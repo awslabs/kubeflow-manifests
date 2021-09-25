@@ -16,6 +16,46 @@
 
 <!-- tocstop -->
 
+## Install RDS in Pipelines
+
+1. Make a folder for the kubeflow installation with the same name as your cluster
+```
+export CLUSTER_NAME="your_cluster_name"
+mkdir ${CLUSTER_NAME}
+```
+
+2. Copy the `kfctl_aws.v1.3.0.yaml` to the folder you created
+```
+cp distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
+```
+
+3. Go to the installation folder and update `kfctl_aws.v1.3.0.yaml` with the proper `clusterName` and `name`
+```
+cd ${CLUSTER_NAME}
+// update kfctl_aws.v1.3.0.yaml with your editor of choice
+```
+
+4. Install kubeflow using `kfctl`
+```
+kfctl apply -V -f kfctl_aws.v1.3.0.yaml
+```
+
+5. To configure kubeflow pipelines with RDS follow the README instructions in `./cache/apps/pipeline/upstream/env/aws` in the installation folder you created
+```
+cd ./cache/apps/pipeline/upstream/env/aws/
+cat README.md
+```
+
+6. To configure katib with RDS update the `secrets.env` file in `./cache/apps/katib/upstream/installs/katib-external-db` and apply the changes
+```
+cd - // back to the installation folder
+cd ./cache/apps/katib/upstream/installs/katib-external-db
+// update secrets.env 
+
+// apply the changes
+kubectl apply -k ./
+```
+
 ## Overview
 
 This repo is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
