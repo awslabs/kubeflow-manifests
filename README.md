@@ -16,7 +16,7 @@
 
 <!-- tocstop -->
 
-## Install RDS in Pipelines
+## Configure RDS/S3 in Pipelines and Katib
 
 1. Make a folder for the kubeflow installation with the same name as your cluster
 ```
@@ -40,7 +40,7 @@ cd ${CLUSTER_NAME}
 kfctl apply -V -f kfctl_aws.v1.3.0.yaml
 ```
 
-5. To configure kubeflow pipelines with RDS follow the README instructions in `./cache/apps/pipeline/upstream/env/aws` in the installation folder you created
+5. To configure kubeflow pipelines with RDS and S3 follow the README instructions in `./cache/apps/pipeline/upstream/env/aws` in the installation folder you created
 ```
 cd ./cache/apps/pipeline/upstream/env/aws/
 cat README.md
