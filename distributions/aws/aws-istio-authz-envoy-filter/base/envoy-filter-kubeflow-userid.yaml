@@ -1,0 +1,40 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: kubeflow-userid
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.http_connection_manager
+            subFilter:
+              name: envoy.filters.http.router
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.lua
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+          inline_code: |
+            function envoy_on_request(request_handle)
+              print("hello from user-id filter")
+              jwt_head = headers:get("x-amzn-oidc-data")
+              if jwt_head==null then
+                request_handle:logWarn("there is is no jwt token")
+              else
+                local jwt = require "resty.jwt"
+                local cjson = require "cjson"
+                jwt_obj = jwt:load_jwt(jwt_head)
+                print(jwt_obj)
+                local email = cjson.encode(jwt_obj)["claims"]["email"]
+                request_handle:headers():add("kubeflow-userid", email)
+              end
+            end
