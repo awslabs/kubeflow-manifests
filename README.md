@@ -3,17 +3,17 @@
 ## Kubeflow on AWS Table of Contents
 <!-- toc -->
 
-- [Preparing AWS Resources](#preparing-aws-resources)
-  - [Prepare S3](#prepare-s3)
-  - [Prepare RDS](#prepare-rds)
+- [Provisioning AWS Resources](#provisioning-aws-resources)
+  - [Create S3 Bucket](#create-s3-bucket)
+  - [Create RDS Instance](#create-rds-instance)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
   - [Kubeflow Pipelines with RDS and S3](#kubeflow-pipelines-with-rds-and-s3)
   - [Katib with RDS](#katib-with-rds)
 
 <!-- tocstop -->
-## Preparing AWS resources 
-### Prepare S3
+## Provisioning AWS Resources 
+### Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 
@@ -23,7 +23,7 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
 ```
 
-### Prepare RDS
+### Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
 
@@ -40,7 +40,7 @@ https://www.kubeflow.org/docs/distributions/aws/deploy/install-kubeflow/#prerequ
 The following steps complete the remaining required prequisites are as following:
 
 1. Create an EKS cluster. 
-Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings.
+Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
 
 ```
 export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
@@ -48,7 +48,7 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 
 eksctl create cluster \
 --name ${CLUSTER_NAME} \
---version 1.18 \
+--version 1.19 \
 --region ${CLUSTER_REGION} \
 --nodegroup-name linux-nodes \
 --node-type m5.xlarge \
@@ -58,33 +58,31 @@ eksctl create cluster \
 --managed
 ```
 
-2. Install `kfctl`. Download the kfctl v1.2.0 release from the [Kubeflow releases page](https://github.com/kubeflow/kfctl/releases/tag/v1.2.0).
 
-3. Unpack the tar ball and add the current working directory to your shell’s path to simplify use of `kfctl`.
+
+### Base installation via `kfctl`
+
+1. Install `kfctl`. Download the kfctl v1.2.0 release from the [Kubeflow releases page](https://github.com/kubeflow/kfctl/releases/tag/v1.2.0).
+
+2. Unpack the tar ball and add the current working directory to your shell’s path to simplify use of `kfctl`.
 
 ```
 tar -xvf kfctl_v1.2.0_<platform>.tar.gz
 export PATH=$PATH:$PWD
 ```
 
-
-
-### Base installation
-
-
-
-1. Create a folder for the kubeflow installation manifests with the same name as your cluster.
+3. Create a folder for the kubeflow installation manifests with the same name as your cluster.
 ```
 export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
 mkdir ${CLUSTER_NAME}
 ```
 
-2. Copy the `kfctl_aws.v1.3.0.yaml` to the folder you created
+4. Copy the `kfctl_aws.v1.3.0.yaml` to the folder you created
 ```
-cp ./distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
+cp <REPO_PATH>/distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
 ```
 
-3. Go to the installation folder and update `kfctl_aws.v1.3.0.yaml` with the proper `clusterName` and `name` values.
+5. Go to the installation folder and update `kfctl_aws.v1.3.0.yaml` with the proper `clusterName` and `name` values.
 ```
 cd ${CLUSTER_NAME}
 // update kfctl_aws.v1.3.0.yaml with your editor of choice
@@ -108,35 +106,41 @@ spec:
 ```
 
 
-4. Install kubeflow using `kfctl`
+6. Install kubeflow using `kfctl`
 ```
 kfctl apply -V -f kfctl_aws.v1.3.0.yaml
 ```
 
+### Base installation via `kustomize`
+
+1. Install kustomize. Installation instructions for your platform can be found here: https://kubectl.docs.kubernetes.io/installation/kustomize/
+
+2. Follow the steps at [Install with a single command](#install-with-a-single-command) to install kubeflow.
+
 ### Kubeflow Pipelines with RDS and S3
 
-Make sure you have followed the steps at [Prepare RDS](#prepare-rds) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
+Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
 
-Make sure you have also followed the steps at [Prepare S3](#prepare-s3) to prepare your S3 for integration with Kubeflow Pipelines. 
+Make sure you have also followed the steps at [Create S3 Bucket](#create-s3-bucket) to prepare your S3 for integration with Kubeflow Pipelines. 
 
-1. Go to the cached manifest directory `./cache/apps/pipeline/upstream/env/aws` in the installation folder you created
+1. Go to the pipelines manifest directory `<REPO_PATH>/apps/pipeline/upstream/env/aws`
 ```
-cd ./cache/apps/pipeline/upstream/env/aws/
+cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
 ```
 
-2. Configure `params.env` with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in [Prepare RDS](#prepare-rds) and [Prepare S3](#prepare-s3). 
+2. Configure `params.env` with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in [Create RDS Instance](#create-rds-instance) and [Create S3 Bucket](#create-s3-bucket). 
 
-- For example if your RDS endpoint URL is `rm12abc4kr5m6qh.chx0g5ytstbj.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
+- For example if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
 
 ```
-dbHost=rm12abc4kr5m6qh.chx0g5ytstbj.us-west-2.rds.amazonaws.com
+dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
 
 bucketName=kf-aws-demo-bucket
 minioServiceHost=s3.amazonaws.com
 minioServiceRegion=us-west-2
 ```
 
-3. Configure `secret.env` with your RDS database username and password that were configured when following the steps in [Prepare RDS](#prepare-rds). 
+3. Configure `secret.env` with your RDS database username and password that were configured when following the steps in [Create RDS Instance](#create-rds-instance). 
 
 - For example if your username is `admin` and your password is `Kubefl0w` then your `secret.env` file should look like:
 
@@ -155,36 +159,78 @@ accesskey=AXXXXXXXXXXXXXXXXXX6
 secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
 ```
 
-5. Install
+5. If installing KFP `platform-agnostic` apply the cluster-scoped-resources manifest. If installing KFP `platform-agnostic-multi-user` skip this step.
 
 ```
+cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
 kubectl apply -k ../../cluster-scoped-resources
 # If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
 # kubectl delete -k ../../cluster-scoped-resources
 
 kubectl wait crd/applications.app.k8s.io --for condition=established --timeout=60s
+```
 
+6. If installing KFP `platform-agnostic-multi-user` make the following change to the kustomization file `<REPO_PATH>/apps/pipeline/upstream/env/aws/kustomization.yaml`. If installing KFP `platform-agnostic` skip this step.
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+bases:
+- ../../env/platform-agnostic-multi-user  # CHANGE THIS LINE from ../../env/platform-agnostic to this
+configMapGenerator:
+- name: pipeline-install-config
+  env: params.env
+  behavior: merge
+- name: workflow-controller-configmap
+  behavior: replace
+  files:
+  - config
+- name: ml-pipeline-ui-configmap
+  behavior: replace
+  files:
+  - viewer-pod-template.json
+secretGenerator:
+- name: mysql-secret
+  env: secret.env
+  behavior: merge
+- name: mlpipeline-minio-artifact
+  env: minio-artifact-secret-patch.env
+  behavior: merge
+generatorOptions:
+  disableNameSuffixHash: true
+patchesStrategicMerge:
+- aws-configuration-patch.yaml
+# Identifier for application manager to apply ownerReference.
+# The ownerReference ensures the resources get garbage collected
+# when application is deleted.
+commonLabels:
+  application-crd-id: kubeflow-pipelines
+```
+
+7. Install KFP.
+
+```
+cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
 kubectl apply -k ./
 # If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
 # kubectl delete -k ./
 ```
 ### Katib with RDS
 
-Make sure you have followed the steps at [Prepare RDS](#prepare-rds) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
+Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
 
-1. Go to the katib manifests directory for external databases `./cache/apps/katib/upstream/installs/katib-external-db`
+1. Go to the katib manifests directory for external databases `apps/katib/upstream/installs/katib-external-db`
 ```
-cd - // back to the installation folder
-cd ./cache/apps/katib/upstream/installs/katib-external-db
-// update secrets.env 
+cd <REPO_PATH>/apps/katib/upstream/installs/katib-external-db
 ```
 
-2. Configure `secrets.env` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in [Prepare RDS](#prepare-rds).
+2. Configure `secrets.env` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in [Create RDS Instance](#create-rds-instance).
 
-- For example if your database name is `KubeflowRDS`, your endpoint URL is `rm12abc4kr5m6qh.chx0g5ytstbj.us-west-2.rds.amazonaws.com`, your DB port is `33006`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
+- For example if your database name is `KubeflowRDS`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
 ```
 KATIB_MYSQL_DB_DATABASE=KubeflowRDS1
-KATIB_MYSQL_DB_HOST=rm12abc4kr5m6qh.chx0g5ytstbj.us-west-2.rds.amazonaws.com
+KATIB_MYSQL_DB_HOST=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
 KATIB_MYSQL_DB_PORT=3306
 DB_USER=admin
 DB_PASSWORD=Kubefl0w
@@ -193,6 +239,7 @@ DB_PASSWORD=Kubefl0w
 
 2. Install
 ```
+cd <REPO_PATH>/apps/katib/upstream/installs/katib-external-db
 kubectl apply -k ./
 ```
 ## Kubeflow Generic Table of Contents
