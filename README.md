@@ -1,6 +1,255 @@
 # Kubeflow Manifests
 
-## Table of Contents
+## Kubeflow on AWS Table of Contents
+<!-- toc -->
+
+- [Provisioning AWS Resources](#provisioning-aws-resources)
+  - [Create EKS Cluster](#create-eks-cluster)
+  - [Create S3 Bucket](#create-s3-bucket)
+  - [Create RDS Instance](#create-rds-instance)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisties)
+  - [Base installation via `kfctl`](#base-installation-via-kfctl)
+  - [Base installation via `kustomize`](#base-installation-via-kustomize)
+  - [Kubeflow Pipelines with RDS and S3](#kubeflow-pipelines-with-rds-and-s3)
+  - [Katib with RDS](#katib-with-rds)
+
+<!-- tocstop -->
+## Provisioning AWS Resources 
+
+### Create EKS Cluster
+
+Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
+
+```
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
+
+eksctl create cluster \
+--name ${CLUSTER_NAME} \
+--version 1.19 \
+--region ${CLUSTER_REGION} \
+--nodegroup-name linux-nodes \
+--node-type m5.xlarge \
+--nodes 2 \
+--nodes-min 1 \
+--nodes-max 4 \
+--managed
+```
+### Create S3 Bucket
+
+Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
+
+```
+export S3_BUCKET=<YOUR_S3_BUCKET_NAME>
+export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
+aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
+```
+
+### Create RDS Instance
+
+Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
+
+
+## Installation
+
+Below is the process to install the basic necessary components to run kubeflow on AWS. The installation can be further integrated with the desired AWS resources by following the following resource specific guides.
+
+### Prerequisties
+
+- Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
+- Install and configure the AWS Command Line Interface (AWS CLI):
+    - Install the [AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html).
+    - Configure the AWS CLI by running the following command: `aws configure`.
+    - Enter your Access Keys ([Access Key ID and Secret Access Key](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys)).
+    - Enter your preferred AWS Region and default output options.
+- Install [eksctl](https://github.com/weaveworks/eksctl)
+- Create an EKS cluster by following the instructions [here](#create-eks-cluster)
+
+### Base installation via `kfctl`
+
+1. Install `kfctl`. Download the kfctl v1.2.0 release from the [Kubeflow releases page](https://github.com/kubeflow/kfctl/releases/tag/v1.2.0).
+
+2. Unpack the tar ball and add the current working directory to your shell’s path to simplify use of `kfctl`.
+
+```
+tar -xvf kfctl_v1.2.0_<platform>.tar.gz
+export PATH=$PATH:$PWD
+```
+
+3. Create a folder for the kubeflow installation manifests with the same name as your cluster.
+```
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+mkdir ${CLUSTER_NAME}
+```
+
+4. Copy the `kfctl_aws.v1.3.0.yaml` to the folder you created
+```
+cp <KUBEFLOW_MANIFESTS_REPO_PATH>/distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
+```
+
+5. Go to the installation folder and update `kfctl_aws.v1.3.0.yaml` with the proper `clusterName` and `name` values.
+```
+cd ${CLUSTER_NAME}
+// update kfctl_aws.v1.3.0.yaml with your editor of choice
+```
+
+- For example, if your cluster name is `kubeflow-aws-demo` and the cluster region is `us-west-2` append the following fields to your manifest as follows:
+
+```yml
+apiVersion: kfdef.apps.kubeflow.org/v1
+kind: KfDef
+metadata:
+  annotations:
+    kfctl.kubeflow.io/force-delete: "false"
+  clusterName: kubeflow-aws-demo.us-west-2.eksctl.io  # Append cluster name
+  creationTimestamp: null
+  name: kubeflow-aws-demo # Append name
+  namespace: kubeflow
+spec:
+
+  ...
+
+```
+
+
+6. Install kubeflow using `kfctl`
+```
+kfctl apply -V -f kfctl_aws.v1.3.0.yaml
+```
+
+### Base installation via `kustomize`
+
+1. Install kustomize. Installation instructions for your platform can be found here: https://kubectl.docs.kubernetes.io/installation/kustomize/
+
+2. Follow the steps at [Install with a single command](#install-with-a-single-command) to install kubeflow.
+
+### Kubeflow Pipelines with RDS and S3
+
+Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
+
+Make sure you have also followed the steps at [Create S3 Bucket](#create-s3-bucket) to prepare your S3 for integration with Kubeflow Pipelines. 
+
+1. Go to the pipelines manifest directory `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws`
+```
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
+```
+
+2. Configure `params.env` with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in [Create RDS Instance](#create-rds-instance) and [Create S3 Bucket](#create-s3-bucket). 
+
+- For example if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
+
+```
+dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
+
+bucketName=kf-aws-demo-bucket
+minioServiceHost=s3.amazonaws.com
+minioServiceRegion=us-west-2
+```
+
+3. Configure `secret.env` with your RDS database username and password that were configured when following the steps in [Create RDS Instance](#create-rds-instance). 
+
+- For example if your username is `admin` and your password is `Kubefl0w` then your `secret.env` file should look like:
+
+```
+username=admin
+password=Kubefl0w
+```
+
+4. Configure `minio-artifact-secret-patch.env` with your AWS credentials.
+
+Find more details about configuring/getting your AWS credentials here:
+https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
+
+```
+accesskey=AXXXXXXXXXXXXXXXXXX6
+secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
+```
+
+5. [Single-user only] Apply the cluster-scoped-resources manifest.
+
+```
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
+kubectl apply -k ../../cluster-scoped-resources
+# If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
+# kubectl delete -k ../../cluster-scoped-resources
+
+kubectl wait crd/applications.app.k8s.io --for condition=established --timeout=60s
+```
+
+6. [Multi-user only] Make the following change to the kustomization file `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/kustomization.yaml`. 
+
+```yml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+bases:
+- ../../env/platform-agnostic-multi-user  # CHANGE THIS LINE from ../../env/platform-agnostic to this
+configMapGenerator:
+- name: pipeline-install-config
+  env: params.env
+  behavior: merge
+- name: workflow-controller-configmap
+  behavior: replace
+  files:
+  - config
+- name: ml-pipeline-ui-configmap
+  behavior: replace
+  files:
+  - viewer-pod-template.json
+secretGenerator:
+- name: mysql-secret
+  env: secret.env
+  behavior: merge
+- name: mlpipeline-minio-artifact
+  env: minio-artifact-secret-patch.env
+  behavior: merge
+generatorOptions:
+  disableNameSuffixHash: true
+patchesStrategicMerge:
+- aws-configuration-patch.yaml
+# Identifier for application manager to apply ownerReference.
+# The ownerReference ensures the resources get garbage collected
+# when application is deleted.
+commonLabels:
+  application-crd-id: kubeflow-pipelines
+```
+
+7. Install KFP.
+
+```
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
+kubectl apply -k ./
+# If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
+# kubectl delete -k ./
+```
+### Katib with RDS
+
+Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
+
+1. Go to the katib manifests directory for external databases `apps/katib/upstream/installs/katib-external-db`
+```
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/katib/upstream/installs/katib-external-db
+```
+
+2. Configure `secrets.env` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in [Create RDS Instance](#create-rds-instance).
+
+- For example if your database name is `KubeflowRDS`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
+```
+KATIB_MYSQL_DB_DATABASE=KubeflowRDS1
+KATIB_MYSQL_DB_HOST=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
+KATIB_MYSQL_DB_PORT=3306
+DB_USER=admin
+DB_PASSWORD=Kubefl0w
+```
+
+
+2. Install
+```
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/katib/upstream/installs/katib-external-db
+kubectl apply -k ./
+```
+## Kubeflow Generic Table of Contents
 
 <!-- toc -->
 
@@ -15,7 +264,6 @@
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 <!-- tocstop -->
-
 ## Overview
 
 This repo is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
