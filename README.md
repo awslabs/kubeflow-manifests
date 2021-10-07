@@ -4,15 +4,38 @@
 <!-- toc -->
 
 - [Provisioning AWS Resources](#provisioning-aws-resources)
+  - [Create EKS Cluster](#create-eks-cluster)
   - [Create S3 Bucket](#create-s3-bucket)
   - [Create RDS Instance](#create-rds-instance)
 - [Installation](#installation)
-  - [Prerequisites](#prerequisites)
+  - [Prerequisites](#prerequisties)
+  - [Base installation via `kfctl`](#base-installation-via-kfctl)
+  - [Base installation via `kustomize`](#base-installation-via-kustomize)
   - [Kubeflow Pipelines with RDS and S3](#kubeflow-pipelines-with-rds-and-s3)
   - [Katib with RDS](#katib-with-rds)
 
 <!-- tocstop -->
 ## Provisioning AWS Resources 
+
+### Create EKS Cluster
+
+Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
+
+```
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
+
+eksctl create cluster \
+--name ${CLUSTER_NAME} \
+--version 1.19 \
+--region ${CLUSTER_REGION} \
+--nodegroup-name linux-nodes \
+--node-type m5.xlarge \
+--nodes 2 \
+--nodes-min 1 \
+--nodes-max 4 \
+--managed
+```
 ### Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
@@ -34,31 +57,14 @@ Below is the process to install the basic necessary components to run kubeflow o
 
 ### Prerequisties
 
-The first set of prerequisites for installation can be found here:
-https://www.kubeflow.org/docs/distributions/aws/deploy/install-kubeflow/#prerequisites
-
-The following steps complete the remaining required prequisites are as following:
-
-1. Create an EKS cluster. 
-Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
-
-```
-export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
-export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-
-eksctl create cluster \
---name ${CLUSTER_NAME} \
---version 1.19 \
---region ${CLUSTER_REGION} \
---nodegroup-name linux-nodes \
---node-type m5.xlarge \
---nodes 2 \
---nodes-min 1 \
---nodes-max 4 \
---managed
-```
-
-
+- Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
+- Install and configure the AWS Command Line Interface (AWS CLI):
+    - Install the [AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html).
+    - Configure the AWS CLI by running the following command: `aws configure`.
+    - Enter your Access Keys ([Access Key ID and Secret Access Key](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys)).
+    - Enter your preferred AWS Region and default output options.
+- Install [eksctl](https://github.com/weaveworks/eksctl)
+- Create an EKS cluster by following the instructions [here](#create-eks-cluster)
 
 ### Base installation via `kfctl`
 
@@ -79,7 +85,7 @@ mkdir ${CLUSTER_NAME}
 
 4. Copy the `kfctl_aws.v1.3.0.yaml` to the folder you created
 ```
-cp <REPO_PATH>/distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
+cp <KUBEFLOW_MANIFESTS_REPO_PATH>/distributions/kfdef/kfctl_aws.v1.3.0.yaml ${CLUSTER_NAME}/
 ```
 
 5. Go to the installation folder and update `kfctl_aws.v1.3.0.yaml` with the proper `clusterName` and `name` values.
@@ -88,16 +94,17 @@ cd ${CLUSTER_NAME}
 // update kfctl_aws.v1.3.0.yaml with your editor of choice
 ```
 
-- For example, if your cluster name is `kubeflow-aws-demo` and the cluster region is `us-west-2` your KFDef manifest should be updated as follows:
-```
+- For example, if your cluster name is `kubeflow-aws-demo` and the cluster region is `us-west-2` append the following fields to your manifest as follows:
+
+```yml
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   annotations:
     kfctl.kubeflow.io/force-delete: "false"
-  clusterName: kubeflow-aws-demo.us-west-2.eksctl.io
+  clusterName: kubeflow-aws-demo.us-west-2.eksctl.io  # Append cluster name
   creationTimestamp: null
-  name: kubeflow-aws-demo
+  name: kubeflow-aws-demo # Append name
   namespace: kubeflow
 spec:
 
@@ -123,9 +130,9 @@ Make sure you have followed the steps at [Create RDS Instance](#create-rds-insta
 
 Make sure you have also followed the steps at [Create S3 Bucket](#create-s3-bucket) to prepare your S3 for integration with Kubeflow Pipelines. 
 
-1. Go to the pipelines manifest directory `<REPO_PATH>/apps/pipeline/upstream/env/aws`
+1. Go to the pipelines manifest directory `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws`
 ```
-cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
 ```
 
 2. Configure `params.env` with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in [Create RDS Instance](#create-rds-instance) and [Create S3 Bucket](#create-s3-bucket). 
@@ -159,10 +166,10 @@ accesskey=AXXXXXXXXXXXXXXXXXX6
 secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
 ```
 
-5. If installing KFP `platform-agnostic` apply the cluster-scoped-resources manifest. If installing KFP `platform-agnostic-multi-user` skip this step.
+5. [Single-user only] Apply the cluster-scoped-resources manifest.
 
 ```
-cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
 kubectl apply -k ../../cluster-scoped-resources
 # If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
 # kubectl delete -k ../../cluster-scoped-resources
@@ -170,9 +177,9 @@ kubectl apply -k ../../cluster-scoped-resources
 kubectl wait crd/applications.app.k8s.io --for condition=established --timeout=60s
 ```
 
-6. If installing KFP `platform-agnostic-multi-user` make the following change to the kustomization file `<REPO_PATH>/apps/pipeline/upstream/env/aws/kustomization.yaml`. If installing KFP `platform-agnostic` skip this step.
+6. [Multi-user only] Make the following change to the kustomization file `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/kustomization.yaml`. 
 
-```
+```yml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
@@ -211,7 +218,7 @@ commonLabels:
 7. Install KFP.
 
 ```
-cd <REPO_PATH>/apps/pipeline/upstream/env/aws/
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws/
 kubectl apply -k ./
 # If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
 # kubectl delete -k ./
@@ -222,7 +229,7 @@ Make sure you have followed the steps at [Create RDS Instance](#create-rds-insta
 
 1. Go to the katib manifests directory for external databases `apps/katib/upstream/installs/katib-external-db`
 ```
-cd <REPO_PATH>/apps/katib/upstream/installs/katib-external-db
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/katib/upstream/installs/katib-external-db
 ```
 
 2. Configure `secrets.env` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in [Create RDS Instance](#create-rds-instance).
@@ -239,7 +246,7 @@ DB_PASSWORD=Kubefl0w
 
 2. Install
 ```
-cd <REPO_PATH>/apps/katib/upstream/installs/katib-external-db
+cd <KUBEFLOW_MANIFESTS_REPO_PATH>/apps/katib/upstream/installs/katib-external-db
 kubectl apply -k ./
 ```
 ## Kubeflow Generic Table of Contents
