@@ -6,10 +6,10 @@ commonLabels:
   kustomize.component: aws-alb-ingress-controller
 generatorOptions:
   disableNameSuffixHash: true
-configMapGenerator:
-- literals:
-  - cluster-name=test
-  name: aws-alb-ingress-controller-config
+# configMapGenerator:
+# - literals:
+#   - cluster-name=test
+#   name: aws-alb-ingress-controller-config
 images:
 - name: docker.io/amazon/aws-alb-ingress-controller
   newName: docker.io/amazon/aws-alb-ingress-controller
@@ -19,6 +19,6 @@ resources:
 - ../base/cluster-role-binding.yaml
 - ../base/deployment.yaml
 - ../base/service-account.yaml
-- ../overlays/application/application.yaml
+# - ../overlays/application/application.yaml
 patchesStrategicMerge:
 - deployment_patch.yaml
