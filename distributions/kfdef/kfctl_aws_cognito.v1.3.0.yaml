@@ -49,11 +49,11 @@ spec:
         name: manifests
         path: distributions/stacks/aws/application/istio-ingress-cognito
     name: istio-ingress
-  # - kustomizeConfig:
-  #     repoRef:
-  #       name: manifests
-  #       path: distributions/stacks/aws/application/aws-istio-auth-envoy-filter
-  #   name: aws-istio-auth-envoy-filter
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: distributions/stacks/aws/application/aws-istio-auth-envoy-filter
+    name: aws-istio-auth-envoy-filter
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -165,5 +165,5 @@ spec:
       region: us-west-2
   repos:
   - name: manifests
-    uri: https://github.com/awslabs/kubeflow-manifests/archive/v1.3-cognito.tar.gz
-  version: v1.3-cognito
+    uri: https://github.com/kubeflow/manifests/archive/c41f71e01ee6f0a8573185e96a9168a18581aa34.tar.gz
+  version: c41f71e01ee6f0a8573185e96a9168a18581aa34
