@@ -2,6 +2,8 @@ bases:
 - ../../base
 patchesStrategicMerge:
 - ingress.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
 - name: istio-ingress-cognito-parameters
   envs:
