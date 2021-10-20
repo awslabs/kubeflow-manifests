@@ -7,6 +7,7 @@ resources:
 - deployment.yaml
 - service-account.yaml
 commonLabels:
+  app: aws-alb-ingress-controller
   kustomize.component: aws-alb-ingress-controller
 generatorOptions:
   disableNameSuffixHash: true
@@ -15,14 +16,16 @@ images:
   newName: docker.io/amazon/aws-alb-ingress-controller
   newTag: v1.1.5
 configMapGenerator:
-- name: alb-ingress-controller-parameters
+- name: aws-alb-ingress-controller-config
   envs:
   - params.env
 vars:
-- name: CLUSTER_NAME
+- name: clusterName
   objref:
     kind: ConfigMap
-    name: alb-ingress-controller-parameters
+    name: aws-alb-ingress-controller-config
     apiVersion: v1
   fieldref:
     fieldpath: data.clusterName
+patchesStrategicMerge:
+- deployment_patch.yaml
