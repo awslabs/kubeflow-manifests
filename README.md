@@ -43,7 +43,7 @@ Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<Y
 ```
 export S3_BUCKET=<YOUR_S3_BUCKET_NAME>
 export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
+aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
 ### Create RDS Instance
