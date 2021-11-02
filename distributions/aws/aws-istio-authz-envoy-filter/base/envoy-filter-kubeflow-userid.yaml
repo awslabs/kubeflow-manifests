@@ -137,6 +137,10 @@ spec:
             end
 
             function envoy_on_request(request_handle)
+              if request_handle:headers():get("kubeflow-userid") ~= nil then
+                return
+              end
+
               local jwt_head = request_handle:headers():get("x-amzn-oidc-data")
               
               if jwt_head == nil then
