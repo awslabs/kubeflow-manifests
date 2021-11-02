@@ -24,183 +24,127 @@ spec:
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
           inline_code: |
-            -- Json Parsing based on https://gist.github.com/tylerneylon/59f4bcf316be525b30ab
-            -- See modified script on https://gist.github.com/inaiat/02bf5d11732d8e4d7b7546399a3a49af
-            local alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+            local valid_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
 
-            local function toBinaryString(int)
-                if int > 64 then error("Bad number " .. int .. " to convert to binary") end
-                local remaining = tonumber(int)
-                local bits = ''
-                for i = 5, 0, -1 do
-                    local pow = 2 ^ i
-                    if remaining >= pow then
-                        bits = bits .. '1'
-                        remaining = remaining - pow
+            local function request_handling_error(string)
+                error("Error validating JWT token due to: " .. string)
+            end
+
+            local function base64_char_to_bitstring(base64_char)
+                -- lua arrays start at 1
+                local offset_base64_value = string.find(valid_chars, base64_char)
+
+                if offset_base64_value == nil then
+                    return ''
+                end
+
+                local base64_value = offset_base64_value-1
+
+                local bitstring = ''
+
+                for i = 5,0,-1 do
+                    local int_value_of_bit = 2^i
+                    if base64_value >= int_value_of_bit then
+                        base64_value = base64_value - int_value_of_bit
+                        bitstring = bitstring .. '1'
                     else
-                        bits = bits .. '0'
+                        bitstring = bitstring .. '0'
                     end
                 end
-                return bits
+
+                return bitstring
             end
-            local function fromBinaryString(bits) return tonumber(bits, 2) end
-            local function decodeBase64(encoded)
-                local bitstr = ''
-                local decoded = ''
-                for i = 1, string.len(encoded) do
-                    local offset, _ = string.find(alpha, string.sub(encoded, i, i))
-                    if offset == nil then
-                        error("Bad base64 character " .. string.sub(encoded, i, i))
+
+            local function base64_string_to_bitstring(base64_string)
+                local bitstring = ''
+
+                for i=1, string.len(base64_string) do
+                    local base64_char = string.sub(base64_string, i, i)
+                    bitstring = bitstring .. base64_char_to_bitstring(base64_char)
+                end
+
+                return bitstring
+            end
+
+            local function bitstring_to_string(bitstring)
+                local output_string = ''
+
+                for i=1, string.len(bitstring), 8 do
+                    local bitstring_chunk = string.sub(bitstring, i, i+7)
+
+                    if string.len(bitstring_chunk) < 8 then
+                        break
                     end
-                    bitstr = bitstr .. toBinaryString(offset - 1)
+
+                    local output_string_char = string.char(tonumber(bitstring_chunk, 2))
+                    output_string = output_string .. output_string_char
                 end
-                for i = 1, string.len(bitstr), 8 do
-                    decoded = decoded ..
-                                  string.char(fromBinaryString(string.sub(bitstr, i, i + 7)))
+
+                return output_string
+            end
+
+            local function decode_base64(base64_string)
+                local base64_bitstring = base64_string_to_bitstring(base64_string)
+                return bitstring_to_string(base64_bitstring)
+            end
+
+            local function extract_jwt_payload(jwt)
+                local claim_start = string.find(jwt, "%.")
+                if claim_start == nil then
+                    request_handling_error("Could not find claims section of JWT")
                 end
-                return decoded
-            end
 
-
-            local json = {}
-
-            local function skip_delim(str, pos, delim, err_if_missing)
-                pos = pos + #str:match('^%s*', pos)
-                if str:sub(pos, pos) ~= delim then
-                    if err_if_missing then
-                        error('Expected ' .. delim .. ' near position ' .. pos)
-                    end
-                    return pos, false
+                local claim_end = string.find(jwt, "%.", claim_start+1)
+                if claim_end == nil then
+                    request_handling_error("Could not find claims section of JWT")
                 end
-                return pos + 1, true
+
+                -- don't include periods
+                return string.sub(jwt, claim_start+1, claim_end-1)
             end
 
-            local function parse_str_val(str, pos, val)
-                val = val or ''
-                local early_end_error = 'End of input found while parsing string.'
-                if pos > #str then error(early_end_error) end
-                local c = str:sub(pos, pos)
-                if c == '"' then return val, pos + 1 end
-                if c ~= '\\' then return parse_str_val(str, pos + 1, val .. c) end
-                -- We must have a \ character.
-                local esc_map = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t'}
-                local nextc = str:sub(pos + 1, pos + 1)
-                if not nextc then error(early_end_error) end
-                return parse_str_val(str, pos + 2, val .. (esc_map[nextc] or nextc))
-            end
+            local function get_email_from_jwt_payload(jwt_payload)
+                local claim_start = 0
+                while true do
+                    local claim_end = string.find(jwt_payload, ",", claim_start)
+                    local claim = string.sub(jwt_payload, claim_start, claim_end)
 
-            local function parse_num_val(str, pos)
-                local num_str = str:match('^-?%d+%.?%d*[eE]?[+-]?%d*', pos)
-                local val = tonumber(num_str)
-                if not val then error('Error parsing number at position ' .. pos .. '.') end
-                return val, pos + #num_str
-            end
-
-            json.null = {}
-            function json.parse(str, pos, end_delim)
-                pos = pos or 1
-                if pos > #str then error('Reached unexpected end of input.') end
-                local pos = pos + #str:match('^%s*', pos) -- Skip whitespace.
-                local first = str:sub(pos, pos)
-                if first == '{' then -- Parse an object.
-                    local obj, key, delim_found = {}, true, true
-                    pos = pos + 1
-                    while true do
-                        key, pos = json.parse(str, pos, '}')
-                        if key == nil then return obj, pos end
-                        if not delim_found then
-                            error('Comma missing between object items.')
+                    if string.find(claim, "\"email\"") ~= nil then
+                        local delimiter_index = string.find(claim, ":")
+                        if delimiter_index == nil then
+                            request_handling_error("Could not parse email in JWT payload")
                         end
-                        pos = skip_delim(str, pos, ':', true) -- true -> error if missing.
-                        obj[key], pos = json.parse(str, pos)
-                        pos, delim_found = skip_delim(str, pos, ',')
-                    end
-                elseif first == '[' then -- Parse an array.
-                    local arr, val, delim_found = {}, true, true
-                    pos = pos + 1
-                    while true do
-                        val, pos = json.parse(str, pos, ']')
-                        if val == nil then return arr, pos end
-                        if not delim_found then
-                            error('Comma missing between array items.')
+                        local email_start = string.find(claim, "\"", delimiter_index+1)
+                        if email_start == nil then
+                            request_handling_error("Could not parse email in JWT payload")
                         end
-                        arr[#arr + 1] = val
-                        pos, delim_found = skip_delim(str, pos, ',')
-                    end
-                elseif first == '"' then -- Parse a string.
-                    return parse_str_val(str, pos + 1)
-                elseif first == '-' or first:match('%d') then -- Parse a number.
-                    return parse_num_val(str, pos)
-                elseif first == end_delim then -- End of an object or array.
-                    return nil, pos + 1
-                else -- Parse true, false, or null.
-                    local literals = {
-                        ['true'] = true,
-                        ['false'] = false,
-                        ['null'] = json.null
-                    }
-                    for lit_str, lit_val in pairs(literals) do
-                        local lit_end = pos + #lit_str - 1
-                        if str:sub(pos, lit_end) == lit_str then
-                            return lit_val, lit_end + 1
+                        local email_end = string.find(claim, "\"", email_start+1)
+                        if email_end == nil then
+                            request_handling_error("Could not parse email in JWT payload")
                         end
-                    end
-                    local pos_info_str = 'position ' .. pos .. ': ' ..
-                                            str:sub(pos, pos + 10)
-                    error('Invalid json syntax starting at ' .. pos_info_str)
-                end
-            end
 
-            function print_table(data)
-              for key, value in pairs(data) do
-                  print(key)
-                  print(value)
-              end
+                        return string.sub(claim, email_start+1, email_end-1)
+                    end
+
+                    if claim_end == nil then
+                        break
+                    end
+
+                    claim_start = claim_end + 1
+                end
+    
+                request_handling_error("Could not find email in JWT payload")
             end
 
             function envoy_on_request(request_handle)
-              print("hello from filter")
               local jwt_head = request_handle:headers():get("x-amzn-oidc-data")
-              local kf_email = request_handle:headers():get("kubeflow-userid")
-              local request_headers = request_handle:headers()
               
-              if kf_email ~= null then
-                print("email-id header present")
-                request_handle:headers():add("kubeflow-userid", kf_email)
-              end
-
-              if jwt_head==null then
-                request_handle:logWarn("there is is no jwt token")
-                if kf_email==null then
-                  request_handle:logWarn("there is is no kf user-id")
-                end
+              if jwt_head == nil then
+                request_handle:logWarn("There is no JWT token in the x-amzn-oidc-data header")
               else
-                print("x-amzn-oidc-data present")
-                --- print(jwt_head)
-                jwt_table={}
-                local jwt_keys={"header", "payload", "signature"}
-                local i=1
-                for token in jwt_head:gmatch("([^.]+)") do
-                  jwt_table[jwt_keys[i]]=token
-                  i=i+1
-                end
-                --- print("payload")
-                --- print(jwt_table["payload"]:gsub('%=', ''))
-                local trimmed_claims=jwt_table["payload"]:gsub('%=', '')
-                local decoded_payload=decodeBase64(trimmed_claims)
-                --- print(decoded_payload)
-                local claims = json.parse(decoded_payload)
-                if claims==nil then
-                  request_handle:logWarn("some problems to get jwt attributes"..jwt_head)
-                else
-                  local email = claims["email"]
-                  --- print(email)
-                  request_handle:headers():add("kubeflow-userid", email)
-                  request_headers = request_handle:headers()
-                  kf_email = request_handle:headers():get("kubeflow-userid")
-                  if kf_email ~= null then
-                    print("email-id header added "..kf_email)
-                  end
-                end
+                local payload = decode_base64(extract_jwt_payload(jwt_head))
+                local email = get_email_from_jwt_payload(payload)
+
+                request_handle:headers():add("kubeflow-userid", email)
               end
             end
