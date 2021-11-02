@@ -80,5 +80,5 @@ spec:
     name: kubeflow-apps
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
-  version: v1.3-branch
+    uri: https://github.com/kubeflow/manifests/archive/v1.3.0.tar.gz
+  version: v1.3.0-tag

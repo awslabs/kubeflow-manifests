@@ -1,6 +1,11 @@
 apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
+  annotations:
+    kfctl.kubeflow.io/force-delete: "false"
+  # clusterName: ${CLUSTER_NAME}.${CLUSTER_REGION}.eksctl.io 
+  creationTimestamp: null
+  # name: ${CLUSTER_NAME}
   namespace: kubeflow
 spec:
   applications:
@@ -72,7 +77,7 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: apps/pipeline/upstream/env/platform-agnostic-multi-user
+        path: apps/pipeline/upstream/env/platform-agnostic
     name: kubeflow-pipelines
   - kustomizeConfig:
       repoRef:
@@ -141,5 +146,5 @@ spec:
     name: user-namespace
   repos:
   - name: manifests
-    uri: https://github.com/kubeflow/manifests/archive/v1.3-branch.tar.gz
-  version: v1.3-branch
+    uri: https://github.com/kubeflow/manifests/archive/v1.3.0.tar.gz
+  version: v1.3.0
