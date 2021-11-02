@@ -27,18 +27,13 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/cert-manager/cert-manager-kube-system-resources/base
-    name: cert-manager-kube-system-resources
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/cert-manager/cert-manager-crds/base
-    name: cert-manager-crds
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/cert-manager/cert-manager/overlays/self-signed
+        path: common/cert-manager/cert-manager/base
     name: cert-manager
+  - kustomizeConfig:
+      repoRef:
+        name: manifests
+        path: common/cert-manager/kubeflow-issuer/base
+    name: cert-manager-kubeflow-self-signed
   - kustomizeConfig:
       repoRef:
         name: manifests
@@ -52,23 +47,13 @@ spec:
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/knative/knative-serving-crds/base
-    name: knative-serving-crds
+        path: common/knative/knative-serving/base
+    name: knative-serving
   - kustomizeConfig:
       repoRef:
         name: manifests
-        path: common/knative/knative-serving-install/base
-    name: knative-serving-install
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/knative/knative-eventing-crds/base
-    name: knative-eventing-crds
-  - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: common/knative/knative-eventing-install/base
-    name: knative-eventing-install
+        path: common/knative/knative-eventing/base
+    name: knative-serving
   - kustomizeConfig:
       repoRef:
         name: manifests
