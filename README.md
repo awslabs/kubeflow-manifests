@@ -82,7 +82,7 @@ eksctl create cluster \
 --node-type m5.xlarge \
 --nodes 5 \
 --nodes-min 1 \
---nodes-max 4 \
+--nodes-max 10 \
 --managed
 ```
 ### Create S3 Bucket
