@@ -29,8 +29,8 @@ eksctl create cluster \
 ## Install
 
 ### Components configured for RDS and S3
-Installation steps can be found [here](rds-s3/README.md)
+Installation steps can be found [here](rds-s3)
 
 ### Components configured for Cognito
-Installation steps can be found [here](cognito/README.md)
+Installation steps can be found [here](cognito)
 
