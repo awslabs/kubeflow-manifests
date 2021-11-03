@@ -80,7 +80,7 @@ eksctl create cluster \
 --region ${CLUSTER_REGION} \
 --nodegroup-name linux-nodes \
 --node-type m5.xlarge \
---nodes 2 \
+--nodes 5 \
 --nodes-min 1 \
 --nodes-max 4 \
 --managed
