@@ -15,4 +15,4 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: aws-alb-ingress-controller-config
-                key: cluster-name
+                key: clusterName
