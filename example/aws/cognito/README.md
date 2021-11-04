@@ -2,29 +2,15 @@
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider.
 
-## Pre-requisites
-
-1. EKS cluster
-2. Kustomize 3.2.x needed for Kubeflow 1.3. [More Info](https://github.com/kubeflow/manifests/tree/v1.3-branch#prerequisites)
-    1. ```
-        curl -sLO https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.2.1/kustomize_kustomize.v3.2.1_linux_amd64
-        chmod +x kustomize_kustomize.v3.2.1_linux_amd64 
-        mv ./kustomize_kustomize.v3.2.1_linux_amd64 /usr/local/bin/kustomize
-        kustomize version
-        ```
-3. kubectl
-4. eksctl
-5. awscli
-
 ## 1.0 Custom domain
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your domain can be registered anywhere. Follow these steps to configure the subdomain:
 
 1. Goto Route53 and create a subdomain to host kubeflow:
-    1. Create a hosted zone for the desired subdomain e.g. `platform.example.com.`
+    1. Create a hosted zone for the desired subdomain e.g. `platform.example.com`.
     2. Copy the NS entries created for the subdomain (`platform.example.com`) and create a `NS` type of record in the root `example.com` zone. Following is a screenshot of `example.com`  hosted zone.
         1. ![root domain NS](./images/screenshot-1.0-1.2.png)
-2. From this step onwards, we will be creating/updating the DNS records only in the subdomain. All the screenshots of hosted zone in the following sections/steps guide are for the subdomain
+2. From this step onwards, we will be creating/updating the DNS records only in the subdomain. All the screenshots of hosted zone in the following sections/steps guide are for the subdomain.
 3. In order to make Cognito to use custom domain name, A record is required to resolve `platform.example.com` as root domain, which can be a Route53 Alias to the ALB as well. Create a new record of type `A` with an arbitrary IP for now. Once we have ALB created, we will update the value later.
     1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
         1. ![subdomain initial A record](./images/screenshot-1.0-3.1.png)
@@ -33,9 +19,9 @@ Register a domain in any domain provider like [Route 53](https://docs.aws.amazon
 
 Create two certificates in Certificate Manager for each `*.example.com` and `*.platform.example.com` in respective order by following [this document](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console). One in N.Virginia and one in the region where your platform is running. That is because Cognito [requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool. The second is required by the ingress-gateway in case the platform does not run in N.Virginia, in our example Oregon. For the validation of both certificates, you will be asked to create one record in the hosted zone we created above.
 
-1. Following is a screenshot showing an issued certificate. See highlighted. Note: Status turns to issued after few minutes of **creating the record in hosted zone**
+1. Following is a screenshot showing an issued certificate. See highlighted. Note: Status turns to issued after few minutes of **creating the record in hosted zone**.
     1. ![successfully issued certificate](./images/screenshot-2.0-1.png)
-2. Following is a screenshot of [platform.example.com](http://platform.example.com/) hosted zone showing the certificate has been added
+2. Following is a screenshot of [platform.example.com](http://platform.example.com/) hosted zone showing the certificate has been added:
     1. ![DNS record for certificate](./images/screenshot-2.0-2.png)
 
 ## 3.0 Cognito User Pool
@@ -51,9 +37,9 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
 5. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
     1. ![active domain cognito](./images/screenshot-3.0-5.png)
     2. When it’s created, it will return the `Alias target` CloudFront address for which you need to create  a type `A` record  `auth.platform.example.com` in the hosted zone.
-        1. Screenshot of the CloudFront URL for Cognito Domain name
+        1. Screenshot of the CloudFront URL for Cognito Domain name:
             1. ![cognito domain cloudfront url](./images/screenshot-3.0-5.2.1.png)
-        2. Screenshot of the A record in `platform.example.com` hosted zone
+        2. Screenshot of the A record in `platform.example.com` hosted zone:
             1. ![cognito domain A record](./images/screenshot-3.0-5.2.2.png)
 6. Take note of the following values:
     1. The Pool ARN of the user pool found in Cognito general settings.
@@ -70,7 +56,7 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
 
 ## 4.0 Building manifests and deploying Kubeflow
 
-1. Verify you are connected to right cluster, cluster has compute and the **aws default region** points to the region of cluster
+1. Verify you are connected to right cluster, cluster has compute and the **aws default region** points to the region of cluster.
     1. ```
         # Display default region
         aws configure get region
@@ -80,13 +66,13 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
         kubectl get nodes
         aws eks describe-cluster --cluster-name $CLUSTER_NAME
         ```
-2. Clone the `awslabs/kubeflow-manifest` repo
+2. Clone the `awslabs/kubeflow-manifest` repo.
     1. ```
         git clone https://github.com/awslabs/kubeflow-manifests.git
         cd kubeflow-manifests
         git checkout v1.3-branch
         ```
-3. Substitute values for setting up Ingress
+3. Substitute values for setting up Ingress.
     1. ```
         printf '
         CognitoUserPoolArn='$CognitoUserPoolArn'
@@ -98,7 +84,7 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
         ```
 4. Setup resources required for ALB controller
     1. Make sure all subnets are tagged properly according to the [prerequisites in this document](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html). We are using ALB controller version 1.1.5.
-        1. Specifically look for:
+        1. Specifically look for the following tags:
             1. `kubernetes.io/cluster/cluster-name` (replace cluster-name with your cluster name). If you created the cluster using eksctl, you might be missing only this tag
             2. `kubernetes.io/role/internal-elb`
             3. `kubernetes.io/role/elb`
