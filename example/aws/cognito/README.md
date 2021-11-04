@@ -2,6 +2,35 @@
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider.
 
+## Prerequisites
+
+This guide assumes that you have:
+
+1. Installed the following tools on the client machine
+    - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
+    - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
+    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
+    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the wget plain binary installation)
+    - [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) - A command line tool to customize Kubernetes objects through a kustomization file.
+
+2. Created an EKS cluster
+    - If you do not have an existing cluster, run the following command to create an EKS cluster. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
+    - Substitute values for the CLUSTER_NAME and AWS_REGION in the script below
+        ```
+        export CLUSTER_NAME=$CLUSTER_NAME
+        export CLUSTER_REGION=$AWS_REGION
+        eksctl create cluster \
+        --name ${CLUSTER_NAME} \
+        --version 1.19 \
+        --region ${CLUSTER_REGION} \
+        --nodegroup-name linux-nodes \
+        --node-type m5.xlarge \
+        --nodes 5 \
+        --nodes-min 1 \
+        --nodes-max 10 \
+        --managed
+        ```
+3. AWS IAM permissions to create roles and attach policies to roles.
 ## 1.0 Custom domain
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your domain can be registered anywhere. Follow these steps to configure the subdomain:
