@@ -13,7 +13,14 @@ The following steps show how to configure and deploy:
 
 ### 1. Prerequisites
 
-1. Clone the repo and checkout the `v1.3-branch` branch
+1. Install CLI tools
+    - [eksctl](https://eksctl.io/introduction/#installation)
+    - [kubectl](https://kubernetes.io/docs/tasks/tools)
+    - [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+    - [awscli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+    - [yq](https://github.com/mikefarah/yq/#install)
+
+2. Clone the repo and checkout the `v1.3-branch` branch
 
 ```
 git clone https://github.com/awslabs/kubeflow-manifests.git
@@ -21,7 +28,7 @@ cd kubeflow-manifests
 git checkout v1.3-branch
 ```
 
-2. Create an EKS cluster 
+3. Create an EKS cluster 
 
  Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
 
@@ -41,7 +48,7 @@ eksctl create cluster \
 --managed
 ```
 
-3. Create S3 Bucket
+4. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 
@@ -51,7 +58,7 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
-4. Create RDS Instance
+5. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
 
