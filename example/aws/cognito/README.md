@@ -115,8 +115,6 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
                     "StringEquals": {
                         "'$OIDC_PROVIDER_URL':aud": "sts.amazonaws.com",
                         "'$OIDC_PROVIDER_URL':sub": [
-                        "system:serviceaccount:kubeflow:fluentd",
-                        "system:serviceaccount:kubeflow:kf-admin",
                         "system:serviceaccount:kubeflow:alb-ingress-controller",
                         "system:serviceaccount:kubeflow:profiles-controller-service-account"
                         ]
@@ -134,7 +132,12 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
             
             export IAM_ROLE_ARN_FOR_IRSA=$(aws iam get-role --role-name $IRSA_ROLE_NAME --output text --query 'Role.Arn')
             ```
-    3. Substitute values for ALB deployment
+    3. Annotate the service accounts with the IAM role
+        1. ```
+            yq e '.metadata.annotations."eks.amazonaws.com/role-arn" = env(IAM_ROLE_ARN_FOR_IRSA)' -i distributions/aws/aws-alb-ingress-controller/base/service-account.yaml
+            yq e '.metadata.annotations."eks.amazonaws.com/role-arn" = env(IAM_ROLE_ARN_FOR_IRSA)' -i apps/profiles/upstream/manager/service-account.yaml
+            ```
+    4. Substitute values for ALB deployment
         1. ```
             printf 'clusterName='$CLUSTER_NAME'' > distributions/aws/aws-alb-ingress-controller/base/params.env
             ```
@@ -217,12 +220,7 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
         # Envoy filter
         kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -
         ```
-    2. Annotate the service account with the IAM role
-        1. ```
-            kubectl annotate serviceaccount -n kubeflow alb-ingress-controller eks.amazonaws.com/role-arn=$IAM_ROLE_ARN_FOR_IRSA
-            kubectl annotate serviceaccount -n kubeflow profiles-controller-service-account eks.amazonaws.com/role-arn=$IAM_ROLE_ARN_FOR_IRSA
-            ```
-    3. Check if ALB is provisioned. It takes around 3-5 minutes
+    2. Check if ALB is provisioned. It takes around 3-5 minutes
         1. ```
             kubectl get ingress -n istio-system
             Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
@@ -230,12 +228,12 @@ Create two certificates in Certificate Manager for each `*.example.com` and `*.p
             istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
             ```
         2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
-    4. When ALB is ready, copy the DNS name of that load balancer and create 2 CNAME entries to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com` and `*.default.platform.example.com`
-        1. ![*.platform and *.default records](./images/screenshot-4.0-5.4.png)
-    5. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
-        1. ![subdomain A record updated](./images/screenshot-4.0-5.5.png)
-    6. Screenshot of all the record sets in hosted zone for reference
-        1. ![subdomain records summary](./images/screenshot-4.0-5.6.png)
+    3. When ALB is ready, copy the DNS name of that load balancer and create 2 CNAME entries to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com` and `*.default.platform.example.com`
+        1. ![*.platform and *.default records](./images/screenshot-4.0-5.3.png)
+    4. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
+        1. ![subdomain A record updated](./images/screenshot-4.0-5.4.png)
+    5. Screenshot of all the record sets in hosted zone for reference
+        1. ![subdomain records summary](./images/screenshot-4.0-5.5.png)
 
 ## 5.0 Connecting to Central dashboard
 
