@@ -5,9 +5,35 @@ This Kustomize Manifest can be used to deploy Kubeflow Pipelines and Katib with 
 
 Follow the [install](#install) steps below to configure and deploy the Kustomize manifest.
 
-## Provisioning AWS Resources 
+## Install
 
-### Create S3 Bucket
+Similar to [the single command base installation](../../../README.md#base-install-with-a-single-command) the AWS install configures the Kubeflow official components to integrate with supported AWS services. 
+
+The following steps show how to configure and deploy:
+
+### 0. Prerequisites
+
+1. Create an EKS cluster 
+
+ Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
+
+```
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
+
+eksctl create cluster \
+--name ${CLUSTER_NAME} \
+--version 1.19 \
+--region ${CLUSTER_REGION} \
+--nodegroup-name linux-nodes \
+--node-type m5.xlarge \
+--nodes 5 \
+--nodes-min 1 \
+--nodes-max 10 \
+--managed
+```
+
+2. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 
@@ -17,38 +43,12 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
-### Create RDS Instance
+3. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
 
-## Install
 
-### Install with a single command
-
-Similar to [the single command base installation](../../../README.md#base-install-with-a-single-command) the AWS install configures the Kubeflow official components to integrate with supported AWS services. 
-
-The following sections show how to configure the respective Kubeflow components:
-- [Kubeflow Pipelines](#kubeflow-pipelines-with-rds-and-s3)
-- [Katib](#katib-with-rds)
-
-
-Once configured, install using the following command:
-
-```sh
-while ! kustomize build . | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
-```
-
-Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../README.md#connect-to-your-kubeflow-cluster).
-
-Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
-
-### Install individual components
-
-#### Kubeflow Pipelines with RDS and S3
-
-Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
-
-Make sure you have also followed the steps at [Create S3 Bucket](#create-s3-bucket) to prepare your S3 for integration with Kubeflow Pipelines. 
+### 1. Configure Kubeflow Pipelines
 
 1. Go to the pipelines manifest directory `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws`
 ```
@@ -86,19 +86,8 @@ accesskey=AXXXXXXXXXXXXXXXXXX6
 secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
 ```
 
-5. [Single component installation] Install
+### 2. Configure Katib
 
-```
-cd <KUBEFLOW_MANIFESTS_REPO_PATH>
-kustomize build apps/pipeline/upstream/env/aws/ | kubectl apply -f -
-
-# If upper one action got failed, e.x. you used wrong value, try delete, fix and apply again
-kustomize build apps/pipeline/upstream/env/aws/ | kubectl delete -f -
-```
-
-#### Katib with RDS
-
-Make sure you have followed the steps at [Create RDS Instance](#create-rds-instance) to prepare your RDS MySQL database for integration with Kubeflow Pipelines. 
 
 1. Go to the katib manifests directory `apps/katib/upstream/installs/katib-external-db-with-kubeflow`
 ```
@@ -116,26 +105,26 @@ DB_USER=admin
 DB_PASSWORD=Kubefl0w
 ```
 
-3. [Single component installation] Install
+
+### 3. Install using the following command:
+
+```sh
+while ! kustomize build . | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
-cd <KUBEFLOW_MANIFESTS_REPO_PATH>
-kustomize build /apps/katib/upstream/installs/katib-external-db-with-kubeflow | kubectl apply -f - 
-```
+
+Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../README.md#connect-to-your-kubeflow-cluster).
+
+Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
+
 
 ## Uninstall
 
-If Kubeflow was installed by following a single command installation Kubeflow can be uninstalled by running the respective commands
-```sh
-kustomize build examples/aws | kubectl delete -f -
-```
-
-Individual components can usually be uninstalled by following:
+Run the following command to uninstall:
 
 ```sh
-kustomize build <PATH_TO_COMPONENT_MANIFEST> | kubectl delete -f -
+kustomize build . | kubectl delete -f -
 ```
 
-Warning: This command may delete the `kubeflow` namespace depending on the Kustomization manifest of the component.
 
 Additionally, the following cleanup steps may be required:
 
