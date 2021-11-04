@@ -27,13 +27,13 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 
 eksctl create cluster \
 --name ${CLUSTER_NAME} \
---version 1.19 \
+--version 1.21 \
 --region ${CLUSTER_REGION} \
 --nodegroup-name linux-nodes \
---node-type m5.xlarge \
---nodes 2 \
---nodes-min 1 \
---nodes-max 4 \
+--node-type m5.2xlarge \
+--nodes 3 \
+--nodes-min 3 \
+--nodes-max 5 \
 --managed
 ```
 ### Create S3 Bucket
@@ -43,7 +43,7 @@ Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<Y
 ```
 export S3_BUCKET=<YOUR_S3_BUCKET_NAME>
 export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
+aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
 ### Create RDS Instance
