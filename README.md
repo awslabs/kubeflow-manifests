@@ -59,7 +59,6 @@ This repo periodically syncs all official Kubeflow components from their respect
 | KFServing | apps/kfserving/upstream | [e189a510121c09f764f749143b80f6ee6baaf48b (release-0.5)](https://github.com/kubeflow/kfserving/tree/e189a510121c09f764f749143b80f6ee6baaf48b/config) |
 | Kubeflow Pipelines | apps/pipeline/upstream | [1.5.1](https://github.com/kubeflow/pipelines/tree/1.5.1/manifests/kustomize) |
 | Kubeflow Tekton Pipelines | apps/kfp-tekton/upstream | [v0.8.0](https://github.com/kubeflow/kfp-tekton/tree/v0.8.0/manifests/kustomize) |
-
 ## Installation
 
 Starting Kubeflow 1.3, the Manifests WG provides two options for installing Kubeflow official components and common services with kustomize. The aim is to help end users install easily and to help distribution owners build their opinionated distributions from a tested starting point:
@@ -93,7 +92,7 @@ The `example` directory contains an example kustomization for the single command
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build examples/base | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build examples/generic | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
@@ -102,13 +101,13 @@ Congratulations! You can now start experimenting and running your end-to-end ML 
 
 ### AWS install
 
-AWS installalation manifiests can be found at [examples/aws](examples/aws)
+AWS installation manifiests can be found at [examples/aws](examples/aws)
 
 ### Uninstall
 
 If Kubeflow was installed by following a single command installation Kubeflow can be uninstalled by running the respective commands
 ```sh
-kustomize build examples/base | kubectl delete -f -
+kustomize build examples/generic | kubectl delete -f -
 ```
 
 Individual components can usually be uninstalled by following:
@@ -277,6 +276,7 @@ Install the KFServing official Kubeflow component:
 ```sh
 kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
+
 #### Katib
 
 Install the Katib official Kubeflow component:

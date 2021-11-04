@@ -11,9 +11,17 @@ Similar to [the single command base installation](../../../README.md#base-instal
 
 The following steps show how to configure and deploy:
 
-### 0. Prerequisites
+### 1. Prerequisites
 
-1. Create an EKS cluster 
+1. Clone the repo and checkout the `v1.3-branch` branch
+
+```
+git clone https://github.com/awslabs/kubeflow-manifests.git
+cd kubeflow-manifests
+git checkout v1.3-branch
+```
+
+2. Create an EKS cluster 
 
  Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
 
@@ -33,7 +41,7 @@ eksctl create cluster \
 --managed
 ```
 
-2. Create S3 Bucket
+3. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 
@@ -43,12 +51,12 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
-3. Create RDS Instance
+4. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
 
 
-### 1. Configure Kubeflow Pipelines
+### 2. Configure Kubeflow Pipelines
 
 1. Go to the pipelines manifest directory `<KUBEFLOW_MANIFESTS_REPO_PATH>/apps/pipeline/upstream/env/aws`
 ```
@@ -76,7 +84,7 @@ username=admin
 password=Kubefl0w
 ```
 
-4. Configure `minio-artifact-secret-patch.env` with your AWS credentials.
+4. Configure `minio-artifact-secret-patch.env` with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
 
 Find more details about configuring/getting your AWS credentials here:
 https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
@@ -86,7 +94,7 @@ accesskey=AXXXXXXXXXXXXXXXXXX6
 secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
 ```
 
-### 2. Configure Katib
+### 3. Configure Katib
 
 
 1. Go to the katib manifests directory `apps/katib/upstream/installs/katib-external-db-with-kubeflow`
@@ -106,7 +114,7 @@ DB_PASSWORD=Kubefl0w
 ```
 
 
-### 3. Install using the following command:
+### 4. Install using the following command:
 
 ```sh
 while ! kustomize build . | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
