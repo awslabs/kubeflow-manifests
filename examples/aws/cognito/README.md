@@ -31,6 +31,13 @@ This guide assumes that you have:
         --managed
         ```
 3. AWS IAM permissions to create roles and attach policies to roles.
+
+4. Clone the `awslabs/kubeflow-manifest` repo.
+    1. ```
+        git clone https://github.com/awslabs/kubeflow-manifests.git
+        cd kubeflow-manifests
+        git checkout v1.3-branch
+        ```
 ## 1.0 Custom domain
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your root domain can be registered anywhere. Follow these steps to configure the subdomain:
@@ -115,12 +122,6 @@ Follow this step only for `*.platform.example.com`:
         kubectl get nodes
         aws eks describe-cluster --name $CLUSTER_NAME
         ```
-2. Clone the `awslabs/kubeflow-manifest` repo.
-    1. ```
-        git clone https://github.com/awslabs/kubeflow-manifests.git
-        cd kubeflow-manifests
-        git checkout v1.3-branch
-        ```
 3. Substitute values for setting up Ingress.
     1. ```
         printf '
@@ -191,8 +192,13 @@ Follow this step only for `*.platform.example.com`:
         1. ```
             printf 'clusterName='$CLUSTER_NAME'' > distributions/aws/aws-alb-ingress-controller/base/params.env
             ```
-5. Deploy Kubeflow
-    1. ```
+5. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
+    1. **[Option 1]** Install with a single command
+        ```
+        while ! kustomize build examples/aws/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        ```
+    1. **[Option 2]** Install individual components
+        ```
         # Kubeflow namespace
         kustomize build common/kubeflow-namespace/base | kubectl apply -f -
         
@@ -270,22 +276,25 @@ Follow this step only for `*.platform.example.com`:
         # Envoy filter
         kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -
         ```
-    2. Check if ALB is provisioned. It takes around 3-5 minutes
-        1. ```
-            kubectl get ingress -n istio-system
-            Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-            NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-            istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
-            ```
-        2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
-    3. When ALB is ready, copy the DNS name of that load balancer and create 2 CNAME entries to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com` and `*.default.platform.example.com`
-        1. ![subdomain-*.platform-and-*.default-records](./images/subdomain-*.platform-and-*.default-records.png)
-    4. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
-        1. ![subdomain-A-record-updated](./images/subdomain-A-record-updated.png)
-    5. Screenshot of all the record sets in hosted zone for reference
-        1. ![subdomain-records-summary](./images/subdomain-records-summary.png)
 
-## 5.0 Connecting to Central dashboard
+## 5.0 Updating the domain with ALB address
+
+1. Check if ALB is provisioned. It takes around 3-5 minutes
+    1. ```
+        kubectl get ingress -n istio-system
+        Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+        NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
+        istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+        ```
+    2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
+1. When ALB is ready, copy the DNS name of that load balancer and create 2 CNAME entries to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com` and `*.default.platform.example.com`
+    1. ![subdomain-*.platform-and-*.default-records](./images/subdomain-*.platform-and-*.default-records.png)
+1. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
+    1. ![subdomain-A-record-updated](./images/subdomain-A-record-updated.png)
+1. Screenshot of all the record sets in hosted zone for reference
+    1. ![subdomain-records-summary](./images/subdomain-records-summary.png)
+
+## 6.0 Connecting to Central dashboard
 
 1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard, create a profile for a user from the Cognito user pool you created in [section 3.0-2](#30-cognito-user-pool) by [following this guide](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). Following is a sample profile for reference:
     1. ```
