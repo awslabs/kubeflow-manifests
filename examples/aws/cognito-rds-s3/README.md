@@ -112,9 +112,7 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         kustomize build distributions/aws/aws-alb-ingress-controller/base | kubectl apply -f -
 
         # Envoy filter
-        kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -
-
-        
+        kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -        
         ```
 1. Follow the rest of the cognito guide from [section 5.0(Updating the domain with ALB address)](../cognito/README.md#50-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address
