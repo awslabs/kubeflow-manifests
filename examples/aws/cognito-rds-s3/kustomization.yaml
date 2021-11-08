@@ -3,9 +3,9 @@ kind: Kustomization
 
 resources:
 # Kubeflow namespace
-- ../../../common/kubeflow-namespace/base | kubectl apply -f -
+- ../../../common/kubeflow-namespace/base
 # Kubeflow Roles
-- ../../../common/kubeflow-roles/base | kubectl apply -f -
+- ../../../common/kubeflow-roles/base
 # Cert-Manager
 - ../../../common/cert-manager/cert-manager/base
 - ../../../common/cert-manager/kubeflow-issuer/base
@@ -14,47 +14,47 @@ resources:
 - ../../../common/istio-1-9/istio-namespace/base
 - ../../../common/istio-1-9/istio-install/base
 # KNative
-- ../../../common/knative/knative-serving/base | kubectl apply -f -
-- ../../../common/knative/knative-eventing/base | kubectl apply -f -
-- ../../../common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+- ../../../common/knative/knative-serving/base
+- ../../../common/knative/knative-eventing/base
+- ../../../common/istio-1-9/cluster-local-gateway/base
 # Kubeflow Istio Resources
-- ../../../common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+- ../../../common/istio-1-9/kubeflow-istio-resources/base
 
 # KFServing
-- ../../../apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/kfserving/upstream/overlays/kubeflow
 # Central Dashboard
-- ../../../apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+- ../../../apps/centraldashboard/upstream/overlays/istio
 # Notebooks
-- ../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
-- ../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+- ../../../apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+- ../../../apps/jupyter/jupyter-web-app/upstream/overlays/istio
 # Admission Webhook
-- ../../../apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+- ../../../apps/admission-webhook/upstream/overlays/cert-manager
 # Profiles + KFAM
-- ../../../apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/profiles/upstream/overlays/kubeflow
 # Volumes Web App
-- ../../../apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+- ../../../apps/volumes-web-app/upstream/overlays/istio
 # Tensorboard
-- ../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
-- ../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+- ../../../apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
 # TFJob Operator
-- ../../../apps/tf-training/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/tf-training/upstream/overlays/kubeflow
 # Pytorch Operator
-- ../../../apps/pytorch-job/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/pytorch-job/upstream/overlays/kubeflow
 # MPI Operator
-- ../../../apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/mpi-job/upstream/overlays/kubeflow
 # MXNet Operator
-- ../../../apps/mxnet-job/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/mxnet-job/upstream/overlays/kubeflow
 # XGBoost Operator
-- ../../../apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
+- ../../../apps/xgboost-job/upstream/overlays/kubeflow
 
 # Configured for AWS Cognito
 
 # Ingress
-- ../../../distributions/aws/istio-ingress/overlays/cognito | kubectl apply -f -
+- ../../../distributions/aws/istio-ingress/overlays/cognito
 # ALB controller
-- ../../../distributions/aws/aws-alb-ingress-controller/base | kubectl apply -f -
+- ../../../distributions/aws/aws-alb-ingress-controller/base
 # Envoy filter
-- ../../../distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -
+- ../../../distributions/aws/aws-istio-envoy-filter/base
 
 # Configured for AWS RDS and AWS S3
 
