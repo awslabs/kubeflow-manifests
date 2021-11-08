@@ -60,8 +60,6 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
         
-        # Katib
-        kustomize build apps/katib/upstream/installs/katib-external-db-with-kubeflow | kubectl apply -f -
         
         # Central Dashboard
         kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
