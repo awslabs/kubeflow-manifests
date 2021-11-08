@@ -56,15 +56,10 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # Kubeflow Istio Resources
         kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
-        # Kubeflow Pipelines
-        # reapply manifest if you see an error
-        kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
         
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
         
-        # Katib
-        kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
         
         # Central Dashboard
         kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
@@ -101,6 +96,13 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # XGBoost Operator
         kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
+        # Kubeflow Pipelines
+        # reapply manifest if you see an error
+        kustomize build apps/pipeline/upstream/env/aws | kubectl apply -f -
+
+        # Katib
+        kustomize build apps/katib/upstream/installs/katib-external-db-with-kubeflow | kubectl apply -f -
+
         # Configured for AWS Cognito
         
         # Ingress
@@ -111,14 +113,8 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
 
         # Envoy filter
         kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -
+
         
-        # Configured for AWS RDS and AWS S3
-
-        # Kubeflow Pipelines
-        - kustomize build apps/pipeline/upstream/env/aws
-
-        # Katib
-        - kustomize build apps/katib/upstream/installs/katib-external-db-with-kubeflow
         ```
 1. Follow the rest of the cognito guide from [section 5.0(Updating the domain with ALB address)](../cognito/README.md#50-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address

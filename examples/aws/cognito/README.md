@@ -97,7 +97,7 @@ Follow this step only for `*.platform.example.com`:
     1. The Pool ARN of the user pool found in Cognito general settings.
     2. The App client id, found in Cognito App clients.
     3. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
-    4. The ARN of the certificate from the Certificate Manager in the region where your platform is running.
+    4. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
     5. Export the values:
         1. ```
             export CognitoUserPoolArn=<>

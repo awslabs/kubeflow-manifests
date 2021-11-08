@@ -60,7 +60,7 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 
 5. Create RDS Instance
 
-Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance.
+Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. 
 
 
 ### 2. Configure Kubeflow Pipelines
