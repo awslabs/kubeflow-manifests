@@ -56,9 +56,6 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # Kubeflow Istio Resources
         kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
-        # Kubeflow Pipelines
-        # reapply manifest if you see an error
-        kustomize build apps/pipeline/upstream/env/aws | kubectl apply -f -
         
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
@@ -100,6 +97,13 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         
         # XGBoost Operator
         kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
+
+        # Kubeflow Pipelines
+        # reapply manifest if you see an error
+        kustomize build apps/pipeline/upstream/env/aws | kubectl apply -f -
+
+        # Katib
+        kustomize build apps/katib/upstream/installs/katib-external-db-with-kubeflow | kubectl apply -f -
 
         # Configured for AWS Cognito
         
