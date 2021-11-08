@@ -109,7 +109,7 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         kustomize build distributions/aws/istio-ingress/overlays/cognito | kubectl apply -f -
 
         # ALB controller
-        kustomize build distributions/aws/aws-alb-ingress-controller/base | kubectl apply -f -        
+        kustomize build distributions/aws/aws-alb-ingress-controller/base | kubectl apply -f -
 
         # Envoy filter
         kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -        
