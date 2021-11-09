@@ -21,18 +21,18 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [cognito guide](../cognito/README.md#10-custom-domain) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto step 4 of [section 4.0(Building manifests and deploying Kubeflow)](../cognito/README.md#40-building-manifests-and-deploying-kubeflow) i.e. *Setup resources required for ALB controller* (complete this section) to:
+1. Follow the [cognito guide](../cognito/README.md#10-custom-domain) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto [section 4.0(Configure Ingress)](../cognito/README.md#40-configure-ingress) to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
-    1. Configuring Ingress and ALB
+    1. Configure Ingress
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command
-    ```
-    while ! kustomize build examples/aws/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
-    ```
+        ```
+        while ! kustomize build examples/aws/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        ```
     1. **[Option 2]** Install individual components
-    ```
+        ```
         # Kubeflow namespace
         kustomize build common/kubeflow-namespace/base | kubectl apply -f -
         
@@ -114,7 +114,7 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # Envoy filter
         kustomize build distributions/aws/aws-istio-envoy-filter/base | kubectl apply -f -        
         ```
-1. Follow the rest of the cognito guide from [section 5.0(Updating the domain with ALB address)](../cognito/README.md#50-updating-the-domain-with-ALB-address) to:
+1. Follow the rest of the cognito guide from [section 6.0(Updating the domain with ALB address)](../cognito/README.md#60-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address
     1. Create a profile for a user from the Cognito user pool
     1. Connect to the central dashboard
