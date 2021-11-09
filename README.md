@@ -1,5 +1,7 @@
 # Kubeflow Manifests
 
+This repository is forked from the [manifests repository under Kubeflow](https://github.com/kubeflow/manifests) to develop and validate Kubeflow on AWS. You can find the instructions to deploy Kubeflow with AWS managed service integrations under [examples/aws](examples/aws) directory. 
+
 ## Kubeflow Table of Contents
 
 <!-- toc -->
@@ -16,8 +18,6 @@
 
 <!-- tocstop -->
 ## Overview
-
-TODO: change overview
 
 This repo is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
 If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).

@@ -10,3 +10,5 @@ Installation steps can be found [here](rds-s3)
 ## Components configured for Cognito
 Installation steps can be found [here](cognito)
 
+## Components configured for Cognito, RDS and S3
+Installation steps can be found [here](cognito-rds-s3)
