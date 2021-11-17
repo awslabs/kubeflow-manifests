@@ -1,0 +1,10 @@
+cognitoUserpool:
+  name: kubeflow-userpool
+kubeflow:
+  region: us-east-1
+route53:
+  rootDomain:
+    hostedZoneId: XXXXX123ZZZZ88XX33WW
+    name: example.com
+  subDomain:
+    name: platform.example.com
