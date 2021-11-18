@@ -72,6 +72,10 @@ class Route53HostedZone:
         record_value: list,
         action: str = "UPSERT",
     ) -> dict:
+        """
+        UPSERT: If a record does not already exist, Amazon Web Services creates it. If a record does exist, Route 53 updates it with the values in the request.
+        https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
+        """
         resource_records = []
         for value in record_value:
             resource_records.append({"Value": value})
@@ -93,6 +97,10 @@ class Route53HostedZone:
         dns_name: str,
         action: str = "UPSERT",
     ) -> dict:
+        """
+        UPSERT: If a record does not already exist, Amazon Web Services creates it. If a record does exist, Route 53 updates it with the values in the request.
+        https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
+        """
         return {
             "Action": action,
             "ResourceRecordSet": {

@@ -112,7 +112,7 @@ class CustomDomainCognitoUserPool:
     def wait_for_domain_status(
         self,
         expected_status: str = "ACTIVE",
-        wait_periods: int = 30,
+        wait_periods: int = 34,
         period_length: int = 30,
     ):
         current_status = self.get_domain_status()
