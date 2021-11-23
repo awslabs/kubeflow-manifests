@@ -124,7 +124,7 @@ class AcmCertificate:
         self.hosted_zone.change_record_set([validation_record])
 
     def wait_for_cert_not_in_use(
-        self, wait_periods: int = 10, period_length: int = 30
+        self, wait_periods: int = 20, period_length: int = 30
     ) -> bool:
         associated_resources = self.describe()["InUseBy"]
         for _ in range(wait_periods):
