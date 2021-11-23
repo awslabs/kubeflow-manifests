@@ -7,7 +7,6 @@ import utils
 from aws.acm import AcmCertificate
 from aws.cognito import CustomDomainCognitoUserPool
 from aws.route53 import Route53HostedZone
-from contextlib import suppress
 from typing import Tuple
 
 
@@ -120,20 +119,20 @@ def create_cognito_userpool(
         client_name="kubeflow",
         callback_urls=[f"https://kubeflow.{subdomain_name}/oauth2/idpresponse"],
     )
-    userpool_cloudfront_domain = cognito_userpool.create_userpool_domain()
+    userpool_cloudfront_alias = cognito_userpool.create_userpool_domain()
     subdomain_hosted_zone.change_record_set(
         [
             subdomain_hosted_zone.generate_change_record_type_alias_target(
                 record_name=userpool_domain,
                 record_type="A",
                 hosted_zone_id=utils.CLOUDFRONT_HOSTED_ZONE_ID,
-                dns_name=userpool_cloudfront_domain,
+                dns_name=userpool_cloudfront_alias,
             )
         ]
     )
     cognito_userpool.wait_for_domain_status("ACTIVE")
 
-    return cognito_userpool, userpool_cloudfront_domain
+    return cognito_userpool, userpool_cloudfront_alias
 
 
 if __name__ == "__main__":
@@ -145,70 +144,37 @@ if __name__ == "__main__":
     root_domain_name = cfg["route53"]["rootDomain"]["name"]
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
 
-    try:
-        utils.print_banner("Creating Subdomain in Route 53")
-        root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
-            subdomain_name,
-            root_domain_name,
-            deployment_region,
-            root_domain_hosted_zone_id,
-        )
-        cfg["route53"]["subDomain"]["hostedZoneId"] = subdomain_hosted_zone.id
-        utils.write_cfg(cfg)
+    utils.print_banner("Creating Subdomain in Route 53")
+    root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
+        subdomain_name, root_domain_name, deployment_region, root_domain_hosted_zone_id,
+    )
+    cfg["route53"]["subDomain"]["hostedZoneId"] = subdomain_hosted_zone.id
+    utils.write_cfg(cfg)
 
-        utils.print_banner("Creating Certificate in ACM")
-        (
-            root_certificate,
-            subdomain_cert_n_virginia,
-            subdomain_cert_deployment_region,
-        ) = create_certificates(
-            deployment_region, subdomain_hosted_zone, root_hosted_zone
-        )
+    utils.print_banner("Creating Certificate in ACM")
+    (
+        root_certificate,
+        subdomain_cert_n_virginia,
+        subdomain_cert_deployment_region,
+    ) = create_certificates(deployment_region, subdomain_hosted_zone, root_hosted_zone)
 
-        if root_certificate:
-            cfg["route53"]["rootDomain"]["certARN"] = root_certificate.arn
-        cfg["route53"]["subDomain"]["us-east-1-certARN"] = subdomain_cert_n_virginia.arn
-        cfg["route53"]["subDomain"][
-            deployment_region + "-certARN"
-        ] = subdomain_cert_deployment_region.arn
-        utils.write_cfg(cfg)
+    if root_certificate:
+        cfg["route53"]["rootDomain"]["certARN"] = root_certificate.arn
+    cfg["route53"]["subDomain"]["us-east-1-certARN"] = subdomain_cert_n_virginia.arn
+    cfg["route53"]["subDomain"][
+        deployment_region + "-certARN"
+    ] = subdomain_cert_deployment_region.arn
+    utils.write_cfg(cfg)
 
-        utils.print_banner("Creating Cognito Userpool")
-        userpool_name = cfg["cognitoUserpool"]["name"]
-        cognito_userpool, userpool_cloudfront_domain = create_cognito_userpool(
-            userpool_name,
-            deployment_region,
-            subdomain_hosted_zone,
-            subdomain_cert_n_virginia.arn,
-        )
-        cfg["cognitoUserpool"]["ARN"] = cognito_userpool.arn
-        cfg["cognitoUserpool"]["appClientId"] = cognito_userpool.client_id
-        cfg["cognitoUserpool"][
-            "domain"
-        ] = userpool_cloudfront_domain = cognito_userpool.cloudfront_domain
-        utils.write_cfg(cfg)
-    except:
-        with suppress(Exception):
-            # In case of exception clean up resources
-            if root_hosted_zone:
-                root_certificate.delete()
-                subdomain_NS_record = subdomain_hosted_zone.generate_change_record(
-                    record_name=subdomain_name,
-                    record_type="NS",
-                    record_value=subdomain_hosted_zone.get_name_servers(),
-                    action="DELETE",
-                )
-                # delete the subdomain entry from the root domain
-                root_hosted_zone.change_record_set([subdomain_NS_record])
-
-            if cognito_userpool:
-                if userpool_cloudfront_domain:
-                    cognito_userpool.delete_userpool_domain()
-                cognito_userpool.delete_userpool()
-
-            if deployment_region != "us-east-1":
-                subdomain_cert_deployment_region.delete()
-            subdomain_cert_n_virginia.delete()
-
-            subdomain_hosted_zone.delete_hosted_zone()
-        raise
+    utils.print_banner("Creating Cognito Userpool")
+    userpool_name = cfg["cognitoUserpool"]["name"]
+    cognito_userpool, userpool_cloudfront_alias = create_cognito_userpool(
+        userpool_name,
+        deployment_region,
+        subdomain_hosted_zone,
+        subdomain_cert_n_virginia.arn,
+    )
+    cfg["cognitoUserpool"]["ARN"] = cognito_userpool.arn
+    cfg["cognitoUserpool"]["appClientId"] = cognito_userpool.client_id
+    cfg["cognitoUserpool"]["domainAliasTarget"] = cognito_userpool.cloudfront_domain
+    utils.write_cfg(cfg)

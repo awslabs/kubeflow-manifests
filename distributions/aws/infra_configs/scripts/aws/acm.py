@@ -19,16 +19,19 @@ class AcmCertificate:
 
     def __init__(
         self,
-        domain: str,
+        domain: str = None,
         hosted_zone: Route53HostedZone = None,
         region: str = "us-east-1",
         acm_client: Any = None,
+        arn: str = None,
     ):
         self.domain = domain
         self.hosted_zone = hosted_zone
         self.region = region
         self.acm_client = acm_client or boto3.client("acm", region_name=region)
-        self.arn = None
+        self.arn = arn
+        if not domain and not arn:
+            raise ValueError("Either domain or arn should be defined")
 
     def request_validation(self, validation_method="DNS") -> str:
         """

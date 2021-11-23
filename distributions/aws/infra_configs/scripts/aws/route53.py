@@ -118,7 +118,7 @@ class Route53HostedZone:
         waiter = self.route53_client.get_waiter("resource_record_sets_changed")
         try:
             logger.info(
-                f"waiting for for change id: {change_id} to be IN_SYNC in hosted zone: {self.id}"
+                f"waiting for for change id: {change_id} to be IN_SYNC in hosted zone: {self.id}, domain: {self.domain}"
             )
             waiter.wait(Id=change_id)
         except WaiterError:

@@ -21,6 +21,7 @@ class CustomDomainCognitoUserPool:
         userpool_name: str,
         userpool_domain: str,
         domain_cert_arn: str,
+        userpool_id: str = None,
         region: str = "us-east-1",
         cognito_client: Any = None,
     ):
@@ -31,7 +32,7 @@ class CustomDomainCognitoUserPool:
         self.cognito_client = cognito_client or boto3.client(
             "cognito-idp", region_name=region
         )
-        self.userpool_id = None
+        self.userpool_id = userpool_id
         self.arn = None
         self.client_id = None
         self.cloudfront_domain = None
@@ -87,7 +88,10 @@ class CustomDomainCognitoUserPool:
             response = self.cognito_client.create_user_pool_client(
                 UserPoolId=self.userpool_id,
                 ClientName=client_name,
+                GenerateSecret=True,
+                SupportedIdentityProviders=["COGNITO"],
                 CallbackURLs=callback_urls,
+                AllowedOAuthFlowsUserPoolClient=True,
                 AllowedOAuthFlows=["code"],
                 AllowedOAuthScopes=[
                     "email",
@@ -142,7 +146,7 @@ class CustomDomainCognitoUserPool:
     def delete_userpool(self):
         try:
             self.cognito_client.delete_user_pool(UserPoolId=self.userpool_id)
-            logger.info(f"deleted userpool {self.arn}")
+            logger.info(f"deleted userpool {self.userpool_id}")
         except ClientError:
             logger.exception(f"failed to delete userpool {self.arn}")
             raise
