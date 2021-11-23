@@ -1,0 +1,10 @@
+cognitoUserpool:
+  name:
+kubeflow:
+  region:
+route53:
+  rootDomain:
+    hostedZoneId:
+    name:
+  subDomain:
+    name:
