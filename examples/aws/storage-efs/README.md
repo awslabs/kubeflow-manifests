@@ -69,7 +69,7 @@ eksctl create iamserviceaccount \
     --name efs-csi-controller-sa \
     --namespace kube-system \
     --cluster $CLUSTER_NAME \
-    --attach-policy-arn arn:aws:iam::$ACCOUNT_ID:policy/AmazonEKS_EFS_CSI_Driver_Policy \
+    --attach-policy-arn arn:aws:iam::$AWS_ACCOUNT_ID:policy/AmazonEKS_EFS_CSI_Driver_Policy \
     --approve \
     --override-existing-serviceaccounts \
     --region $CLUSTER_REGION
@@ -195,7 +195,7 @@ kubectl apply -f examples/aws/storage-efs/sample/sc.yaml
 
 
 ## 7.0 Connecting to Central dashboard
-Logon to http://localhost:8080 using default credentials.
+Port Forward as needed and Login to http://localhost:8080 using default credentials.
 
 ## 8.0 Test your Setup
 Check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow as follows - 
@@ -212,3 +212,31 @@ kubectl apply -f examples/aws/storage-efs/sample/set-permission-job.yaml
     - The Notebook Controller Logs
     - The specific notebook server instance pod's logs
 
+### 8.3 Training using TFJob Operator
+The following section re-uses the PVC and the Kubeflow Notebook created in the previous steps to download a dataset to the EFS Volume. Then we spin up a TFjob which runs a image classification job using the data from the shared volume. 
+Source: https://www.tensorflow.org/tutorials/load_data/images
+
+1. Download the dataset to the EFS Volume using the kubeflow notebook created above 
+```
+import pathlib
+import tensorflow as tf
+dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
+data_dir = tf.keras.utils.get_file(origin=dataset_url,
+                                   fname='flower_photos',
+                                   untar=True)
+data_dir = pathlib.Path(data_dir)
+```
+
+2. Build and Push the Docker image 
+```
+cd examples/aws/storage-efs/training-sample
+docker build -t <dockerimage:tag>
+docker push <dockerimage:tag>
+```
+
+3. Create the TFjob and use the provided commands to check the training logs 
+```
+kubectl apply -f tfjob.yaml
+kubectl describe tfjob image-classification-pvc -n kubeflow-user-example-com
+kubectl logs -n kubeflow-user-example-com image-classification-pvc-worker-0 -f
+```
