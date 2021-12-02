@@ -1,30 +1,42 @@
 ---
-kind: DaemonSet
+# Source: aws-fsx-csi-driver/templates/node-daemonset.yaml
 apiVersion: apps/v1
+kind: DaemonSet
 metadata:
   name: fsx-csi-node
+  labels:
+    app.kubernetes.io/name: aws-fsx-csi-driver
 spec:
   selector:
     matchLabels:
       app: fsx-csi-node
+      app.kubernetes.io/name: aws-fsx-csi-driver
   template:
     metadata:
       labels:
         app: fsx-csi-node
+        app.kubernetes.io/name: aws-fsx-csi-driver
     spec:
       nodeSelector:
         kubernetes.io/os: linux
-        kubernetes.io/arch: amd64
       hostNetwork: true
+      dnsPolicy: ClusterFirst
+      serviceAccountName: fsx-csi-node-sa
+      priorityClassName: system-node-critical
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 300
       containers:
         - name: fsx-plugin
           securityContext:
             privileged: true
-          image: amazon/aws-fsx-csi-driver:latest
+          image: amazon/aws-fsx-csi-driver:v0.7.0
+          imagePullPolicy: IfNotPresent
           args:
             - --endpoint=$(CSI_ENDPOINT)
-            - --logtostderr
-            - --v=5
           env:
             - name: CSI_ENDPOINT
               value: unix:/csi/csi.sock
@@ -35,23 +47,23 @@ spec:
             - name: plugin-dir
               mountPath: /csi
           ports:
-            - containerPort: 9810
-              name: healthz
+            - name: healthz
+              containerPort: 9810
               protocol: TCP
           livenessProbe:
-            failureThreshold: 5
             httpGet:
               path: /healthz
               port: healthz
             initialDelaySeconds: 10
             timeoutSeconds: 3
             periodSeconds: 2
-        - name: csi-driver-registrar
-          image: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
+            failureThreshold: 5
+        - name: node-driver-registrar
+          image: public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar:v2.1.0-eks-1-18-2
+          imagePullPolicy: IfNotPresent
           args:
             - --csi-address=$(ADDRESS)
             - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
-            - --v=5
           env:
             - name: ADDRESS
               value: /csi/csi.sock
@@ -67,8 +79,8 @@ spec:
             - name: registration-dir
               mountPath: /registration
         - name: liveness-probe
-          imagePullPolicy: Always
-          image: quay.io/k8scsi/livenessprobe:v1.1.0
+          image: public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe:v2.2.0-eks-1-18-2
+          imagePullPolicy: IfNotPresent
           args:
             - --csi-address=/csi/csi.sock
             - --health-port=9810
