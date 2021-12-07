@@ -116,5 +116,6 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         ```
 1. Follow the rest of the cognito guide from [section 6.0(Updating the domain with ALB address)](../cognito/README.md#60-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address
-    1. Create a profile for a user from the Cognito user pool
+    1. Create a user in Cognito user pool
+    1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
