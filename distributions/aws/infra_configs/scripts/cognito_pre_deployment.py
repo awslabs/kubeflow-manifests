@@ -50,7 +50,7 @@ def create_subdomain_hosted_zone(
         root_hosted_zone.change_record_set([subdomains_NS_record])
     else:
         logger.info(
-            f"Create a NS type record in {root_domain_name} for {subdomain_name} with value {subdomain_name_servers}"
+            f"Since your {root_domain_name} hosted zone is not managed by route53, you will need to manually create a NS type record in {root_domain_name} for {subdomain_name} with value {subdomain_name_servers}"
         )
         input("Press any key once this step is complete")
 
@@ -74,6 +74,12 @@ def create_certificates(
         validation_record = root_certificate.generate_domain_validation_record()
         root_certificate.create_domain_validation_records(validation_record)
         root_certificate.wait_for_certificate_validation()
+    else:
+        logger.info(
+            f"Since your {root_domain_name} hosted zone is not managed by route53, please create a certificate for *.{root_hosted_zone.domain} by following this document: https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console."
+            "Make sure you validate your ceritificate using one of the methods mentioned in this document: https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html"
+        )
+        input("Press any key once the certificate status is ISSUED")
 
     subdomain_cert_n_virginia = AcmCertificate(
         domain="*." + subdomain_hosted_zone.domain,
@@ -176,5 +182,6 @@ if __name__ == "__main__":
     )
     cfg["cognitoUserpool"]["ARN"] = cognito_userpool.arn
     cfg["cognitoUserpool"]["appClientId"] = cognito_userpool.client_id
+    cfg["cognitoUserpool"]["domain"] = cognito_userpool.userpool_domain
     cfg["cognitoUserpool"]["domainAliasTarget"] = cognito_userpool.cloudfront_domain
     utils.write_cfg(cfg)
