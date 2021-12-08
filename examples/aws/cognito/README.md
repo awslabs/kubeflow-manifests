@@ -39,6 +39,9 @@ This guide assumes that you have:
         cd kubeflow-manifests
         git checkout v1.3-branch
         ```
+
+**Tip:** The following sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool and is good for a new user to understand the setup. If you prefer a automated setup for setting up these pre-requisites for deploying Kubeflow with Cognito, follow this [README](./README-automated.md)
+
 ## 1.0 Custom domain
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your root domain can be registered anywhere. Follow these steps to configure the subdomain:
@@ -75,8 +78,6 @@ In this section, we will be creating certificate to enable TLS authentication at
 ## 3.0 Cognito User Pool
 
 1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults` and `Create pool`.
-1. Create some users in `Users and groups`, these are the users who will login to the central dashboard.
-    1. ![cognito-user-pool-created](./images/cognito-user-pool-created.png)
 1. Add an `App client` with any name and the default options.
     1. ![cognito-app-client-id](./images/cognito-app-client-id.png)
 1. In the `App client settings`, select `Authorization code grant` flow under OAuth-2.0 and check box `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. Also check box `Enabled Identity Providers`. 
@@ -92,7 +93,10 @@ In this section, we will be creating certificate to enable TLS authentication at
             2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
             3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
                 1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
-1. Take note of the following values:
+
+## 4.0 Configure Ingress
+
+1. Take note of the following values from the previous step or `distributions/aws/infra_configs/scripts/config.yaml` if you used automated guide(./README-automated.md):
     1. The Pool ARN of the user pool found in Cognito general settings.
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
@@ -104,9 +108,6 @@ In this section, we will be creating certificate to enable TLS authentication at
             export CognitoUserPoolDomain=<>
             export certArn=<>
             ```
-
-## 4.0 Configure Ingress
-
 1. Verify you are connected to right cluster, cluster has compute and the aws region is set to the region of cluster.
     1. Substitute the value of CLUSTER_REGION below
         ```
@@ -310,18 +311,21 @@ In this section, we will be creating certificate to enable TLS authentication at
 
 ## 7.0 Connecting to Central dashboard
 
-1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard, create a profile for a user from the Cognito user pool you created in [section 3.0-2](#30-cognito-user-pool) by [following this guide](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). Following is a sample profile for reference:
-    1. ```
-        apiVersion: kubeflow.org/v1beta1
-        kind: Profile
-        metadata:
-            # replace with the name of profile you want, this will be user's namespace name
-            name: namespace-for-my-user
-            namespace: kubeflow
-        spec:
-            owner:
-                kind: User
-                # replace with the email of the user
-                name: my_user_email@kubeflow.com
-        ```
+1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard:
+    1. Head over to the Cognito console and create some users in `Users and groups`. These are the users who will login to the central dashboard.
+        1. ![cognito-user-pool-created](./images/cognito-user-pool-created.png)
+    1. Create a profile for a user created in previous step by [following this guide](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). Following is a sample profile for reference:
+        1. ```
+            apiVersion: kubeflow.org/v1beta1
+            kind: Profile
+            metadata:
+                # replace with the name of profile you want, this will be user's namespace name
+                name: namespace-for-my-user
+                namespace: kubeflow
+            spec:
+                owner:
+                    kind: User
+                    # replace with the email of the user
+                    name: my_user_email@kubeflow.com
+            ```
 1. Open the central dashboard at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). It will redirect to Cognito for login. Use the credentials of the user for which profile was created in previous step.
