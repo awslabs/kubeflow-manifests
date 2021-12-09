@@ -21,7 +21,7 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [cognito guide](../cognito/README.md#10-custom-domain) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto [section 4.0(Configure Ingress)](../cognito/README.md#40-configure-ingress) to:
+1. Follow the [cognito guide](../cognito/README.md) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto [section 4.0(Configure Ingress)](../cognito/README.md#40-configure-ingress) to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -29,7 +29,7 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command
         ```
-        while ! kustomize build examples/aws/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build distributions/aws/examples/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
         ```
     1. **[Option 2]** Install individual components
         ```
@@ -56,10 +56,8 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # Kubeflow Istio Resources
         kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
-        
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-        
         
         # Central Dashboard
         kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -

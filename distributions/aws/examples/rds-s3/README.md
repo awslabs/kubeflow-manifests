@@ -7,7 +7,7 @@ Follow the [install](#install) steps below to configure and deploy the Kustomize
 
 ## Install
 
-Similar to [the single command base installation](../../../README.md#base-install-with-a-single-command) the AWS install configures the Kubeflow official components to integrate with supported AWS services. 
+Similar to [the single command base installation](../../../../README.md#install-with-a-single-command) the AWS install configures the Kubeflow official components to integrate with supported AWS services. 
 
 The following steps show how to configure and deploy:
 
@@ -21,7 +21,7 @@ The following steps show how to configure and deploy:
     - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
     - [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) - A command line tool to customize Kubernetes objects through a kustomization file.
 
-2. Clone the repo and checkout the `v1.3-branch` branch
+2. Clone the repo and checkout the release branch
 
 ```
 git clone https://github.com/awslabs/kubeflow-manifests.git
@@ -68,7 +68,7 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
 
 1. Configure the following files in `apps/pipeline/upstream/env/aws` directory:
 
-    1. Configure `apps/pipeline/upstream/env/aws/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in [Create RDS Instance](#create-rds-instance) and [Create S3 Bucket](#create-s3-bucket). 
+    1. Configure `apps/pipeline/upstream/env/aws/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites). 
         - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
         - ```
           dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
@@ -77,8 +77,9 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
           minioServiceHost=s3.amazonaws.com
           minioServiceRegion=us-west-2
           ```
-    1. Configure `apps/pipeline/upstream/env/aws/secret.env` file with your RDS database username and password that were configured when following the steps in [Create RDS Instance](#create-rds-instance).
+    1. Configure `apps/pipeline/upstream/env/aws/secret.env` file with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - For example, if your username is `admin` and your password is `Kubefl0w` then your `secret.env` file should look like:
+        - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           username=admin
           password=Kubefl0w
@@ -94,8 +95,9 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
 ### 3. Configure Katib
 
 
-1. Configure the `apps/katib/upstream/installs/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in [Create RDS Instance](#create-rds-instance).
-    - For example, if your database name is `KubeflowRDS`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
+1. Configure the `apps/katib/upstream/installs/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+    - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
+    - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
     - ```
       KATIB_MYSQL_DB_DATABASE=kubeflow
       KATIB_MYSQL_DB_HOST=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
@@ -105,23 +107,23 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
       ```
 
 
-### 4. Install using the following command:
+### 4. Build Manifests and Install Kubeflow
 
 ```sh
-while ! kustomize build examples/aws/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
-Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../README.md#connect-to-your-kubeflow-cluster).
+Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
 
-## Uninstall
+## Uninstall Kubeflow
 
 Run the following command to uninstall:
 
 ```sh
-kustomize build examples/aws/rds-s3 | kubectl delete -f -
+kustomize build distributions/aws/examples/rds-s3 | kubectl delete -f -
 ```
 
 
