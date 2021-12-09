@@ -19,7 +19,8 @@ class Metadata:
 
     def save(self, key, value):
         self.insert(key, value)
-        self.to_file()
+        file = self.to_file()
+        print(f"Saved key: {key} value: {value} in metadata file {file}")
     
     def get(self, key):
         if key not in self.params:
@@ -52,9 +53,6 @@ def keep_successfully_created_resource(request):
     return request.config.getoption("--keepsuccess")
 
 def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_create, on_delete):
-    if metadata.get(metadata_key):
-        return metadata.get(metadata_key)
-
     successful_creation = False
     
     def delete():
@@ -63,16 +61,18 @@ def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_
         on_delete()
     request.addfinalizer(delete)
 
-    on_create()
-    metadata.save(metadata_key, resource_id)
+    if not metadata.get(metadata_key):
+        on_create()
+        metadata.save(metadata_key, resource_id)
+
     successful_creation = True
+    return metadata.get(metadata_key)
 
 @pytest.fixture(scope="class")
-def region(metadata):
+def region(metadata, request):
     if metadata.get('region'):
         return metadata.get('region')
 
-    # todo, remove hardcoded region
-    region = "ap-south-1"
+    region = request.config.getoption("--region")
     metadata.insert('region', region)
     return region

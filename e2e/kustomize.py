@@ -2,6 +2,7 @@
 
 import subprocess
 import tempfile
+import time
 
 import pytest
 
@@ -26,6 +27,8 @@ def delete_kustomize(path):
 def kustomize(metadata, cluster, kustomize_path, request):
     def on_create():
         wait_for(lambda : apply_kustomize(kustomize_path), timeout=20*60)
+        time.sleep(5*60)    # wait a bit for all pods to be running
+        # todo: verify this programmatically
     
     def on_delete():
         delete_kustomize(kustomize_path)

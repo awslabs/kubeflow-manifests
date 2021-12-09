@@ -36,8 +36,7 @@ def cluster(metadata, region, request):
         create_cluster(cluster_name, region)
     
     def on_delete():
-        delete_cluster(cluster_name, region)
+        name = metadata.get('cluster_name') or cluster_name
+        delete_cluster(name, region)
 
-    configure_resource_fixture(metadata, request, cluster_name, 'cluster_name', on_create, on_delete)
-
-    return cluster_name
+    return configure_resource_fixture(metadata, request, cluster_name, 'cluster_name', on_create, on_delete)
