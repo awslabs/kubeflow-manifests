@@ -4,7 +4,7 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
 
 ## Prerequisites
 
-This guide assumes you have python3 installed and completed the pre-requisites from this [README](./README.md#1-prerequisites).
+This guide assumes you have python3 installed and completed the pre-requisites from this [README](./README.md#prerequisites).
 
 ## Create required resources and deploy Kubeflow
 
@@ -61,7 +61,9 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             ```
         1. Use the values `cognitoUserpool.ARN`, `cognitoUserpool.appClientId`, `cognitoUserpool.domain` and `subdomain.us-west-2-certARN` (i.e. certificate ARN of subdomain in the region where cluster is) from config file in the next step.
 
-1. Follow the [section 4.0(Configure Ingress)](./README.md#40-configure-ingress) and [section 5.0(Building manifests and deploying Kubeflow)](./README.md#50-building-manifests-and-deploying-kubeflow) of [this guide](./README.md) to configure Ingress and install Kubeflow
+1. Follow the [section 4.0(Configure Ingress)](./README.md#40-configure-ingress) of [this guide](./README.md) to configure Ingress
+
+1. Follow the [section 5.0(Building manifests and deploying Kubeflow)](./README.md#50-building-manifests-and-deploying-kubeflow) to install Kubeflow
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes

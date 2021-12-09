@@ -33,7 +33,7 @@ This guide assumes that you have:
         ```
 1. AWS IAM permissions to create roles and attach policies to roles.
 
-1. Clone the `awslabs/kubeflow-manifest` repo.
+1. Clone the `awslabs/kubeflow-manifest` repo and checkout release branch.
     1. ```
         git clone https://github.com/awslabs/kubeflow-manifests.git
         cd kubeflow-manifests
@@ -210,7 +210,7 @@ In this section, we will be creating certificate to enable TLS authentication at
 1. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command
         ```
-        while ! kustomize build examples/aws/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build distributions/aws/examples/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
         ```
     1. **[Option 2]** Install individual components
         ```

@@ -1,8 +1,6 @@
-# Kubeflow Manifests
+# AWS Distribution of Kubeflow
 
-This repository is forked from the [manifests repository under Kubeflow](https://github.com/kubeflow/manifests) to develop and validate Kubeflow on AWS. You can find the instructions to deploy Kubeflow with AWS managed service integrations under [examples/aws](examples/aws) directory. 
-
-## Kubeflow Table of Contents
+## Table of Contents
 
 <!-- toc -->
 
@@ -19,7 +17,10 @@ This repository is forked from the [manifests repository under Kubeflow](https:/
 <!-- tocstop -->
 ## Overview
 
-This repo is owned by the [Manifests Working Group](https://github.com/kubeflow/community/blob/master/wg-manifests/charter.md).
+This repository is forked from the [Kubeflow Manifests](https://github.com/kubeflow/manifests) repository to develop and validate Kubeflow on AWS. This fork contains specific overlays on top of the original repository to deploy Kubeflow with AWS managed service integrations on Amazon [Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/). Detailed instructions for deploying Kubeflow on AWS are in [distributions/aws/examples](distributions/aws/examples) directory.
+
+## The following information is from original repository
+
 If you are a contributor authoring or editing the packages please see [Best Practices](./docs/KustomizeBestPractices.md).
 
 The Kubeflow Manifests repository is organized under three (3) main directories, which include manifests for installing:
@@ -87,47 +88,17 @@ The `example` directory contains an example kustomization for the single command
 
 ---
 
-### Base install with a single command
+### Install with a single command
 
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build examples/generic | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
-
-### AWS install
-
-AWS installation manifiests can be found at [examples/aws](examples/aws)
-
-### Uninstall
-
-If Kubeflow was installed by following a single command installation Kubeflow can be uninstalled by running the respective commands
-```sh
-kustomize build examples/generic | kubectl delete -f -
-```
-
-Individual components can usually be uninstalled by following:
-
-```sh
-kustomize build <PATH_TO_COMPONENT_MANIFEST> | kubectl delete -f -
-```
-
-Warning: This command may delete the `kubeflow` namespace depending on the Kustomization manifest of the component.
-
-Additionally, the following cleanup steps may be required:
-
-```sh
-kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io webhook.eventing.knative.dev webhook.istio.networking.internal.knative.dev webhook.serving.knative.dev
-
-kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io config.webhook.eventing.knative.dev config.webhook.istio.networking.internal.knative.dev config.webhook.serving.knative.dev
-
-kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
-```
-
 
 ### Install individual components
 
