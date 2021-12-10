@@ -2,9 +2,9 @@
 Module for helper methods to create and delete kubernetes custom resources (e.g. katib experiments, etc.)
 """
 
-from e2e.utils import unmarshal_yaml
+from e2e.utils.utils import unmarshal_yaml
 
-from e2e.constants import KUBEFLOW_GROUP
+from e2e.utils.constants import KUBEFLOW_GROUP
 
 def create_namespaced_resource_from_yaml(k8s_custom_objects_api_client, yaml_file, group, version, plural, namespace, replacements={}):
     body = unmarshal_yaml(yaml_file, replacements)

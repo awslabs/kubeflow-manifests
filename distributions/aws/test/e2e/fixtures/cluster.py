@@ -5,8 +5,8 @@ EKS cluster fixture module
 import subprocess
 import pytest
 
-from e2e.utils import rand_name
-from e2e.config import configure_resource_fixture
+from e2e.utils.utils import rand_name
+from e2e.utils.config import configure_resource_fixture
 
 def create_cluster(cluster_name, region, cluster_version='1.19'):
     cmd = []

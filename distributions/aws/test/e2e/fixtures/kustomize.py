@@ -8,8 +8,8 @@ import time
 
 import pytest
 
-from e2e.config import configure_resource_fixture
-from e2e.utils import wait_for
+from e2e.utils.config import configure_resource_fixture
+from e2e.utils.utils import wait_for
 
 
 def apply_kustomize(path):

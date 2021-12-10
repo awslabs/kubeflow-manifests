@@ -6,17 +6,24 @@ import os
 
 import pytest
 
+from e2e.utils.constants import DEFAULT_USER_NAMESPACE
+from e2e.utils.utils import wait_for, rand_name
+from e2e.utils.config import metadata
+
+from e2e.conftest import region
+
+from e2e.fixtures.cluster import cluster
+from e2e.fixtures.kustomize import kustomize
+from e2e.fixtures.clients import k8s_custom_objects_api_client, kfp_client, port_forward, session_cookie, host, login, password, client_namespace
+
+from e2e.utils.custom_resources import create_katib_experiment_from_yaml, get_katib_experiment, delete_katib_experiment
+
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
-from e2e.constants import GENERIC_KUSTOMIZE_MANIFEST_PATH, DEFAULT_USER_NAMESPACE, CUSTOM_RESOURCE_TEMPLATES_FOLDER
-from e2e.utils import safe_open, wait_for, rand_name
-from e2e.config import metadata, region
-from e2e.cluster import cluster
-from e2e.kustomize import kustomize
-from e2e.clients import k8s_custom_objects_api_client, kfp_client, port_forward
-from e2e.custom_resources import create_katib_experiment_from_yaml, get_katib_experiment, delete_katib_experiment
 
+GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../../../example"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 @pytest.fixture(scope="class")
 def kustomize_path():

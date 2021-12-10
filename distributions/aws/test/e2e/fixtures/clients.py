@@ -11,6 +11,8 @@ import pytest
 from kubernetes import client, config
 import kfp
 
+from e2e.utils.constants import DEFAULT_HOST, DEFAULT_PASSWORD, DEFAULT_USER_NAMESPACE, DEFAULT_USERNAME
+
 def client_from_config(cluster, region):
     context = f"Administrator@{cluster}.{region}.eksctl.io"
     return config.new_client_from_config(context=context)
@@ -47,30 +49,56 @@ def port_forward(kustomize):
     yield
     proc.terminate()
 
-HOST = "http://localhost:8080/"
-USERNAME = "user@example.com"
-PASSWORD = "12341234"
-NAMESPACE = "kubeflow-user-example-com"
+
+# Defaults, fixtures can be overriden if implemented in the test class
+# E.g. create a new fixture in the class with the same name but different return value
+# 
+# @pytest.fixture(scope="class")
+# def host():
+#     return "https://alb-address.abcd.com"
+# 
 
 @pytest.fixture(scope="class")
-def kfp_client(port_forward):
+def host():
+    return DEFAULT_HOST
+
+@pytest.fixture(scope="class")
+def login():
+    return DEFAULT_USERNAME
+
+@pytest.fixture(scope="class")
+def password():
+    return DEFAULT_PASSWORD
+
+# Not sure why this has to be set considering KFP is multi user
+@pytest.fixture(scope="class")
+def client_namespace():
+    return DEFAULT_USER_NAMESPACE
+
+@pytest.fixture(scope="class")
+def session_cookie(port_forward, host, login, password):
+    session = requests.Session()
+    response = session.get(host)
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    data = {"login": login, "password": password}
+    session.post(response.url, headers=headers, data=data)
+    session_cookie = session.cookies.get_dict()["authservice_session"]
+
+    return session_cookie
+
+@pytest.fixture(scope="class")
+def kfp_client(port_forward, host, client_namespace, session_cookie):
     """
     Kubeflow pipelines client. Requires portforwarding to call from localhost.
     """
 
-    session = requests.Session()
-    response = session.get(HOST)
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    data = {"login": USERNAME, "password": PASSWORD}
-    session.post(response.url, headers=headers, data=data)
-    session_cookie = session.cookies.get_dict()["authservice_session"]
     client = kfp.Client(
-        host=f"{HOST}/pipeline",
+        host=f"{host}/pipeline",
         cookies=f"authservice_session={session_cookie}",
-        namespace=NAMESPACE,
+        namespace=client_namespace,
     )
-    client._context_setting['namespace'] = NAMESPACE    # needs to be set for list_experiments
+    client._context_setting['namespace'] = client_namespace    # needs to be set for list_experiments
 
     return client

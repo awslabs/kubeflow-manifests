@@ -7,7 +7,7 @@ import time
 import json
 import os
 
-from e2e.utils import safe_open
+from e2e.utils.utils import safe_open
 
 METADATA_FOLDER = './.metadata'
 
@@ -98,16 +98,3 @@ def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_
 
     successful_creation = True
     return metadata.get(metadata_key)
-
-@pytest.fixture(scope="class")
-def region(metadata, request):
-    """
-    Test region.
-    """
-
-    if metadata.get('region'):
-        return metadata.get('region')
-
-    region = request.config.getoption("--region")
-    metadata.insert('region', region)
-    return region
