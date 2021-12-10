@@ -8,6 +8,7 @@ import pytest
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 
+# Todo load from yaml and replace values
 def create_cluster(cluster_name, region, cluster_version='1.19'):
     cmd = []
     cmd += "eksctl create cluster".split()
