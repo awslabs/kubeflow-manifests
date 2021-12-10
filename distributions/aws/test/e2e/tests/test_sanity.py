@@ -14,7 +14,7 @@ from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
 from e2e.fixtures.kustomize import kustomize
-from e2e.fixtures.clients import k8s_custom_objects_api_client, kfp_client, port_forward, session_cookie, host, login, password, client_namespace
+from e2e.fixtures.clients import kfp_client, port_forward, session_cookie, host, login, password, client_namespace
 
 from e2e.utils.custom_resources import create_katib_experiment_from_yaml, get_katib_experiment, delete_katib_experiment
 
@@ -89,7 +89,7 @@ class TestSanity:
 
         wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
     
-    def test_katib_experiment(self, setup, k8s_custom_objects_api_client):
+    def test_katib_experiment(self, setup, cluster, region):
         filepath = os.path.abspath(os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE))
 
         name = rand_name('katib-random-')
@@ -99,29 +99,29 @@ class TestSanity:
             "NAMESPACE": namespace
         }
 
-        resp = create_katib_experiment_from_yaml(k8s_custom_objects_api_client,
-                                                filepath,
-                                                namespace,
-                                                replacements)
+        resp = create_katib_experiment_from_yaml(cluster, region,
+                                                 filepath,
+                                                 namespace,
+                                                 replacements)
         
         assert resp['kind'] == 'Experiment'
         assert resp['metadata']['name'] == name
         assert resp['metadata']['namespace'] == namespace
 
-        resp = get_katib_experiment(k8s_custom_objects_api_client, namespace, name)
+        resp = get_katib_experiment(cluster, region, namespace, name)
         
         assert resp['kind'] == 'Experiment'
         assert resp['metadata']['name'] == name
         assert resp['metadata']['namespace'] == namespace
 
-        resp = delete_katib_experiment(k8s_custom_objects_api_client, namespace, name)
+        resp = delete_katib_experiment(cluster, region, namespace, name)
 
         assert resp['kind'] == 'Experiment'
         assert resp['metadata']['name'] == name
         assert resp['metadata']['namespace'] == namespace
 
         try:
-            get_katib_experiment(k8s_custom_objects_api_client, namespace, name)
+            get_katib_experiment(cluster, region, namespace, name)
             raise AssertionError("Expected K8sApiException Not Found")
         except K8sApiException as e:
             assert 'Not Found' == e.reason
