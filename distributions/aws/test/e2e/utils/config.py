@@ -8,7 +8,9 @@ import json
 import os
 
 from e2e.utils.utils import safe_open
+from e2e.conftest import keep_successfully_created_resource, load_metadata_file
 
+# Todo make this configurable
 METADATA_FOLDER = './.metadata'
 
 class Metadata:
@@ -63,14 +65,11 @@ def metadata(request):
     Else, created an empty metadata object.
     """
 
-    metadata_file = request.config.getoption("--metadata")
+    metadata_file = load_metadata_file(request)
     if metadata_file:
         return Metadata.from_file(metadata_file)
     
     return Metadata()
-
-def keep_successfully_created_resource(request):
-    return request.config.getoption("--keepsuccess")
 
 def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_create, on_delete):
     """
