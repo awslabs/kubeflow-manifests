@@ -1,3 +1,8 @@
+"""
+Add additional pytest supported test configurations.
+
+https://docs.pytest.org/en/6.2.x/example/simple.html
+"""
 
 def pytest_addoption(parser):
     parser.addoption("--metadata", action="store", help="Metadata file to resume a test class from.")

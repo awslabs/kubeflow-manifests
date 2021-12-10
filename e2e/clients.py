@@ -1,3 +1,7 @@
+"""
+Client fixtures module
+"""
+
 import subprocess
 import time
 import requests
@@ -13,15 +17,30 @@ def client_from_config(cluster, region):
 
 @pytest.fixture(scope="class")
 def k8s_core_api_client(cluster, region):
+    """
+    API client for interacting with k8s core API, e.g. describe_pods, etc.
+    """
+
     return client.CoreV1Api(api_client=client_from_config(cluster, region))
 
 @pytest.fixture(scope="class")
 def k8s_custom_objects_api_client(cluster, region):
+    """
+    API client for performing CRUD operations on custom resources.
+    """
+
     return client.CustomObjectsApi(api_client=client_from_config(cluster, region))
 
 # todo make port random
 @pytest.fixture(scope="class")
 def port_forward(kustomize):
+    """
+    Opens port forwarding to the istio-ingressgateway to allow making requests
+    to kubeflow components from localhost.
+
+    Without this, services will need to be exposed via a public loadbalancer (e.g. ALB).
+    """
+
     cmd = "kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80".split()
     proc = subprocess.Popen(cmd)
     time.sleep(10)  # Wait 10 seconds for port forwarding to open
@@ -35,6 +54,10 @@ NAMESPACE = "kubeflow-user-example-com"
 
 @pytest.fixture(scope="class")
 def kfp_client(port_forward):
+    """
+    Kubeflow pipelines client. Requires portforwarding to call from localhost.
+    """
+
     session = requests.Session()
     response = session.get(HOST)
     headers = {

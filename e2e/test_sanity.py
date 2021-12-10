@@ -1,3 +1,7 @@
+"""
+Installs the vanilla distribution of kubeflow and validates the installation
+"""
+
 import os
 
 import pytest

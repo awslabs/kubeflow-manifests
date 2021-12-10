@@ -39,3 +39,13 @@ Resume from a previous run using the resources that were previous created
 ```
 pytest -s pytest -s -q --metadata .metadata/metadata-1638939746471968000 --keepsuccess --region <REGION_NAME>
 ```
+
+### About metadata
+When using the helper method `configure_resource_fixture` a metadata file is generated with the following output:
+```
+# Using cluster as an example
+
+Saved key: cluster_name value: e2e-test-cluster-507uvuyhca in metadata file /Users/rkharse/kf-e2e-tests/e2e/.metadata/metadata-1639087995874492000
+```
+
+Metadata can also be manually be output to a file by calling `Metadata#to_file` on a metadata object

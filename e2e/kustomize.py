@@ -1,4 +1,6 @@
-
+"""
+Kustomize fixture module
+"""
 
 import subprocess
 import tempfile
@@ -11,6 +13,13 @@ from e2e.utils import wait_for
 
 
 def apply_kustomize(path):
+    """
+    Equivalent to:
+
+    while ! kustomize build <PATH> | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+
+    but creates a temporary file instead of piping. 
+    """
     with tempfile.NamedTemporaryFile() as tmp:
         build_retcode = subprocess.call(f"kustomize build {path} -o {tmp.name}".split())
         assert build_retcode == 0
@@ -18,6 +27,13 @@ def apply_kustomize(path):
         assert apply_retcode == 0
 
 def delete_kustomize(path):
+    """
+    Equivalent to:
+
+    kustomize build <PATH> | kubectl delete -f -
+
+    but creates a temporary file instead of piping. 
+    """
     with tempfile.NamedTemporaryFile() as tmp:
         build_retcode = subprocess.call(f"kustomize build {path} -o {tmp.name}".split())
         assert build_retcode == 0
@@ -25,6 +41,16 @@ def delete_kustomize(path):
 
 @pytest.fixture(scope="class")
 def kustomize(metadata, cluster, kustomize_path, request):
+    """
+    This fixture is created once for each test class.
+
+    Before all tests are run, installs kubeflow using the manifest at `kustomize_path` 
+    if `kustomize_path` was not provided in the metadata.
+
+    After all tests are run, uninstalls kubeflow using the manifest at `kustomize_path` 
+    if the flag `--keepsuccess` was not provided as a pytest argument.
+    """
+
     def on_create():
         wait_for(lambda : apply_kustomize(kustomize_path), timeout=20*60)
         time.sleep(5*60)    # wait a bit for all pods to be running

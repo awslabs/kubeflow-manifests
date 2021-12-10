@@ -1,3 +1,7 @@
+"""
+EKS cluster fixture module 
+"""
+
 import subprocess
 import pytest
 
@@ -30,6 +34,15 @@ def delete_cluster(cluster_name, region):
 
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):
+    """
+    This fixture is created once for each test class.
+
+    Before all tests are run, a cluster is created if `cluster_name` was not provided in the metadata.
+
+    After all tests are run, deletes the cluster if the flag `--keepsuccess` was not provided as a pytest
+    argument.
+    """
+
     cluster_name = rand_name("e2e-test-cluster-")
 
     def on_create():

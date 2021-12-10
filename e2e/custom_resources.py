@@ -1,3 +1,7 @@
+"""
+Module for helper methods to create and delete kubernetes custom resources (e.g. katib experiments, etc.)
+"""
+
 from e2e.utils import unmarshal_yaml
 
 from e2e.constants import KUBEFLOW_GROUP

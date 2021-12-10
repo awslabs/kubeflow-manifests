@@ -1,3 +1,7 @@
+"""
+A test configuration utility module
+"""
+
 import pytest
 import time
 import json
@@ -8,6 +12,17 @@ from e2e.utils import safe_open
 METADATA_FOLDER = './.metadata'
 
 class Metadata:
+    """
+    Models user configurable metadata that can be saved in a file
+    and reloaded to resume test execution.
+
+    For example, 'cluster_name' is being stored in metadata by the
+    cluster fixture. 
+    When reading from a metadata file, if 'cluster_name' is present
+    the test will skip cluster creation and use the cluster in
+    'cluster_name'.
+    """
+
     def __init__(self, params=None):
         if params:
             self.params = params
@@ -43,6 +58,11 @@ class Metadata:
 
 @pytest.fixture(scope="class")
 def metadata(request):
+    """
+    If `--metadata` argument is present, reads the metadata that is passed in.
+    Else, created an empty metadata object.
+    """
+
     metadata_file = request.config.getoption("--metadata")
     if metadata_file:
         return Metadata.from_file(metadata_file)
@@ -53,6 +73,17 @@ def keep_successfully_created_resource(request):
     return request.config.getoption("--keepsuccess")
 
 def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_create, on_delete):
+    """
+    Helper method to create resources if required and configure them for teardown.
+
+    If the resource is not present in the metadata a new resource will be created and added to 
+    the metadata.
+
+    If a resource is present in the metadata it will not be created.
+
+    If the `--keepsuccess` flag is specified, successfully created resources (e.g. those that
+    did not raise an exception) will not be deleted.
+    """
     successful_creation = False
     
     def delete():
@@ -70,6 +101,10 @@ def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_
 
 @pytest.fixture(scope="class")
 def region(metadata, request):
+    """
+    Test region.
+    """
+
     if metadata.get('region'):
         return metadata.get('region')
 
