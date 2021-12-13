@@ -1,5 +1,8 @@
 """
-Installs the vanilla distribution of kubeflow and validates the installation
+Installs the vanilla distribution of kubeflow and validates the installation by:
+    - Creating, describing, and deleting a KFP experiment
+    - Running a pipeline that comes with the default kubeflow installation
+    - Creating, describing, and deleting a Katib experiment
 """
 
 import os
