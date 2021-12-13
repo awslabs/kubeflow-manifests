@@ -9,13 +9,14 @@ import string
 import yaml
 
 
-def safe_open(filepath, mode='r'):
+def safe_open(filepath, mode="r"):
     """
     Creates a directory if one does not exist when opening a file.
     """
 
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     return open(filepath, mode)
+
 
 def unmarshal_yaml(yaml_file, replacements={}):
     """
@@ -43,8 +44,9 @@ def unmarshal_yaml(yaml_file, replacements={}):
 
     for r_key, r_value in replacements.items():
         contents = contents.replace(f"${{{r_key}}}", r_value)
-    
+
     return yaml.safe_load(contents)
+
 
 def wait_for(callback, timeout=300, interval=10):
     """
@@ -65,9 +67,12 @@ def wait_for(callback, timeout=300, interval=10):
                 raise e
             time.sleep(interval)
 
+
 def rand_name(prefix):
     """
     Returns a random string of 10 ascii lowercase characters appended to the prefix
     """
-    suffix = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
+    suffix = "".join(
+        random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+    )
     return prefix + suffix

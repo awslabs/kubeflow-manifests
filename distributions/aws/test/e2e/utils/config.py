@@ -11,7 +11,8 @@ from e2e.utils.utils import safe_open
 from e2e.conftest import keep_successfully_created_resource, load_metadata_file
 
 # Todo make this configurable
-METADATA_FOLDER = './.metadata'
+METADATA_FOLDER = "./.metadata"
+
 
 class Metadata:
     """
@@ -19,7 +20,7 @@ class Metadata:
     and reloaded to resume test execution.
 
     For example, 'cluster_name' is being stored in metadata by the
-    cluster fixture. 
+    cluster fixture.
     When reading from a metadata file, if 'cluster_name' is present
     the test will skip cluster creation and use the cluster in
     'cluster_name'.
@@ -30,7 +31,7 @@ class Metadata:
             self.params = params
         else:
             self.params = {}
-    
+
     def insert(self, key, value):
         self.params[key] = value
 
@@ -38,7 +39,7 @@ class Metadata:
         self.insert(key, value)
         file = self.to_file()
         print(f"Saved key: {key} value: {value} in metadata file {file}")
-    
+
     def get(self, key):
         if key not in self.params:
             return None
@@ -46,10 +47,10 @@ class Metadata:
         return self.params[key]
 
     def to_file(self):
-        filename = 'metadata-' + str(time.time_ns())
+        filename = "metadata-" + str(time.time_ns())
         filepath = os.path.abspath(os.path.join(METADATA_FOLDER, filename))
 
-        with safe_open(filepath, 'w') as file:
+        with safe_open(filepath, "w") as file:
             json.dump(self.params, file)
 
         return filepath
@@ -57,6 +58,7 @@ class Metadata:
     def from_file(filepath):
         with open(filepath) as file:
             return Metadata(json.load(file))
+
 
 @pytest.fixture(scope="class")
 def metadata(request):
@@ -68,14 +70,17 @@ def metadata(request):
     metadata_file = load_metadata_file(request)
     if metadata_file:
         return Metadata.from_file(metadata_file)
-    
+
     return Metadata()
 
-def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_create, on_delete):
+
+def configure_resource_fixture(
+    metadata, request, resource_id, metadata_key, on_create, on_delete
+):
     """
     Helper method to create resources if required and configure them for teardown.
 
-    If the resource is not present in the metadata a new resource will be created and added to 
+    If the resource is not present in the metadata a new resource will be created and added to
     the metadata.
 
     If a resource is present in the metadata it will not be created.
@@ -84,11 +89,12 @@ def configure_resource_fixture(metadata, request, resource_id, metadata_key, on_
     did not raise an exception) will not be deleted.
     """
     successful_creation = False
-    
+
     def delete():
         if successful_creation and keep_successfully_created_resource(request):
             return
         on_delete()
+
     request.addfinalizer(delete)
 
     if not metadata.get(metadata_key):

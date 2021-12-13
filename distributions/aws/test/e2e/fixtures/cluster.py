@@ -9,7 +9,7 @@ from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 
 # Todo load from yaml and replace values
-def create_cluster(cluster_name, region, cluster_version='1.19'):
+def create_cluster(cluster_name, region, cluster_version="1.19"):
     cmd = []
     cmd += "eksctl create cluster".split()
     cmd += f"--name {cluster_name}".split()
@@ -24,6 +24,7 @@ def create_cluster(cluster_name, region, cluster_version='1.19'):
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
+
 def delete_cluster(cluster_name, region):
     cmd = []
     cmd += "eksctl delete cluster".split()
@@ -32,6 +33,7 @@ def delete_cluster(cluster_name, region):
 
     retcode = subprocess.call(cmd)
     assert retcode == 0
+
 
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):
@@ -48,9 +50,11 @@ def cluster(metadata, region, request):
 
     def on_create():
         create_cluster(cluster_name, region)
-    
+
     def on_delete():
-        name = metadata.get('cluster_name') or cluster_name
+        name = metadata.get("cluster_name") or cluster_name
         delete_cluster(name, region)
 
-    return configure_resource_fixture(metadata, request, cluster_name, 'cluster_name', on_create, on_delete)
+    return configure_resource_fixture(
+        metadata, request, cluster_name, "cluster_name", on_create, on_delete
+    )
