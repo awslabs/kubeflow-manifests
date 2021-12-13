@@ -1,9 +1,9 @@
-# Deploying Kubeflow with AWS EFS as Persistent Storage
+# Using Amazon EFS as Persistent Storage with Kubeflow
 
-This guide describes how to use Amazon EFS as Persistent storage with Kubeflow.  
+This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.  
 
 ## 1.0 Prerequisites
-1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the EFS CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the AWS managed service integrated offering<link> or generic distribution<link>.
+1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the EFS CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../README.md) or [generic distribution](../../../../README.md).
 
 2. At this point, you have likely cloned this repo and checked out the right branch. Navigate over this this directory. 
 
@@ -73,9 +73,9 @@ Please refer to the official [AWS EFS CSI Document](https://docs.aws.amazon.com/
 ### Option 1 - Static Provisioning
 [Using this sample from official AWS Docs](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods) we have provided the required spec files in the sample subdirectory but you can create the PVC another way. 
 
-1. Use the `$file_system_id` you recorded before or use the following command to get the efs filesystem id - 
+1. Use the `$file_system_id` you recorded in section 4 above or use the AWS Console to get the filesystem id of the EFS volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
 ```
-aws efs describe-file-systems --query "FileSystems[*].FileSystemId" --output text
+aws efs describe-file-systems --query "FileSystems[*].FileSystemId" --output text --region $CLUSTER_REGION
 ```
 
 2. Now edit the last line of the sample/pv.yaml file to specify the `volumeHandle` field to point to your EFS filesystem.
@@ -128,16 +128,16 @@ data_dir = pathlib.Path(data_dir)
 ```
 
 ### 2. Build and Push the Docker image
-In the `training-sample` directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image- 
+In the `training-sample` directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image. Be sure to point the `$IMAGE_URI` to your registry and specify an appropriate tag - 
 ```
-export dockerImage=image-classification:no-data
+export IMAGE_URI=<dockerimage:tag>
 cd storage-efs/training-sample
-docker build -t $dockerImage .
-docker push $dockerImage
+docker build -t $IMAGE_URI .
+docker push $IMAGE_URI
 ```
 Once the docker image is built, be sure to replace the `<dockerimage:tag>` in the `tfjob.yaml` file, line #17. 
 ```
-yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(dockerImage)' -i training-sample/tfjob.yaml
+yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_URI)' -i training-sample/tfjob.yaml
 ```
 
 ### 3. Create the TFjob and use the provided commands to check the training logs 
