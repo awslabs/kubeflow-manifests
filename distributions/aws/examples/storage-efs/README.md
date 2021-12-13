@@ -87,9 +87,9 @@ yq e '.spec.csi.volumeHandle = env(file_system_id)' -i sample/pv.yaml
 
 4. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
 ```
-kubectl apply -f examples/aws/storage-efs/sample/pv.yaml
-kubectl apply -f examples/aws/storage-efs/sample/pvc.yaml
-kubectl apply -f examples/aws/storage-efs/sample/sc.yaml
+kubectl apply -f storage-efs/sample/pv.yaml
+kubectl apply -f storage-efs/sample/pvc.yaml
+kubectl apply -f storage-efs/sample/sc.yaml
 ```
 
 ## 5.2 Check your Setup
@@ -107,7 +107,7 @@ In case the server does not start up in the expected time, do make sure to check
 ### Note about Permissions
 You might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. 
 ```
-kubectl apply -f examples/aws/storage-efs/sample/set-permission-job.yaml
+kubectl apply -f storage-efs/sample/set-permission-job.yaml
 ```
 If you use EFS for other purposes (e.g. sharing data across pipelines), you don’t need this step.
 
@@ -131,7 +131,7 @@ data_dir = pathlib.Path(data_dir)
 In the `training-sample` directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image- 
 ```
 export dockerImage=image-classification:no-data
-cd examples/aws/storage-efs/training-sample
+cd storage-efs/training-sample
 docker build -t $dockerImage .
 docker push $dockerImage
 ```
