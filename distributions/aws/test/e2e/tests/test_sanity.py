@@ -88,6 +88,8 @@ class TestSanity:
         assert run.status == None
 
         wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
+
+        kfp_client.delete_experiment(experiment.id)
     
     def test_katib_experiment(self, setup, cluster, region):
         filepath = os.path.abspath(os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE))
