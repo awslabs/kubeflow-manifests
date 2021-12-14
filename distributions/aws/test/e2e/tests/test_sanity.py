@@ -46,7 +46,7 @@ def kustomize_path():
     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
 
-PIPELINE_NAME = "[Tutorial] V2 lightweight Python components"
+PIPELINE_NAME = "[Tutorial] Data passing in python components"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
 
