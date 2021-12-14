@@ -87,14 +87,29 @@ yq e '.spec.csi.volumeHandle = env(file_system_id)' -i sample/pv.yaml
 
 4. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
 ```
+kubectl apply -f storage-efs/sample/sc.yaml
 kubectl apply -f storage-efs/sample/pv.yaml
 kubectl apply -f storage-efs/sample/pvc.yaml
-kubectl apply -f storage-efs/sample/sc.yaml
 ```
 
 ## 5.2 Check your Setup
-Port Forward as needed and Login to the Kubeflow dashboard.
-Now, Check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
+Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
+```
+kubectl get pv
+
+NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                 STORAGECLASS   REASON   AGE
+efs-pv  5Gi        RWX            Retain           Bound    kubeflow-user-example-com/efs-claim   efs-sc                  5d16h
+```
+
+```
+kubectl get pvc -n kubeflow-user-example-com
+
+NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+efs-claim   Bound    efs-pv   5Gi        RWX            efs-sc         5d16h
+```
+
+Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
+In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
 ## 5.3 Using EFS volume as workspace or data volume for a notebook server 
 
