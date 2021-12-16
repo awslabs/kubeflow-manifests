@@ -63,6 +63,25 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. 
 
+6. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+
+Run the following commands to enable oidc and create an iamserviceaccount with permissions to retrieve secrets from AWS Secrets Manager
+
+```
+eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLUSTER_NAME --approve
+
+kubectl create namespace kubeflow
+
+eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster $CLUSTER_NAME --attach-policy-arn \ arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region $CLUSTER_REGION
+```
+
+Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+
+```
+helm repo add secrets-store-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
+helm -n kube-system install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver  --set syncSecret.enabled=true
+curl -s https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml | kubectl apply -f - 
+```
 
 ### 2. Configure Kubeflow Pipelines
 
@@ -77,14 +96,13 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
           minioServiceHost=s3.amazonaws.com
           minioServiceRegion=us-west-2
           ```
-    1. Configure `apps/pipeline/upstream/env/aws/secret.env` file with your RDS database username and password that were configured when following the steps in Create RDS Instance.
-        - For example, if your username is `admin` and your password is `Kubefl0w` then your `secret.env` file should look like:
+    1. Configure an AWS secret at https://aws.amazon.com/secrets-manager/ with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           username=admin
           password=Kubefl0w
           ```
-    1. Configure `apps/pipeline/upstream/env/aws/minio-artifact-secret-patch.env` file with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
+    1. Configure an AWS secret with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
         - Find more details about configuring/getting your AWS credentials here:
         https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
         - ```
