@@ -51,11 +51,14 @@ def keep_successfully_created_resource(request):
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
 
+
 def get_accesskey(request):
     return request.config.getoption("--accesskey")
 
+
 def get_secretkey(request):
     return request.config.getoption("--secretkey")
+
 
 @pytest.fixture(scope="class")
 def region(metadata, request):

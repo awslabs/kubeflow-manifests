@@ -40,9 +40,11 @@ def delete_kustomize(path):
         assert build_retcode == 0
         subprocess.call(f"kubectl delete -f {tmp.name}".split())
 
+
 @pytest.fixture(scope="class")
 def configure_manifests():
     pass
+
 
 @pytest.fixture(scope="class")
 def kustomize(metadata, cluster, configure_manifests, kustomize_path, request):

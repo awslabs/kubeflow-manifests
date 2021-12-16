@@ -1,5 +1,6 @@
 import mysql.connector
 
+
 def query(mysql_client: mysql.connector.MySQLConnection, query):
     """
     Query a mysql database using SQL syntax

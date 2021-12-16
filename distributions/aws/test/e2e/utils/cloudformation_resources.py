@@ -55,14 +55,14 @@ def delete_stack(cfn_client, stack_name, timeout=300, interval=10):
         WaiterConfig={"Delay": interval, "MaxAttempts": timeout // interval + 1},
     )
 
+
 def describe_stack(cfn_client, stack_name):
     """
     Describes a cloudformation stack
     """
 
-    return cfn_client.describe_stacks(
-        StackName=stack_name
-    )['Stacks'][0]
+    return cfn_client.describe_stacks(StackName=stack_name)["Stacks"][0]
+
 
 def get_stack_outputs(cfn_client, stack_name):
     """
@@ -74,7 +74,8 @@ def get_stack_outputs(cfn_client, stack_name):
 
     resp = describe_stack(cfn_client, stack_name)
 
-    return {o['OutputKey']: o['OutputValue'] for o in resp['Outputs']}
+    return {o["OutputKey"]: o["OutputValue"] for o in resp["Outputs"]}
+
 
 def create_cloudformation_fixture(
     metadata,
@@ -96,6 +97,7 @@ def create_cloudformation_fixture(
     Takes care of adding the resource details to the metadata and creating and tearing
     down the stack.
     """
+
     def on_create():
         create_stack(
             cfn_client=cfn_client,
