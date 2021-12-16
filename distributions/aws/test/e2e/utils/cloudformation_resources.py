@@ -98,6 +98,8 @@ def create_cloudformation_fixture(
     down the stack.
     """
 
+    resource_details = {'stack_name': stack_name, 'params': params}
+
     def on_create():
         create_stack(
             cfn_client=cfn_client,
@@ -110,15 +112,15 @@ def create_cloudformation_fixture(
         )
 
     def on_delete():
-        name = metadata.get(metadata_key) or stack_name
+        details = metadata.get(metadata_key) or resource_details
+        
         delete_stack(
             cfn_client=cfn_client,
-            stack_name=name,
+            stack_name=details['stack_name'],
             timeout=delete_timeout,
             interval=delete_interval,
         )
 
-    resource_details = {"stack_name": stack_name, "params": params}
 
     return configure_resource_fixture(
         metadata=metadata,

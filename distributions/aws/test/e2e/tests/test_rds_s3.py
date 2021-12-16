@@ -2,6 +2,7 @@ import os
 import json
 
 import pytest
+import boto3
 
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -46,6 +47,8 @@ from e2e.utils.custom_resources import (
 
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
+
+from conftest import keep_successfully_created_resource
 
 RDS_S3_KUSTOMIZE_MANIFEST_PATH = "../../examples/rds-s3/"
 RDS_S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/rds-s3.yaml"
@@ -173,6 +176,23 @@ def configure_manifests(cfn_client, cfn_stack, region, request):
         },
     )
 
+@pytest.fixture(scope="class")
+def delete_s3_bucket_contents(cfn_client, cfn_stack, request):
+    """
+    Hack to clean out s3 objects since CFN does not allow deleting non-empty buckets
+    nor provides a way to empty a bucket.
+    """
+
+    yield
+
+    if keep_successfully_created_resource(request):
+        return
+
+    stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
+
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(stack_outputs['S3BucketName'])
+    bucket.objects.delete()
 
 PIPELINE_NAME = "[Demo] XGBoost - Iterative model training"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
@@ -220,7 +240,7 @@ def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):
 
 class TestRDSS3:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, port_forward, cluster, region):
+    def setup(self, metadata, port_forward, cluster, region, delete_s3_bucket_contents):
 
         # Disable caching in KFP
         # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
