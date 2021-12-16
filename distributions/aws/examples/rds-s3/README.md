@@ -96,7 +96,7 @@ curl -s https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-
           minioServiceHost=s3.amazonaws.com
           minioServiceRegion=us-west-2
           ```
-    1. Configure an AWS secret at https://aws.amazon.com/secrets-manager/ with your RDS database username and password that were configured when following the steps in Create RDS Instance.
+    1. Configure an AWS secret with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           username=admin
@@ -109,6 +109,10 @@ curl -s https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-
           accesskey=AXXXXXXXXXXXXXXXXXX6
           secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
           ```
+    Example command to create an AWS Secret
+    ```
+    aws secretsmanager create-secret --name kubeflow-secrets --secret-string '{"username":"admin","password":"Kubefl0w","accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
+    ```
 
 ### 3. Configure Katib
 
