@@ -14,7 +14,7 @@ from e2e.utils.utils import (
 )
 from e2e.utils.config import metadata, configure_env_file
 
-from e2e.conftest import region, get_accesskey, get_secretkey
+from e2e.conftest import region, get_accesskey, get_secretkey, keep_successfully_created_resource
 
 from e2e.fixtures.cluster import cluster
 from e2e.fixtures.kustomize import kustomize
@@ -47,8 +47,6 @@ from e2e.utils.custom_resources import (
 
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
-
-from conftest import keep_successfully_created_resource
 
 RDS_S3_KUSTOMIZE_MANIFEST_PATH = "../../examples/rds-s3/"
 RDS_S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/rds-s3.yaml"
