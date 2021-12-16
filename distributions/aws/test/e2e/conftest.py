@@ -32,6 +32,16 @@ def pytest_addoption(parser):
         action="store",
         help="Hosted zone id of the root domain. Required for tests which use cognito",
     )
+    parser.addoption(
+        "--accesskey",
+        action="store",
+        help="AWS account accesskey",
+    )
+    parser.addoption(
+        "--secretkey",
+        action="store",
+        help="AWS account secretkey",
+    )
 
 
 def keep_successfully_created_resource(request):
@@ -41,6 +51,11 @@ def keep_successfully_created_resource(request):
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
 
+def get_accesskey(request):
+    return request.config.getoption("--accesskey")
+
+def get_secretkey(request):
+    return request.config.getoption("--secretkey")
 
 @pytest.fixture(scope="class")
 def region(metadata, request):

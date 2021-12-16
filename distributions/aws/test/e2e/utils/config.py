@@ -75,7 +75,7 @@ def metadata(request):
 
 
 def configure_resource_fixture(
-    metadata, request, resource_id, metadata_key, on_create, on_delete
+    metadata, request, resource_details, metadata_key, on_create, on_delete
 ):
     """
     Helper method to create resources if required and configure them for teardown.
@@ -99,7 +99,7 @@ def configure_resource_fixture(
 
     if not metadata.get(metadata_key):
         on_create()
-        metadata.save(metadata_key, resource_id)
+        metadata.save(metadata_key, resource_details)
 
     successful_creation = True
     return metadata.get(metadata_key)

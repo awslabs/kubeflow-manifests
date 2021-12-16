@@ -49,6 +49,14 @@ def unmarshal_yaml(yaml_file, replacements={}):
 
     return yaml.safe_load(contents)
 
+class WaitForCircuitBreakerError(Exception):
+    """
+    When this exception is thrown, the below wait_for function
+    will exit immediately. Useful to escape a retry loop in failure scenarios
+    where the only other option would be to wait for an eventual timeout. 
+    """
+
+    pass
 
 def wait_for(callback, timeout=300, interval=10):
     """
@@ -64,6 +72,8 @@ def wait_for(callback, timeout=300, interval=10):
     while True:
         try:
             return callback()
+        except WaitForCircuitBreakerError as we:
+            raise we
         except Exception as e:
             if time.time() - start >= timeout:
                 raise e

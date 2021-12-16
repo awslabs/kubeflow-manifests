@@ -11,6 +11,8 @@ import pytest
 
 from kubernetes import client, config
 import kfp
+import boto3
+import mysql.connector
 
 from e2e.utils.constants import (
     DEFAULT_HOST,
@@ -38,6 +40,13 @@ def k8s_custom_objects_api_client(cluster, region):
     """
 
     return client.CustomObjectsApi(api_client=client_from_config(cluster, region))
+
+def create_k8s_admission_registration_api_client(cluster, region):
+    """
+    API client for interacting with k8s core API, e.g. describe_pods, etc.
+    """
+
+    return client.AdmissionregistrationV1Api(api_client=client_from_config(cluster, region))
 
 
 # todo make port random
@@ -124,3 +133,22 @@ def kfp_client(port_forward, host, client_namespace, session_cookie):
 @pytest.fixture(scope="class")
 def account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
+
+@pytest.fixture(scope="class")
+def cfn_client(region):
+    return boto3.client("cloudformation", region_name=region)
+
+
+@pytest.fixture(scope="class")
+def ec2_client(region):
+    return boto3.client("ec2", region_name=region)
+
+@pytest.fixture(scope="class")
+def s3_client(region):
+    return boto3.client("s3", region_name=region)
+
+
+def create_mysql_client(user, password, host, database) ->  mysql.connector.MySQLConnection:
+    return mysql.connector.connect(user=user, password=password,
+                              host=host,
+                              database=database)
