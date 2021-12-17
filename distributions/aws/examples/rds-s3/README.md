@@ -76,11 +76,17 @@ eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace
 ```
 
 Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
-
 ```
-helm repo add secrets-store-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
-helm -n kube-system install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver  --set syncSecret.enabled=true
-curl -s https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml | kubectl apply -f - 
+# You will first need to clone the secrets-store-csi-driver repo.
+git clone https://github.com/kubernetes-sigs/secrets-store-csi-driver.git && cd secrets-store-csi-driver
+kubectl apply -f deploy/rbac-secretproviderclass.yaml
+kubectl apply -f deploy/csidriver.yaml
+kubectl apply -f deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
+kubectl apply -f deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
+kubectl apply -f deploy/secrets-store-csi-driver.yaml
+kubectl apply -f deploy/rbac-secretprovidersyncing.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
 ```
 
 ### 2. Configure Kubeflow Pipelines
