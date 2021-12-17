@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: efs-claim
-  namespace: kubeflow-user-example-com
+  namespace: <namespace>
 spec:
   accessModes:
     - ReadWriteMany
