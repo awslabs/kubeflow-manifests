@@ -57,16 +57,17 @@ eksctl create iamserviceaccount \
 kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
 ```
 
-## 4.0 Create an Instance of the FSx Filesystem
-Please refer to the official [AWS FSx CSI Document](https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html) for detailed instructions on creating an FSx filesystem. 
+4. For Dynamic Provisioning, you will also have to attach the above created policy `Amazon_FSx_Lustre_CSI_Driver` to the Cluster worker node's IAM role. 
 
 ## 5.0 Using FSx Storage in Kubeflow
 
-## 5.1 Provisioning Options
-### Option 1 - Static Provisioning
+## 5.1 Provisioning Option 1: Static Provisioning
 [Using this sample from official Kubeflow Docs](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre) 
 
-1. Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
+1. Create an Instance of the FSx Filesystem
+Please refer to the official [AWS FSx CSI Document](https://docs.aws.amazon.com/eks/latest/userguide/fsx-csi.html) for detailed instructions on creating an FSx filesystem. 
+
+2. Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
 ```
 aws fsx describe-file-systems --query "FileSystems[*].FileSystemId" --output text --region $CLUSTER_REGION
 ```
@@ -75,35 +76,64 @@ aws fsx describe-file-systems --query "FileSystems[*].FileSystemId" --output tex
 export file_system_id=<fsx-id-to-use>
 ```
 
-2. Once you have the filesystem id, Use the following command to retrieve DNSName, and MountName values.
+3. Once you have the filesystem id, Use the following command to retrieve DNSName, and MountName values.
 ```
 export dns_name=$(aws fsx describe-file-systems --file-system-ids $file_system_id --query "FileSystems[0].DNSName" --output text --region $CLUSTER_REGION)
 
 export mount_name=$(aws fsx describe-file-systems --file-system-ids $file_system_id --query "FileSystems[0].LustreConfiguration.MountName" --output text --region $CLUSTER_REGION)
 ```
 
-3. Now edit the `fsx-for-lustre/static-provisioning/pv.yaml` to replace <file_system_id>, <dns_name>, and <mount_name> with your values.
+4. Now edit the `fsx-for-lustre/static-provisioning/pv.yaml` to replace <file_system_id>, <dns_name>, and <mount_name> with your values.
 ```
 yq e '.spec.csi.volumeHandle = env(file_system_id)' -i fsx-for-lustre/static-provisioning/pv.yaml
 yq e '.spec.csi.volumeAttributes.dnsname = env(dns_name)' -i fsx-for-lustre/static-provisioning/pv.yaml
 yq e '.spec.csi.volumeAttributes.mountname = env(mount_name)' -i fsx-for-lustre/static-provisioning/pv.yaml
 ```
 
-4. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
+5. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
 export PVC_NAMESPACE=kubeflow-user-example-com
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
-
-5. Now create the required `PersistentVolume` and `PersistentVolumeClaim` resources as -
+6. Now create the required `PersistentVolume` and `PersistentVolumeClaim` resources as -
 ```
 kubectl apply -f fsx-for-lustre/static-provisioning/pv.yaml
 kubectl apply -f fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
-## 5.2 Check your Setup
-Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
+## 5.2 Provisioning Option 2: Dynamic Provisioning
+The Dynamic Provisioning does not require you to create an FSx Volume upfront but instead deploys based on the configuration in the storageClass spec. We have provided one specific example here but for more details and configuration options refer to the [upstream documentation here](https://github.com/kubernetes-sigs/aws-fsx-csi-driver/tree/master/examples/kubernetes/dynamic_provisioning).
+
+1. Determine the IDs of the subnets in your VPC and which Availability Zone the subnet is in. Use one public subnet while creating the filesystem
+```
+export subnet_id=$(aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.resourcesVpcConfig.subnetIds[0]" --output text)
+yq e '.parameters.subnetId = env(subnet_id)' -i fsx-for-lustre/dynamic-provisioning/sc.yaml
+```
+
+2. Create a security group which allows inbound/outbound access to Lustre ports 988 and 1021–1023. For more information, see [Lustre Client VPC Security Group Rules](https://docs.aws.amazon.com/fsx/latest/LustreGuide/limit-access-security-groups.html#lustre-client-inbound-outbound-rules) in the FSx for Lustre User Guide.
+```
+export security_group_id=<lustre_security_group>
+yq e '.parameters.securityGroupIds = env(security_group_id)' -i fsx-for-lustre/dynamic-provisioning/sc.yaml
+```
+
+4. The `StorageClass` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i fsx-for-lustre/dynamic-provisioning/pvc.yaml
+```
+
+5. Now create the required `PersistentVolume` and `PersistentVolumeClaim` resources as -
+```
+kubectl apply -f fsx-for-lustre/dynamic-provisioning/sc.yaml
+kubectl apply -f fsx-for-lustre/dynamic-provisioning/pvc.yaml
+```
+
+
+## 5.3 Check your Setup
+Use the following commands to ensure all resources have been deployed as expected and the PersistentVolumeClaim is correctly bound to the PersistentVolume or StorageClass
+
+1. Static Provisioning -
 ```
 kubectl get pv
 
@@ -112,10 +142,25 @@ fsx-pv  1200Gi     RWX            Recycle          Bound    kubeflow-user-exampl
 ```
 
 ```
-kubectl get pvc -n kubeflow-user-example-com
+kubectl get pvc -n $PVC_NAMESPACE
 
 NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 fsx-claim   Bound    fsx-pv   1200Gi     RWX                           83s
+```
+
+2. Dynamic Provisioning - 
+```
+kubectl get sc
+
+NAME               PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+fsx-sc-dynamic     fsx.csi.aws.com         Delete          Immediate              false                  38m
+```
+
+```
+kubectl get pvc -n $PVC_NAMESPACE
+
+NAME                STATUS   VOLUME        CAPACITY   ACCESS MODES   STORAGECLASS     AGE
+fsx-claim-dynamic   Bound    pvc-xxxxxxx     1200Gi     RWX          fsx-sc-dynamic   36m
 ```
 
 Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
@@ -131,8 +176,11 @@ In case the server does not start up in the expected time, do make sure to check
 
 ### Note about Permissions
 You might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the FSx as your workspace in your kubeflow notebook. 
+
 ```
-kubectl apply -f fsx-for-lustre/static-provisioning/set-permission-job.yaml
+export CLAIM_NAME=fsx-claim
+yq e '.spec.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
+kubectl apply -f notebook-sample/set-permission-job.yaml
 ```
 If you use FSx for other purposes (e.g. sharing data across pipelines), you don’t need this step.
 
