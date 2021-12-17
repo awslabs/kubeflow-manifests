@@ -103,8 +103,8 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
           minioServiceRegion=us-west-2
           ```
     1. Configure an AWS secret with your RDS database username and password that were configured when following the steps in Create RDS Instance.
-        - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - For example, if your username is `admin` and your password is `Kubefl0w` then your secret should look like:
+        - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w"}'  --region $CLUSTER_REGION
           ```
