@@ -58,7 +58,7 @@ kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
 ```
 
 ## 4.0 Create an Instance of the FSx Filesystem
-Please refer to the official [AWS FSx CSI Document](https://docs.aws.amazon.com/eks/latest/userguide/fsx-csi.html) for detailed instructions on creating an FSx filesystem. 
+Please refer to the official [AWS FSx CSI Document](https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html) for detailed instructions on creating an FSx filesystem. 
 
 ## 5.0 Using FSx Storage in Kubeflow
 
