@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fsx-claim-dynamic
+  namespace: <namespace>
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: fsx-sc-dynamic
+  resources:
+    requests:
+      storage: 1200Gi
