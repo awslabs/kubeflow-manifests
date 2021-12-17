@@ -83,7 +83,11 @@ aws efs describe-file-systems --query "FileSystems[*].FileSystemId" --output tex
 yq e '.spec.csi.volumeHandle = env(file_system_id)' -i efs/static-provisioning/pv.yaml
 ```
 
-3. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Be sure to replace the `kubeflow-user-example-com` namespace specified in the `efs/static-provisioning/pvc.yaml` file with the namespace for the kubeflow user. 
+3. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `efs/static-provisioning/pvc.yaml` file accordingly. 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i efs/static-provisioning/pvc.yaml
+```
 
 4. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
 ```

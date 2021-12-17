@@ -15,7 +15,7 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 ```
 
 ## 2.0 Install the FSx CSI Driver
-We recommend installing the FSx CSI Driver v1.3.4 directly from the [the aws-fsx-csi-driver github repo](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows - 
+We recommend installing the FSx CSI Driver v0.7.1 directly from the [the aws-fsx-csi-driver github repo](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows - 
 
 ```
 kubectl apply -k "github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.7.1"
@@ -36,7 +36,7 @@ The CSI driver's service account (created during installation) requires IAM perm
 ```
 aws iam create-policy \
     --policy-name Amazon_FSx_Lustre_CSI_Driver \
-    --policy-document file://fsx-for-lustre/fsx-csi-driver.json
+    --policy-document file://fsx-for-lustre/fsx-csi-driver-policy.json
 ```
 
 2. Create an IAM role and attach the IAM policy to it. Annotate the Kubernetes service account with the IAM role ARN and the IAM role with the Kubernetes service account name. You can create the role using eksctl as follows - 
@@ -75,26 +75,31 @@ aws fsx describe-file-systems --query "FileSystems[*].FileSystemId" --output tex
 export file_system_id=<fsx-id-to-use>
 ```
 
-2. Once you have the filesystem id, Use the following command to retriev DNSName, and MountName values.
+2. Once you have the filesystem id, Use the following command to retrieve DNSName, and MountName values.
 ```
 export dns_name=$(aws fsx describe-file-systems --file-system-ids $file_system_id --query "FileSystems[0].DNSName" --output text --region $CLUSTER_REGION)
 
 export mount_name=$(aws fsx describe-file-systems --file-system-ids $file_system_id --query "FileSystems[0].LustreConfiguration.MountName" --output text --region $CLUSTER_REGION)
 ```
 
-3. Now edit the sample/fsx-pv.yaml to replace <file_system_id>, <dns_name>, and <mount_name> with your values.
+3. Now edit the `fsx-for-lustre/static-provisioning/pv.yaml` to replace <file_system_id>, <dns_name>, and <mount_name> with your values.
 ```
-yq e '.spec.csi.volumeHandle = env(file_system_id)' -i fsx-for-lustre/static-provisioning/fsx-pv.yaml
-yq e '.spec.csi.volumeAttributes.dnsname = env(dns_name)' -i fsx-for-lustre/static-provisioning/fsx-pv.yaml
-yq e '.spec.csi.volumeAttributes.mountname = env(mount_name)' -i fsx-for-lustre/static-provisioning/fsx-pv.yaml
+yq e '.spec.csi.volumeHandle = env(file_system_id)' -i fsx-for-lustre/static-provisioning/pv.yaml
+yq e '.spec.csi.volumeAttributes.dnsname = env(dns_name)' -i fsx-for-lustre/static-provisioning/pv.yaml
+yq e '.spec.csi.volumeAttributes.mountname = env(mount_name)' -i fsx-for-lustre/static-provisioning/pv.yaml
 ```
 
-4. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Be sure to replace the `kubeflow-user-example-com` namespace specified in the `fsx-for-lustre/static-provisioning/fsx-pvc.yaml` file with the namespace for the kubeflow user. 
-
-5. Now create the required persistentvolume and persistentvolumeclaim resources as -
+4. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
-kubectl apply -f fsx-for-lustre/static-provisioning/fsx-pv.yaml
-kubectl apply -f fsx-for-lustre/static-provisioning/fsx-pvc.yaml
+export PVC_NAMESPACE=kubeflow-user-example-com
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i fsx-for-lustre/static-provisioning/pvc.yaml
+```
+
+
+5. Now create the required `PersistentVolume` and `PersistentVolumeClaim` resources as -
+```
+kubectl apply -f fsx-for-lustre/static-provisioning/pv.yaml
+kubectl apply -f fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
 ## 5.2 Check your Setup
