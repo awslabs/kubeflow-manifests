@@ -3,9 +3,9 @@
 This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.  
 
 ## 1.0 Prerequisites
-1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the EFS CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../README.md) or [generic distribution](../../../../README.md).
+1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the EFS CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../../README.md) or [generic distribution](../../../../../README.md).
 
-2. At this point, you have likely cloned this repo and checked out the right branch. Navigate over this this directory. 
+2. At this point, you have likely cloned this repo and checked out the right branch. All paths in the following steps are relative to `kubeflow-manifests/distributions/aws/examples/storage` directory.
 
 3. Make sure the following environment variables are set. 
 ```
@@ -80,16 +80,20 @@ aws efs describe-file-systems --query "FileSystems[*].FileSystemId" --output tex
 
 2. Now edit the last line of the sample/pv.yaml file to specify the `volumeHandle` field to point to your EFS filesystem.
 ```
-yq e '.spec.csi.volumeHandle = env(file_system_id)' -i sample/pv.yaml
+yq e '.spec.csi.volumeHandle = env(file_system_id)' -i efs/static-provisioning/pv.yaml
 ```
 
-3. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Be sure to replace the `kubeflow-user-example-com` namespace specified in the `sample/pvc.yaml` file with the namespace for the kubeflow user. 
+3. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `efs/static-provisioning/pvc.yaml` file accordingly. 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i efs/static-provisioning/pvc.yaml
+```
 
 4. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
 ```
-kubectl apply -f storage-efs/sample/sc.yaml
-kubectl apply -f storage-efs/sample/pv.yaml
-kubectl apply -f storage-efs/sample/pvc.yaml
+kubectl apply -f efs/static-provisioning/sc.yaml
+kubectl apply -f efs/static-provisioning/pv.yaml
+kubectl apply -f efs/static-provisioning/pvc.yaml
 ```
 
 ## 5.2 Check your Setup
@@ -122,7 +126,7 @@ In case the server does not start up in the expected time, do make sure to check
 ### Note about Permissions
 You might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. 
 ```
-kubectl apply -f storage-efs/sample/set-permission-job.yaml
+kubectl apply -f efs/static-provisioning/set-permission-job.yaml
 ```
 If you use EFS for other purposes (e.g. sharing data across pipelines), you don’t need this step.
 
@@ -146,19 +150,29 @@ data_dir = pathlib.Path(data_dir)
 In the `training-sample` directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image. Be sure to point the `$IMAGE_URI` to your registry and specify an appropriate tag - 
 ```
 export IMAGE_URI=<dockerimage:tag>
-cd storage-efs/training-sample
+cd training-sample
+
+# You will need to login to ECR for the following steps
 docker build -t $IMAGE_URI .
 docker push $IMAGE_URI
+cd -
 ```
-Once the docker image is built, be sure to replace the `<dockerimage:tag>` in the `tfjob.yaml` file, line #17. 
+
+### 3. Configure the tfjob spec file
+Once the docker image is built, replace the `<dockerimage:tag>` in the `tfjob.yaml` file, line #17. 
 ```
 yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_URI)' -i training-sample/tfjob.yaml
 ```
+Also, specify the name of the PVC you created - 
+```
+export CLAIM_NAME=efs-claim
+yq e '.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i training-sample/tfjob.yaml
+```
 
 ### 3. Create the TFjob and use the provided commands to check the training logs 
-At this point, we are ready to train the model using the `training.py` script and the data available on the shared volume with the Kubeflow TFJob operator as -
+At this point, we are ready to train the model using the `training-sample/training.py` script and the data available on the shared volume with the Kubeflow TFJob operator as -
 ```
-kubectl apply -f tfjob.yaml
+kubectl apply -f training-sample/tfjob.yaml
 ```
 
 In order to check that the training job is running as expected, you can check the events in the TFJob describe response as well as the job logs as - 
