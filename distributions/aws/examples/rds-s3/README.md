@@ -72,7 +72,7 @@ eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLU
 
 kubectl create namespace kubeflow
 
-eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster $CLUSTER_NAME --attach-policy-arn \ arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region $CLUSTER_REGION
+eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster $CLUSTER_NAME --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region $CLUSTER_REGION
 ```
 
 Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
@@ -105,20 +105,14 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
     1. Configure an AWS secret with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
-          username=admin
-          password=Kubefl0w
+          aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w"}'  --region $CLUSTER_REGION
           ```
     1. Configure an AWS secret with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
         - Find more details about configuring/getting your AWS credentials here:
         https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
         - ```
-          accesskey=AXXXXXXXXXXXXXXXXXX6
-          secretkey=eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq
+          aws secretsmanager create-secret --name aws-secrets --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
           ```
-    Example command to create an AWS Secret
-    ```
-    aws secretsmanager create-secret --name kubeflow-secrets --secret-string '{"username":"admin","password":"Kubefl0w","accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
-    ```
 
 ### 3. Configure Katib
 
