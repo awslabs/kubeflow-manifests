@@ -66,9 +66,9 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
 
 ### 2. Configure Kubeflow Pipelines
 
-1. Configure the following files in `distributions/aws/apps/pipelines` directory:
+1. Configure the following files in `apps/pipeline/upstream/env/aws` directory:
 
-    1. Configure `distributions/aws/apps/pipelines/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites). 
+    1. Configure `apps/pipeline/upstream/env/aws/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites). 
         - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
         - ```
           dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
@@ -77,14 +77,14 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
           minioServiceHost=s3.amazonaws.com
           minioServiceRegion=us-west-2
           ```
-    1. Configure `distributions/aws/apps/pipelines/secret.env` file with your RDS database username and password that were configured when following the steps in Create RDS Instance.
+    1. Configure `apps/pipeline/upstream/env/aws/secret.env` file with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - For example, if your username is `admin` and your password is `Kubefl0w` then your `secret.env` file should look like:
         - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           username=admin
           password=Kubefl0w
           ```
-    1. Configure `distributions/aws/apps/pipelines/minio-artifact-secret-patch.env` file with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
+    1. Configure `apps/pipeline/upstream/env/aws/minio-artifact-secret-patch.env` file with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
         - Find more details about configuring/getting your AWS credentials here:
         https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
         - ```
@@ -95,7 +95,7 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
 ### 3. Configure Katib
 
 
-1. Configure the `distributions/aws/apps/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+1. Configure the `apps/katib/upstream/installs/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
     - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
     - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
     - ```
@@ -107,7 +107,7 @@ Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aw
       ```
 
 
-### 4. Build manifests and Install Kubeflow
+### 4. Build Manifests and Install Kubeflow
 
 ```sh
 while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
