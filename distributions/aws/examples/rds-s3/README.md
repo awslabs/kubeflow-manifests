@@ -78,7 +78,7 @@ eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace
 Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 ```
 # You will first need to clone the secrets-store-csi-driver repo.
-git clone https://github.com/kubernetes-sigs/secrets-store-csi-driver.git && cd secrets-store-csi-driver
+git clone -b v1.0.0 --single-branch https://github.com/kubernetes-sigs/secrets-store-csi-driver.git && cd secrets-store-csi-driver
 kubectl apply -f deploy/rbac-secretproviderclass.yaml
 kubectl apply -f deploy/csidriver.yaml
 kubectl apply -f deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
@@ -104,6 +104,7 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
           ```
     1. Configure an AWS secret with your RDS database username and password that were configured when following the steps in Create RDS Instance.
         - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
+        - For example, if your username is `admin` and your password is `Kubefl0w` then your secret should look like:
         - ```
           aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w"}'  --region $CLUSTER_REGION
           ```
@@ -111,7 +112,7 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
         - Find more details about configuring/getting your AWS credentials here:
         https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
         - ```
-          aws secretsmanager create-secret --name aws-secrets --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
+          aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
           ```
 
 ### 3. Configure Katib
