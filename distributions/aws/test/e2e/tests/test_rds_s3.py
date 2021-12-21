@@ -14,9 +14,15 @@ from e2e.utils.utils import (
 )
 from e2e.utils.config import metadata, configure_env_file
 
-from e2e.conftest import region, get_accesskey, get_secretkey, keep_successfully_created_resource
+from e2e.conftest import (
+    region,
+    get_accesskey,
+    get_secretkey,
+    keep_successfully_created_resource,
+)
 
 from e2e.fixtures.cluster import cluster
+from e2e.fixtures.secrets import aws_secrets_driver, create_secret_string
 from e2e.fixtures.kustomize import kustomize
 from e2e.fixtures.clients import (
     kfp_client,
@@ -62,7 +68,7 @@ def kustomize_path():
 
 
 @pytest.fixture(scope="class")
-def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
+def cfn_stack(metadata, cluster, cfn_client, ec2_client, aws_secrets_driver, request):
     stack_name = rand_name("test-e2e-rds-stack-")
 
     resp = ec2_client.describe_vpcs(
@@ -100,6 +106,16 @@ def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
     instances = [i for r in resp["Reservations"] for i in r["Instances"]]
     security_groups = [i["SecurityGroups"][0]["GroupId"] for i in instances]
 
+    rds_secret = {
+        "username": rand_name("admin"),
+        "password": rand_name("Kubefl0w"),
+    }
+
+    s3_secret = {
+        "accesskey": get_accesskey(request),
+        "secretkey": get_secretkey(request),
+    }
+
     return create_cloudformation_fixture(
         metadata=metadata,
         request=request,
@@ -113,8 +129,14 @@ def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
             "VpcId": vpc_id,
             "Subnets": ",".join(public_subnets),
             "SecurityGroupId": security_groups[0],
-            "DBUsername": rand_name("admin"),
-            "DBPassword": rand_name("Kubefl0w"),
+            "DBUsername": rds_secret[
+                "username"
+            ],  # remove once katib secrets manager added
+            "DBPassword": rds_secret[
+                "password"
+            ],  # remove once katib secrets manager added
+            "RDSSecretString": create_secret_string(rds_secret),
+            "S3SecretString": create_secret_string(s3_secret),
         },
     )
 
@@ -124,11 +146,11 @@ KATIB_MANIFEST_FOLDER = (
     "../../../../apps/katib/upstream/installs/katib-external-db-with-kubeflow"
 )
 
-KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE = (
-    KFP_MANIFEST_FOLDER + "/minio-artifact-secret-patch.env"
-)
+# KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE = (
+#     KFP_MANIFEST_FOLDER + "/minio-artifact-secret-patch.env"
+# )
 KFP_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/params.env"
-KFP_SECRET_ENV_FILE = KFP_MANIFEST_FOLDER + "/secret.env"
+# KFP_SECRET_ENV_FILE = KFP_MANIFEST_FOLDER + "/secret.env"
 
 KATIB_SECRETS_ENV_FILE = KATIB_MANIFEST_FOLDER + "/secrets.env"
 
@@ -137,13 +159,13 @@ KATIB_SECRETS_ENV_FILE = KATIB_MANIFEST_FOLDER + "/secrets.env"
 def configure_manifests(cfn_client, cfn_stack, region, request):
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-    configure_env_file(
-        env_file_path=KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE,
-        env_dict={
-            "accesskey": get_accesskey(request),
-            "secretkey": get_secretkey(request),
-        },
-    )
+    # configure_env_file(
+    #     env_file_path=KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE,
+    #     env_dict={
+    #         "accesskey": get_accesskey(request),
+    #         "secretkey": get_secretkey(request),
+    #     },
+    # )
 
     configure_env_file(
         env_file_path=KFP_PARAMS_ENV_FILE,
@@ -155,13 +177,13 @@ def configure_manifests(cfn_client, cfn_stack, region, request):
         },
     )
 
-    configure_env_file(
-        env_file_path=KFP_SECRET_ENV_FILE,
-        env_dict={
-            "username": cfn_stack["params"]["DBUsername"],
-            "password": cfn_stack["params"]["DBPassword"],
-        },
-    )
+    # configure_env_file(
+    #     env_file_path=KFP_SECRET_ENV_FILE,
+    #     env_dict={
+    #         "username": cfn_stack["params"]["DBUsername"],
+    #         "password": cfn_stack["params"]["DBPassword"],
+    #     },
+    # )
 
     configure_env_file(
         env_file_path=KATIB_SECRETS_ENV_FILE,
@@ -173,6 +195,7 @@ def configure_manifests(cfn_client, cfn_stack, region, request):
             "DB_PASSWORD": cfn_stack["params"]["DBPassword"],
         },
     )
+
 
 @pytest.fixture(scope="class")
 def delete_s3_bucket_contents(cfn_client, cfn_stack, request):
@@ -188,9 +211,10 @@ def delete_s3_bucket_contents(cfn_client, cfn_stack, request):
 
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(stack_outputs['S3BucketName'])
+    s3 = boto3.resource("s3")
+    bucket = s3.Bucket(stack_outputs["S3BucketName"])
     bucket.objects.delete()
+
 
 PIPELINE_NAME = "[Demo] XGBoost - Iterative model training"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"

@@ -26,7 +26,7 @@ def client_from_config(cluster, region):
     return config.new_client_from_config()
 
 
-def k8s_core_api_client(cluster, region):
+def create_k8s_core_api_client(cluster, region):
     """
     API client for interacting with k8s core API, e.g. describe_pods, etc.
     """
@@ -34,7 +34,7 @@ def k8s_core_api_client(cluster, region):
     return client.CoreV1Api(api_client=client_from_config(cluster, region))
 
 
-def k8s_custom_objects_api_client(cluster, region):
+def create_k8s_custom_objects_api_client(cluster, region):
     """
     API client for performing CRUD operations on custom resources.
     """

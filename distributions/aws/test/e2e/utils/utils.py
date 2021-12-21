@@ -4,6 +4,7 @@ Generic helper methods module
 
 import json
 import os
+import subprocess
 import time
 import random
 import string
@@ -107,3 +108,7 @@ def get_iam_client(region):
 
 def get_ec2_client(region):
     return boto3.client("ec2", region_name=region)
+
+def kubectl_apply(path):
+    cmd = f"kubectl apply -f {path}".split()
+    subprocess.call(cmd)

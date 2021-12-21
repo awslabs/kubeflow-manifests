@@ -3,7 +3,7 @@ Module for helper methods to create and delete kubernetes custom resources (e.g.
 """
 
 from e2e.utils.utils import unmarshal_yaml
-from e2e.fixtures.clients import k8s_custom_objects_api_client
+from e2e.fixtures.clients import create_k8s_custom_objects_api_client
 
 from e2e.utils.constants import KUBEFLOW_GROUP
 
@@ -12,7 +12,7 @@ def create_namespaced_resource_from_yaml(
     cluster, region, yaml_file, group, version, plural, namespace, replacements={}
 ):
     body = unmarshal_yaml(yaml_file, replacements)
-    client = k8s_custom_objects_api_client(cluster, region)
+    client = create_k8s_custom_objects_api_client(cluster, region)
 
     return client.create_namespaced_custom_object(
         group=group, version=version, namespace=namespace, plural=plural, body=body
@@ -20,7 +20,7 @@ def create_namespaced_resource_from_yaml(
 
 
 def get_namespaced_resource(cluster, region, group, version, plural, namespace, name):
-    client = k8s_custom_objects_api_client(cluster, region)
+    client = create_k8s_custom_objects_api_client(cluster, region)
 
     return client.get_namespaced_custom_object(
         group=group, version=version, namespace=namespace, plural=plural, name=name
@@ -30,7 +30,7 @@ def get_namespaced_resource(cluster, region, group, version, plural, namespace, 
 def delete_namespaced_resource(
     cluster, region, group, version, plural, namespace, name
 ):
-    client = k8s_custom_objects_api_client(cluster, region)
+    client = create_k8s_custom_objects_api_client(cluster, region)
     return client.delete_namespaced_custom_object(
         group=group, version=version, namespace=namespace, plural=plural, name=name
     )
