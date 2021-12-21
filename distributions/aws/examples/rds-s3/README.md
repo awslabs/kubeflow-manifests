@@ -118,15 +118,17 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
 ### 3. Configure Katib
 
 
-1. Configure the `apps/katib/upstream/installs/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
-    - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
+1. Configure the secret with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+    - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
     - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
     - ```
-      KATIB_MYSQL_DB_DATABASE=kubeflow
-      KATIB_MYSQL_DB_HOST=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-      KATIB_MYSQL_DB_PORT=3306
-      DB_USER=admin
-      DB_PASSWORD=Kubefl0w
+      dname=kubeflow
+      host=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
+      port=3306
+      username=admin
+      password=Kubefl0w
+
+      aws secretsmanager update-secret  --region $CLUSTER_REGION --secret-id rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","dbname":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}'
       ```
 
 
