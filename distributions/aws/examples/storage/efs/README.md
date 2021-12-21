@@ -69,8 +69,8 @@ Please refer to the official [AWS EFS CSI Document](https://docs.aws.amazon.com/
 
 ## 5.0 Using EFS Storage in Kubeflow
 
-## 5.1 Provisioning Options
-### Option 1 - Static Provisioning
+## 5.1 Provisioning Option 1: Static Provisioning
+
 [Using this sample from official AWS Docs](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods) we have provided the required spec files in the sample subdirectory but you can create the PVC another way. 
 
 1. Use the `$file_system_id` you recorded in section 4 above or use the AWS Console to get the filesystem id of the EFS volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
@@ -96,6 +96,21 @@ kubectl apply -f efs/static-provisioning/pv.yaml
 kubectl apply -f efs/static-provisioning/pvc.yaml
 ```
 
+## 5.2 Provisioning Option 2: Dynamic Provisioning
+EFS Dynamic Provisioning still requires you to create an EFS Volume first. We have provided one specific example here but for more details and configuration options refer to the [upstream documentation here](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/dynamic_provisioning).
+
+1. Use the `$file_system_id` you recorded in section 4 above or use the AWS Console to get the filesystem id of the EFS volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
+
+2. Edit the `efs/dynamic-provisioning/sc.yaml` file, replacing the value for fileSystemId with your file system ID.
+```
+yq e '.parameters.fileSystemId = env(file_system_id)' -i efs/dynamic-provisioning/sc.yaml
+```
+
+3. Deploy the `storageClass` manifest as follows which creates the required `PersistentVolume` and `PersistentVolumeClaim` as well.  - 
+```
+kubectl apply -f efs/dynamic-provisioning/sc.yaml
+```
+
 ## 5.2 Check your Setup
 Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
 ```
@@ -106,7 +121,7 @@ efs-pv  5Gi        RWX            Retain           Bound    kubeflow-user-exampl
 ```
 
 ```
-kubectl get pvc -n kubeflow-user-example-com
+kubectl get pvc -n $PVC_NAMESPACE
 
 NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 efs-claim   Bound    efs-pv   5Gi        RWX            efs-sc         5d16h
@@ -125,8 +140,11 @@ In case the server does not start up in the expected time, do make sure to check
 
 ### Note about Permissions
 You might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. 
+
 ```
-kubectl apply -f efs/static-provisioning/set-permission-job.yaml
+export CLAIM_NAME=efs-claim
+yq e '.spec.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
+kubectl apply -f notebook-sample/set-permission-job.yaml
 ```
 If you use EFS for other purposes (e.g. sharing data across pipelines), you don’t need this step.
 
