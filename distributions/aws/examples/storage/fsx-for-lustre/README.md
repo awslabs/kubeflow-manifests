@@ -103,6 +103,8 @@ kubectl apply -f fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
 ## 5.2 Provisioning Option 2: Dynamic Provisioning
+Note: There are some known issues when using Dynamic Provisioning for FSx on Kubernetes v1.20. Refer to this [Github Issue](https://github.com/kubernetes-sigs/aws-fsx-csi-driver/issues/183).
+
 The Dynamic Provisioning does not require you to create an FSx Volume upfront but instead deploys based on the configuration in the storageClass spec. We have provided one specific example here but for more details and configuration options refer to the [upstream documentation here](https://github.com/kubernetes-sigs/aws-fsx-csi-driver/tree/master/examples/kubernetes/dynamic_provisioning).
 
 1. Determine the IDs of the subnets in your VPC and which Availability Zone the subnet is in. Use one public subnet while creating the filesystem
