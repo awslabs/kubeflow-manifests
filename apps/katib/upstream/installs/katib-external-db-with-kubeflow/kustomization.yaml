@@ -7,9 +7,3 @@ bases:
   - ../katib-with-kubeflow
 patchesStrategicMerge:
   - db-manager-patch.yaml
-# Modify katib-mysql-secrets with parameters for the DB.
-secretGenerator:
-  - name: katib-mysql-secrets
-    behavior: replace
-    envs:
-      - secrets.env
