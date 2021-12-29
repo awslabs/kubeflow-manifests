@@ -1,8 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: set-permission
-  namespace: kubeflow-user-example-com
+  name: <name>
+  namespace: <namespace>
 spec:
   template:
     metadata:
@@ -23,4 +23,4 @@ spec:
       volumes:
       - name: persistent-storage
         persistentVolumeClaim:
-          claimName: efs-claim
+          claimName: 	<claim-name>

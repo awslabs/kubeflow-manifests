@@ -2,7 +2,7 @@ apiVersion: kubeflow.org/v1
 kind: TFJob
 metadata:
   name: image-classification-pvc
-  namespace: kubeflow-user-example-com
+  namespace: <namespace>
 spec:
   runPolicy:
     cleanPodPolicy: None
