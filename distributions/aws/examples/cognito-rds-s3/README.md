@@ -94,6 +94,9 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         # XGBoost Operator
         kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
+        # AWS Secret Manager
+        kustomize build distributions/aws/aws-secrets-manager/base | kubectl apply -f -
+        
         # Kubeflow Pipelines
         # reapply manifest if you see an error
         kustomize build apps/pipeline/upstream/env/aws | kubectl apply -f -
