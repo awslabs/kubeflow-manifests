@@ -50,6 +50,8 @@ resources:
 
 # Configured for AWS RDS and AWS S3
 
+# AWS Secret Manager
+- ../../../../distributions/aws/aws-secrets-manager/base
 # Kubeflow Pipelines
 - ../../apps/pipelines
 # Katib
