@@ -15,7 +15,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 ## Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
 
 Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubeflow-pipelines) section from this guide to:
-1. Substitute the RDS connection strings and credentials to be used to access the db instance and S3
+1. Substitute the RDS Host and S3 Bucket name used to access the dbinstance and S3
 
 ## Configure Custom Domain and Cognito
 
