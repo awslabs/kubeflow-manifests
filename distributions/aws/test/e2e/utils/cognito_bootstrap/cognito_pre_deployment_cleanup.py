@@ -1,9 +1,9 @@
 import logging
-import utils
+from . import common as utils
 
-from aws.acm import AcmCertificate
-from aws.cognito import CustomDomainCognitoUserPool
-from aws.route53 import Route53HostedZone
+from .aws.acm import AcmCertificate
+from .aws.cognito import CustomDomainCognitoUserPool
+from .aws.route53 import Route53HostedZone
 
 
 logging.basicConfig(level=logging.INFO)
@@ -49,7 +49,7 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     try:
         # delete the subdomain entry from the root domain
         subdomain_NS_record = subdomain_hosted_zone.generate_change_record(
-            record_name=subdomain_name,
+            record_name=subdomain_hosted_zone.domain,
             record_type="NS",
             record_value=subdomain_hosted_zone.get_name_servers(),
             action="DELETE",
@@ -59,10 +59,7 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
         pass
 
 
-if __name__ == "__main__":
-    utils.print_banner("Reading Config")
-    cfg = utils.load_cfg()
-
+def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["kubeflow"]["region"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
@@ -121,3 +118,8 @@ if __name__ == "__main__":
 
         # delete hosted zone
         subdomain_hosted_zone.delete_hosted_zone()
+
+if __name__ == "__main__":
+    utils.print_banner("Reading Config")
+    cfg = utils.load_cfg()
+    delete_cognito_dependency_resources(cfg)

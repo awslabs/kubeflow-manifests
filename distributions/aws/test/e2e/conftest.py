@@ -22,6 +22,16 @@ def pytest_addoption(parser):
         action="store",
         help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
     )
+    parser.addoption(
+        "--root-domain-name",
+        action="store",
+        help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
+    )
+    parser.addoption(
+        "--root-domain-hosted-zone-id",
+        action="store",
+        help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
+    )
 
 
 def keep_successfully_created_resource(request):
@@ -44,3 +54,21 @@ def region(metadata, request):
     region = request.config.getoption("--region")
     metadata.insert("region", region)
     return region
+
+
+@pytest.fixture(scope="class")
+def root_domain_name(metadata, request):
+    cognito_deps = metadata.get("cognito_dependencies")
+    if cognito_deps:
+        return cognito_deps["route53"]["rootDomain"]["name"]
+
+    return request.config.getoption("--root-domain-name")
+
+
+@pytest.fixture(scope="class")
+def root_domain_hosted_zone_id(metadata, request):
+    cognito_deps = metadata.get("cognito_dependencies")
+    if cognito_deps:
+        return cognito_deps["route53"]["rootDomain"]["hostedZoneId"]
+
+    return request.config.getoption("--root-domain-hosted-zone-id")

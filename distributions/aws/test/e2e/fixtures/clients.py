@@ -4,6 +4,7 @@ Client fixtures module
 
 import subprocess
 import time
+import boto3
 import requests
 
 import pytest
@@ -20,8 +21,7 @@ from e2e.utils.constants import (
 
 
 def client_from_config(cluster, region):
-    context = f"Administrator@{cluster}.{region}.eksctl.io"
-    return config.new_client_from_config(context=context)
+    return config.new_client_from_config()
 
 
 def k8s_core_api_client(cluster, region):
@@ -119,3 +119,8 @@ def kfp_client(port_forward, host, client_namespace, session_cookie):
     ] = client_namespace  # needs to be set for list_experiments
 
     return client
+
+
+@pytest.fixture(scope="class")
+def account_id():
+    return boto3.client("sts").get_caller_identity().get("Account")

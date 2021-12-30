@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import utils
+from . import common as utils
 
-from aws.acm import AcmCertificate
-from aws.cognito import CustomDomainCognitoUserPool
-from aws.route53 import Route53HostedZone
+from .aws.acm import AcmCertificate
+from .aws.cognito import CustomDomainCognitoUserPool
+from .aws.route53 import Route53HostedZone
 from typing import Tuple
 
 

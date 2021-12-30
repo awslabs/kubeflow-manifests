@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import utils
+from . import common as utils
 
-from aws.elbv2 import ElasticLoadBalancingV2
-from aws.route53 import Route53HostedZone
+from .aws.elbv2 import ElasticLoadBalancingV2
+from .aws.route53 import Route53HostedZone
 
 
 logging.basicConfig(level=logging.INFO)
