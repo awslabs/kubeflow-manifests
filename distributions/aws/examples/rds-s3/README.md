@@ -52,6 +52,7 @@ eksctl create cluster \
 4. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
+This bucket will be used to store artifacts from pipelines.
 
 ```
 export S3_BUCKET=<YOUR_S3_BUCKET_NAME>
@@ -61,37 +62,47 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 
 5. Create RDS Instance
 
-Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. 
+Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
 
-6. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+6. Create Secrets in AWS Secrets Manager
+    1. Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+        - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
+        - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
+        - ```
+          aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","dbname":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION 
+          ```
+    1. Configure a secret named `s3-secret` with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
+        - Find more details about configuring/getting your AWS credentials here:
+        https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
+        - ```
+          aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
+          ```
 
-Run the following commands to enable oidc and create an iamserviceaccount with permissions to retrieve secrets from AWS Secrets Manager
+7. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 
-```
-eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLUSTER_NAME --approve
+    1. Run the following commands to enable oidc and create an iamserviceaccount with permissions to retrieve the secrets created from AWS Secrets Manager
 
-kubectl create namespace kubeflow
+    ```
+    eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLUSTER_NAME --approve
 
-eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster $CLUSTER_NAME --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region $CLUSTER_REGION
-```
+    eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster $CLUSTER_NAME --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region $CLUSTER_REGION
+    ```
 
-Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
-```
-# You will first need to clone the secrets-store-csi-driver repo.
-git clone -b v1.0.0 --single-branch https://github.com/kubernetes-sigs/secrets-store-csi-driver.git && cd secrets-store-csi-driver
-kubectl apply -f deploy/rbac-secretproviderclass.yaml
-kubectl apply -f deploy/csidriver.yaml
-kubectl apply -f deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
-kubectl apply -f deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
-kubectl apply -f deploy/secrets-store-csi-driver.yaml
-kubectl apply -f deploy/rbac-secretprovidersyncing.yaml
+    2. Run these commands to install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+   ```
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretproviderclass.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/csidriver.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store-csi-driver.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretprovidersyncing.yaml
 
-kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
-```
+    kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
+   ```
 
 ### 2. Configure Kubeflow Pipelines
 
-1. Configure the following files in `apps/pipeline/upstream/env/aws` directory:
+1. Configure the following file in `apps/pipeline/upstream/env/aws` directory:
 
     1. Configure `apps/pipeline/upstream/env/aws/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites). 
         - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
@@ -102,33 +113,6 @@ kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-
           minioServiceHost=s3.amazonaws.com
           minioServiceRegion=us-west-2
           ```
-    1. Configure an AWS secret with your RDS database username and password that were configured when following the steps in Create RDS Instance.
-        - For example, if your username is `admin` and your password is `Kubefl0w` then your secret should look like:
-        - **Note:** These are the default values for database credentials in cloudformation template for creating the RDS instance, change these according to the values you used
-        - ```
-          aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w"}'  --region $CLUSTER_REGION
-          ```
-    1. Configure an AWS secret with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
-        - Find more details about configuring/getting your AWS credentials here:
-        https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
-        - ```
-          aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}'  --region $CLUSTER_REGION
-          ```
-
-### 3. Configure Katib
-
-
-1. Configure the `apps/katib/upstream/installs/katib-external-db-with-kubeflow/secrets.env` file with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
-    - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your `secrets.env` file should look like:
-    - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
-    - ```
-      KATIB_MYSQL_DB_DATABASE=kubeflow
-      KATIB_MYSQL_DB_HOST=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-      KATIB_MYSQL_DB_PORT=3306
-      DB_USER=admin
-      DB_PASSWORD=Kubefl0w
-      ```
-
 
 ### 4. Build Manifests and Install Kubeflow
 

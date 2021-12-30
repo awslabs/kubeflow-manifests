@@ -8,16 +8,14 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 1. Clone the repo
 1. Create an EKS cluster and
 1. Create S3 Bucket
+1. Create RDS Instance
+1. Configure AWS Secrets for RDS and S3
+1. Install AWS Secrets and Kubernetes Secrets Store CSI driver
 
-## Configure Kubeflow Pipelines for RDS and S3
+## Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
 
 Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubeflow-pipelines) section from this guide to:
-1. Create an RDS instance
-2. Substitute the RDS connection strings and credentials to be used to access the db instance and S3
-
-## Configure Katib for RDS
-Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from this guide to:
-1. Substitute the RDS connection strings and credentials to be used to access the db instance
+1. Substitute the RDS Host and S3 Bucket name used to access the dbinstance and S3
 
 ## Configure Custom Domain and Cognito
 
@@ -93,6 +91,9 @@ Follow the [Configure Katib](../rds-s3/README.md#3-configure-katib) section from
         
         # XGBoost Operator
         kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
+
+        # AWS Secret Manager
+        kustomize build distributions/aws/aws-secrets-manager/base | kubectl apply -f -
 
         # Kubeflow Pipelines
         # reapply manifest if you see an error

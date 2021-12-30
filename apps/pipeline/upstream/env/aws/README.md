@@ -33,7 +33,7 @@ aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
 Follow this [doc](https://www.kubeflow.org/docs/aws/rds/#deploy-amazon-rds-mysql-in-your-environment) to set up AWS RDS instance.
 
 4. Customize your values
-- Edit [params.env](params.env), [secret.env](secret.env) and [minio-artifact-secret-patch.env](minio-artifact-secret-patch.env)
+- Edit [params.env](params.env)
 
 5. Install
 
