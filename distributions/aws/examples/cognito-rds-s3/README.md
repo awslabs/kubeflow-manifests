@@ -12,6 +12,11 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 1. Configure AWS Secrets for RDS and S3
 1. Install AWS Secrets and Kubernetes Secrets Store CSI driver
 
+## Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
+
+Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubeflow-pipelines) section from this guide to:
+1. Substitute the RDS connection strings and credentials to be used to access the db instance and S3
+
 ## Configure Custom Domain and Cognito
 
 1. Follow the [cognito guide](../cognito/README.md) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto [section 4.0(Configure Ingress)](../cognito/README.md#40-configure-ingress) to:

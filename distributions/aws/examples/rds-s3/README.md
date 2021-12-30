@@ -65,13 +65,13 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
 
 6. Create Secrets in AWS Secrets Manager
-    1. Configure a secret named rds-secret with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+    1. Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
         - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
         - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
         - ```
           aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","dbname":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION 
           ```
-    1. Configure a secret named s3-secret with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
+    1. Configure a secret named `s3-secret` with your AWS credentials. These need to be long term credentials from an IAM user and not temporary. 
         - Find more details about configuring/getting your AWS credentials here:
         https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
         - ```
