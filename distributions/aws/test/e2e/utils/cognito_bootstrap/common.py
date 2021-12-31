@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-CONFIG_FILE = "./config.yaml"
+CONFIG_FILE = "./utils/cognito_bootstrap/config.yaml"
 
 # For creating an alias record to other AWS resource, route53 needs hosted zone id and DNS name.
 # Since CloudFront is a global service, there is only one hosted zone id

@@ -25,12 +25,12 @@ def pytest_addoption(parser):
     parser.addoption(
         "--root-domain-name",
         action="store",
-        help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
+        help="Root domain name for which subdomain will be created. Required for tests which use cognito",
     )
     parser.addoption(
         "--root-domain-hosted-zone-id",
         action="store",
-        help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
+        help="Hosted zone id of the root domain. Required for tests which use cognito",
     )
 
 
@@ -52,6 +52,8 @@ def region(metadata, request):
         return metadata.get("region")
 
     region = request.config.getoption("--region")
+    if not region:
+        pytest.fail("--region is required")
     metadata.insert("region", region)
     return region
 

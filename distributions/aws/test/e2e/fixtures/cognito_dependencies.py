@@ -32,9 +32,15 @@ from e2e.utils.custom_resources import get_ingress
 def cognito_bootstrap(
     metadata, region, request, root_domain_name, root_domain_hosted_zone_id
 ):
-    subdomain_name = rand_name("platform") + "." + root_domain_name
+    if not root_domain_name or not root_domain_hosted_zone_id:
+        pytest.fail("--root-domain-name and --root-domain-hosted-zone-id required for cognito related tests")
 
-    cognito_deps = {}
+    subdomain_name = rand_name("platform") + "." + root_domain_name
+    cognito_deps = {
+        "kubeflow": {
+            "region": region
+        }
+    }
 
     def on_create():
         root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -85,10 +91,11 @@ def cognito_bootstrap(
             "domainAliasTarget": cognito_userpool.cloudfront_domain,
         }
 
-        cognito_deps["kubeflow"] = {"region": region}
-
     def on_delete():
         cfg = metadata.get("cognito_dependencies") or cognito_deps
+        alb_dns = metadata.get("alb_dns")
+        if alb_dns:
+            cfg["kubeflow"]["ALBDNS"] = alb_dns
         delete_cognito_dependency_resources(cfg)
 
     return configure_resource_fixture(
@@ -141,10 +148,11 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
                 load_json_file("../../infra_configs/iam_alb_ingress_policy.json")
             )
         )
+        role_arn = response["Role"]["Arn"]
         alb_sa_filepath = "../../aws-alb-ingress-controller/base/service-account.yaml"
         alb_sa = load_cfg(alb_sa_filepath)
         alb_sa["metadata"]["annotations"] = {
-            "eks.amazonaws.com/role-arn": response["Role"]["Arn"]
+            "eks.amazonaws.com/role-arn": role_arn
         }
         write_cfg(alb_sa, alb_sa_filepath)
 
@@ -161,7 +169,7 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
         )
         profile_sa = load_cfg(profile_sa_filepath)
         profile_sa["metadata"]["annotations"] = {
-            "eks.amazonaws.com/role-arn": response["Role"]["Arn"]
+            "eks.amazonaws.com/role-arn": role_arn
         }
         write_cfg(profile_sa, profile_sa_filepath)
 
@@ -228,22 +236,31 @@ def wait_for_alb_dns(cluster, region):
 
         assert ingress.get("status") is not None
         assert ingress["status"]["loadBalancer"] is not None
-        assert ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
-
+        assert len(ingress["status"]["loadBalancer"]["ingress"]) > 0
+        assert ingress["status"]["loadBalancer"]["ingress"][0].get("hostname", None) is not None
     wait_for(callback)
 
 
 @pytest.fixture(scope="class")
-def post_deployment_dns_update(region, cluster, cognito_bootstrap, kustomize):
-    wait_for_alb_dns(cluster, region)
-    ingress = get_ingress(cluster, region)
-    alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+def post_deployment_dns_update(metadata, region, request, cluster, cognito_bootstrap, kustomize):
 
-    update_hosted_zone_with_alb(
-        subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],
-        subdomain_hosted_zone_id=cognito_bootstrap["route53"]["subDomain"][
-            "hostedZoneId"
-        ],
-        alb_dns=alb_dns,
-        deployment_region=region,
+    alb_dns = None
+    def on_create():
+        wait_for_alb_dns(cluster, region)
+        ingress = get_ingress(cluster, region)
+        alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+        update_hosted_zone_with_alb(
+            subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],
+            subdomain_hosted_zone_id=cognito_bootstrap["route53"]["subDomain"][
+                "hostedZoneId"
+            ],
+            alb_dns=alb_dns,
+            deployment_region=region,
+        )
+
+    def on_delete():
+        pass
+
+    return configure_resource_fixture(
+        metadata, request, alb_dns, "alb_dns", on_create, on_delete
     )

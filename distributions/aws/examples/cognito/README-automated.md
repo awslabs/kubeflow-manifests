@@ -11,7 +11,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
 1. The following steps automate [section 1.0(Custom Domain)](./README.md#10-custom-domain), [section 2.0(certificates)](./README.md#20-certificate) and [section 3.0(Cognito user pool)](./README.md#30-cognito-user-pool) of the cognito guide to create a custom domain to host Kubeflow, TLS certificates for the domain and create a Cognito Userpool respectively.
     1. Install dependencies for the scripts
         ```
-        pip install -r distributions/aws/test/e2e/utils/cognito_bootstrap/requirements.txt
+        pip install -r distributions/aws/test/e2e/requirements.txt
         ```
     1. Substitute values in `distributions/aws/test/e2e/utils/cognito_bootstrap/config.yaml`.
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
@@ -34,8 +34,8 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                 ```
     1. Run the script to create the resources
         1. ```
-            cd distributions/aws/test/e2e/utils/cognito_bootstrap
-            PYTHONPATH=.. python cognito_pre_deployment.py
+            cd distributions/aws/test/e2e
+            PYTHONPATH=.. python utils/cognito_bootstrap/cognito_pre_deployment.py
             cd -
             ```
     1. The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
@@ -82,8 +82,8 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             ```
     1. Run the following script to update the subdomain with ALB address
         1. ```
-            cd distributions/aws/test/e2e/utils/cognito_bootstrap
-            PYTHONPATH=.. python cognito_post_deployment.py
+            cd distributions/aws/test/e2e
+            PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
 1. Follow the rest of the cognito guide from [section 7.0(Connecting to central dashboard)](./README.md#70-connecting-to-central-dashboard) to:

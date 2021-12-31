@@ -22,7 +22,7 @@ def kustomize_path():
 
 
 @pytest.fixture(scope="class")
-def configure_manifests(region, cluster, configure_ingress, cognito_bootstrap):
+def configure_manifests(region, cluster, configure_ingress):
     print(
         "fixture to introduce dependency to setup cognito related resources before applying manifests"
     )
@@ -30,12 +30,12 @@ def configure_manifests(region, cluster, configure_ingress, cognito_bootstrap):
 
 class TestCognito:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, configure_ingress):
+    def setup(self, metadata, post_deployment_dns_update):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestSanity", metadata_file)
 
-    def test_url_is_up(self, setup, cognito_bootstrap, post_deployment_dns_update):
+    def test_url_is_up(self, setup, cognito_bootstrap):
         subdomain_name = cognito_bootstrap["route53"]["subDomain"]["name"]
         kubeflow_endpoint = "https://kubeflow." + subdomain_name
         response = requests.get(kubeflow_endpoint)

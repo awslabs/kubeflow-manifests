@@ -1,9 +1,10 @@
 import logging
-from . import common as utils
+from e2e.utils.cognito_bootstrap import common as utils
 
-from .aws.acm import AcmCertificate
-from .aws.cognito import CustomDomainCognitoUserPool
-from .aws.route53 import Route53HostedZone
+from e2e.utils.cognito_bootstrap.aws.acm import AcmCertificate
+from e2e.utils.cognito_bootstrap.aws.elbv2 import ElasticLoadBalancingV2
+from e2e.utils.cognito_bootstrap.aws.cognito import CustomDomainCognitoUserPool
+from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
 
 
 logging.basicConfig(level=logging.INFO)
@@ -58,6 +59,12 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     except Exception:
         pass
 
+def delete_alb(dns: str, region: str):
+    try:
+        alb = ElasticLoadBalancingV2(dns=dns, region=region)
+        alb.delete()
+    except Exception:
+        pass
 
 def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["kubeflow"]["region"]
@@ -110,6 +117,11 @@ def delete_cognito_dependency_resources(cfg: dict):
                 domain_cert_arn=subdomain_cert_deployment_region.arn,
                 region=deployment_region,
             )
+        
+        # delete ALB
+        alb_dns = cfg["kubeflow"].get("ALBDNS", None)
+        if alb_dns:
+            delete_alb(alb_dns, deployment_region)
 
         # delete subdomain certs
         if deployment_region != "us-east-1":
