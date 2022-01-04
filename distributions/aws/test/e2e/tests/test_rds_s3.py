@@ -146,7 +146,7 @@ def rds_s3_secrets(cfn_client, cfn_stack, region, metadata, request):
     rds_secret = {
         "username": cfn_stack["params"]["DBUsername"],
         "password": cfn_stack["params"]["DBPassword"],
-        "dbname": "kubeflow",
+        "database": "kubeflow",
         "host": stack_outputs["RDSEndpoint"],
         "port": "3306",
     }
