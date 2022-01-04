@@ -35,6 +35,16 @@ def delete_cluster(cluster_name, region):
     assert retcode == 0
 
 
+def associate_iam_oidc_provider(cluster_name, region):
+    cmd = []
+    cmd += "eksctl utils associate-iam-oidc-provider".split()
+    cmd += f"--region {region}".split()
+    cmd += f"--cluster {cluster_name}".split()
+    cmd += "--approve".split()
+
+    subprocess.call(cmd)
+
+
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):
     """

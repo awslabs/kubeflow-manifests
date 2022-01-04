@@ -11,9 +11,9 @@ This guide assumes you have python3 installed and completed the pre-requisites f
 1. The following steps automate [section 1.0(Custom Domain)](./README.md#10-custom-domain), [section 2.0(certificates)](./README.md#20-certificate) and [section 3.0(Cognito user pool)](./README.md#30-cognito-user-pool) of the cognito guide to create a custom domain to host Kubeflow, TLS certificates for the domain and create a Cognito Userpool respectively.
     1. Install dependencies for the scripts
         ```
-        pip install -r distributions/aws/infra_configs/scripts/requirements.txt
+        pip install -r distributions/aws/test/e2e/requirements.txt
         ```
-    1. Substitute values in `distributions/aws/infra_configs/scripts/config.yaml`.
+    1. Substitute values in `distributions/aws/test/e2e/utils/cognito_bootstrap/config.yaml`.
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
             1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
         1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](./README.md#10-custom-domain) to understand why we use a subdomain.
@@ -34,8 +34,8 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                 ```
     1. Run the script to create the resources
         1. ```
-            cd distributions/aws/infra_configs
-            PYTHONPATH=.. python scripts/cognito_pre_deployment.py
+            cd distributions/aws/test/e2e
+            PYTHONPATH=.. python utils/cognito_bootstrap/cognito_pre_deployment.py
             cd -
             ```
     1. The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
@@ -74,7 +74,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
             ```
         2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
-    1. Substitute the ALB address under `kubeflow.ALBDNS` in `distributions/aws/infra_configs/scripts/config.yaml`. The kubeflow section of the config file will look like:
+    1. Substitute the ALB address under `kubeflow.ALBDNS` in `distributions/aws/test/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
         1. ```
             kubeflow:
                 ALBDNS: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
@@ -82,8 +82,8 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             ```
     1. Run the following script to update the subdomain with ALB address
         1. ```
-            cd distributions/aws/infra_configs
-            PYTHONPATH=.. python scripts/cognito_post_deployment.py
+            cd distributions/aws/test/e2e
+            PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
 1. Follow the rest of the cognito guide from [section 7.0(Connecting to central dashboard)](./README.md#70-connecting-to-central-dashboard) to:
