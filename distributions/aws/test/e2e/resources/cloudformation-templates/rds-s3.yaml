@@ -65,23 +65,23 @@ Parameters:
     Default: 'false'
     AllowedValues: ['true', 'false']
     ConstraintDescription: must be true or false.
-  RDSSecretString:
-    Description: Secret string for RDS secrets
-    Type: String
-  S3SecretString:
-    Description: Secret string for S3 secrets
-    Type: String
+  # RDSSecretString:
+  #   Description: Secret string for RDS secrets
+  #   Type: String
+  # S3SecretString:
+  #   Description: Secret string for S3 secrets
+  #   Type: String
 Resources:
-  MyRDSSecret:
-    Type: 'AWS::SecretsManager::Secret'
-    Properties:
-      Name: rds-secret
-      SecretString: !Ref RDSSecretString
-  MyS3Secret:
-    Type: 'AWS::SecretsManager::Secret'
-    Properties:
-      Name: s3-secret
-      SecretString: !Ref S3SecretString
+  # MyRDSSecret:
+  #   Type: 'AWS::SecretsManager::Secret'
+  #   Properties:
+  #     Name: rds-secret
+  #     SecretString: !Ref RDSSecretString
+  # MyS3Secret:
+  #   Type: 'AWS::SecretsManager::Secret'
+  #   Properties:
+  #     Name: s3-secret
+  #     SecretString: !Ref S3SecretString
   MySQLSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -117,12 +117,12 @@ Resources:
       EngineVersion: '8.0.17'
       MultiAZ:
         Ref: MultiAZ
-      # MasterUsername:
-        # Ref: DBUsername
-      # MasterUserPassword:
-      #   Ref: DBPassword
-      MasterUsername: '{{resolve:secretsmanager:rds-secret:SecretString:username}}'
-      MasterUserPassword: '{{resolve:secretsmanager:rds-secret:SecretString:password}}'
+      MasterUsername:
+        Ref: DBUsername
+      MasterUserPassword:
+        Ref: DBPassword
+      # MasterUsername: '{{resolve:secretsmanager:rds-secret:SecretString:username}}'
+      # MasterUserPassword: '{{resolve:secretsmanager:rds-secret:SecretString:password}}'
       DBSubnetGroupName:
         Ref: MyDBSubnetGroup
       VPCSecurityGroups:

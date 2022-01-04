@@ -12,7 +12,7 @@ from e2e.utils.utils import (
     WaitForCircuitBreakerError,
     unmarshal_yaml,
 )
-from e2e.utils.config import metadata, configure_env_file
+from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
 
 from e2e.conftest import (
     region,
@@ -35,6 +35,7 @@ from e2e.fixtures.clients import (
     cfn_client,
     ec2_client,
     s3_client,
+    create_secrets_manager_client,
     create_k8s_admission_registration_api_client,
     create_mysql_client,
 )
@@ -68,7 +69,7 @@ def kustomize_path():
 
 
 @pytest.fixture(scope="class")
-def cfn_stack(metadata, cluster, cfn_client, ec2_client, aws_secrets_driver, request):
+def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
     stack_name = rand_name("test-e2e-rds-stack-")
 
     resp = ec2_client.describe_vpcs(
@@ -106,16 +107,6 @@ def cfn_stack(metadata, cluster, cfn_client, ec2_client, aws_secrets_driver, req
     instances = [i for r in resp["Reservations"] for i in r["Instances"]]
     security_groups = [i["SecurityGroups"][0]["GroupId"] for i in instances]
 
-    rds_secret = {
-        "username": rand_name("admin"),
-        "password": rand_name("Kubefl0w"),
-    }
-
-    s3_secret = {
-        "accesskey": get_accesskey(request),
-        "secretkey": get_secretkey(request),
-    }
-
     return create_cloudformation_fixture(
         metadata=metadata,
         request=request,
@@ -129,22 +120,16 @@ def cfn_stack(metadata, cluster, cfn_client, ec2_client, aws_secrets_driver, req
             "VpcId": vpc_id,
             "Subnets": ",".join(public_subnets),
             "SecurityGroupId": security_groups[0],
-            "DBUsername": rds_secret[
-                "username"
-            ],  # remove once katib secrets manager added
-            "DBPassword": rds_secret[
-                "password"
-            ],  # remove once katib secrets manager added
-            "RDSSecretString": create_secret_string(rds_secret),
-            "S3SecretString": create_secret_string(s3_secret),
+            "DBUsername": rand_name("admin"),
+            "DBPassword": rand_name("Kubefl0w"),
         },
     )
 
 
 KFP_MANIFEST_FOLDER = "../../../../apps/pipeline/upstream/env/aws"
-KATIB_MANIFEST_FOLDER = (
-    "../../../../apps/katib/upstream/installs/katib-external-db-with-kubeflow"
-)
+# KATIB_MANIFEST_FOLDER = (
+#     "../../../../apps/katib/upstream/installs/katib-external-db-with-kubeflow"
+# )
 
 # KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE = (
 #     KFP_MANIFEST_FOLDER + "/minio-artifact-secret-patch.env"
@@ -152,11 +137,57 @@ KATIB_MANIFEST_FOLDER = (
 KFP_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/params.env"
 # KFP_SECRET_ENV_FILE = KFP_MANIFEST_FOLDER + "/secret.env"
 
-KATIB_SECRETS_ENV_FILE = KATIB_MANIFEST_FOLDER + "/secrets.env"
+# KATIB_SECRETS_ENV_FILE = KATIB_MANIFEST_FOLDER + "/secrets.env"
+
+@pytest.fixture(scope="class")
+def rds_s3_secrets(cfn_client, cfn_stack, region, metadata, request):
+    stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
+
+    rds_secret = {
+        "username": cfn_stack["params"]["DBUsername"],
+        "password": cfn_stack["params"]["DBPassword"],
+        "dbname": "kubeflow",
+        "host": stack_outputs["RDSEndpoint"],
+        "port": "3306",
+    }
+
+    s3_secret = {
+        "accesskey": get_accesskey(request),
+        "secretkey": get_secretkey(request),
+    }
+
+
+    def on_create():
+        secrets_manager_client = create_secrets_manager_client(region)
+        secrets_manager_client.create_secret(
+            Name='rds-secret',
+            SecretString=create_secret_string(rds_secret),
+        )
+        secrets_manager_client.create_secret(
+            Name='s3-secret',
+            SecretString=create_secret_string(s3_secret),
+        )
+
+    def on_delete():
+        secrets_manager_client = create_secrets_manager_client(region)
+        secrets_manager_client.delete_secret(
+            SecretId='rds-secret',
+            ForceDeleteWithoutRecovery=True
+        )
+        secrets_manager_client.delete_secret(
+            SecretId='s3-secret',
+            ForceDeleteWithoutRecovery=True
+        )
+
+
+    return configure_resource_fixture(
+        metadata, request, "created", "rds-s3-secrets", on_create, on_delete
+    )
+
 
 
 @pytest.fixture(scope="class")
-def configure_manifests(cfn_client, cfn_stack, region, request):
+def configure_manifests(cfn_client, cfn_stack, rds_s3_secrets, aws_secrets_driver, region, request):
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
     # configure_env_file(
@@ -185,16 +216,16 @@ def configure_manifests(cfn_client, cfn_stack, region, request):
     #     },
     # )
 
-    configure_env_file(
-        env_file_path=KATIB_SECRETS_ENV_FILE,
-        env_dict={
-            "KATIB_MYSQL_DB_DATABASE": "kubeflow",
-            "KATIB_MYSQL_DB_HOST": stack_outputs["RDSEndpoint"],
-            "KATIB_MYSQL_DB_PORT": "3306",
-            "DB_USER": cfn_stack["params"]["DBUsername"],
-            "DB_PASSWORD": cfn_stack["params"]["DBPassword"],
-        },
-    )
+    # configure_env_file(
+    #     env_file_path=KATIB_SECRETS_ENV_FILE,
+    #     env_dict={
+    #         "KATIB_MYSQL_DB_DATABASE": "kubeflow",
+    #         "KATIB_MYSQL_DB_HOST": stack_outputs["RDSEndpoint"],
+    #         "KATIB_MYSQL_DB_PORT": "3306",
+    #         "DB_USER": cfn_stack["params"]["DBUsername"],
+    #         "DB_PASSWORD": cfn_stack["params"]["DBPassword"],
+    #     },
+    # )
 
 
 @pytest.fixture(scope="class")

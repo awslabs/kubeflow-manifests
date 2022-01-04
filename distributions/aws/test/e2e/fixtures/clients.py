@@ -151,6 +151,9 @@ def ec2_client(region):
 def s3_client(region):
     return boto3.client("s3", region_name=region)
 
+def create_secrets_manager_client(region):
+    return boto3.client("secretsmanager", region_name=region)
+
 
 def create_mysql_client(
     user, password, host, database
