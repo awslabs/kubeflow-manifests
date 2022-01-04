@@ -2,11 +2,13 @@
 Generic helper methods module
 """
 
+import json
 import os
 import time
 import random
 import string
 import yaml
+import boto3
 
 
 def safe_open(filepath, mode="r"):
@@ -76,3 +78,20 @@ def rand_name(prefix):
         random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
     )
     return prefix + suffix
+
+
+def load_json_file(filepath):
+    with open(filepath) as file:
+        return json.load(file)
+
+
+def get_eks_client(region):
+    return boto3.client("eks", region_name=region)
+
+
+def get_iam_client(region):
+    return boto3.client("iam", region_name=region)
+
+
+def get_ec2_client(region):
+    return boto3.client("ec2", region_name=region)

@@ -47,11 +47,11 @@ class Metadata:
         return self.params[key]
 
     def to_file(self):
-        filename = "metadata-" + str(time.time_ns())
+        filename = "metadata-" + str(time.time_ns()) + ".json"
         filepath = os.path.abspath(os.path.join(METADATA_FOLDER, filename))
 
         with safe_open(filepath, "w") as file:
-            json.dump(self.params, file)
+            json.dump(self.params, file, indent=4)
 
         return filepath
 
@@ -103,3 +103,18 @@ def configure_resource_fixture(
 
     successful_creation = True
     return metadata.get(metadata_key)
+
+
+def configure_env_file(env_file_path, env_dict):
+    """
+    Overwrite the contents of a .env file with the input env vars to configure with.
+    E.g.
+        Inputs:
+        env_file_path='/path/to/file/params.env'
+        env_dict={'DB_HOST': 'https://rds.amazon.com/abcde'}
+        Contents of `env_file_path` will become:
+            DB_HOST=https://rds.amazon.com/abcde
+    """
+    with open(env_file_path, "w") as file:
+        for key, value in env_dict.items():
+            file.write(f"{key}={value}\n")

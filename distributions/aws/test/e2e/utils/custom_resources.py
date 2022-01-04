@@ -73,3 +73,15 @@ def delete_katib_experiment(cluster, region, namespace, name):
         plural="experiments",
         name=name,
     )
+
+
+def get_ingress(cluster, region, name="istio-ingress", namespace="istio-system"):
+    return get_namespaced_resource(
+        cluster,
+        region,
+        group="networking.k8s.io",
+        version="v1beta1",
+        namespace=namespace,
+        plural="ingresses",
+        name=name,
+    )

@@ -1,9 +1,10 @@
 import logging
-import utils
+from e2e.utils.cognito_bootstrap import common as utils
 
-from aws.acm import AcmCertificate
-from aws.cognito import CustomDomainCognitoUserPool
-from aws.route53 import Route53HostedZone
+from e2e.utils.cognito_bootstrap.aws.acm import AcmCertificate
+from e2e.utils.cognito_bootstrap.aws.elbv2 import ElasticLoadBalancingV2
+from e2e.utils.cognito_bootstrap.aws.cognito import CustomDomainCognitoUserPool
+from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
 
 
 logging.basicConfig(level=logging.INFO)
@@ -49,7 +50,7 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     try:
         # delete the subdomain entry from the root domain
         subdomain_NS_record = subdomain_hosted_zone.generate_change_record(
-            record_name=subdomain_name,
+            record_name=subdomain_hosted_zone.domain,
             record_type="NS",
             record_value=subdomain_hosted_zone.get_name_servers(),
             action="DELETE",
@@ -58,11 +59,14 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     except Exception:
         pass
 
+def delete_alb(dns: str, region: str):
+    try:
+        alb = ElasticLoadBalancingV2(dns=dns, region=region)
+        alb.delete()
+    except Exception:
+        pass
 
-if __name__ == "__main__":
-    utils.print_banner("Reading Config")
-    cfg = utils.load_cfg()
-
+def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["kubeflow"]["region"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
@@ -113,6 +117,11 @@ if __name__ == "__main__":
                 domain_cert_arn=subdomain_cert_deployment_region.arn,
                 region=deployment_region,
             )
+        
+        # delete ALB
+        alb_dns = cfg["kubeflow"].get("ALBDNS", None)
+        if alb_dns:
+            delete_alb(alb_dns, deployment_region)
 
         # delete subdomain certs
         if deployment_region != "us-east-1":
@@ -121,3 +130,8 @@ if __name__ == "__main__":
 
         # delete hosted zone
         subdomain_hosted_zone.delete_hosted_zone()
+
+if __name__ == "__main__":
+    utils.print_banner("Reading Config")
+    cfg = utils.load_cfg()
+    delete_cognito_dependency_resources(cfg)
