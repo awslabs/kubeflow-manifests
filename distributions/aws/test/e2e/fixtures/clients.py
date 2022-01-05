@@ -136,28 +136,3 @@ def kfp_client(port_forward, host, client_namespace, session_cookie):
 @pytest.fixture(scope="class")
 def account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
-
-@pytest.fixture(scope="class")
-def cfn_client(region):
-    return boto3.client("cloudformation", region_name=region)
-
-
-@pytest.fixture(scope="class")
-def ec2_client(region):
-    return boto3.client("ec2", region_name=region)
-
-
-@pytest.fixture(scope="class")
-def s3_client(region):
-    return boto3.client("s3", region_name=region)
-
-def create_secrets_manager_client(region):
-    return boto3.client("secretsmanager", region_name=region)
-
-
-def create_mysql_client(
-    user, password, host, database
-) -> mysql.connector.MySQLConnection:
-    return mysql.connector.connect(
-        user=user, password=password, host=host, database=database
-    )

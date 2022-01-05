@@ -33,14 +33,12 @@ def cognito_bootstrap(
     metadata, region, request, root_domain_name, root_domain_hosted_zone_id
 ):
     if not root_domain_name or not root_domain_hosted_zone_id:
-        pytest.fail("--root-domain-name and --root-domain-hosted-zone-id required for cognito related tests")
+        pytest.fail(
+            "--root-domain-name and --root-domain-hosted-zone-id required for cognito related tests"
+        )
 
     subdomain_name = rand_name("platform") + "." + root_domain_name
-    cognito_deps = {
-        "kubeflow": {
-            "region": region
-        }
-    }
+    cognito_deps = {"kubeflow": {"region": region}}
 
     def on_create():
         root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -151,9 +149,7 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
         role_arn = response["Role"]["Arn"]
         alb_sa_filepath = "../../aws-alb-ingress-controller/base/service-account.yaml"
         alb_sa = load_cfg(alb_sa_filepath)
-        alb_sa["metadata"]["annotations"] = {
-            "eks.amazonaws.com/role-arn": role_arn
-        }
+        alb_sa["metadata"]["annotations"] = {"eks.amazonaws.com/role-arn": role_arn}
         write_cfg(alb_sa, alb_sa_filepath)
 
         profile_controller_policy = iam_resource.RolePolicy(
@@ -168,9 +164,7 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
             "../../aws-alb-ingress-controller/base/service-account.yaml"
         )
         profile_sa = load_cfg(profile_sa_filepath)
-        profile_sa["metadata"]["annotations"] = {
-            "eks.amazonaws.com/role-arn": role_arn
-        }
+        profile_sa["metadata"]["annotations"] = {"eks.amazonaws.com/role-arn": role_arn}
         write_cfg(profile_sa, profile_sa_filepath)
 
     def on_delete():
@@ -237,14 +231,21 @@ def wait_for_alb_dns(cluster, region):
         assert ingress.get("status") is not None
         assert ingress["status"]["loadBalancer"] is not None
         assert len(ingress["status"]["loadBalancer"]["ingress"]) > 0
-        assert ingress["status"]["loadBalancer"]["ingress"][0].get("hostname", None) is not None
+        assert (
+            ingress["status"]["loadBalancer"]["ingress"][0].get("hostname", None)
+            is not None
+        )
+
     wait_for(callback)
 
 
 @pytest.fixture(scope="class")
-def post_deployment_dns_update(metadata, region, request, cluster, cognito_bootstrap, kustomize):
+def post_deployment_dns_update(
+    metadata, region, request, cluster, cognito_bootstrap, kustomize
+):
 
     alb_dns = None
+
     def on_create():
         wait_for_alb_dns(cluster, region)
         ingress = get_ingress(cluster, region)

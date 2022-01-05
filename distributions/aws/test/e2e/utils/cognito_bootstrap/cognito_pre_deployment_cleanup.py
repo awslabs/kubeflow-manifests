@@ -45,7 +45,10 @@ def delete_cert(acm_certificate):
 
 
 def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
-    root_hosted_zone = Route53HostedZone(domain=domain_name, id=hosted_zone_id,)
+    root_hosted_zone = Route53HostedZone(
+        domain=domain_name,
+        id=hosted_zone_id,
+    )
 
     try:
         # delete the subdomain entry from the root domain
@@ -59,12 +62,14 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     except Exception:
         pass
 
+
 def delete_alb(dns: str, region: str):
     try:
         alb = ElasticLoadBalancingV2(dns=dns, region=region)
         alb.delete()
     except Exception:
         pass
+
 
 def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["kubeflow"]["region"]
@@ -77,7 +82,8 @@ def delete_cognito_dependency_resources(cfg: dict):
     if subdomain_hosted_zone_id:
         subdomain_name = cfg["route53"]["subDomain"]["name"]
         subdomain_hosted_zone = Route53HostedZone(
-            domain=subdomain_name, id=subdomain_hosted_zone_id,
+            domain=subdomain_name,
+            id=subdomain_hosted_zone_id,
         )
 
         if root_domain_hosted_zone_id:
@@ -117,7 +123,7 @@ def delete_cognito_dependency_resources(cfg: dict):
                 domain_cert_arn=subdomain_cert_deployment_region.arn,
                 region=deployment_region,
             )
-        
+
         # delete ALB
         alb_dns = cfg["kubeflow"].get("ALBDNS", None)
         if alb_dns:
@@ -130,6 +136,7 @@ def delete_cognito_dependency_resources(cfg: dict):
 
         # delete hosted zone
         subdomain_hosted_zone.delete_hosted_zone()
+
 
 if __name__ == "__main__":
     utils.print_banner("Reading Config")

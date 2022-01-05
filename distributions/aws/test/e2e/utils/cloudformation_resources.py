@@ -8,7 +8,7 @@ def create_stack(
     params={},
     capabilities=[],
     timeout=300,
-    interval=10,
+    interval=30,
 ):
     """
     Creates a cloudformation stack from a cloudformation template

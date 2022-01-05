@@ -15,4 +15,3 @@ def create_namespace(cluster, region, namespace_name):
     except ApiException as e:
         if "Conflict" != e.reason:
             raise e
-

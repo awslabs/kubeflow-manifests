@@ -152,7 +152,10 @@ if __name__ == "__main__":
 
     utils.print_banner("Creating Subdomain in Route 53")
     root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
-        subdomain_name, root_domain_name, deployment_region, root_domain_hosted_zone_id,
+        subdomain_name,
+        root_domain_name,
+        deployment_region,
+        root_domain_hosted_zone_id,
     )
     cfg["route53"]["subDomain"]["hostedZoneId"] = subdomain_hosted_zone.id
     utils.write_cfg(cfg)

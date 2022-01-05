@@ -11,6 +11,11 @@ from e2e.utils.utils import (
     rand_name,
     WaitForCircuitBreakerError,
     unmarshal_yaml,
+    get_cfn_client,
+    get_ec2_client,
+    get_s3_client,
+    get_secrets_manager_client,
+    get_mysql_client,
 )
 from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
 
@@ -32,12 +37,7 @@ from e2e.fixtures.clients import (
     login,
     password,
     client_namespace,
-    cfn_client,
-    ec2_client,
-    s3_client,
-    create_secrets_manager_client,
     create_k8s_admission_registration_api_client,
-    create_mysql_client,
 )
 
 from e2e.utils import mysql
@@ -69,8 +69,10 @@ def kustomize_path():
 
 
 @pytest.fixture(scope="class")
-def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
-    stack_name = rand_name("test-e2e-rds-stack-")
+def cfn_stack(metadata, cluster, region, request):
+    cfn_client = get_cfn_client(region)
+    ec2_client = get_ec2_client(region)
+    stack_name = rand_name("test-e2e-rds-s3-stack-")
 
     resp = ec2_client.describe_vpcs(
         Filters=[
@@ -127,20 +129,24 @@ def cfn_stack(metadata, cluster, cfn_client, ec2_client, request):
 
 
 KFP_MANIFEST_FOLDER = "../../../../apps/pipeline/upstream/env/aws"
-# KATIB_MANIFEST_FOLDER = (
-#     "../../../../apps/katib/upstream/installs/katib-external-db-with-kubeflow"
-# )
-
-# KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE = (
-#     KFP_MANIFEST_FOLDER + "/minio-artifact-secret-patch.env"
-# )
 KFP_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/params.env"
-# KFP_SECRET_ENV_FILE = KFP_MANIFEST_FOLDER + "/secret.env"
 
-# KATIB_SECRETS_ENV_FILE = KATIB_MANIFEST_FOLDER + "/secrets.env"
 
 @pytest.fixture(scope="class")
-def rds_s3_secrets(cfn_client, cfn_stack, region, metadata, request):
+def rds_s3_secrets(cfn_stack, region, metadata, request):
+    """
+    Fixture to keep track of rds and s3 AWS secret creation.
+    These secrets can't be created as part of the CFN stack because
+    the CFN implementation of secrets manager appends a random string
+    to the end of a secret name. Our current integration with secrets
+    manager has hardcoded the secret names as 'rds-secret' and 's3-secret'
+    so having a random string appended to the end of the secret name
+    would not work with our current implementation.
+
+    Todo: allow secret names to be configurable parameters
+    """
+
+    cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
     rds_secret = {
@@ -156,47 +162,35 @@ def rds_s3_secrets(cfn_client, cfn_stack, region, metadata, request):
         "secretkey": get_secretkey(request),
     }
 
-
     def on_create():
-        secrets_manager_client = create_secrets_manager_client(region)
+        secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.create_secret(
-            Name='rds-secret',
+            Name="rds-secret",
             SecretString=create_secret_string(rds_secret),
         )
         secrets_manager_client.create_secret(
-            Name='s3-secret',
+            Name="s3-secret",
             SecretString=create_secret_string(s3_secret),
         )
 
     def on_delete():
-        secrets_manager_client = create_secrets_manager_client(region)
+        secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.delete_secret(
-            SecretId='rds-secret',
-            ForceDeleteWithoutRecovery=True
+            SecretId="rds-secret", ForceDeleteWithoutRecovery=True
         )
         secrets_manager_client.delete_secret(
-            SecretId='s3-secret',
-            ForceDeleteWithoutRecovery=True
+            SecretId="s3-secret", ForceDeleteWithoutRecovery=True
         )
-
 
     return configure_resource_fixture(
         metadata, request, "created", "rds-s3-secrets", on_create, on_delete
     )
 
 
-
 @pytest.fixture(scope="class")
-def configure_manifests(cfn_client, cfn_stack, rds_s3_secrets, aws_secrets_driver, region, request):
+def configure_manifests(cfn_stack, rds_s3_secrets, aws_secrets_driver, region):
+    cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
-
-    # configure_env_file(
-    #     env_file_path=KFP_MINIO_ARTIFACT_SECRET_PATCH_ENV_FILE,
-    #     env_dict={
-    #         "accesskey": get_accesskey(request),
-    #         "secretkey": get_secretkey(request),
-    #     },
-    # )
 
     configure_env_file(
         env_file_path=KFP_PARAMS_ENV_FILE,
@@ -208,28 +202,9 @@ def configure_manifests(cfn_client, cfn_stack, rds_s3_secrets, aws_secrets_drive
         },
     )
 
-    # configure_env_file(
-    #     env_file_path=KFP_SECRET_ENV_FILE,
-    #     env_dict={
-    #         "username": cfn_stack["params"]["DBUsername"],
-    #         "password": cfn_stack["params"]["DBPassword"],
-    #     },
-    # )
-
-    # configure_env_file(
-    #     env_file_path=KATIB_SECRETS_ENV_FILE,
-    #     env_dict={
-    #         "KATIB_MYSQL_DB_DATABASE": "kubeflow",
-    #         "KATIB_MYSQL_DB_HOST": stack_outputs["RDSEndpoint"],
-    #         "KATIB_MYSQL_DB_PORT": "3306",
-    #         "DB_USER": cfn_stack["params"]["DBUsername"],
-    #         "DB_PASSWORD": cfn_stack["params"]["DBPassword"],
-    #     },
-    # )
-
 
 @pytest.fixture(scope="class")
-def delete_s3_bucket_contents(cfn_client, cfn_stack, request):
+def delete_s3_bucket_contents(cfn_stack, request, region):
     """
     Hack to clean out s3 objects since CFN does not allow deleting non-empty buckets
     nor provides a way to empty a bucket.
@@ -240,6 +215,7 @@ def delete_s3_bucket_contents(cfn_client, cfn_stack, request):
     if keep_successfully_created_resource(request):
         return
 
+    cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
     s3 = boto3.resource("s3")
@@ -310,7 +286,9 @@ class TestRDSS3:
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestRDSS3", metadata_file)
 
-    def test_kfp_experiment(self, setup, kfp_client, cfn_stack, cfn_client):
+    # todo: make test method reusable
+    def test_kfp_experiment(self, setup, kfp_client, cfn_stack, region):
+        cfn_client = get_cfn_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
         name = rand_name("experiment-")
@@ -323,7 +301,7 @@ class TestRDSS3:
         assert description == experiment.description
         assert DEFAULT_USER_NAMESPACE == experiment.resource_references[0].key.id
 
-        mysql_client = create_mysql_client(
+        mysql_client = get_mysql_client(
             user=cfn_stack["params"]["DBUsername"],
             password=cfn_stack["params"]["DBPassword"],
             host=stack_outputs["RDSEndpoint"],
@@ -363,7 +341,10 @@ class TestRDSS3:
 
         mysql_client.close()
 
-    def test_run_pipeline(self, setup, kfp_client, cfn_stack, cfn_client, s3_client):
+    # todo: make test method reusable
+    def test_run_pipeline(self, setup, kfp_client, cfn_stack, region):
+        cfn_client = get_cfn_client(region)
+        s3_client = get_s3_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
         experiment_name = rand_name("experiment-")
@@ -383,7 +364,6 @@ class TestRDSS3:
 
         assert run.name == job_name
         assert run.pipeline_spec.pipeline_id == pipeline_id
-        assert run.status == None
 
         resp = wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
 
@@ -409,7 +389,7 @@ class TestRDSS3:
         for key in s3_artifact_keys:
             assert key in content_keys
 
-        mysql_client = create_mysql_client(
+        mysql_client = get_mysql_client(
             user=cfn_stack["params"]["DBUsername"],
             password=cfn_stack["params"]["DBPassword"],
             host=stack_outputs["RDSEndpoint"],
@@ -427,7 +407,9 @@ class TestRDSS3:
 
         kfp_client.delete_experiment(experiment.id)
 
-    def test_katib_experiment(self, setup, cluster, region, cfn_stack, cfn_client):
+    # todo: make test method reusable
+    def test_katib_experiment(self, setup, cluster, region, cfn_stack):
+        cfn_client = get_cfn_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
         filepath = os.path.abspath(
@@ -448,7 +430,7 @@ class TestRDSS3:
 
         wait_for_katib_experiment_succeeded(cluster, region, namespace, name)
 
-        mysql_client = create_mysql_client(
+        mysql_client = get_mysql_client(
             user=cfn_stack["params"]["DBUsername"],
             password=cfn_stack["params"]["DBPassword"],
             host=stack_outputs["RDSEndpoint"],

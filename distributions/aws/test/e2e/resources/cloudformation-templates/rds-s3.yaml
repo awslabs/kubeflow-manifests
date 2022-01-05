@@ -1,16 +1,18 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'WARNING: This is not a recommended solution for using AWS RDS and is for testing only.
-              
-              Creates an S3 Bucket and a RDS instance. The RDS instance is accessible from outside the VPC
-              so do not publicly expose the MYSQL username and password.'
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  "WARNING: This is not a recommended solution for using AWS RDS and is for testing only.
+
+  Creates an S3 Bucket and a RDS instance. The RDS instance is accessible from outside the VPC
+  so do not publicly expose the MYSQL username and password."
 Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VpcId of your existing Virtual Private Cloud (VPC)
     ConstraintDescription: must be the VPC Id of an existing Virtual Private Cloud.
   Subnets:
-    Type: 'List<AWS::EC2::Subnet::Id>'
-    Description: The list of SubnetIds, for at least two Availability Zones in the
+    Type: "List<AWS::EC2::Subnet::Id>"
+    Description:
+      The list of SubnetIds, for at least two Availability Zones in the
       region in your Virtual Private Cloud (VPC)
     ConstraintDescription: Select at least two SubnetIds that are Private
   SecurityGroupId:
@@ -21,24 +23,24 @@ Parameters:
     Default: kubeflow
     Description: Database name for Kubeflow
     Type: String
-    MinLength: '1'
-    MaxLength: '64'
+    MinLength: "1"
+    MaxLength: "64"
     AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBUsername:
-    NoEcho: 'true'
+    NoEcho: "true"
     Description: The database admin account username
     Type: String
-    MinLength: '1'
-    MaxLength: '16'
+    MinLength: "1"
+    MaxLength: "16"
     AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBPassword:
-    NoEcho: 'true'
+    NoEcho: "true"
     Description: The database admin account password
     Type: String
-    MinLength: '8'
-    MaxLength: '41'
+    MinLength: "8"
+    MaxLength: "41"
     AllowedPattern: ".*"
     ConstraintDescription: must contain only alphanumeric characters.
   DBClass:
@@ -46,42 +48,30 @@ Parameters:
     Description: Database instance class
     Type: String
     AllowedValues:
-    - db.m5.large
-    - db.m5.xlarge
-    - db.m5.2xlarge
-    - db.m5.4xlarge
-    - db.m5.12xlarge
+      - db.m5.large
+      - db.m5.xlarge
+      - db.m5.2xlarge
+      - db.m5.4xlarge
+      - db.m5.12xlarge
     ConstraintDescription: must select a valid database instance type.
   DBAllocatedStorage:
-    Default: '20'
+    Default: "20"
     Description: The size of the database (Gb)
     Type: Number
-    MinValue: '20'
-    MaxValue: '65536'
+    MinValue: "20"
+    MaxValue: "65536"
     ConstraintDescription: must be between 20 and 65536Gb.
   MultiAZ:
     Description: Multi-AZ master database
     Type: String
-    Default: 'false'
-    AllowedValues: ['true', 'false']
+    Default: "false"
+    AllowedValues: ["true", "false"]
     ConstraintDescription: must be true or false.
-  # RDSSecretString:
-  #   Description: Secret string for RDS secrets
-  #   Type: String
+  # See MyRDSSecret and MyS3Secret below
   # S3SecretString:
   #   Description: Secret string for S3 secrets
   #   Type: String
 Resources:
-  # MyRDSSecret:
-  #   Type: 'AWS::SecretsManager::Secret'
-  #   Properties:
-  #     Name: rds-secret
-  #     SecretString: !Ref RDSSecretString
-  # MyS3Secret:
-  #   Type: 'AWS::SecretsManager::Secret'
-  #   Properties:
-  #     Name: s3-secret
-  #     SecretString: !Ref S3SecretString
   MySQLSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -89,15 +79,15 @@ Resources:
       VpcId:
         Ref: VpcId
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 3306
-        ToPort: 3306
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
-      - IpProtocol: -1
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
   MyS3Bucket:
-    Type: 'AWS::S3::Bucket'
+    Type: "AWS::S3::Bucket"
   MyDBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -114,15 +104,13 @@ Resources:
       DBInstanceClass:
         Ref: DBClass
       Engine: MySQL
-      EngineVersion: '8.0.17'
+      EngineVersion: "8.0.17"
       MultiAZ:
         Ref: MultiAZ
       MasterUsername:
         Ref: DBUsername
       MasterUserPassword:
         Ref: DBPassword
-      # MasterUsername: '{{resolve:secretsmanager:rds-secret:SecretString:username}}'
-      # MasterUserPassword: '{{resolve:secretsmanager:rds-secret:SecretString:password}}'
       DBSubnetGroupName:
         Ref: MyDBSubnetGroup
       VPCSecurityGroups:
@@ -130,6 +118,20 @@ Resources:
         - !Ref MySQLSecurityGroup
       PubliclyAccessible: True
     DeletionPolicy: Snapshot
+
+  # Currently the secret names must be rds-secret and s3-secret, however SecretsManager in CFN appends a random string to the end of a provided name
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secret.html
+  # Uncomment this section when we make secret names a configurable parameter for our secrets manager implementation
+  # MyRDSSecret:
+  #   Type: "AWS::SecretsManager::Secret"
+  #   Properties:
+  #     Name: rds-secret
+  #     SecretString: !Sub '{"username":${DBUsername},"password":${DBPassword},"database":${DBName},"host":${MyDB.Endpoint.Address},"port":${MyDB.Endpoint.Port}}'
+  # MyS3Secret:
+  #   Type: "AWS::SecretsManager::Secret"
+  #   Properties:
+  #     Name: s3-secret
+  #     SecretString: !Sub S3SecretString # This doesn't depend on any resource outputs so lets pass it in directly
 Outputs:
   RDSEndpoint:
     Description: RDS Endpoint

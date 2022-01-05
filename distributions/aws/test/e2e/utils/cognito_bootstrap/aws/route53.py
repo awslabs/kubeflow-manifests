@@ -41,7 +41,8 @@ class Route53HostedZone:
         )
         try:
             response = self.route53_client.create_hosted_zone(
-                Name=self.domain, CallerReference=f"{self.domain}-{randstr}",
+                Name=self.domain,
+                CallerReference=f"{self.domain}-{randstr}",
             )
         except ClientError:
             logger.exception(

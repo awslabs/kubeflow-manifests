@@ -10,6 +10,7 @@ import random
 import string
 import yaml
 import boto3
+import mysql.connector
 
 
 def safe_open(filepath, mode="r"):
@@ -61,7 +62,7 @@ class WaitForCircuitBreakerError(Exception):
     pass
 
 
-def wait_for(callback, timeout=300, interval=10):
+def wait_for(callback, timeout=300, interval=30):
     """
     Provide a function with no arguments as a callback.
 
@@ -108,6 +109,25 @@ def get_iam_client(region):
 
 def get_ec2_client(region):
     return boto3.client("ec2", region_name=region)
+
+
+def get_cfn_client(region):
+    return boto3.client("cloudformation", region_name=region)
+
+
+def get_s3_client(region):
+    return boto3.client("s3", region_name=region)
+
+
+def get_secrets_manager_client(region):
+    return boto3.client("secretsmanager", region_name=region)
+
+
+def get_mysql_client(user, password, host, database) -> mysql.connector.MySQLConnection:
+    return mysql.connector.connect(
+        user=user, password=password, host=host, database=database
+    )
+
 
 def kubectl_apply(path):
     cmd = f"kubectl apply -f {path}".split()
