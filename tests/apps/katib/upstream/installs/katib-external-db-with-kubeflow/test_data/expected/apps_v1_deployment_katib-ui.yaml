@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: katib-ui
+  name: katib-ui
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: katib-ui
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: katib-ui
+    spec:
+      containers:
+      - args:
+        - --port=8080
+        command:
+        - ./katib-ui
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: docker.io/kubeflowkatib/katib-ui:v0.11.1
+        name: katib-ui
+        ports:
+        - containerPort: 8080
+          name: ui
+      serviceAccountName: katib-ui
