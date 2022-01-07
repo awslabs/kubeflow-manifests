@@ -147,6 +147,14 @@ def kubectl_delete(path):
     cmd = f"kubectl delete -f {path}".split()
     subprocess.call(cmd)
 
+def kubectl_apply_kustomize(path):
+    cmd = f"kubectl apply -k {path}".split()
+    subprocess.call(cmd)
+
+def kubectl_delete_kustomize(path):
+    cmd = f"kubectl delete -k {path}".split()
+    subprocess.call(cmd)
+
 def get_aws_account_id():
     client = boto3.client('sts')
     response = client.get_caller_identity()
