@@ -37,15 +37,21 @@ def update_hosted_zone_with_alb(
     # dual stack prefix is needed when creating an alias dns record for ELB
     alb = ElasticLoadBalancingV2(dns=alb_dns, region=deployment_region)
     alb_details = alb.describe()
-    updated_subdomain_A_record = subdomain_hosted_zone.generate_change_record_type_alias_target(
-        record_name=subdomain_name,
-        record_type="A",
-        hosted_zone_id=alb_details["CanonicalHostedZoneId"],
-        dns_name="dualstack." + alb_dns,
+    updated_subdomain_A_record = (
+        subdomain_hosted_zone.generate_change_record_type_alias_target(
+            record_name=subdomain_name,
+            record_type="A",
+            hosted_zone_id=alb_details["CanonicalHostedZoneId"],
+            dns_name="dualstack." + alb_dns,
+        )
     )
 
     subdomain_hosted_zone.change_record_set(
-        [_platform_record, _default_platform_record, updated_subdomain_A_record,]
+        [
+            _platform_record,
+            _default_platform_record,
+            updated_subdomain_A_record,
+        ]
     )
 
 
