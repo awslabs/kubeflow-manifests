@@ -87,3 +87,23 @@ def cluster(metadata, region, request):
     return configure_resource_fixture(
         metadata, request, cluster_name, "cluster_name", on_create, on_delete
     )
+
+
+def create_iam_service_account(
+    service_account_name, namespace, cluster_name, region, iam_policy_arns
+):
+    cmd = []
+    cmd += "eksctl create iamserviceaccount".split()
+    cmd += f"--name {service_account_name}".split()
+    cmd += f"--namespace {namespace}".split()
+    cmd += f"--cluster {cluster_name}".split()
+    cmd += f"--region {region}".split()
+
+    for arn in iam_policy_arns:
+        cmd += f"--attach-policy-arn {arn}".split()
+
+    cmd += "--override-existing-serviceaccounts".split()
+    cmd += "--approve".split()
+
+    retcode = subprocess.call(cmd)
+    assert retcode == 0
