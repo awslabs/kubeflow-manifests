@@ -25,7 +25,11 @@ class ElasticLoadBalancingV2:
 
     def describe(self) -> dict:
         try:
-            response = self.elbv2_client.describe_load_balancers(Names=[self.name,])
+            response = self.elbv2_client.describe_load_balancers(
+                Names=[
+                    self.name,
+                ]
+            )
         except ClientError:
             logger.exception(f"Failed to describe load balancer {self.name}")
         else:
@@ -44,12 +48,14 @@ class ElasticLoadBalancingV2:
             return dns[:last_hypen_index]
         else:
             return dns_prefix
-    
+
     def get_registered_target_groups(self, alb_arn: str) -> dict:
         try:
             response = self.elbv2_client.describe_target_groups(LoadBalancerArn=alb_arn)
         except ClientError:
-            logger.exception(f"Failed to get registered target groups for load balancer {self.name}")
+            logger.exception(
+                f"Failed to get registered target groups for load balancer {self.name}"
+            )
         else:
             return response["TargetGroups"]
 
@@ -64,7 +70,7 @@ class ElasticLoadBalancingV2:
             except ClientError:
                 logger.exception(f"failed to delete target group {target_group_arn}")
                 pass
-    
+
     def get_listeners(self, alb_arn: str) -> dict:
         try:
             response = self.elbv2_client.describe_listeners(LoadBalancerArn=alb_arn)
@@ -72,7 +78,7 @@ class ElasticLoadBalancingV2:
             logger.exception(f"Failed to get listeners for load balancer {self.name}")
         else:
             return response["Listeners"]
-    
+
     def delete_listeners(self, listeners):
         for listener in listeners:
             listener_arn = listener["ListenerArn"]

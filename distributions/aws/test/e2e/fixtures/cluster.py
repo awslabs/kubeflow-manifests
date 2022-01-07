@@ -45,6 +45,25 @@ def associate_iam_oidc_provider(cluster_name, region):
     subprocess.call(cmd)
 
 
+def create_iam_service_account(
+    service_account_name, namespace, cluster_name, region, iam_policy_arns
+):
+    cmd = []
+    cmd += "eksctl create iamserviceaccount".split()
+    cmd += f"--name {service_account_name}".split()
+    cmd += f"--namespace {namespace}".split()
+    cmd += f"--cluster {cluster_name}".split()
+    cmd += f"--region {region}".split()
+
+    for arn in iam_policy_arns:
+        cmd += f"--attach-policy-arn {arn}".split()
+
+    cmd += "--override-existing-serviceaccounts".split()
+    cmd += "--approve".split()
+
+    subprocess.call(cmd)
+
+
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):
     """

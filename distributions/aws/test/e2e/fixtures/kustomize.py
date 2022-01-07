@@ -42,6 +42,11 @@ def delete_kustomize(path):
 
 
 @pytest.fixture(scope="class")
+def configure_manifests():
+    pass
+
+
+@pytest.fixture(scope="class")
 def kustomize(metadata, cluster, configure_manifests, kustomize_path, request):
     """
     This fixture is created once for each test class.
