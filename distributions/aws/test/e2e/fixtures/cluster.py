@@ -61,7 +61,8 @@ def create_iam_service_account(
     cmd += "--override-existing-serviceaccounts".split()
     cmd += "--approve".split()
 
-    subprocess.call(cmd)
+    retcode = subprocess.call(cmd)
+    assert retcode == 0
 
 
 @pytest.fixture(scope="class")
@@ -87,3 +88,4 @@ def cluster(metadata, region, request):
     return configure_resource_fixture(
         metadata, request, cluster_name, "cluster_name", on_create, on_delete
     )
+    
