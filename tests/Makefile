@@ -61,7 +61,8 @@ test: modules
 	# are buildable again, before the release. In addition, evaluate if we need
 	# the legacy kustomizations tests. Perhaps a simpler sanity test of building
 	# all kustomizations in the repo would be preferrable.
-	# @GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/...
+	@GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/apps/...
+	@GO111MODULE=on $(GO) test -v github.com/kubeflow/manifests/tests/distributions/...
 	@GO111MODULE=on $(GO) test -run TestCheckWebhookSelector -v github.com/kubeflow/manifests/tests/.
 	@GO111MODULE=on $(GO) test -run TestKustomizationHasDeprecatedEnv -v github.com/kubeflow/manifests/tests/.
 
