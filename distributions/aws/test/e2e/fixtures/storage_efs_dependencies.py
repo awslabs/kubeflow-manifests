@@ -12,6 +12,7 @@ from e2e.utils.config import configure_resource_fixture
 from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
 from e2e.utils.utils import (
     rand_name,
+    wait_for,
     get_iam_client,
     get_eks_client,
     get_ec2_client,
@@ -28,14 +29,16 @@ DEFAULT_NAMESPACE = "kube-system"
 
 
 def wait_on_efs_status(desired_status, efs_client, file_system_id):
-    filesystem_status = ""
-    while filesystem_status != desired_status:
+
+    def callback():
         response = efs_client.describe_file_systems(
             FileSystemId=file_system_id,
         )
         filesystem_status = response["FileSystems"][0]["LifeCycleState"]
         print(f"{file_system_id} {filesystem_status} .... waiting")
-        time.sleep(10)
+        assert filesystem_status == desired_status
+        
+    wait_for(callback)
 
 
 @pytest.fixture(scope="class")
