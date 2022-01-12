@@ -40,14 +40,23 @@ def wait_on_efs_status(desired_status, efs_client, file_system_id):
 
 @pytest.fixture(scope="class")
 def install_efs_csi_driver(metadata, region, request, cluster):
-    EFS_CSI_DRIVER = "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.4"
+    efs_driver = {}
+    EFS_DRIVER_VERSION = "v1.3.4"
+    EFS_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{EFS_DRIVER_VERSION}"
 
     def on_create():
         kubectl_apply_kustomize(EFS_CSI_DRIVER)
+        cmd = f"kubectl apply -k {EFS_CSI_DRIVER}".split()
+        subprocess.call(cmd)
+
+        efs_driver["driver_version"] = EFS_DRIVER_VERSION
 
     def on_delete():
         kubectl_delete_kustomize(EFS_CSI_DRIVER)
 
+    return configure_resource_fixture(
+        metadata, request, efs_driver, "efs_driver", on_create, on_delete
+    )
 
 @pytest.fixture(scope="class")
 def create_iam_policy(metadata, region, request, cluster):
@@ -70,16 +79,18 @@ def create_iam_policy(metadata, region, request, cluster):
             PolicyName=policy_name,
             PolicyDocument=policy,
         )
+        assert response["Policy"]["Arn"] is not None
 
         create_iam_service_account(
             "efs-csi-controller-sa", DEFAULT_NAMESPACE, cluster, region, policy_arn
         )
         efs_deps["efs_iam_policy_name"] = policy_name
+        efs_deps["aws_account_id"] = aws_account_id
 
     def on_delete():
         details_efs_deps = metadata.get("efs_deps")
         policy_name = details_efs_deps["efs_iam_policy_name"]
-        response = iam_client.delete_policy(
+        iam_client.delete_policy(
             PolicyName=policy_name,
         )
 
@@ -176,18 +187,18 @@ def create_efs_volume(metadata, region, request, cluster):
         existing_mount_targets = response["MountTargets"]
         for mount_target in existing_mount_targets:
             mount_target_id = mount_target["MountTargetId"]
-            response = efs_client.delete_mount_target(
+            efs_client.delete_mount_target(
                 MountTargetId=mount_target_id,
             )
 
         # Delete the Filesystem
-        response = efs_client.delete_file_system(
+        efs_client.delete_file_system(
             FileSystemId=fs_id,
         )
         wait_on_efs_status("deleted", efs_client, fs_id)
 
         # Delete the Security Group
-        response = ec2_client.delete_security_group(GroupId=sg_id)
+        ec2_client.delete_security_group(GroupId=sg_id)
 
     return configure_resource_fixture(
         metadata, request, efs_volume, "efs_volume", on_create, on_delete

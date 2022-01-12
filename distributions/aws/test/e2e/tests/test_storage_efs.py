@@ -62,7 +62,8 @@ class TestEFS:
         sa_account = subprocess.check_output(
             "kubectl describe -n kube-system serviceaccount efs-csi-controller-sa".split()
         ).decode()
-        assert details_efs_deps["efs_iam_policy_name"] in sa_account
+        aws_account_id = details_efs_deps["aws_account_id"]
+        assert f"arn:aws:iam::{aws_account_id}:role" in sa_account
 
         fs_id = details_efs_volume["file_system_id"]
         assert "fs-" in fs_id

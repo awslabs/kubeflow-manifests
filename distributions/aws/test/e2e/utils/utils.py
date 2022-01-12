@@ -10,11 +10,8 @@ import random
 import string
 import yaml
 import boto3
-<<<<<<< HEAD
 import mysql.connector
-=======
 import subprocess
->>>>>>> Initial Commit: EFS Test
 
 
 def safe_open(filepath, mode="r"):
