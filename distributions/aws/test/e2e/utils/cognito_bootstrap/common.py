@@ -13,7 +13,7 @@ CONFIG_FILE = "./utils/cognito_bootstrap/config.yaml"
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 CLOUDFRONT_HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"
 
-
+# TODO: Remove this methods from this file and move it to the utils file
 def load_cfg(file_path: str = CONFIG_FILE):
     with open(file_path, "r") as stream:
         try:
