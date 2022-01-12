@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: katib-db-manager
+  name: katib-db-manager
+  namespace: kubeflow
+spec:
+  ports:
+  - name: api
+    port: 6789
+    protocol: TCP
+  selector:
+    app: katib-db-manager
+  type: ClusterIP
