@@ -132,6 +132,9 @@ def get_mysql_client(user, password, host, database) -> mysql.connector.MySQLCon
 def get_efs_client(region):
     return boto3.client("efs", region_name=region)
 
+def get_fsx_client(region):
+    return boto3.client("fsx", region_name=region)
+
 def curl_file_to_path(file, path):
     cmd = f"curl -o {path} {file}".split()
     subprocess.call(cmd)

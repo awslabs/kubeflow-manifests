@@ -49,8 +49,8 @@ def install_efs_csi_driver(metadata, region, request, cluster):
 
     def on_create():
         kubectl_apply_kustomize(EFS_CSI_DRIVER)
-        cmd = f"kubectl apply -k {EFS_CSI_DRIVER}".split()
-        subprocess.call(cmd)
+        # cmd = f"kubectl apply -k {EFS_CSI_DRIVER}".split()
+        # subprocess.call(cmd)
 
         efs_driver["driver_version"] = EFS_DRIVER_VERSION
 
