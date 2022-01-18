@@ -5,8 +5,10 @@ import boto3
 
 from e2e.utils.config import metadata
 from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
+from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
+from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
@@ -17,8 +19,6 @@ from e2e.utils.utils import (
     get_eks_client,
     get_ec2_client,
     get_fsx_client,
-    curl_file_to_path,
-    get_aws_account_id,
     kubectl_apply,
     kubectl_delete,
     kubectl_apply_kustomize,
@@ -29,46 +29,33 @@ DEFAULT_NAMESPACE = "kube-system"
 
 
 def wait_on_fsx_status(desired_status, fsx_client, file_system_id):
-
     def callback():
-        response = fsx_client.describe_file_systems(
-            FileSystemIds=[
-                file_system_id
-            ]
-        )
+        response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
         filesystem_status = response["FileSystems"][0]["Lifecycle"]
         print(f"{file_system_id} {filesystem_status} .... waiting")
         assert filesystem_status == desired_status
-        
+
     wait_for(callback, 600)
 
+
 def get_fsx_dns_name(fsx_client, file_system_id):
-    response = fsx_client.describe_file_systems(
-            FileSystemIds=[
-                file_system_id
-            ]
-        )
+    response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["DNSName"]
 
+
 def get_fsx_mount_name(fsx_client, file_system_id):
-    response = fsx_client.describe_file_systems(
-            FileSystemIds=[
-                file_system_id
-            ]
-        )
+    response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["LustreConfiguration"]["MountName"]
 
+
 @pytest.fixture(scope="class")
-def install_fsx_csi_driver(metadata, region, request, cluster):
+def install_fsx_csi_driver(metadata, region, request, cluster, kustomize):
     fsx_driver = {}
     FSx_DRIVER_VERSION = "v0.7.1"
     FSx_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{FSx_DRIVER_VERSION}"
 
     def on_create():
         kubectl_apply_kustomize(FSx_CSI_DRIVER)
-        # cmd = f"kubectl apply -k {FSx_CSI_DRIVER}".split()
-        # subprocess.call(cmd)
-
         fsx_driver["driver_version"] = FSx_DRIVER_VERSION
 
     def on_delete():
@@ -78,16 +65,20 @@ def install_fsx_csi_driver(metadata, region, request, cluster):
         metadata, request, fsx_driver, "fsx_driver", on_create, on_delete
     )
 
+
 @pytest.fixture(scope="class")
-def create_iam_policy(metadata, region, request, cluster):
+def create_fsx_driver_sa(
+    metadata, region, request, cluster, account_id, install_fsx_csi_driver
+):
     # TODO: Existing IAM Client with Region does not seem to work.
     fsx_deps = {}
     iam_client = boto3.client("iam")
 
-    FSx_POLICY_DOCUMENT = "../../examples/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    FSx_POLICY_DOCUMENT = (
+        "../../examples/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    )
     policy_name = rand_name("fsx-iam-policy-")
-    aws_account_id = get_aws_account_id()
-    policy_arn = [f"arn:aws:iam::{aws_account_id}:policy/{policy_name}"]
+    policy_arn = [f"arn:aws:iam::{account_id}:policy/{policy_name}"]
 
     def on_create():
         associate_iam_oidc_provider(cluster, region)
@@ -105,10 +96,9 @@ def create_iam_policy(metadata, region, request, cluster):
             "fsx-csi-controller-sa", DEFAULT_NAMESPACE, cluster, region, policy_arn
         )
         fsx_deps["fsx_iam_policy_name"] = policy_name
-        fsx_deps["aws_account_id"] = aws_account_id
 
     def on_delete():
-        details_fsx_deps = metadata.get("fsx_deps")
+        details_fsx_deps = metadata.get("fsx_deps") or fsx_deps
         policy_name = details_fsx_deps["fsx_iam_policy_name"]
         iam_client.delete_policy(
             PolicyName=policy_name,
@@ -120,7 +110,7 @@ def create_iam_policy(metadata, region, request, cluster):
 
 
 @pytest.fixture(scope="class")
-def create_fsx_volume(metadata, region, request, cluster):
+def create_fsx_volume(metadata, region, request, cluster, create_fsx_driver_sa):
     fsx_volume = {}
     eks_client = get_eks_client(region)
     ec2_client = get_ec2_client(region)
@@ -130,7 +120,9 @@ def create_fsx_volume(metadata, region, request, cluster):
         # Get VPC ID, Cluster security group
         response = eks_client.describe_cluster(name=cluster)
         vpc_id = response["cluster"]["resourcesVpcConfig"]["vpcId"]
-        cluster_security_group = response["cluster"]["resourcesVpcConfig"]["clusterSecurityGroupId"]
+        cluster_security_group = response["cluster"]["resourcesVpcConfig"][
+            "clusterSecurityGroupId"
+        ]
         subnet_id = response["cluster"]["resourcesVpcConfig"]["subnetIds"][0]
 
         # Create Security Group
@@ -140,43 +132,38 @@ def create_fsx_volume(metadata, region, request, cluster):
             GroupName=security_group_name,
             Description="My fsx security group",
         )
-        security_group_id = response["GroupId"]
-        fsx_volume["security_group_id"] = security_group_id
+        fsx_volume["security_group_id"] = security_group_id = response["GroupId"]
 
         # Open Port for CIDR Range
         ec2_client.authorize_security_group_ingress(
             GroupId=security_group_id,
             IpPermissions=[
                 {
-                    'FromPort': 988,
-                    'ToPort': 988,
-                    'IpProtocol': 'tcp',
-                    'UserIdGroupPairs': [{ 'GroupId': security_group_id }]
+                    "FromPort": 988,
+                    "ToPort": 988,
+                    "IpProtocol": "tcp",
+                    "UserIdGroupPairs": [{"GroupId": security_group_id}],
                 },
-                ],
+            ],
         )
 
         ec2_client.authorize_security_group_ingress(
             GroupId=security_group_id,
             IpPermissions=[
                 {
-                    'FromPort': 988,
-                    'ToPort': 988,
-                    'IpProtocol': 'tcp',
-                    'UserIdGroupPairs': [{ 'GroupId': cluster_security_group }]
+                    "FromPort": 988,
+                    "ToPort": 988,
+                    "IpProtocol": "tcp",
+                    "UserIdGroupPairs": [{"GroupId": cluster_security_group}],
                 },
-                ],
+            ],
         )
 
         # Create an Amazon fsx FileSystem for your EKS Cluster
         response = fsx_client.create_file_system(
             FileSystemType="LUSTRE",
-            SubnetIds=[
-                subnet_id
-            ],
-            SecurityGroupIds=[
-                security_group_id
-            ],
+            SubnetIds=[subnet_id],
+            SecurityGroupIds=[security_group_id],
             StorageCapacity=1200,
         )
         file_system_id = response["FileSystem"]["FileSystemId"]
@@ -191,10 +178,9 @@ def create_fsx_volume(metadata, region, request, cluster):
 
     def on_delete():
         # Get FileSystem_ID
-        details_fsx_volume = metadata.get("fsx_volume")
+        details_fsx_volume = metadata.get("fsx_volume") or fsx_volume
         fs_id = details_fsx_volume["file_system_id"]
         sg_id = details_fsx_volume["security_group_id"]
-
 
         # Delete the Filesystem, does not provide a deleted status hence can't check delete status
         fsx_client.delete_file_system(
@@ -210,14 +196,18 @@ def create_fsx_volume(metadata, region, request, cluster):
 
 
 @pytest.fixture(scope="class")
-def static_provisioning(metadata, region, request, cluster):
+def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
     details_fsx_volume = metadata.get("fsx_volume")
     fs_id = details_fsx_volume["file_system_id"]
     dns_name = details_fsx_volume["dns_name"]
     mount_name = details_fsx_volume["mount_name"]
     claim_name = rand_name("fsx-claim-")
-    fsx_pv_filepath = "../../examples/storage/fsx-for-lustre/static-provisioning/pv.yaml"
-    fsx_pvc_filepath = "../../examples/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    fsx_pv_filepath = (
+        "../../examples/storage/fsx-for-lustre/static-provisioning/pv.yaml"
+    )
+    fsx_pvc_filepath = (
+        "../../examples/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    )
     fsx_claim = {}
 
     def on_create():

@@ -15,12 +15,13 @@ from e2e.utils.config import metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
+from e2e.fixtures.clients import account_id
 
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 
 from e2e.fixtures.storage_efs_dependencies import (
     install_efs_csi_driver,
-    create_iam_policy,
+    create_efs_driver_sa,
     create_efs_volume,
     static_provisioning,
 )
@@ -35,7 +36,7 @@ def kustomize_path():
 
 class TestEFS:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, kustomize):
+    def setup(self, metadata, kustomize, static_provisioning):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestSanity", metadata_file)
@@ -44,15 +45,10 @@ class TestEFS:
         self,
         metadata,
         setup,
-        install_efs_csi_driver,
-        create_iam_policy,
+        account_id,
         create_efs_volume,
         static_provisioning,
     ):
-        details_efs_deps = metadata.get("efs_deps")
-        details_efs_volume = metadata.get("efs_volume")
-        details_efs_claim = metadata.get("efs_claim")
-
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "efs.csi.aws.com" in driver_list
 
@@ -62,12 +58,11 @@ class TestEFS:
         sa_account = subprocess.check_output(
             "kubectl describe -n kube-system serviceaccount efs-csi-controller-sa".split()
         ).decode()
-        aws_account_id = details_efs_deps["aws_account_id"]
-        assert f"arn:aws:iam::{aws_account_id}:role" in sa_account
+        assert f"arn:aws:iam::{account_id}:role" in sa_account
 
-        fs_id = details_efs_volume["file_system_id"]
+        fs_id = create_efs_volume["file_system_id"]
         assert "fs-" in fs_id
 
-        claim_name = details_efs_claim["claim_name"]
+        claim_name = static_provisioning["claim_name"]
         claim_list = subprocess.check_output("kubectl get pvc -A".split()).decode()
         assert claim_name in claim_list
