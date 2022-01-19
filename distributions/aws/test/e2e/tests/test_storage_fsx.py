@@ -1,8 +1,8 @@
 """
-Installs the vanilla distribution of kubeflow and validates EFS integration by:
-    - Installing the EFS Driver from upstream
+Installs the vanilla distribution of kubeflow and validates FSx for Lustre integration by:
+    - Installing the FSx CSI Driver from upstream
     - Creating the required IAM Policy, Role and Service Account
-    - Creating the EFS Volume 
+    - Creating the FSx for Lustre Volume 
     - Creating a StorageClass, PersistentVolume and PersistentVolumeClaim using Static Provisioning
 """
 
@@ -19,10 +19,10 @@ from e2e.fixtures.clients import account_id
 
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 
-from e2e.fixtures.storage_efs_dependencies import (
-    install_efs_csi_driver,
-    create_efs_driver_sa,
-    create_efs_volume,
+from e2e.fixtures.storage_fsx_dependencies import (
+    install_fsx_csi_driver,
+    create_fsx_driver_sa,
+    create_fsx_volume,
     static_provisioning,
 )
 
@@ -34,9 +34,9 @@ def kustomize_path():
     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
 
-class TestEFS:
+class TestFSx:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, kustomize, static_provisioning):
+    def setup(self, metadata, static_provisioning):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestSanity", metadata_file)
@@ -44,23 +44,23 @@ class TestEFS:
     def test_pvc_with_volume(
         self,
         metadata,
-        setup,
         account_id,
-        create_efs_volume,
+        setup,
+        create_fsx_volume,
         static_provisioning,
     ):
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
-        assert "efs.csi.aws.com" in driver_list
+        assert "fsx.csi.aws.com" in driver_list
 
         pod_list = subprocess.check_output("kubectl get pods -A".split()).decode()
-        assert "efs-csi-controller" in pod_list
+        assert "fsx-csi-controller" in pod_list
 
         sa_account = subprocess.check_output(
-            "kubectl describe -n kube-system serviceaccount efs-csi-controller-sa".split()
+            "kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa".split()
         ).decode()
         assert f"arn:aws:iam::{account_id}:role" in sa_account
 
-        fs_id = create_efs_volume["file_system_id"]
+        fs_id = create_fsx_volume["file_system_id"]
         assert "fs-" in fs_id
 
         claim_name = static_provisioning["claim_name"]

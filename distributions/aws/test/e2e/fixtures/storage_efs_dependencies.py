@@ -4,9 +4,11 @@ import subprocess
 import boto3
 
 from e2e.utils.config import metadata
+from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
+from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
@@ -18,7 +20,6 @@ from e2e.utils.utils import (
     get_ec2_client,
     get_efs_client,
     curl_file_to_path,
-    get_aws_account_id,
     kubectl_apply,
     kubectl_delete,
     kubectl_apply_kustomize,
@@ -29,7 +30,6 @@ DEFAULT_NAMESPACE = "kube-system"
 
 
 def wait_on_efs_status(desired_status, efs_client, file_system_id):
-
     def callback():
         response = efs_client.describe_file_systems(
             FileSystemId=file_system_id,
@@ -37,21 +37,18 @@ def wait_on_efs_status(desired_status, efs_client, file_system_id):
         filesystem_status = response["FileSystems"][0]["LifeCycleState"]
         print(f"{file_system_id} {filesystem_status} .... waiting")
         assert filesystem_status == desired_status
-        
+
     wait_for(callback)
 
 
 @pytest.fixture(scope="class")
-def install_efs_csi_driver(metadata, region, request, cluster):
+def install_efs_csi_driver(metadata, region, request, cluster, kustomize):
     efs_driver = {}
     EFS_DRIVER_VERSION = "v1.3.4"
     EFS_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{EFS_DRIVER_VERSION}"
 
     def on_create():
         kubectl_apply_kustomize(EFS_CSI_DRIVER)
-        cmd = f"kubectl apply -k {EFS_CSI_DRIVER}".split()
-        subprocess.call(cmd)
-
         efs_driver["driver_version"] = EFS_DRIVER_VERSION
 
     def on_delete():
@@ -61,16 +58,18 @@ def install_efs_csi_driver(metadata, region, request, cluster):
         metadata, request, efs_driver, "efs_driver", on_create, on_delete
     )
 
+
 @pytest.fixture(scope="class")
-def create_iam_policy(metadata, region, request, cluster):
+def create_efs_driver_sa(
+    metadata, region, request, cluster, account_id, install_efs_csi_driver
+):
     # TODO: Existing IAM Client with Region does not seem to work.
     efs_deps = {}
     iam_client = boto3.client("iam")
 
     EFS_IAM_POLICY = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json"
     policy_name = rand_name("efs-iam-policy-")
-    aws_account_id = get_aws_account_id()
-    policy_arn = [f"arn:aws:iam::{aws_account_id}:policy/{policy_name}"]
+    policy_arn = [f"arn:aws:iam::{account_id}:policy/{policy_name}"]
 
     def on_create():
         associate_iam_oidc_provider(cluster, region)
@@ -88,10 +87,9 @@ def create_iam_policy(metadata, region, request, cluster):
             "efs-csi-controller-sa", DEFAULT_NAMESPACE, cluster, region, policy_arn
         )
         efs_deps["efs_iam_policy_name"] = policy_name
-        efs_deps["aws_account_id"] = aws_account_id
 
     def on_delete():
-        details_efs_deps = metadata.get("efs_deps")
+        details_efs_deps = metadata.get("efs_deps") or efs_deps
         policy_name = details_efs_deps["efs_iam_policy_name"]
         iam_client.delete_policy(
             PolicyName=policy_name,
@@ -103,7 +101,7 @@ def create_iam_policy(metadata, region, request, cluster):
 
 
 @pytest.fixture(scope="class")
-def create_efs_volume(metadata, region, request, cluster):
+def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
     efs_volume = {}
     eks_client = get_eks_client(region)
     ec2_client = get_ec2_client(region)
@@ -179,7 +177,7 @@ def create_efs_volume(metadata, region, request, cluster):
 
     def on_delete():
         # Get FileSystem_ID
-        details_efs_volume = metadata.get("efs_volume")
+        details_efs_volume = metadata.get("efs_volume") or efs_volume
         fs_id = details_efs_volume["file_system_id"]
         sg_id = details_efs_volume["security_group_id"]
 
@@ -209,7 +207,7 @@ def create_efs_volume(metadata, region, request, cluster):
 
 
 @pytest.fixture(scope="class")
-def static_provisioning(metadata, region, request, cluster):
+def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     details_efs_volume = metadata.get("efs_volume")
     fs_id = details_efs_volume["file_system_id"]
     claim_name = rand_name("efs-claim-")
