@@ -129,30 +129,35 @@ def get_mysql_client(user, password, host, database) -> mysql.connector.MySQLCon
         user=user, password=password, host=host, database=database
     )
 
+
 def get_efs_client(region):
     return boto3.client("efs", region_name=region)
+
+
+def get_fsx_client(region):
+    return boto3.client("fsx", region_name=region)
+
 
 def curl_file_to_path(file, path):
     cmd = f"curl -o {path} {file}".split()
     subprocess.call(cmd)
 
+
 def kubectl_apply(path):
     cmd = f"kubectl apply -f {path}".split()
     subprocess.call(cmd)
+
 
 def kubectl_delete(path):
     cmd = f"kubectl delete -f {path}".split()
     subprocess.call(cmd)
 
+
 def kubectl_apply_kustomize(path):
     cmd = f"kubectl apply -k {path}".split()
     subprocess.call(cmd)
 
+
 def kubectl_delete_kustomize(path):
     cmd = f"kubectl delete -k {path}".split()
     subprocess.call(cmd)
-
-def get_aws_account_id():
-    client = boto3.client('sts')
-    response = client.get_caller_identity()
-    return response["Account"]
