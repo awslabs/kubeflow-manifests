@@ -21,7 +21,8 @@ The following steps show how to configure and deploy:
    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
-   - [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) - A command line tool to customize Kubernetes objects through a kustomization file.
+   - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
+     - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
 2. Clone the repo and checkout the release branch
 
@@ -65,6 +66,39 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 5. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
+
+To use the latest MySQL version (or a different version) in the CFN template, change the `EngineVersion` property of resource `MyDB` to desired version.
+
+For example:
+
+```
+Resources:
+  ...
+
+  Type: AWS::RDS::DBInstance
+  Properties:
+    DBName:
+      Ref: DBName
+    AllocatedStorage:
+      Ref: DBAllocatedStorage
+    DBInstanceClass:
+      Ref: DBClass
+    Engine: MySQL
+    EngineVersion: '8.0.28'  # Change this property
+    MultiAZ:
+      Ref: MultiAZ
+    MasterUsername:
+      Ref: DBUsername
+    MasterUserPassword:
+      Ref: DBPassword
+    DBSubnetGroupName:
+      Ref: MyDBSubnetGroup
+    VPCSecurityGroups:
+      Ref: SecurityGroupId
+  DeletionPolicy: Snapshot
+
+  ...
+```
 
 6. Create Secrets in AWS Secrets Manager
 
@@ -128,6 +162,90 @@ while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
+
+## Verify the instalation
+
+### Verify RDS
+
+1. Connect to the RDS instance from a pod within the cluster
+
+```
+kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u <YOUR LOGIN> -p<YOUR PASSWORD>
+```
+
+If you used the default parameters in the [CFN template](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/files/rds.yaml) given at step 5 of the Prerequistes, the command would look like
+
+```
+kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u admin -pKubefl0w
+```
+
+2. Once connected verify the databases `kubeflow` and `mlpipeline` exist.
+
+```
+mysql> show databases;
+
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| kubeflow           |
+| mlpipeline         |
+| mysql              |
+| performance_schema |
++--------------------+
+```
+
+3. Verify the database `mlpipeline` has the following tables:
+
+```
+mysql> use mlpipeline; show tables;
+
++----------------------+
+| Tables_in_mlpipeline |
++----------------------+
+| db_statuses          |
+| default_experiments  |
+| experiments          |
+| jobs                 |
+| pipeline_versions    |
+| pipelines            |
+| resource_references  |
+| run_details          |
+| run_metrics          |
++----------------------+
+```
+
+4. Access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster) and navigate to Katib (under Experiments (AutoML)).
+
+5. Create an experiment using the following [yaml file](../../test/e2e/resources/custom-resource-templates/katib-experiment-random.yaml).
+
+6. Once the experiment is complete verify the following table exists:
+
+```
+mysql> use kubeflow; show tables;
+
++----------------------+
+| Tables_in_kubeflow   |
++----------------------+
+| observation_logs     |
++----------------------+
+```
+
+7. Describe `observation_logs` to verify it is being populated.
+
+```
+mysql> select * from observation_logs;
+```
+
+### Verify S3
+
+1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
+
+2. Create an experiment named `test` and create a run using the sample pipeline `[Demo] XGBoost - Iterative model training`.
+
+3. Once the run is completed go to the S3 AWS console and open the bucket you specified for the Kubeflow installation.
+
+4. Verify the bucket is not empty and was populated by outputs of the experiment.
 
 ## Uninstall Kubeflow
 
