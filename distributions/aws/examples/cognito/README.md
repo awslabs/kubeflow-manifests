@@ -135,7 +135,6 @@ In this section, we will be creating certificate to enable TLS authentication at
         CognitoAppClientId='$CognitoAppClientId'
         CognitoUserPoolDomain='$CognitoUserPoolDomain'
         certArn='$certArn'
-        loadBalancerScheme=internet-facing
         ' > distributions/aws/istio-ingress/overlays/cognito/params.env
         ```
 1. Setup resources required for the application load balancer controller
