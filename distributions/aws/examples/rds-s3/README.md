@@ -17,12 +17,15 @@ The following steps show how to configure and deploy:
 1. Install CLI tools
 
    - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
-   - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
+   - [eksctl >= 0.56](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+
+
+
 
 2. Clone the repo and checkout the release branch
 
@@ -52,7 +55,36 @@ eksctl create cluster \
 --managed
 ```
 
-4. Create S3 Bucket
+4. Create an OIDC provider for your cluster  
+**Important :**  
+You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
+
+### 2. Setup RDS and S3
+#### **Automated setup**
+This setup performs all the manual steps in an automated fashion.  
+The script takes care of creating the S3 bucket, creating the S3 secrets using the secrets manager, setting up the RDS database and creating the RDS secret using the secrets manager. It also edits the required configuration files for Kubeflow pipeline to be properly configured for the RDS database during Kubeflow installation.  
+The script also handles cases where the resources already exist in which case it will simply skips the step.
+  
+Note : The script will **not** delete any resource therefore if a secret already exist or if a database with the same name already exist or if the S3 bucket already exists for instance, it will skip those steps. This was done in order to prevent unwanted results such as accidental deletion. For instance, if a database with the same name already exists, the script will skip the database creation setup. If it's expected in your scenario, then perhaps this is fine for you, if you simply forgot to change the database name used for creation then this gives you the chance to retry the script with the proper value. See `python auto-rds-s3-setup.py --help` for the list of parameters as well as their default values.
+
+1. Install the dependencies for the script
+    1. Install the python dependencies `pip install -r requirements.txt`
+    2. Install [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html#installing-eksctl)
+    3. Install [kubectl](https://kubernetes.io/docs/tasks/tools/)
+2. Run the script  
+Replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_S3_BUCKET` with your values.
+```
+python auto-rds-s3-setup.py --region YOUR_CLUSTER_REGION --cluster YOUR_CLUSTER_NAME --bucket YOUR_S3_BUCKET
+```  
+
+##### **Advanced customization**
+The script applies some sensible default values for the db user password, max storage, storage type, instance type etc but if you know what you are doing, you can always tweak those preferences by passing different values.  
+You can learn more about the different parameters by running `python auto-rds-s3-setup.py --help`.  
+
+
+#### **Manual setup**
+If you prefer to manually setup each components then you can follow this manual guide.  
+1. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 This bucket will be used to store artifacts from pipelines.
@@ -63,7 +95,7 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
-5. Create RDS Instance
+2. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
 
@@ -100,7 +132,7 @@ Resources:
   ...
 ```
 
-6. Create Secrets in AWS Secrets Manager
+3. Create Secrets in AWS Secrets Manager
 
    1. Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
       - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
@@ -115,7 +147,7 @@ Resources:
         aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
         ```
 
-7. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 
    1. Run the following commands to enable oidc and create an iamserviceaccount with permissions to retrieve the secrets created from AWS Secrets Manager
 
@@ -138,9 +170,7 @@ Resources:
     kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
    ```
 
-### 2. Configure Kubeflow Pipelines
-
-1. Configure the following file in `apps/pipeline/upstream/env/aws` directory:
+5. Configure Kubeflow Pipelines by editing the following file in `apps/pipeline/upstream/env/aws` directory:
 
    1. Configure `apps/pipeline/upstream/env/aws/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites).
 
@@ -153,7 +183,7 @@ Resources:
         minioServiceRegion=us-west-2
         ```
 
-### 4. Build Manifests and Install Kubeflow
+### 3. Build Manifests and Install Kubeflow
 
 ```sh
 while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
@@ -177,6 +207,17 @@ If you used the default parameters in the [CFN template](https://www.kubeflow.or
 
 ```
 kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u admin -pKubefl0w
+```
+
+Note that you can find your credentials by visiting [aws secrets manager](https://aws.amazon.com/secrets-manager/) or by using [AWS CLI](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/secretsmanager/get-secret-value.html)  
+
+For instance, to retrieve the value of a secret named `rds-secret`, we would do : 
+```
+aws secretsmanager get-secret-value \
+    --region $CLUSTER_REGION \
+    --secret-id rds-secret \
+    --query 'SecretString' \
+    --output text
 ```
 
 2. Once connected verify the databases `kubeflow` and `mlpipeline` exist.
