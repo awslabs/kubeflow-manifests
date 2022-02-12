@@ -28,7 +28,7 @@ from e2e.conftest import (
 
 from e2e.fixtures.cluster import cluster
 from e2e.fixtures.secrets import aws_secrets_driver, create_secret_string
-from e2e.fixtures.kustomize import kustomize
+from e2e.fixtures.kustomize import kustomize, clone_upstream
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -165,21 +165,21 @@ def rds_s3_secrets(cfn_stack, region, metadata, request):
     def on_create():
         secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.create_secret(
-            Name="rds-secret",
+            Name="rds-secret-2",
             SecretString=create_secret_string(rds_secret),
         )
         secrets_manager_client.create_secret(
-            Name="s3-secret",
+            Name="s3-secret-2",
             SecretString=create_secret_string(s3_secret),
         )
 
     def on_delete():
         secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.delete_secret(
-            SecretId="rds-secret", ForceDeleteWithoutRecovery=True
+            SecretId="rds-secret-2", ForceDeleteWithoutRecovery=True
         )
         secrets_manager_client.delete_secret(
-            SecretId="s3-secret", ForceDeleteWithoutRecovery=True
+            SecretId="s3-secret-2", ForceDeleteWithoutRecovery=True
         )
 
     return configure_resource_fixture(

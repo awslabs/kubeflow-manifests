@@ -143,7 +143,9 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
         alb_role_policy = iam_resource.RolePolicy(role_name, "alb_controller_policy")
         alb_role_policy.put(
             PolicyDocument=json.dumps(
-                load_json_file("../../awsconfigs/infra_configs/iam_alb_ingress_policy.json")
+                load_json_file(
+                    "../../awsconfigs/infra_configs/iam_alb_ingress_policy.json"
+                )
             )
         )
         role_arn = response["Role"]["Arn"]
@@ -157,7 +159,9 @@ def configure_kf_admin_role(metadata, region, request, account_id, cluster):
         )
         profile_controller_policy.put(
             PolicyDocument=json.dumps(
-                load_json_file("../../awsconfigs/infra_configs/iam_profile_controller_policy.json")
+                load_json_file(
+                    "../../awsconfigs/infra_configs/iam_profile_controller_policy.json"
+                )
             )
         )
         profile_sa_filepath = (
@@ -187,7 +191,7 @@ def configure_ingress(region, cognito_bootstrap, cluster, configure_kf_admin_rol
             "CognitoUserPoolArn": cognito_bootstrap["cognitoUserpool"]["ARN"],
             "CognitoAppClientId": cognito_bootstrap["cognitoUserpool"]["appClientId"],
             "CognitoUserPoolDomain": cognito_bootstrap["cognitoUserpool"]["domain"],
-            "certArn": cognito_bootstrap["route53"]["subDomain"][region + "-certARN"]
+            "certArn": cognito_bootstrap["route53"]["subDomain"][region + "-certARN"],
         },
     )
 

@@ -5,10 +5,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alb-ingress-controller
-  # Namespace the ALB Ingress Controller should run in. Does not impact which
-  # namespaces it's able to resolve ingress resource for. For limiting ingress
-  # namespace scope, see --watch-namespace.
-#  namespace: kubeflow
 spec:
   selector:
     matchLabels:
@@ -36,7 +32,6 @@ spec:
             # Name of your cluster. Used when naming resources created
             # by the ALB Ingress Controller, providing distinction between
             # clusters.
-#            - --cluster-name=$(CLUSTER_NAME)
             - --cluster-name=$(CLUSTER_NAME)
 
             # AWS VPC ID this ingress controller will use to create AWS resources.

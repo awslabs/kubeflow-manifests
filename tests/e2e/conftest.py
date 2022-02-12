@@ -53,11 +53,17 @@ def load_metadata_file(request):
 
 
 def get_accesskey(request):
-    return request.config.getoption("--accesskey")
+    access_key = request.config.getoption("--accesskey")
+    if not access_key:
+        pytest.fail("--accesskey is required")
+    return access_key
 
 
 def get_secretkey(request):
-    return request.config.getoption("--secretkey")
+    secret_key = request.config.getoption("--secretkey")
+    if not secret_key:
+        pytest.fail("--secretkey is required")
+    return secret_key
 
 
 @pytest.fixture(scope="class")

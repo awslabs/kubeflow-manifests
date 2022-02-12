@@ -211,9 +211,15 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     details_efs_volume = metadata.get("efs_volume")
     fs_id = details_efs_volume["file_system_id"]
     claim_name = rand_name("efs-claim-")
-    efs_sc_filepath = "../../docs/deployment/add-ons/storage/efs/static-provisioning/sc.yaml"
-    efs_pv_filepath = "../../docs/deployment/add-ons/storage/efs/static-provisioning/pv.yaml"
-    efs_pvc_filepath = "../../docs/deployment/add-ons/storage/efs/static-provisioning/pvc.yaml"
+    efs_sc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/static-provisioning/sc.yaml"
+    )
+    efs_pv_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/static-provisioning/pv.yaml"
+    )
+    efs_pvc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/static-provisioning/pvc.yaml"
+    )
     efs_claim = {}
 
     def on_create():

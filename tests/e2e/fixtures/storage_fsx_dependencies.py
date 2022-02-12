@@ -74,9 +74,7 @@ def create_fsx_driver_sa(
     fsx_deps = {}
     iam_client = boto3.client("iam")
 
-    FSx_POLICY_DOCUMENT = (
-        "../../docs/deployment/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
-    )
+    FSx_POLICY_DOCUMENT = "../../docs/deployment/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
     policy_name = rand_name("fsx-iam-policy-")
     policy_arn = [f"arn:aws:iam::{account_id}:policy/{policy_name}"]
 
@@ -165,9 +163,7 @@ def create_fsx_volume(metadata, region, request, cluster, create_fsx_driver_sa):
             SubnetIds=[subnet_id],
             SecurityGroupIds=[security_group_id],
             StorageCapacity=1200,
-            LustreConfiguration={
-                "DeploymentType": 'SCRATCH_2'
-            }
+            LustreConfiguration={"DeploymentType": "SCRATCH_2"},
         )
         file_system_id = response["FileSystem"]["FileSystemId"]
 
@@ -205,12 +201,8 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
     dns_name = details_fsx_volume["dns_name"]
     mount_name = details_fsx_volume["mount_name"]
     claim_name = rand_name("fsx-claim-")
-    fsx_pv_filepath = (
-        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
-    )
-    fsx_pvc_filepath = (
-        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
-    )
+    fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
+    fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
     fsx_claim = {}
 
     def on_create():

@@ -5,10 +5,11 @@ Kustomize fixture module
 import subprocess
 import tempfile
 import time
-
 import pytest
+import os
 
 from e2e.utils.config import configure_resource_fixture
+from e2e.utils.constants import KUBEFLOW_VERSION
 from e2e.utils.utils import wait_for
 
 
@@ -46,7 +47,21 @@ def configure_manifests():
 
 
 @pytest.fixture(scope="class")
-def kustomize(metadata, cluster, configure_manifests, kustomize_path, request):
+def clone_upstream():
+    upstream_path = "../../upstream"
+    if not os.path.isdir(upstream_path):
+        retcode = subprocess.call(
+            f"git clone --branch {KUBEFLOW_VERSION} https://github.com/kubeflow/manifests.git ../../upstream".split()
+        )
+        assert retcode == 0
+    else:
+        print("upstream directory already exists, skipping clone ...")
+
+
+@pytest.fixture(scope="class")
+def kustomize(
+    metadata, cluster, clone_upstream, configure_manifests, kustomize_path, request
+):
     """
     This fixture is created once for each test class.
 

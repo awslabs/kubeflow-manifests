@@ -7,3 +7,4 @@ bases:
   - ../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
 patchesStrategicMerge:
   - patches/db-manager.yaml
+  - patches/remove-mysql-resources.yaml

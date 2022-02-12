@@ -88,4 +88,3 @@ def cluster(metadata, region, request):
     return configure_resource_fixture(
         metadata, request, cluster_name, "cluster_name", on_create, on_delete
     )
-    

@@ -5,7 +5,7 @@ from e2e.utils.config import metadata, configure_env_file
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize
+from e2e.fixtures.kustomize import kustomize, clone_upstream
 from e2e.fixtures.clients import account_id
 
 from e2e.fixtures.cognito_dependencies import (
