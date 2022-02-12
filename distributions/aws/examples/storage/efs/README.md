@@ -4,7 +4,9 @@ This guide describes how to use Amazon EFS as Persistent storage on top of an ex
 
 ## 1.0 Prerequisites
 1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the EFS CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../../README.md) or [generic distribution](../../../../../README.md).
-You should also make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster.
+
+**Important :**
+You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
 
 2. At this point, you have likely cloned this repo and checked out the right branch. Navigate to the current directory - 
 ```
