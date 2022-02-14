@@ -12,7 +12,7 @@ Similar to [the single command base installation](../../../../README.md#install-
 
 The following steps show how to configure and deploy:
 
-### 1. Prerequisites
+## 1.0 Prerequisites
 
 1. Install CLI tools
 
@@ -23,8 +23,6 @@ The following steps show how to configure and deploy:
    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
-
-
 
 
 2. Clone the repo and checkout the release branch
@@ -59,8 +57,10 @@ eksctl create cluster \
 **Important :**  
 You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
 
-### 2. Setup RDS and S3
-#### **Automated setup**
+## 2.0 Setup RDS, S3 and configure Secrets
+There are two ways to create the RDS and S3 resources before you deploy the Kubeflow manifests. Either use the automated python script we have provided by following the steps in section 2.1 or fall back on the manual setup steps as in section 2.2 below - 
+
+### 2.1 **Option 1: Automated Setup**
 This setup performs all the manual steps in an automated fashion.  
 The script takes care of creating the S3 bucket, creating the S3 secrets using the secrets manager, setting up the RDS database and creating the RDS secret using the secrets manager. It also edits the required configuration files for Kubeflow pipeline to be properly configured for the RDS database during Kubeflow installation.  
 The script also handles cases where the resources already exist in which case it will simply skips the step.
@@ -77,12 +77,12 @@ Replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_S3_BUCKET` with you
 python auto-rds-s3-setup.py --region YOUR_CLUSTER_REGION --cluster YOUR_CLUSTER_NAME --bucket YOUR_S3_BUCKET
 ```  
 
-##### **Advanced customization**
+### Advanced customization
 The script applies some sensible default values for the db user password, max storage, storage type, instance type etc but if you know what you are doing, you can always tweak those preferences by passing different values.  
 You can learn more about the different parameters by running `python auto-rds-s3-setup.py --help`.  
 
 
-#### **Manual setup**
+### 2.2 **Option 2: Manual Setup**
 If you prefer to manually setup each components then you can follow this manual guide.  
 1. Create S3 Bucket
 
@@ -183,19 +183,20 @@ Resources:
         minioServiceRegion=us-west-2
         ```
 
-### 3. Build Manifests and Install Kubeflow
+## 3.0 Build Manifests and Install Kubeflow
+Once you have the resources ready, you can continue on to deploying the Kubeflow manifests using the single line command below -
 
 ```sh
 while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
-Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster).
+After everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
-## Verify the instalation
+## 4.0 Verify the installation
 
-### Verify RDS
+### 4.1 Verify RDS
 
 1. Connect to the RDS instance from a pod within the cluster
 
@@ -278,7 +279,7 @@ mysql> use kubeflow; show tables;
 mysql> select * from observation_logs;
 ```
 
-### Verify S3
+### 4.2 Verify S3
 
 1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
 
@@ -288,7 +289,7 @@ mysql> select * from observation_logs;
 
 4. Verify the bucket is not empty and was populated by outputs of the experiment.
 
-## Uninstall Kubeflow
+## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall:
 
