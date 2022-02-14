@@ -7,3 +7,5 @@ Resolves #
 **Testing:**
 - [ ] Unit tests pass
 - [ ] e2e tests pass
+- Details about new tests (If this PR adds a new feature)
+- Details about any manual tests performed
