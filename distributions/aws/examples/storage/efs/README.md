@@ -20,8 +20,11 @@ export CLUSTER_REGION=<clusterregion>
 ```
 
 ## 2.0 Setup EFS
-### **Automated setup**
-This setup performs all the manual steps in an automated fashion.  
+
+You can either use Automated or Manual setup 
+
+### 2.1 [Option 1] Automated setup
+The script automates all the Manual steps and is only for Dynamic Provisioning option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning.
 1. Install the dependencies for the script
     1. Install the python dependencies `pip install -r requirements.txt`
@@ -34,7 +37,7 @@ python auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
 #### **Advanced customization**
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python auto-efs-setup.py --help`.
 
-### **Manual setup**
+### 2.1 [Option 2] Manual setup
 If you prefer to manually setup each components then you can follow this manual guide.  
 
 ```
@@ -98,7 +101,7 @@ Note: For this README, we have assumed that you are creating your EFS Filesystem
 #### Choose between dynamic and static provisioning  
 In the following section, you have to choose between setting up [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) or setting up static provisioning.
 
-#### 4. Dynamic Provisioning  
+#### 4. [Option 1] Dynamic Provisioning  
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the `dynamic-provisioning/sc.yaml` file by chaning `<YOUR_FILE_SYSTEM_ID>` with your `fs-xxxxxx` file system id. You can also change it using the following command :  
 ```
 file_system_id=$file_system_id yq e '.parameters.fileSystemId = env(file_system_id)' -i dynamic-provisioning/sc.yaml
@@ -115,7 +118,7 @@ kubectl get sc
 
 Note : The `StorageClass` is a cluster scoped resource which means we only need to do this step once per cluster. 
 
-#### 4. Static Provisioning
+#### 4. [Option 2] Static Provisioning
 [Using this sample from official AWS Docs](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods) we have provided the required spec files in the sample subdirectory but you can create the PVC another way. 
 
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the last line of the static-provisioning/pv.yaml file to specify the `volumeHandle` field to point to your EFS filesystem. Replace `$file_system_id` if it is not already set. 
