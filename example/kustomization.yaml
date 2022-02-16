@@ -57,6 +57,8 @@ resources:
 - ../apps/mxnet-job/upstream/overlays/kubeflow
 # XGBoost Operator
 - ../apps/xgboost-job/upstream/overlays/kubeflow
+# Telemetry
+- ../distributions/aws/aws-telemetry
 
 # User namespace
 - ../common/user-namespace/base

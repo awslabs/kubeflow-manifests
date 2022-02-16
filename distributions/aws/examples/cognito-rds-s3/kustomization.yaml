@@ -55,6 +55,8 @@ resources:
 - ../../aws-alb-ingress-controller/base
 # Envoy filter
 - ../../aws-istio-envoy-filter/base
+# Telemetry
+- ../../aws-telemetry
 
 # Configured for AWS RDS and AWS S3
 

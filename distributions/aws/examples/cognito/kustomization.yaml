@@ -50,6 +50,8 @@ resources:
 - ../../../../apps/mxnet-job/upstream/overlays/kubeflow
 # XGBoost Operator
 - ../../../../apps/xgboost-job/upstream/overlays/kubeflow
+# Telemetry
+- ../../aws-telemetry
 
 # Configured for AWS Cognito
 

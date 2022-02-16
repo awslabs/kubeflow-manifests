@@ -98,6 +98,9 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
         # Katib
         kustomize build apps/katib/upstream/installs/katib-external-db-with-kubeflow | kubectl apply -f -
 
+        # AWS Telemetry
+        kustomize build distributions/aws/aws-telemetry | kubectl apply -f -
+
         # Configured for AWS Cognito
         
         # Ingress
