@@ -282,7 +282,7 @@ In this section, we will be creating certificate to enable TLS authentication at
         # XGBoost Operator
         kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 
-        # AWS Telemetry
+        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
         kustomize build distributions/aws/aws-telemetry | kubectl apply -f -
 
         # Ingress

@@ -357,6 +357,14 @@ Install the XGBoost Operator official Kubeflow component:
 kustomize build apps/xgboost-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
+#### AWS Telemetry
+
+Install the AWS Kubeflow telemetry component. This is an optional component. See the [usage tracking documentation](TBD) for more information
+
+```sh
+kustomize build distributions/aws/aws-telemetry | kubectl apply -f -
+```
+
 #### User Namespace
 
 Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).

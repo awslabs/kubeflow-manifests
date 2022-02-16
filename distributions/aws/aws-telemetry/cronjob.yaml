@@ -14,6 +14,7 @@ spec:
       template:
         metadata:
           annotations:
+            # istio sidecar is not neeeded since there is no inbound or outbound traffic from the service mesh
             sidecar.istio.io/inject: "false"
         spec:
           restartPolicy: Never
@@ -24,12 +25,16 @@ spec:
               - /bin/sh
               - -c
               - |
+                # Following code uses IMDS service. See: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+
                 get_instance_id() {
+                  # use IMDSv2 if enabled else fallback to IMDSv1
                   local _token
                   _token=$(curl -s --retry 3 --max-time 3 -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
                   if [[ -n ${_token+x} ]]; then
                     IMDSV2_HEADER=(-H "X-aws-ec2-metadata-token: ${_token}")
                   fi
+                  
                   INSTANCE_ID=$(curl -s --retry 3 "${IMDSV2_HEADER[@]}" http://169.254.169.254/latest/meta-data/instance-id)
 
                   local _instance_id_regex="^(i-\S{17})"
@@ -39,6 +44,7 @@ spec:
                 }
 
                 get_region() {
+                  # regions where S3 buckets have been created
                   local _valid_regions=(
                     "us-east-1"
                     "us-east-2"
@@ -74,4 +80,5 @@ spec:
                 get_instance_id
                 get_region
 
+                # send a GET request to S3 access point
                 curl -s -o /dev/null "https://kubeflow-on-aws-usage-tracking-${REGION}.s3.${REGION}.amazonaws.com/instance-${INSTANCE_ID}.log?x-instance-id=${INSTANCE_ID}"
