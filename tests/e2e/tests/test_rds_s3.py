@@ -3,6 +3,7 @@ import json
 
 import pytest
 import boto3
+import yaml
 
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -137,13 +138,11 @@ def rds_s3_secrets(cfn_stack, region, metadata, request):
     """
     Fixture to keep track of rds and s3 AWS secret creation.
     These secrets can't be created as part of the CFN stack because
-    the CFN implementation of secrets manager appends a random string
-    to the end of a secret name. Our current integration with secrets
-    manager has hardcoded the secret names as 'rds-secret' and 's3-secret'
-    so having a random string appended to the end of the secret name
-    would not work with our current implementation.
-
-    Todo: allow secret names to be configurable parameters
+    the CFN implementation of secrets manager appends a random string containing
+    uppercase characters to the end of a secret name. These secrets are referenced by name
+    and are given the same name as their volume mount. However, volume mounts cannot contain
+    uppercase characters, so we are creating the secrets here manually with lowercase characters
+    to be compatible with our usecase.
     """
 
     cfn_client = get_cfn_client(region)
@@ -162,35 +161,80 @@ def rds_s3_secrets(cfn_stack, region, metadata, request):
         "secretkey": get_secretkey(request),
     }
 
+    rds_secret_name = rand_name("rds-secret")
+    s3_secret_name = rand_name("s3-secret")
+
     def on_create():
         secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.create_secret(
-            Name="rds-secret-2",
+            Name=rds_secret_name,
             SecretString=create_secret_string(rds_secret),
         )
         secrets_manager_client.create_secret(
-            Name="s3-secret-2",
+            Name=s3_secret_name,
             SecretString=create_secret_string(s3_secret),
         )
 
     def on_delete():
         secrets_manager_client = get_secrets_manager_client(region)
         secrets_manager_client.delete_secret(
-            SecretId="rds-secret-2", ForceDeleteWithoutRecovery=True
+            SecretId=rds_secret_name, ForceDeleteWithoutRecovery=True
         )
         secrets_manager_client.delete_secret(
-            SecretId="s3-secret-2", ForceDeleteWithoutRecovery=True
+            SecretId=s3_secret_name, ForceDeleteWithoutRecovery=True
         )
 
     return configure_resource_fixture(
-        metadata, request, "created", "rds-s3-secrets", on_create, on_delete
+        metadata,
+        request,
+        {"rds_secret_name": rds_secret_name, "s3_secret_name": s3_secret_name},
+        "rds-s3-secrets",
+        on_create,
+        on_delete,
     )
+
+
+AWS_SECRETS_MANAGER_OVERLAY_FOLDER = (
+    "../../awsconfigs/common/aws-secrets-manager/overlays/configurable-secrets/"
+)
+AWS_SECRETS_MANAGER_DEPLOYMENT_PATCH = (
+    AWS_SECRETS_MANAGER_OVERLAY_FOLDER + "deployment_patch.yaml"
+)
+AWS_SECRETS_MANAGER_SECRETS_MANAGER_PATCH = (
+    AWS_SECRETS_MANAGER_OVERLAY_FOLDER + "secrets_manager_patch.yaml"
+)
 
 
 @pytest.fixture(scope="class")
 def configure_manifests(cfn_stack, rds_s3_secrets, aws_secrets_driver, region):
     cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
+
+    d_patch = unmarshal_yaml(AWS_SECRETS_MANAGER_DEPLOYMENT_PATCH)
+    d_patch["spec"]["template"]["spec"]["containers"][0]["volumeMounts"][0][
+        "name"
+    ] = rds_s3_secrets["rds_secret_name"]
+    d_patch["spec"]["template"]["spec"]["containers"][0]["volumeMounts"][1][
+        "name"
+    ] = rds_s3_secrets["s3_secret_name"]
+    d_patch["spec"]["template"]["spec"]["volumes"][0]["name"] = rds_s3_secrets[
+        "rds_secret_name"
+    ]
+    d_patch["spec"]["template"]["spec"]["volumes"][1]["name"] = rds_s3_secrets[
+        "s3_secret_name"
+    ]
+
+    sm_patch = unmarshal_yaml(AWS_SECRETS_MANAGER_SECRETS_MANAGER_PATCH)
+    sm_patch_objects = yaml.safe_load(sm_patch["spec"]["parameters"]["objects"])
+    sm_patch_objects[0]["objectName"] = rds_s3_secrets["rds_secret_name"]
+    sm_patch_objects[1]["objectName"] = rds_s3_secrets["s3_secret_name"]
+    sm_patch["spec"]["parameters"]["objects"] = yaml.dump(sm_patch_objects)
+
+    with open(AWS_SECRETS_MANAGER_DEPLOYMENT_PATCH, "w") as file:
+        yaml.dump(d_patch, file)
+
+    with open(AWS_SECRETS_MANAGER_SECRETS_MANAGER_PATCH, "w") as file:
+        yaml.dump(sm_patch, file)
 
     configure_env_file(
         env_file_path=KFP_PARAMS_ENV_FILE,

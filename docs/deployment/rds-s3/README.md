@@ -138,6 +138,72 @@ Resources:
 
     kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
    ```
+   
+   3. [Optional] If you prefer to use a different secret name for RDS or S3, patch files exist under the overlay at `distributions/aws/aws-secrets-manager/overlays/configurable-secrets`. In the overlay folder, replace the default secret names in the files `deployment_patch.yaml` and `secrets_manager_patch.yaml`. 
+      - For example, if the prefered secrets names were `rds-secret-us-east-1-prod` and `s3-secret-us-east-1-prod` then `deployment_patch.yaml` should look like:
+      - ```
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: kubeflow-secrets-pod
+          namespace: kubeflow
+        spec:
+          template:
+            spec:
+              containers:
+                - name: secrets
+                  volumeMounts:
+                  - name: rds-secret-us-east-1-prod
+                    mountPath: "/mnt/rds-store"
+                    readOnly: true
+                  - name: s3-secret-us-east-1-prod
+                    mountPath: "/mnt/aws-store"
+                    readOnly: true
+              volumes:
+                - name: rds-secret-us-east-1-prod
+                  csi:
+                    driver: secrets-store.csi.k8s.io
+                    readOnly: true
+                    volumeAttributes:
+                      secretProviderClass: "aws-secrets"
+                - name: s3-secret-us-east-1-prod
+                  csi:
+                    driver: secrets-store.csi.k8s.io
+                    readOnly: true
+                    volumeAttributes:
+                      secretProviderClass: "aws-secrets"
+        ```
+      - and `secrets_manager_patch.yaml` should look like:
+        ```
+        apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+        kind: SecretProviderClass
+        metadata:
+          name: aws-secrets
+          namespace: kubeflow
+        spec:
+          parameters:
+            objects: | 
+              - objectName: "rds-secret-us-east-1-prod"
+                objectType: "secretsmanager"
+                jmesPath:
+                    - path: "username"
+                      objectAlias: "user"
+                    - path: "password"
+                      objectAlias: "pass"
+                    - path: "host"
+                      objectAlias: "host"
+                    - path: "database"
+                      objectAlias: "database"
+                    - path: "port"
+                      objectAlias: "port"
+              - objectName: "s3-secret-us-east-1-prod"
+                objectType: "secretsmanager"
+                jmesPath:
+                    - path: "accesskey"
+                      objectAlias: "access"
+                    - path: "secretkey"
+                      objectAlias: "secret"           
+        ```  
 
 ### 2. Configure Kubeflow Pipelines
 

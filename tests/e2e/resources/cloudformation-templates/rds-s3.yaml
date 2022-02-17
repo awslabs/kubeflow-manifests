@@ -67,10 +67,6 @@ Parameters:
     Default: "false"
     AllowedValues: ["true", "false"]
     ConstraintDescription: must be true or false.
-  # See MyRDSSecret and MyS3Secret below
-  # S3SecretString:
-  #   Description: Secret string for S3 secrets
-  #   Type: String
 Resources:
   MySQLSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -119,19 +115,6 @@ Resources:
       PubliclyAccessible: True
     DeletionPolicy: Snapshot
 
-  # Currently the secret names must be rds-secret and s3-secret, however SecretsManager in CFN appends a random string to the end of a provided name
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secret.html
-  # Uncomment this section when we make secret names a configurable parameter for our secrets manager implementation
-  # MyRDSSecret:
-  #   Type: "AWS::SecretsManager::Secret"
-  #   Properties:
-  #     Name: rds-secret
-  #     SecretString: !Sub '{"username":${DBUsername},"password":${DBPassword},"database":${DBName},"host":${MyDB.Endpoint.Address},"port":${MyDB.Endpoint.Port}}'
-  # MyS3Secret:
-  #   Type: "AWS::SecretsManager::Secret"
-  #   Properties:
-  #     Name: s3-secret
-  #     SecretString: !Sub S3SecretString # This doesn't depend on any resource outputs so lets pass it in directly
 Outputs:
   RDSEndpoint:
     Description: RDS Endpoint

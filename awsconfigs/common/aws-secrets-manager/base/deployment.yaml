@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeflow-secrets-pod
+  namespace: kubeflow
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeflow-secrets-pod
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubeflow-secrets-pod
+    spec:
+      containers:
+        - name: secrets
+          image: public.ecr.aws/xray/aws-xray-daemon:latest
+          volumeMounts:
+          - name: rds-secret
+            mountPath: "/mnt/rds-store"
+            readOnly: true
+          - name: s3-secret
+            mountPath: "/mnt/aws-store"
+            readOnly: true
+      volumes:
+        - name: rds-secret
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
+        - name: s3-secret
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
+      serviceAccountName: kubeflow-secrets-manager-sa

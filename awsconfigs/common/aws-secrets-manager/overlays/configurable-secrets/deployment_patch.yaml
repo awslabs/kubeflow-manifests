@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeflow-secrets-pod
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+        - name: secrets
+          volumeMounts:
+          - name: rds-secret # rename secret
+            mountPath: "/mnt/rds-store"
+            readOnly: true
+          - name: s3-secret # rename secret
+            mountPath: "/mnt/aws-store"
+            readOnly: true
+      volumes:
+        - name: rds-secret # rename secret
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
+        - name: s3-secret # rename secret
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
