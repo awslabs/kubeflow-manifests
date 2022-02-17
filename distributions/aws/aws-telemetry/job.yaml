@@ -1,3 +1,4 @@
+# Since CronJob operates on fix schedule, this job is in place for one off tracking at the time Kubeflow is deployed.
 apiVersion: batch/v1
 kind: Job
 metadata:
