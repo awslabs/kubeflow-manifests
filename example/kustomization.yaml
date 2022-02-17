@@ -57,6 +57,8 @@ resources:
 - ../apps/mxnet-job/upstream/overlays/kubeflow
 # XGBoost Operator
 - ../apps/xgboost-job/upstream/overlays/kubeflow
+# AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+- ../distributions/aws/aws-telemetry
 
 # User namespace
 - ../common/user-namespace/base
