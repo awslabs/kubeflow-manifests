@@ -5,7 +5,7 @@ import string
 import random
 import yaml
 import urllib.request
-
+import random
 from shutil import which
 from time import sleep
 
@@ -206,7 +206,8 @@ def kubectl_apply(file_name: str):
         "kubectl",
         "apply",
         "-f",
-        file_name
+        file_name, 
+        "--force"
     ])
 
 
@@ -537,6 +538,14 @@ def footer():
     print("                      EFS Setup Complete")
     print("=================================================================")
 
+def rand_name(prefix):
+    """
+    Returns a random string of 10 ascii lowercase characters appended to the prefix
+    """
+    suffix = "".join(
+        random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+    )
+    return prefix + suffix
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -553,7 +562,7 @@ parser.add_argument(
     help='Your cluster name (eg: mycluster-1)',
     required=True
 )
-EFS_FILE_SYSTEM_NAME_DEFAULT = "KubeflowEfs"
+EFS_FILE_SYSTEM_NAME_DEFAULT = rand_name("Kubeflow-efs")
 parser.add_argument(
     '--efs_file_system_name',
     type=str,

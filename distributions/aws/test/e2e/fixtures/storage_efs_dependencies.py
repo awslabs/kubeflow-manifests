@@ -25,8 +25,10 @@ from e2e.utils.utils import (
     kubectl_apply_kustomize,
     kubectl_delete_kustomize,
 )
-
-DEFAULT_NAMESPACE = "kube-system"
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    DEFAULT_NAMESPACE,
+)
 
 
 def wait_on_efs_status(desired_status, efs_client, file_system_id):
@@ -225,7 +227,7 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
 
         # Add the namespace to the pvc.yaml file
         efs_pvc = load_cfg(efs_pvc_filepath)
-        efs_pvc["metadata"]["namespace"] = DEFAULT_NAMESPACE
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_pvc["metadata"]["name"] = claim_name
         write_cfg(efs_pvc, efs_pvc_filepath)
 
@@ -243,3 +245,40 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     return configure_resource_fixture(
         metadata, request, efs_claim, "efs_claim", on_create, on_delete
     )
+
+@pytest.fixture(scope="class")
+def dynamic_provisioning(metadata, region, request, cluster, create_efs_volume):
+    details_efs_volume = metadata.get("efs_volume")
+    fs_id = details_efs_volume["file_system_id"]
+    claim_name = rand_name("efs-claim-dyn")
+    efs_sc_filepath = "../../examples/storage/efs/dynamic-provisioning/sc.yaml"
+    efs_pvc_filepath = "../../examples/storage/efs/dynamic-provisioning/pvc.yaml"
+    efs_claim_dyn = {}
+
+    def on_create():
+        # Add the filesystem_id to the sc.yaml file
+        efs_sc = load_cfg(efs_sc_filepath)
+        efs_sc["parameters"]["fileSystemId"] = fs_id
+        efs_sc["metadata"]["name"] = claim_name
+        write_cfg(efs_sc, efs_sc_filepath)
+
+        # Add the namespace to the pvc.yaml file
+        efs_pvc = load_cfg(efs_pvc_filepath)
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_pvc["metadata"]["name"] = claim_name
+        efs_pvc["spec"]["storageClassName"] = claim_name
+        write_cfg(efs_pvc, efs_pvc_filepath)
+
+        kubectl_apply(efs_sc_filepath)
+        kubectl_apply(efs_pvc_filepath)
+
+        efs_claim_dyn["efs_claim_dyn"] = claim_name
+
+    def on_delete():
+        kubectl_delete(efs_pvc_filepath)
+        kubectl_delete(efs_sc_filepath)
+
+    return configure_resource_fixture(
+        metadata, request, efs_claim_dyn, "efs_claim_dyn", on_create, on_delete
+    )
+
