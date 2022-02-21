@@ -106,12 +106,14 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
+    1. CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain which you provided as the Sign out URL(s).
     1. Export the values:
         1. ```
           export CognitoUserPoolArn=<>
           export CognitoAppClientId=<>
           export CognitoUserPoolDomain=<>
           export certArn=<>
+          export CognitoLogoutURL=$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=<>
           ```
 1. Verify you are connected to right cluster, cluster has compute and the aws region is set to the region of cluster.
     1. Substitute the value of CLUSTER_REGION below
@@ -140,6 +142,13 @@ In this section, we will be creating certificate to enable TLS authentication at
         CognitoUserPoolDomain='$CognitoUserPoolDomain'
         certArn='$certArn'
         ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
+        ```
+1. Substitute values for setting up AWS authservice.
+    1. ```
+        printf '
+        LOGOUT_URL='$CognitoLogoutURL'
+        PORT=8082
+        ' > awsconfigs/common/aws-authservice/base/params.env
         ```
 1. Setup resources required for the application load balancer controller
     1. Make sure all the subnets(public and private) corresponding to the EKS cluster are tagged according to the `Prerequisites` section in this [document](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html). Ignore the requirement to have an existing ALB provisioned on the cluster. We will be deploying ALB controller version 1.1.5 in the later section.
@@ -285,6 +294,9 @@ In this section, we will be creating certificate to enable TLS authentication at
 
         # Envoy filter
         kustomize build awsconfigs/common/aws-istio-envoy-filter/base | kubectl apply -f -
+
+        # AWS Authservice
+        kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -
         ```
 
 ## 6.0 Updating the domain with ALB address

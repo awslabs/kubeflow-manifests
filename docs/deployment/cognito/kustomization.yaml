@@ -53,3 +53,5 @@ resources:
 - ../../../awsconfigs/common/aws-alb-ingress-controller/base
 # Envoy filter
 - ../../../awsconfigs/common/aws-istio-envoy-filter/base
+# Authservice
+- ../../../awsconfigs/common/aws-authservice/base

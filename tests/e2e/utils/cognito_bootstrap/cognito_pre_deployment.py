@@ -124,6 +124,7 @@ def create_cognito_userpool(
     cognito_userpool.create_userpool_client(
         client_name="kubeflow",
         callback_urls=[f"https://kubeflow.{subdomain_name}/oauth2/idpresponse"],
+        logout_urls=[f"https://kubeflow.{subdomain_name}"],
     )
     userpool_cloudfront_alias = cognito_userpool.create_userpool_domain()
     subdomain_hosted_zone.change_record_set(
