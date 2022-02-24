@@ -97,40 +97,55 @@ aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 
 2. Create RDS Instance
 
-Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
+Amazon RDS is a managed service that makes it easy to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard relational database and manages common database administration tasks. This RDS Instance will be used by Pipelines and Katib.
 
-To use the latest MySQL version (or a different version) in the CFN template, change the `EngineVersion` property of resource `MyDB` to desired version.
+The folloing instructions will show how to setup an RDS instance to be used by the Kubeflow Pipelines and Katib components.
 
-For example:
+To get started deploying a MySQL database using Amazon RDS, you'll need to retrieve some configuration parameters that are needed.
 
+```shell
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+
+# Retrieve your VpcId
+aws ec2 describe-vpcs \
+    --output json \
+    --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME \
+    | jq -r '.Vpcs[].VpcId'
+
+# Retrieve the list of SubnetId's of your cluster's Private subnets, select at least two
+aws ec2 describe-subnets \
+    --output json \
+    --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME Name=tag:aws:cloudformation:logical-id,Values=SubnetPrivate* \
+    | jq -r '.Subnets[].SubnetId'
+
+# Retrieve the SecurityGroupId for your nodes
+# Note, this assumes your nodes share the same SecurityGroup
+INSTANCE_IDS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag-key,Values=eks:cluster-name" "Name=tag-value,Values=$CLUSTER_NAME" --output text)
+for i in "${INSTANCE_IDS[@]}"
+do
+  echo "SecurityGroup for EC2 instance $i ..."
+  aws ec2 describe-instances --output json --instance-ids $i | jq -r '.Reservations[].Instances[].SecurityGroups[].GroupId'
+done  
 ```
-Resources:
-  ...
 
-  Type: AWS::RDS::DBInstance
-  Properties:
-    DBName:
-      Ref: DBName
-    AllocatedStorage:
-      Ref: DBAllocatedStorage
-    DBInstanceClass:
-      Ref: DBClass
-    Engine: MySQL
-    EngineVersion: '8.0.28'  # Change this property
-    MultiAZ:
-      Ref: MultiAZ
-    MasterUsername:
-      Ref: DBUsername
-    MasterUserPassword:
-      Ref: DBPassword
-    DBSubnetGroupName:
-      Ref: MyDBSubnetGroup
-    VPCSecurityGroups:
-      Ref: SecurityGroupId
-  DeletionPolicy: Snapshot
+With this information in hand, you can now use either the Amazon RDS console or use the attached [CloudFormation template](/distributions/aws/examples/files/rds.yaml) to deploy your database.
 
-  ...
-```
+:warning: The CloudFormation template deploys Amazon RDS for MySQL that is intended for Dev/Test environment.
+We highly recommend deploying a Multi-AZ database for Production use. Please review the Amazon RDS [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) to learn more.
+
+Open the AWS Cloudformation management console to create a new stack and upload the attached [CloudFormation template](/distributions/aws/examples/files/rds.yaml).
+Select your desired **Region** in the AWS CloudFormation management console then click **Next**.
+We recommend you change the **DBPassword**, if not it will default to `Kubefl0w`. 
+To use the latest MySQL version (or a different version), change the **EngineVersion** to the desired engine version.
+Select VpcId, Subnets and SecurityGroupId then click **Next**.
+Take the rest of the defaults by clicking **Next**, then clicking **Create Stack**.
+
+Once the CloudFormation stack creation is complete, click on **Outputs** to get the RDS endpoint.
+
+![dashboard](/distributions/aws/examples/images/cloudformation-rds-output.png)
+
+If you didn't use CloudFormation, you can retrieve the RDS endpoint through the RDS console on the Connectivity & Security tab under the Endpoint & Port section. We will use it in the next step while installing Kubeflow.   
+
 
 3. Create Secrets in AWS Secrets Manager
 
