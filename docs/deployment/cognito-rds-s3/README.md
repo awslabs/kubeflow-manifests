@@ -101,8 +101,8 @@ Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubefl
         # ALB controller
         kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
 
-        # Envoy filter
-        kustomize build awsconfigs/common/aws-istio-envoy-filter/base | kubectl apply -f -        
+        # Authservice
+        kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -        
         ```
 1. Follow the rest of the cognito guide from [section 6.0(Updating the domain with ALB address)](../cognito/README.md#60-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address

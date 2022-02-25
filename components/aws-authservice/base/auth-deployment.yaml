@@ -20,7 +20,7 @@ spec:
       containers:
         - name: aws-authservice
           image: public.ecr.aws/c9e4w0g3/cognito/aws-authservice:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
           - name: http-api
             containerPort: 8082

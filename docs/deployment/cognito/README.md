@@ -292,9 +292,6 @@ In this section, we will be creating certificate to enable TLS authentication at
         # ALB controller
         kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
 
-        # Envoy filter
-        kustomize build awsconfigs/common/aws-istio-envoy-filter/base | kubectl apply -f -
-
         # AWS Authservice
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -
         ```

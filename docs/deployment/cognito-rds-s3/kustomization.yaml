@@ -47,8 +47,8 @@ resources:
 - ../../../awsconfigs/common/istio-ingress/overlays/cognito
 # ALB controller
 - ../../../awsconfigs/common/aws-alb-ingress-controller/base
-# Envoy filter
-- ../../../awsconfigs/common/aws-istio-envoy-filter/base
+# Authservice
+- ../../../awsconfigs/common/aws-authservice/base
 
 # Configured for AWS RDS and AWS S3
 
