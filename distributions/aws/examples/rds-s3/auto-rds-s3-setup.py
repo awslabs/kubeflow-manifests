@@ -126,13 +126,20 @@ def does_bucket_exist(s3_client):
 def create_s3_bucket(s3_client):
     print("Creating S3 bucket...")
 
-    s3_client.create_bucket(
+    # CreateBucketConfiguration cannot have LocationConstraint of us-east-1 since it is the default
+    if CLUSTER_REGION == "us-east-1":
+        s3_client.create_bucket(
         ACL="private",
-        Bucket=S3_BUCKET_NAME,
-        CreateBucketConfiguration={
-            "LocationConstraint": CLUSTER_REGION,
-        }
+        Bucket=S3_BUCKET_NAME
     )
+    else: 
+        s3_client.create_bucket(
+            ACL="private",
+            Bucket=S3_BUCKET_NAME,
+            CreateBucketConfiguration={
+                "LocationConstraint": CLUSTER_REGION,
+            }
+        )
 
     print("S3 bucket created!")
 
