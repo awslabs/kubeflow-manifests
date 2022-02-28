@@ -209,7 +209,7 @@ spawnerFormDefaults:
   configurations:
     # List of labels to be selected, these are the labels from PodDefaults
     # value:
-    #   - add-gcp-secret
+    #   - add-aws-secret
     #   - default-editor
     value: []
     readOnly: false
