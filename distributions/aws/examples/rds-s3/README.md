@@ -82,7 +82,7 @@ You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/l
 ## 2.0 Setup RDS, S3 and configure Secrets
 To facilitate creating the RDS and S3 resources an automated python script has been provided. 
 
-:warning The automated python script setups an environment to be used for development/testing purposes. To help setup an environment that meets your production needs, please refer to the [RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) and [S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide//Welcome.html) documentation. 
+:warning: The automated python script setups an environment to be used for development/testing purposes. To help setup an environment that meets your production needs, please refer to the [RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) and [S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide//Welcome.html) documentation. 
 
 The script takes care of creating the S3 bucket, creating the S3 secrets using the secrets manager, setting up the RDS database and creating the RDS secret using the secrets manager. It also edits the required configuration files for Kubeflow pipeline to be properly configured for the RDS database during Kubeflow installation.  
 The script also handles cases where the resources already exist in which case it will simply skips the step.
