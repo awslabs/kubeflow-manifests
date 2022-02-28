@@ -64,9 +64,8 @@ def create_iam_service_account(
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
-def delete_iam_service_account(
-    service_account_name, namespace, cluster_name, region
-):
+
+def delete_iam_service_account(service_account_name, namespace, cluster_name, region):
     cmd = []
     cmd += "eksctl delete iamserviceaccount".split()
     cmd += f"--name {service_account_name}".split()
@@ -75,6 +74,7 @@ def delete_iam_service_account(
     cmd += f"--region {region}".split()
 
     subprocess.call(cmd)
+
 
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):

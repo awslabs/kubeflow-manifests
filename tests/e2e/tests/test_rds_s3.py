@@ -140,25 +140,38 @@ KFP_S3_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/s3/params.env"
 RDS_SECRET_PROVIDER_CLASS_FILE = KFP_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
 S3_SECRET_PROVIDER_CLASS_FILE = KFP_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
 
+
 @pytest.fixture(scope="class")
 def configure_manifests(cfn_stack, aws_secrets_driver, region):
     cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
     rds_secret_provider = unmarshal_yaml(RDS_SECRET_PROVIDER_CLASS_FILE)
-    rds_secret_provider_objects = yaml.safe_load(rds_secret_provider['spec']['parameters']['objects'])
-    rds_secret_provider_objects[0]['objectName'] = "-".join(stack_outputs["RDSSecretName"].split(":")[-1].split('-')[:-1])
-    rds_secret_provider['spec']['parameters']['objects'] = yaml.dump(rds_secret_provider_objects)
+    rds_secret_provider_objects = yaml.safe_load(
+        rds_secret_provider["spec"]["parameters"]["objects"]
+    )
+    rds_secret_provider_objects[0]["objectName"] = "-".join(
+        stack_outputs["RDSSecretName"].split(":")[-1].split("-")[:-1]
+    )
+    rds_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
+        rds_secret_provider_objects
+    )
 
     s3_secret_provider = unmarshal_yaml(S3_SECRET_PROVIDER_CLASS_FILE)
-    s3_secret_provider_objects = yaml.safe_load(s3_secret_provider['spec']['parameters']['objects'])
-    s3_secret_provider_objects[0]['objectName'] = "-".join(stack_outputs["S3SecretName"].split(":")[-1].split('-')[:-1])
-    s3_secret_provider['spec']['parameters']['objects'] = yaml.dump(s3_secret_provider_objects)
+    s3_secret_provider_objects = yaml.safe_load(
+        s3_secret_provider["spec"]["parameters"]["objects"]
+    )
+    s3_secret_provider_objects[0]["objectName"] = "-".join(
+        stack_outputs["S3SecretName"].split(":")[-1].split("-")[:-1]
+    )
+    s3_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
+        s3_secret_provider_objects
+    )
 
-    with open(RDS_SECRET_PROVIDER_CLASS_FILE, 'w') as file:
+    with open(RDS_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(rds_secret_provider, file)
 
-    with open(S3_SECRET_PROVIDER_CLASS_FILE, 'w') as file:
+    with open(S3_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(s3_secret_provider, file)
 
     configure_env_file(
@@ -176,6 +189,7 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
             "minioServiceRegion": region,
         },
     )
+
 
 @pytest.fixture(scope="class")
 def delete_s3_bucket_contents(cfn_stack, request, region):

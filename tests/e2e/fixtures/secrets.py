@@ -4,7 +4,11 @@ import pytest
 
 from e2e.utils.utils import kubectl_apply
 
-from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account, delete_iam_service_account
+from e2e.fixtures.cluster import (
+    associate_iam_oidc_provider,
+    create_iam_service_account,
+    delete_iam_service_account,
+)
 from e2e.utils.k8s_core_api import create_namespace
 
 from e2e.utils.constants import (
@@ -40,6 +44,7 @@ def aws_secrets_driver(cluster, region):
 
     secrets_store_csi_driver.install()
     secrets_store_csi_driver_provider_aws.install()
+
 
 def create_secret_string(secrets_dict):
     return json.dumps(secrets_dict)

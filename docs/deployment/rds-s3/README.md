@@ -207,13 +207,13 @@ while ! kustomize build docs/deployment/rds-s3 | kubectl apply -f -; do echo "Re
 #### [RDS] Deploy RDS only
 
 ```sh
-while ! kustomize build docs/deployment/rds-s3/rds | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build docs/deployment/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 #### [S3] Deploy S3 only
 
 ```sh
-while ! kustomize build docs/deployment/rds-s3/s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build docs/deployment/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster).
