@@ -83,6 +83,8 @@ Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubefl
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 
+        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+        kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
         # AWS Secret Manager
         kustomize build awsconfigs/common/aws-secrets-manager/base | kubectl apply -f -
