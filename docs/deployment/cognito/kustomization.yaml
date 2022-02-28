@@ -44,6 +44,8 @@ resources:
 - ../../../upstream/apps/training-operator/upstream/overlays/kubeflow
 # MPI Operator
 - ../../../upstream/apps/mpi-job/upstream/overlays/kubeflow
+# AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+- ../../../awsconfigs/common/aws-telemetry
 
 # Configured for AWS Cognito
 

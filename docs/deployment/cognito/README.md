@@ -277,6 +277,9 @@ In this section, we will be creating certificate to enable TLS authentication at
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 
+        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+        kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
+
         # Ingress
         kustomize build awsconfigs/common/istio-ingress/overlays/cognito | kubectl apply -f -
 
