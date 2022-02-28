@@ -114,9 +114,24 @@ def setup_s3_bucket():
 def get_s3_client():
     return boto3.client(
         "s3",
-        region_name=CLUSTER_REGION
+        region_name=CLUSTER_REGION,
+        aws_access_key_id=get_s3_access_key_id(),
+        aws_secret_access_key=get_s3_secret_access_key()
     )
 
+def get_s3_access_key_id():
+    if S3_ACCESS_KEY_ID is not None:
+        return S3_ACCESS_KEY_ID
+    else:
+        session = boto3.Session()
+        return session.get_credentials().access_key
+
+def get_s3_secret_access_key():
+    if S3_SECRET_ACCESS_KEY is not None:
+        return S3_SECRET_ACCESS_KEY
+    else:
+        session = boto3.Session()
+        return session.get_credentials().secret_key
 
 def does_bucket_exist(s3_client):
     buckets = s3_client.list_buckets()["Buckets"]
@@ -164,8 +179,8 @@ def create_s3_secret(secrets_manager_client, s3_secret_name):
     session = boto3.Session()
 
     secret_string = json.dumps({
-        "accesskey": f"{session.get_credentials().access_key}",
-        "secretkey": f"{session.get_credentials().secret_key}"
+        "accesskey": f"{get_s3_access_key_id()}",
+        "secretkey": f"{get_s3_secret_access_key()}"
     })
 
     secrets_manager_client.create_secret(
@@ -686,13 +701,34 @@ parser.add_argument(
     help=f"Default is set to {DB_SUBNET_GROUP_NAME_DEFAULT}",
     required=False
 )
-
+parser.add_argument(
+    '--s3_aws_access_key_id',
+    type=str,
+    help="""
+    This parameter allows to explicitly specify the access key ID to use for the setup.
+    The access key ID is used to create the S3 bucket and is saved using the secrets manager.
+    If no value is provided the script will use the access key ID configured on your machine.
+    """,
+    required=False
+)
+parser.add_argument(
+    '--s3_aws_secret_access_key',
+    type=str,
+    help="""
+    This parameter allows to explicitly specify the secret access key to use for the setup.
+    The secret access key is used to create the S3 bucket and is saved using the secrets manager.
+    If no value is provided the script will use the secret access key configured on your machine.
+    """,
+    required=False
+)
 args, _ = parser.parse_known_args()
 
 if __name__ == "__main__":
     CLUSTER_REGION = args.region
     CLUSTER_NAME = args.cluster
     S3_BUCKET_NAME = args.bucket
+    S3_ACCESS_KEY_ID=args.s3_aws_access_key_id
+    S3_SECRET_ACCESS_KEY=args.s3_aws_secret_access_key
     DB_ROOT_USER = args.db_root_user
     DB_ROOT_PASSWORD = args.db_root_password
     DB_INSTANCE_NAME = args.db_instance_name
