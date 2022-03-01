@@ -8,9 +8,7 @@ Follow the [install](#install) steps below to configure and deploy the Kustomize
 
 ## Install
 
-Similar to [the single command base installation](../../../../README.md#install-with-a-single-command) the AWS install configures the Kubeflow official components to integrate with supported AWS services.
-
-The following steps show how to configure and deploy:
+The following steps show how to configure and deploy Kubeflow with supported AWS services:
 
 ## 1.0 Prerequisites
 
@@ -19,7 +17,7 @@ The following steps show how to configure and deploy:
    - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
    - [eksctl >= 0.56](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
-   - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
+   - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://github.com/mikefarah/yq/#install))
    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
@@ -190,7 +188,7 @@ Once you have the resources ready, you can continue on to deploying the Kubeflow
 while ! kustomize build distributions/aws/examples/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
-After everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster).
+After everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster).
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
@@ -257,7 +255,7 @@ mysql> use mlpipeline; show tables;
 +----------------------+
 ```
 
-4. Access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster) and navigate to Katib (under Experiments (AutoML)).
+4. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Katib (under Experiments (AutoML)).
 
 5. Create an experiment using the following [yaml file](../../test/e2e/resources/custom-resource-templates/katib-experiment-random.yaml).
 
@@ -281,7 +279,7 @@ mysql> select * from observation_logs;
 
 ### 4.2 Verify S3
 
-1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../../../../README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
+1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
 
 2. Create an experiment named `test` and create a run using the sample pipeline `[Demo] XGBoost - Iterative model training`.
 
