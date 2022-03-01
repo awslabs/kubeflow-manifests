@@ -3,7 +3,7 @@
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider, RDS for database and S3 for artifact storage.
 
 ## 1. Prerequisites
-Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prerequisites) to:
+Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prerequisites) and setup RDS & S3 from [this guide](../rds-s3/README.md#20-setup-rds-s3-and-configure-secrets) to:
 1. Install the CLI tools
 1. Clone the repo
 1. Create an EKS cluster and
@@ -11,11 +11,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 1. Create RDS Instance
 1. Configure AWS Secrets for RDS and S3
 1. Install AWS Secrets and Kubernetes Secrets Store CSI driver
-
-## Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
-
-Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubeflow-pipelines) section from this guide to:
-1. Substitute the RDS Host and S3 Bucket name used to access the dbinstance and S3
+1. Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
 
 ## Configure Custom Domain and Cognito
 
