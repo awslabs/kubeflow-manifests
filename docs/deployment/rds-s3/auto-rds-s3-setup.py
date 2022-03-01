@@ -564,6 +564,9 @@ def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_
     db_host_pattern = "dbHost="
     db_host_new_line = db_host_pattern + db_instance_info["Endpoint"]["Address"] + "\n"
 
+    db_mlmd_db_pattern = "mlmdDb="
+    db_mlmd_db_new_line = db_mlmd_db_pattern + db_instance_info["DBName"] + "\n"
+
     bucket_name_pattern = "bucketName="
     bucket_name_new_line = bucket_name_pattern + S3_BUCKET_NAME + "\n"
 
@@ -574,6 +577,7 @@ def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_
 
     for line in pipeline_params_env_lines:
         line = replace_line(line, db_host_pattern, db_host_new_line)
+        line = replace_line(line, db_mlmd_db_pattern, db_mlmd_db_new_line)
         line = replace_line(line, bucket_name_pattern, bucket_name_new_line)
         line = replace_line(line, minio_service_region_pattern, minio_service_region_new_line)
         new_pipeline_params_env_lines.append(line)
@@ -645,12 +649,12 @@ parser.add_argument(
     help=f"Unique identifier for the RDS database instance. Default is set to {DB_INSTANCE_NAME_DEFAULT}",
     required=False
 )
-DB_NAME_DEFAULT = "kubeflow"
+DB_NAME_DEFAULT = "ml_metadata_db"
 parser.add_argument(
     '--db_name',
     type=str,
     default=DB_NAME_DEFAULT,
-    help=f"Default is set to {DB_NAME_DEFAULT}",
+    help=f"Name of the metadata database. Default is set to {DB_NAME_DEFAULT}",
     required=False
 )
 DB_INSTANCE_TYPE_DEFAULT = "db.m5.large"
