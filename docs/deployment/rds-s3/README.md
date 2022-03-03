@@ -172,21 +172,23 @@ Resources:
     kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
    ```
 
-5. Configure Kubeflow Pipelines by editing the following file in `awsconfigs/apps/pipeline` directory:
+5. Update the KFP configurations
+    1. [RDS] Configure the `awsconfigs/apps/pipeline/rds/params.env` file with the RDS endpoint url and the metadata db name.
 
-   - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` your `params.env` file should look like:
-   - ```
-     dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-     ```
-
-   2. [S3] Configure `awsconfigs/apps/pipeline/s3/params.env` file with the S3 bucket name, and S3 bucket region that were configured when following the steps in Create S3 Bucket steps in prerequisites(#1-prerequisites).
-
-      - For example, if your S3 bucket name is `kf-aws-demo-bucket` and s3 bucket region is `us-west-2` your `params.env` file should look like:
-      - ```
-        bucketName=kf-aws-demo-bucket
-        minioServiceHost=s3.amazonaws.com
-        minioServiceRegion=us-west-2
+       For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` and your metadata db name is `kubeflow` your `params.env` file should look like:
+       ```
+        dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
+        mlmdDb=kubeflow
         ```
+
+    2. [S3] Configure the `awsconfigs/apps/pipeline/s3/params.env` file with the S3 bucket name, and S3 bucket region that were configured when following the steps in Create S3 Bucket steps in prerequisites(#1-prerequisites).
+
+         For example, if your S3 bucket name is `kf-aws-demo-bucket` and s3 bucket region is `us-west-2` your `params.env` file should look like:
+         ```
+          bucketName=kf-aws-demo-bucket
+          minioServiceHost=s3.amazonaws.com
+          minioServiceRegion=us-west-2
+          ```
 
 ## 3.0 Build Manifests and Install Kubeflow
 
