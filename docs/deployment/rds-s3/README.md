@@ -4,7 +4,28 @@
 
 This Kustomize Manifest can be used to deploy Kubeflow Pipelines and Katib with RDS and S3.
 
-Follow the [install](#install) steps below to configure and deploy the Kustomize manifest.
+### RDS
+
+[Amazon Relational Database Service (RDS)](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.
+
+In the [default kubeflow installation](../../../../example/kustomization.yaml), the [KFP](../../../../apps/katib/upstream/components/mysql/mysql.yaml) and [Katib](../../../../apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
+
+As compared to using the MySQL setup in the default installation, using RDS provides the following advantages:
+- Easier to configure scalability and availability: RDS provides high availability and failover support for DB instances using Multi-AZ deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.
+- Persisted KFP and Katib data can be reused across Kubeflow versions: Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing the same RDS instance to be used across multiple Kubeflow deployments and versions.
+- Higher level of customizability and management: RDS provides management features to facilitate changing database instance types, updating SQL versions, and more.
+
+### S3
+[Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide//Welcome.html) is an object storage service that is highly scalable, available, secure, and performant. 
+
+In the [default kubeflow installation](../../../../example/kustomization.yaml), the [KFP](../../../../apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
+
+Configuring MinIO to read and write to S3 provides the following advantages:
+- Higher scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.
+- Persisted KFP data can be reused across Kubeflow version: Using S3 decouples the KFP object datastore from the Kubeflow deployment, allowing the same S3 resources to be used across multiple Kubeflow deployments and versions.
+- Higher level of customizability and management: S3 provides management features to help optimize, organize, and configure access to your data to meet your specific business, organizational, and compliance requirements
+
+To get started with configuring and installing your Kubeflow installation with RDS and S3 follow the [install](#install) steps below to configure and deploy the Kustomize manifest.
 
 ## Install
 
@@ -83,62 +104,26 @@ The script applies some sensible default values for the db user password, max st
 You can learn more about the different parameters by running `python auto-rds-s3-setup.py --help`.
 
 ### 2.2 **Option 2: Manual Setup**
+If you prefer to manually setup each components then you can follow this manual guide.  
+1. [S3] Create an S3 Bucket
 
-If you prefer to manually setup each components then you can follow this manual guide.
+    Refer to the [S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html) for steps on creating an `S3 bucket`.
+  To complete the following steps you will need to keep track of the `S3 bucket name`.
 
-1. Create S3 Bucket
+2. [RDS] Create an RDS Instance
 
-Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
-This bucket will be used to store artifacts from pipelines.
-
-```
-export S3_BUCKET=<YOUR_S3_BUCKET_NAME>
-export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
-```
-
-2. Create RDS Instance
-
-Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
-
-To use the latest MySQL version (or a different version) in the CFN template, change the `EngineVersion` property of resource `MyDB` to desired version.
-
-For example:
-
-```
-Resources:
-  ...
-
-  Type: AWS::RDS::DBInstance
-  Properties:
-    DBName:
-      Ref: DBName
-    AllocatedStorage:
-      Ref: DBAllocatedStorage
-    DBInstanceClass:
-      Ref: DBClass
-    Engine: MySQL
-    EngineVersion: '8.0.28'  # Change this property
-    MultiAZ:
-      Ref: MultiAZ
-    MasterUsername:
-      Ref: DBUsername
-    MasterUserPassword:
-      Ref: DBPassword
-    DBSubnetGroupName:
-      Ref: MyDBSubnetGroup
-    VPCSecurityGroups:
-      Ref: SecurityGroupId
-  DeletionPolicy: Snapshot
-
-  ...
-```
+    Refer to the [RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.MySQL.html) for steps on creating an `RDS MySQL instance`.
+    To complete the following steps you will need to keep track of the following:
+    - `RDS database name` (not to be confused with the `DB identifier`)
+    - `RDS database admin username`
+    - `RDS database admin password`
+    - `RDS database endpoint URL`
+    - `RDS database port`
 
 3. Create Secrets in AWS Secrets Manager
 
    1. [RDS] Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
       - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
-      - **Note:** These are the default values for the database name and credentials in cloudformation template for creating the RDS instance, change these according to the values you used
       - ```
         aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
         ```
@@ -181,7 +166,7 @@ Resources:
         mlmdDb=kubeflow
         ```
 
-    2. [S3] Configure the `awsconfigs/apps/pipeline/s3/params.env` file with the S3 bucket name, and S3 bucket region that were configured when following the steps in Create S3 Bucket steps in prerequisites(#1-prerequisites).
+    2. [S3] Configure the `awsconfigs/apps/pipeline/s3/params.env` file with with the `S3 bucket name`, and `S3 bucket region`..
 
          For example, if your S3 bucket name is `kf-aws-demo-bucket` and s3 bucket region is `us-west-2` your `params.env` file should look like:
          ```
@@ -222,20 +207,22 @@ Once, everything is installed successfully, you can access the Kubeflow Central 
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
-## 4.0 Verify the installation
+## 4.0 Using only RDS or only S3
 
-### 4.1 Verify RDS
+### RDS only
+Follow the steps prefixed with [RDS] above.
+
+### S3 only
+Follow the steps prefixed with [S3] above.
+
+## 5.0 Verify the installation
+
+### 5.1 Verify RDS
 
 1. Connect to the RDS instance from a pod within the cluster
 
 ```
 kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u <YOUR LOGIN> -p<YOUR PASSWORD>
-```
-
-If you used the default parameters in the [CFN template](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/files/rds.yaml) given at step 5 of the Prerequistes, the command would look like
-
-```
-kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u admin -pKubefl0w
 ```
 
 Note that you can find your credentials by visiting [aws secrets manager](https://aws.amazon.com/secrets-manager/) or by using [AWS CLI](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/secretsmanager/get-secret-value.html)
@@ -308,7 +295,7 @@ mysql> use kubeflow; show tables;
 mysql> select * from observation_logs;
 ```
 
-### 4.2 Verify S3
+### 5.2 Verify S3
 
 1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
 
@@ -318,7 +305,7 @@ mysql> select * from observation_logs;
 
 4. Verify the bucket is not empty and was populated by outputs of the experiment.
 
-## 5.0 Uninstall Kubeflow
+## 6.0 Uninstall Kubeflow
 
 Run the following command to uninstall:
 
