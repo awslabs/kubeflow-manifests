@@ -10,9 +10,6 @@ configMapGenerator:
 - name: pipeline-install-config
   env: params.env
   behavior: merge
-- name: secret-objects
-  files:
-    - secret-object.yaml
 generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:

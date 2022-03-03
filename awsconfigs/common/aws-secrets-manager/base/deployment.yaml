@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kubeflow-secrets-pod
+  name: aws-secrets-sync
   namespace: kubeflow
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: kubeflow-secrets-pod
+      app: aws-secrets-sync
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: kubeflow-secrets-pod
+        app: aws-secrets-sync
     spec:
       containers:
         - name: secrets
