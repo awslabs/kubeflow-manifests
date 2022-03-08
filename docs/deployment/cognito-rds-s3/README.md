@@ -43,7 +43,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
         kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
         
         # KNative
-        kustomize build upstream/common/knative/knative-serving/base | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
         kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
         
