@@ -1,4 +1,4 @@
-# AWS Distribution of Kubeflow
+# Kubeflow on AWS
 
 ## Overview
 
@@ -12,7 +12,7 @@ There are a number of deployment options for installing Kubeflow with AWS servic
 
 For help, please consider the following venues (in order):
 
-* Documentation: Link TBD
+* [Documentation](https://www.kubeflow.org/docs/distributions/aws/)
 * [Search open issues](https://github.com/awslabs/kubeflow-manifests/issues)
 * [File an issue](https://github.com/awslabs/kubeflow-manifests/issues/new/choose)
 * Chat with us on the `#platform-aws` channel in the [Kubeflow Slack](https://www.kubeflow.org/docs/about/community/#slack) community.

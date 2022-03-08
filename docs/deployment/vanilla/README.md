@@ -325,6 +325,10 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
 2. Login with the default user's credential. The default email address is `user@example.com` and the default password is `12341234`.
 
+#### Exposing Kubeflow over Load Balancer
+
+In order to expose Kubeflow over an external address you can setup AWS Application Load Balancer. This feature is in active development, please take a look at the following issue: [#67](https://github.com/awslabs/kubeflow-manifests/issues/67) to stay up to date on the progress.
+
 ### Change default user password
 
 For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
