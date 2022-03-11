@@ -25,7 +25,10 @@ from e2e.utils.utils import (
     kubectl_delete_kustomize,
 )
 
-DEFAULT_NAMESPACE = "kube-system"
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    DEFAULT_NAMESPACE,
+)
 
 
 def wait_on_fsx_status(desired_status, fsx_client, file_system_id):
@@ -208,6 +211,9 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
     fsx_pvc_filepath = (
         "../../examples/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
     )
+    fsx_permissions_filepath = (
+        "../../examples/storage/notebook-sample/set-permission-job.yaml"
+    )
     fsx_claim = {}
 
     def on_create():
@@ -219,20 +225,31 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
         fsx_pv["spec"]["csi"]["volumeAttributes"]["mountname"] = mount_name
         write_cfg(fsx_pv, fsx_pv_filepath)
 
-        # Add the namespace to the pvc.yaml file
+        # Update the values in the pvc.yaml file
         fsx_pvc = load_cfg(fsx_pvc_filepath)
-        fsx_pvc["metadata"]["namespace"] = DEFAULT_NAMESPACE
+        fsx_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         fsx_pvc["metadata"]["name"] = claim_name
         write_cfg(fsx_pvc, fsx_pvc_filepath)
 
+        # Update the values in the permissions file
+        fsx_permission = load_cfg(fsx_permissions_filepath)
+        fsx_permission["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        fsx_permission["metadata"]["name"] = "permissions-" + claim_name
+        fsx_permission["spec"]["template"]["spec"]["volumes"][0][
+            "persistentVolumeClaim"
+        ]["claimName"] = claim_name
+        write_cfg(fsx_permission, fsx_permissions_filepath)
+
         kubectl_apply(fsx_pv_filepath)
         kubectl_apply(fsx_pvc_filepath)
+        kubectl_apply(fsx_permissions_filepath)
 
         fsx_claim["claim_name"] = claim_name
 
     def on_delete():
         kubectl_delete(fsx_pvc_filepath)
         kubectl_delete(fsx_pv_filepath)
+        kubectl_delete(fsx_permissions_filepath)
 
     return configure_resource_fixture(
         metadata, request, fsx_claim, "fsx_claim", on_create, on_delete
