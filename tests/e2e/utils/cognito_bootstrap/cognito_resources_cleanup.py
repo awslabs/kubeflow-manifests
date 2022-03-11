@@ -1,9 +1,11 @@
+from email import policy
 import logging
 from e2e.utils.cognito_bootstrap import common as utils
 
 from e2e.utils.cognito_bootstrap.aws.acm import AcmCertificate
 from e2e.utils.cognito_bootstrap.aws.elbv2 import ElasticLoadBalancingV2
 from e2e.utils.cognito_bootstrap.aws.cognito import CustomDomainCognitoUserPool
+from e2e.utils.cognito_bootstrap.aws.iam import IAMPolicy
 from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
 
 
@@ -62,6 +64,13 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
     except Exception:
         pass
 
+def delete_policy(arn: str, region: str):
+    try:
+        policy = IAMPolicy(arn=arn, region=region)
+        policy.delete()
+    except Exception:
+        pass
+
 
 def delete_alb(dns: str, region: str):
     try:
@@ -72,7 +81,7 @@ def delete_alb(dns: str, region: str):
 
 
 def delete_cognito_dependency_resources(cfg: dict):
-    deployment_region = cfg["kubeflow"]["region"]
+    deployment_region = cfg["cluster"]["region"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
 
@@ -125,9 +134,17 @@ def delete_cognito_dependency_resources(cfg: dict):
             )
 
         # delete ALB
-        alb_dns = cfg["kubeflow"].get("ALBDNS", None)
-        if alb_dns:
-            delete_alb(alb_dns, deployment_region)
+        if "kubeflow" in cfg.keys():
+            alb = cfg["kubeflow"].get("alb", None)
+            if alb:
+                alb_dns = alb.get("dns", None)
+                if alb_dns:
+                    delete_alb(alb_dns, deployment_region)
+                alb_controller_policy_arn = alb["serviceAccount"]["policyArn"]
+                delete_policy(
+                    arn=alb_controller_policy_arn,
+                    region=deployment_region
+                )
 
         # delete subdomain certs
         if deployment_region != "us-east-1":

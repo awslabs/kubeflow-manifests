@@ -1,7 +1,8 @@
+cluster:
+  name:
+  region:
 cognitoUserpool:
   name:
-kubeflow:
-  region:
 route53:
   rootDomain:
     hostedZoneId:

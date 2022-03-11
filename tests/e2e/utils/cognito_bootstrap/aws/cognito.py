@@ -39,7 +39,19 @@ class CustomDomainCognitoUserPool:
 
     def create_userpool(self) -> str:
         try:
-            response = self.cognito_client.create_user_pool(PoolName=self.userpool_name)
+            response = self.cognito_client.create_user_pool(PoolName=self.userpool_name,
+            AliasAttributes=['email'],
+            Schema=[
+                {
+                    "Name": "email",
+                    "AttributeDataType": "String",
+                    "Mutable": True,
+                    "Required": False,
+                }
+            ],
+            AdminCreateUserConfig={
+                'AllowAdminCreateUserOnly': True
+            })
         except ClientError:
             logger.exception(
                 f"Failed to create userpool {self.userpool_name} in {self.region}"

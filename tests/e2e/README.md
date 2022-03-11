@@ -37,7 +37,7 @@ pytest -s -q --keepsuccess --region <REGION_NAME>
 
 Resume from a previous run using the resources that were previous created
 ```
-pytest -s pytest -s -q --metadata .metadata/metadata-1638939746471968000 --keepsuccess --region <REGION_NAME>
+pytest -s -q --metadata .metadata/metadata-1638939746471968000 --keepsuccess --region <REGION_NAME>
 ```
 
 ### About metadata

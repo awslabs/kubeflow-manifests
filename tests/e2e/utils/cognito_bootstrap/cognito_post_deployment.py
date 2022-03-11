@@ -26,12 +26,6 @@ def update_hosted_zone_with_alb(
         record_name="*." + subdomain_name, record_type="CNAME", record_value=[alb_dns]
     )
 
-    _default_platform_record = subdomain_hosted_zone.generate_change_record(
-        record_name="*.default." + subdomain_name,
-        record_type="CNAME",
-        record_value=[alb_dns],
-    )
-
     # https://aws.amazon.com/premiumsupport/knowledge-center/alias-resource-record-set-route53-cli/
     # creating a alias type record for ELB
     # dual stack prefix is needed when creating an alias dns record for ELB
@@ -49,7 +43,6 @@ def update_hosted_zone_with_alb(
     subdomain_hosted_zone.change_record_set(
         [
             _platform_record,
-            _default_platform_record,
             updated_subdomain_A_record,
         ]
     )
@@ -59,10 +52,10 @@ if __name__ == "__main__":
     utils.print_banner("Reading Config")
     cfg = utils.load_cfg()
 
-    deployment_region = cfg["kubeflow"]["region"]
+    deployment_region = cfg["cluster"]["region"]
     subdomain_name = cfg["route53"]["subDomain"]["name"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
-    alb_dns = cfg["kubeflow"]["ALBDNS"]
+    alb_dns = cfg["kubeflow"]["alb"]["dns"]
 
     utils.print_banner("Updating hosted zone with ALB DNS")
     update_hosted_zone_with_alb(

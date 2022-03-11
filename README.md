@@ -1,3 +1,6 @@
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/awslabs/kubeflow-manifests/issues)
+![current development version](https://img.shields.io/badge/Kubeflow-v1.4.1-green.svg?style=flat)
+
 # Kubeflow on AWS
 
 ## Overview

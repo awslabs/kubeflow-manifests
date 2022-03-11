@@ -107,7 +107,8 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
     1. Export the values:
-        1. ```
+        1. 
+          ```
           export CognitoUserPoolArn=<>
           export CognitoAppClientId=<>
           export CognitoUserPoolDomain=<>
