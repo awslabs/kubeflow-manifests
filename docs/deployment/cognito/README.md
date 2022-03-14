@@ -107,7 +107,8 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
     1. Export the values:
-        1. ```
+        1. 
+          ```
           export CognitoUserPoolArn=<>
           export CognitoAppClientId=<>
           export CognitoUserPoolDomain=<>
@@ -147,7 +148,7 @@ In this section, we will be creating certificate to enable TLS authentication at
             1. `kubernetes.io/cluster/cluster-name` (replace `cluster-name` with your cluster name e.g. `kubernetes.io/cluster/my-k8s-cluster`). Add this tag in both private and public subnets. If you created the cluster using eksctl, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of `TAG_VALUE` variable(`owned` or `shared`):
                 - ```
                   export KIO_TAG_VALUE=<>
-                  export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME | jq -r '.Subnets[].SubnetId')
+                  export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME --output json | jq -r '.Subnets[].SubnetId')
                   for i in "${CLUSTER_SUBNET_IDS[@]}"
                   do
                       aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${KIO_TAG_VALUE}
