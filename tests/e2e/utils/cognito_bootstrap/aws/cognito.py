@@ -46,7 +46,7 @@ class CustomDomainCognitoUserPool:
                     "Name": "email",
                     "AttributeDataType": "String",
                     "Mutable": True,
-                    "Required": False,
+                    "Required": True,
                 }
             ],
             AdminCreateUserConfig={
