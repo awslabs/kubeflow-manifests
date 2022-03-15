@@ -106,6 +106,7 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
+    1. signOutURL is the domain which you provided as the Sign out URL(s).
     1. CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain which you provided as the Sign out URL(s).
     1. Export the values:
         1. 
@@ -114,7 +115,8 @@ In this section, we will be creating certificate to enable TLS authentication at
           export CognitoAppClientId=<>
           export CognitoUserPoolDomain=<>
           export certArn=<>
-          export CognitoLogoutURL=$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=<>
+          export signOutURL=<>
+          export CognitoLogoutURL=$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL
           ```
 1. Verify you are connected to right cluster, cluster has compute and the aws region is set to the region of cluster.
     1. Substitute the value of CLUSTER_REGION below
