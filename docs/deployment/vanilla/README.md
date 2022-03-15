@@ -282,6 +282,14 @@ Install the MPI Operator official Kubeflow component:
 kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
+#### AWS Telemetry
+
+Install the AWS Kubeflow telemetry component. This is an optional component. See the [usage tracking documentation](TBD) for more information
+
+```sh
+kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
+```
+
 #### User Namespace
 
 Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
@@ -316,6 +324,10 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
 2. Login with the default user's credential. The default email address is `user@example.com` and the default password is `12341234`.
+
+#### Exposing Kubeflow over Load Balancer
+
+In order to expose Kubeflow over an external address you can setup AWS Application Load Balancer. This feature is in active development, please take a look at the following issue: [#67](https://github.com/awslabs/kubeflow-manifests/issues/67) to stay up to date on the progress.
 
 ### Change default user password
 

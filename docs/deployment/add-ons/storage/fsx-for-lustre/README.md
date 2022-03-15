@@ -3,7 +3,7 @@
 This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.  
 
 ## 1.0 Prerequisites
-1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../../README.md) or [generic distribution](../../../../../README.md).
+1. For this README, we will assume that you already have an EKS Cluster with Kubeflow installed since the FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. You can follow any of the other guides to complete these steps - choose one of the [AWS managed service integrated offering](../../../README.md#deployment-options) or [vanilla distribution](../../../vanilla/README.md).
 
 2. At this point, you have likely cloned this repo and checked out the right branch. Navigate to the current directory - 
 ```

@@ -3,7 +3,7 @@
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider, RDS for database and S3 for artifact storage.
 
 ## 1. Prerequisites
-Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prerequisites) to:
+Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prerequisites) and setup RDS & S3 from [this guide](../rds-s3/README.md#20-setup-rds-s3-and-configure-secrets) to:
 1. Install the CLI tools
 1. Clone the repo
 1. Create an EKS cluster and
@@ -11,11 +11,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 1. Create RDS Instance
 1. Configure AWS Secrets for RDS and S3
 1. Install AWS Secrets and Kubernetes Secrets Store CSI driver
-
-## Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
-
-Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubeflow-pipelines) section from this guide to:
-1. Substitute the RDS Host and S3 Bucket name used to access the dbinstance and S3
+1. Configure RDS endpoint and S3 bucket name for Kubeflow Pipelines
 
 ## Configure Custom Domain and Cognito
 
@@ -47,7 +43,7 @@ Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubefl
         kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
         
         # KNative
-        kustomize build upstream/common/knative/knative-serving/base | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
         kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
         
@@ -83,6 +79,8 @@ Follow the [Configure Kubeflow Pipelines](../rds-s3/README.md#2-configure-kubefl
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 
+        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+        kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
         # AWS Secret Manager
         kustomize build awsconfigs/common/aws-secrets-manager/base | kubectl apply -f -

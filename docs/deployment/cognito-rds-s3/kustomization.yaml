@@ -14,7 +14,7 @@ resources:
 - ../../../upstream/common/istio-1-9/istio-namespace/base
 - ../../../upstream/common/istio-1-9/istio-install/base
 # KNative
-- ../../../upstream/common/knative/knative-serving/base
+- ../../../upstream/common/knative/knative-serving/overlays/gateways
 - ../../../upstream/common/knative/knative-eventing/base
 - ../../../upstream/common/istio-1-9/cluster-local-gateway/base
 # Kubeflow Istio Resources
@@ -40,6 +40,8 @@ resources:
 - ../../../upstream/apps/training-operator/upstream/overlays/kubeflow
 # MPI Operator
 - ../../../upstream/apps/mpi-job/upstream/overlays/kubeflow
+# AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+- ../../../awsconfigs/common/aws-telemetry
 
 # Configured for AWS Cognito
 

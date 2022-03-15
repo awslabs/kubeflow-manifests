@@ -10,7 +10,7 @@ This guide assumes that you have:
     - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
     - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
     - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
-    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
+    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://github.com/mikefarah/yq/#install))
     - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
     - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
       - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
@@ -108,7 +108,8 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) in the region where your platform is running.
     1. CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain which you provided as the Sign out URL(s).
     1. Export the values:
-        1. ```
+        1. 
+          ```
           export CognitoUserPoolArn=<>
           export CognitoAppClientId=<>
           export CognitoUserPoolDomain=<>
@@ -156,7 +157,7 @@ In this section, we will be creating certificate to enable TLS authentication at
             1. `kubernetes.io/cluster/cluster-name` (replace `cluster-name` with your cluster name e.g. `kubernetes.io/cluster/my-k8s-cluster`). Add this tag in both private and public subnets. If you created the cluster using eksctl, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of `TAG_VALUE` variable(`owned` or `shared`):
                 - ```
                   export KIO_TAG_VALUE=<>
-                  export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME | jq -r '.Subnets[].SubnetId')
+                  export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME --output json | jq -r '.Subnets[].SubnetId')
                   for i in "${CLUSTER_SUBNET_IDS[@]}"
                   do
                       aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${KIO_TAG_VALUE}
@@ -243,7 +244,7 @@ In this section, we will be creating certificate to enable TLS authentication at
         kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
         
         # KNative
-        kustomize build common/knative/knative-serving/base | kubectl apply -f -
+        kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build common/knative/knative-eventing/base | kubectl apply -f -
         kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
         
@@ -285,6 +286,9 @@ In this section, we will be creating certificate to enable TLS authentication at
 
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
+
+        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+        kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
         # Ingress
         kustomize build awsconfigs/common/istio-ingress/overlays/cognito | kubectl apply -f -

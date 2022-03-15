@@ -10,14 +10,14 @@ Follow the [install](#install) steps below to configure and deploy the Kustomize
 
 The following steps show how to configure and deploy Kubeflow with supported AWS services:
 
-### 1. Prerequisites
+## 1.0 Prerequisites
 
 1. Install CLI tools
 
    - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
-   - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
+   - [eksctl >= 0.56](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
-   - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
+   - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://github.com/mikefarah/yq/#install))
    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
@@ -53,7 +53,35 @@ eksctl create cluster \
 --managed
 ```
 
-4. Create S3 Bucket
+4. Create an OIDC provider for your cluster  
+**Important :**  
+You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
+
+## 2.0 Setup RDS, S3 and configure Secrets
+There are two ways to create the RDS and S3 resources before you deploy the Kubeflow manifests. Either use the automated python script we have provided by following the steps in section 2.1 or fall back on the manual setup steps as in section 2.2 below - 
+
+### 2.1 **Option 1: Automated Setup**
+This setup performs all the manual steps in an automated fashion.  
+The script takes care of creating the S3 bucket, creating the S3 secrets using the secrets manager, setting up the RDS database and creating the RDS secret using the secrets manager. It also edits the required configuration files for Kubeflow pipeline to be properly configured for the RDS database during Kubeflow installation.  
+The script also handles cases where the resources already exist in which case it will simply skips the step.
+  
+Note : The script will **not** delete any resource therefore if a resource already exists (eg: secret, database with the same name or S3 bucket etc), **it will skip the creation of those resources and use the existing resources instead**. This was done in order to prevent unwanted results such as accidental deletion. For instance, if a database with the same name already exists, the script will skip the database creation setup. If it's expected in your scenario, then perhaps this is fine for you, if you simply forgot to change the database name used for creation then this gives you the chance to retry the script with the proper value. See `python auto-rds-s3-setup.py --help` for the list of parameters as well as their default values.
+
+1. Install the script dependencies `pip install -r requirements.txt`
+2. Run the script  
+Replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_S3_BUCKET` with your values.
+```
+python auto-rds-s3-setup.py --region YOUR_CLUSTER_REGION --cluster YOUR_CLUSTER_NAME --bucket YOUR_S3_BUCKET
+```  
+
+### Advanced customization
+The script applies some sensible default values for the db user password, max storage, storage type, instance type etc but if you know what you are doing, you can always tweak those preferences by passing different values.  
+You can learn more about the different parameters by running `python auto-rds-s3-setup.py --help`.  
+
+
+### 2.2 **Option 2: Manual Setup**
+If you prefer to manually setup each components then you can follow this manual guide.  
+1. Create S3 Bucket
 
 Run this command to create S3 bucket by changing `<YOUR_S3_BUCKET_NAME>` and `<YOUR_CLUSTER_REGION` to the preferred settings.
 This bucket will be used to store artifacts from pipelines.
@@ -64,7 +92,7 @@ export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
 aws s3 mb s3://$S3_BUCKET --region $CLUSTER_REGION
 ```
 
-5. Create RDS Instance
+2. Create RDS Instance
 
 Follow this [doc](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/rds/#deploy-amazon-rds-mysql) to set up an AWS RDS instance. Please follow only section called `Deploy Amazon RDS MySQL`. This RDS Instance will be used by Pipelines and Katib.
 
@@ -101,7 +129,7 @@ Resources:
   ...
 ```
 
-6. Create Secrets in AWS Secrets Manager
+3. Create Secrets in AWS Secrets Manager
 
    1. Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
       - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
@@ -116,7 +144,7 @@ Resources:
         aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
         ```
 
-7. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
+4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 
    1. Run the following commands to enable oidc and create an iamserviceaccount with permissions to retrieve the secrets created from AWS Secrets Manager
 
@@ -139,22 +167,21 @@ Resources:
     kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
    ```
 
-### 2. Configure Kubeflow Pipelines
-
-1. Configure the following file in `awsconfigs/apps/pipeline` directory:
+5. Configure Kubeflow Pipelines by editing the following file in `awsconfigs/apps/pipeline` directory:
 
    1. Configure `awsconfigs/apps/pipeline/params.env` file with the RDS endpoint URL, S3 bucket name, and S3 bucket region that were configured when following the steps in Create RDS Instance and Create S3 Bucket steps in prerequisites(#1-prerequisites).
 
-      - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
+      - For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, metadata db name is `kubeflow`, S3 bucket name is `kf-aws-demo-bucket`, and s3 bucket region is `us-west-2` your `params.env` file should look like:
       - ```
         dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-
+        mlmdDb=kubeflow
         bucketName=kf-aws-demo-bucket
         minioServiceHost=s3.amazonaws.com
         minioServiceRegion=us-west-2
         ```
 
-### 4. Build Manifests and Install Kubeflow
+## 3.0 Build Manifests and Install Kubeflow
+Once you have the resources ready, you can continue on to deploying the Kubeflow manifests using the single line command below -
 
 ```sh
 while ! kustomize build docs/deployment/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
@@ -164,9 +191,9 @@ Once, everything is installed successfully, you can access the Kubeflow Central 
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
-## Verify the instalation
+## 4.0 Verify the installation
 
-### Verify RDS
+### 4.1 Verify RDS
 
 1. Connect to the RDS instance from a pod within the cluster
 
@@ -178,6 +205,17 @@ If you used the default parameters in the [CFN template](https://www.kubeflow.or
 
 ```
 kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u admin -pKubefl0w
+```
+
+Note that you can find your credentials by visiting [aws secrets manager](https://aws.amazon.com/secrets-manager/) or by using [AWS CLI](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/secretsmanager/get-secret-value.html)  
+
+For instance, to retrieve the value of a secret named `rds-secret`, we would do : 
+```
+aws secretsmanager get-secret-value \
+    --region $CLUSTER_REGION \
+    --secret-id rds-secret \
+    --query 'SecretString' \
+    --output text
 ```
 
 2. Once connected verify the databases `kubeflow` and `mlpipeline` exist.
@@ -218,7 +256,7 @@ mysql> use mlpipeline; show tables;
 
 4. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Katib (under Experiments (AutoML)).
 
-5. Create an experiment using the following [yaml file](../../test/e2e/resources/custom-resource-templates/katib-experiment-random.yaml).
+5. Create an experiment using the following [yaml file](../../../tests/e2e/resources/custom-resource-templates/katib-experiment-random.yaml).
 
 6. Once the experiment is complete verify the following table exists:
 
@@ -238,7 +276,7 @@ mysql> use kubeflow; show tables;
 mysql> select * from observation_logs;
 ```
 
-### Verify S3
+### 4.2 Verify S3
 
 1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
 
@@ -248,7 +286,7 @@ mysql> select * from observation_logs;
 
 4. Verify the bucket is not empty and was populated by outputs of the experiment.
 
-## Uninstall Kubeflow
+## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall:
 
