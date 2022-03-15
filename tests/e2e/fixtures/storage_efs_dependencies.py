@@ -1,14 +1,17 @@
 import time
+from unicodedata import name
 import pytest
 import subprocess
 import boto3
+import os
+import stat
+import sys
 
 from e2e.utils.config import metadata
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
@@ -25,8 +28,10 @@ from e2e.utils.utils import (
     kubectl_apply_kustomize,
     kubectl_delete_kustomize,
 )
-
-DEFAULT_NAMESPACE = "kube-system"
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    DEFAULT_NAMESPACE,
+)
 
 
 def wait_on_efs_status(desired_status, efs_client, file_system_id):
@@ -220,6 +225,9 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     efs_pvc_filepath = (
         "../../docs/deployment/add-ons/storage/efs/static-provisioning/pvc.yaml"
     )
+    efs_permissions_filepath = (
+        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+    )
     efs_claim = {}
 
     def on_create():
@@ -229,15 +237,25 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         efs_pv["metadata"]["name"] = claim_name
         write_cfg(efs_pv, efs_pv_filepath)
 
-        # Add the namespace to the pvc.yaml file
+        # Update the values in the pvc.yaml file
         efs_pvc = load_cfg(efs_pvc_filepath)
-        efs_pvc["metadata"]["namespace"] = DEFAULT_NAMESPACE
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_pvc["metadata"]["name"] = claim_name
         write_cfg(efs_pvc, efs_pvc_filepath)
+
+        # Update the values in the permissions file
+        efs_permission = load_cfg(efs_permissions_filepath)
+        efs_permission["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_permission["metadata"]["name"] = "permissions" + claim_name
+        efs_permission["spec"]["template"]["spec"]["volumes"][0][
+            "persistentVolumeClaim"
+        ]["claimName"] = claim_name
+        write_cfg(efs_permission, efs_permissions_filepath)
 
         kubectl_apply(efs_sc_filepath)
         kubectl_apply(efs_pv_filepath)
         kubectl_apply(efs_pvc_filepath)
+        kubectl_apply(efs_permissions_filepath)
 
         efs_claim["claim_name"] = claim_name
 
@@ -245,7 +263,79 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         kubectl_delete(efs_pvc_filepath)
         kubectl_delete(efs_pv_filepath)
         kubectl_delete(efs_sc_filepath)
+        kubectl_delete(efs_permissions_filepath)
 
     return configure_resource_fixture(
         metadata, request, efs_claim, "efs_claim", on_create, on_delete
+    )
+
+
+@pytest.fixture(scope="class")
+def dynamic_provisioning(metadata, region, request, cluster):
+    claim_name = rand_name("efs-claim-auto-dyn-")
+    efs_pvc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"
+    )
+    efs_sc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
+    )
+    efs_permissions_filepath = (
+        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+    )
+    efs_auto_script_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/auto-efs-setup.py"
+    )
+    efs_claim_dyn = {}
+
+    def on_create():
+        # Run the automated script to create the EFS Filesystem and the SC
+        efs_auto_script_absolute_filepath = os.path.join(
+            os.path.abspath(sys.path[0]), "../" + efs_auto_script_filepath
+        )
+        st = os.stat(efs_auto_script_filepath)
+        os.chmod(efs_auto_script_filepath, st.st_mode | stat.S_IEXEC)
+        subprocess.call(
+            [
+                "python",
+                efs_auto_script_absolute_filepath,
+                "--region",
+                region,
+                "--cluster",
+                cluster,
+                "--directory",
+                "../../docs/deployment/add-ons/storage/efs/",
+                "--efs_file_system_name",
+                claim_name,
+            ]
+        )
+
+        # PVC creation is not a part of the script
+        # Update the values in the pvc.yaml file
+        efs_pvc = load_cfg(efs_pvc_filepath)
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_pvc["metadata"]["name"] = claim_name
+        write_cfg(efs_pvc, efs_pvc_filepath)
+
+        # Update the values in the permissions file
+        efs_permission = load_cfg(efs_permissions_filepath)
+        efs_permission["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_permission["metadata"]["name"] = "permissions" + claim_name
+        efs_permission["spec"]["template"]["spec"]["volumes"][0][
+            "persistentVolumeClaim"
+        ]["claimName"] = claim_name
+        write_cfg(efs_permission, efs_permissions_filepath)
+
+        kubectl_apply(efs_pvc_filepath)
+        kubectl_apply(efs_permissions_filepath)
+
+        efs_claim_dyn["efs_claim_dyn"] = claim_name
+
+    def on_delete():
+        kubectl_delete(efs_pvc_filepath)
+        kubectl_delete(efs_sc_filepath)
+        kubectl_delete(efs_permissions_filepath)
+        # TODO: Also Need to delete the Filesystem resources
+
+    return configure_resource_fixture(
+        metadata, request, efs_claim_dyn, "efs_claim_dyn", on_create, on_delete
     )

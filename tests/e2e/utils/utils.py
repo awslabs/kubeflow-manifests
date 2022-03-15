@@ -85,6 +85,21 @@ def wait_for(callback, timeout=300, interval=30):
             time.sleep(interval)
 
 
+def wait_for_kfp_run_succeeded_from_run_id(kfp_client, run_id):
+    def callback():
+        resp = kfp_client.get_run(run_id)
+        status = resp.run.status
+
+        if "Failed" == status:
+            print(resp.run)
+            raise WaitForCircuitBreakerError("Pipeline run Failed")
+
+        print(f"{run_id} {status} .... waiting")
+        assert status == "Succeeded"
+
+    return wait_for(callback, 600)
+
+
 def rand_name(prefix):
     """
     Returns a random string of 10 ascii lowercase characters appended to the prefix
