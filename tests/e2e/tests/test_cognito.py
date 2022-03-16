@@ -30,7 +30,7 @@ class TestCognito:
     @pytest.fixture(scope="class")
     def setup(self, metadata, post_deployment_dns_update):
         metadata_file = metadata.to_file()
-        print(metadata.params)
+        metadata.log()
         print("Created metadata file for TestSanity", metadata_file)
 
     def test_url_is_up(self, setup, cognito_bootstrap):

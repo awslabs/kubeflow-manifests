@@ -84,7 +84,7 @@ In this section, we will be creating certificate to enable TLS authentication at
 ## 3.0 Cognito User Pool
 
 1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults`.
-1. Edit the `Required attributes`, select `email` as a required attribute and click on next step. Email is a required field since Kubeflow uses email address as the user identifier for multi-user isolation. See this [documentation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for example.
+1. Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this [documentation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the `Required attributes` and select `email`.
     1. ![cognito-email-required](./images/cognito-email-required.png)
 1. On the Policies page, select `Only allow administrators to create users` under `Do you want to allow users to sign themselves up?` and save changes. This step is optional but is recommended to have strict control over the users.
 1. Click on `Create pool` to create the user pool.

@@ -72,14 +72,6 @@ def delete_policy(arn: str, region: str):
         pass
 
 
-def delete_alb(dns: str, region: str):
-    try:
-        alb = ElasticLoadBalancingV2(dns=dns, region=region)
-        alb.delete()
-    except Exception:
-        pass
-
-
 def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["cluster"]["region"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
@@ -137,9 +129,6 @@ def delete_cognito_dependency_resources(cfg: dict):
         if "kubeflow" in cfg.keys():
             alb = cfg["kubeflow"].get("alb", None)
             if alb:
-                alb_dns = alb.get("dns", None)
-                if alb_dns:
-                    delete_alb(alb_dns, deployment_region)
                 alb_controller_policy_arn = alb["serviceAccount"]["policyArn"]
                 delete_policy(
                     arn=alb_controller_policy_arn,

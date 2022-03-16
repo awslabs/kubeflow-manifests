@@ -16,28 +16,23 @@ pip install -r requirements.txt
 
 Run all
 ```
-pytest -q --region <REGION_NAME>
+pytest --region <REGION_NAME> --root-domain-name <> --root-domain-hosted-zone-id <> --accesskey <> --secretkey <>
 ```
 
-Run specific
+Run a specific test.
+Region is a required parameter for all tests. Each test suite/test class may require additional set of parameters. e.g. test_sanity needs only `--region` but cognito test needs `--root-domain-name` and `--root-domain-hosted-zone-id` and rds-s3 tests need `--accesskey` and `--secretkey` in addition to region.
 ```
-pytest <test_file.py> -k <test_name(s)> --region <REGION_NAME>
-```
-
-Run with output
-```
-pytest -s -q --region <REGION_NAME>
+pytest <tests/test_file.py> -k <test_name(s)> --region <REGION_NAME>
 ```
 
-Run without deleting successfully created resources. 
-Usefull for rerunning failed tests.
+Run without deleting successfully created resources. Useful for re-running failed tests.
 ```
-pytest -s -q --keepsuccess --region <REGION_NAME>
+pytest --keepsuccess ...<other arguments>...
 ```
 
 Resume from a previous run using the resources that were previous created
 ```
-pytest -s -q --metadata .metadata/metadata-1638939746471968000 --keepsuccess --region <REGION_NAME>
+pytest --metadata .metadata/metadata-1638939746471968000.json --keepsuccess ...<other arguments>...
 ```
 
 ### About metadata

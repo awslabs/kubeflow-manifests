@@ -105,9 +105,6 @@ def cognito_bootstrap(
 
     def on_delete():
         cfg = metadata.get("cognito_dependencies") or cognito_deps
-        alb_dns = metadata.get("alb_dns")
-        if alb_dns:
-            cfg["kubeflow"]["alb"]["dns"] = alb_dns
         delete_cognito_dependency_resources(cfg)
 
     return configure_resource_fixture(
@@ -135,24 +132,14 @@ def post_deployment_dns_update(
     metadata, region, request, cluster, cognito_bootstrap, kustomize
 ):
 
-    alb_dns = None
-
-    def on_create():
-        wait_for_alb_dns(cluster, region)
-        ingress = get_ingress(cluster, region)
-        alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
-        update_hosted_zone_with_alb(
-            subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],
-            subdomain_hosted_zone_id=cognito_bootstrap["route53"]["subDomain"][
-                "hostedZoneId"
-            ],
-            alb_dns=alb_dns,
-            deployment_region=region,
-        )
-
-    def on_delete():
-        pass
-
-    return configure_resource_fixture(
-        metadata, request, alb_dns, "alb_dns", on_create, on_delete
+    wait_for_alb_dns(cluster, region)
+    ingress = get_ingress(cluster, region)
+    alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+    update_hosted_zone_with_alb(
+        subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],
+        subdomain_hosted_zone_id=cognito_bootstrap["route53"]["subDomain"][
+            "hostedZoneId"
+        ],
+        alb_dns=alb_dns,
+        deployment_region=region,
     )
