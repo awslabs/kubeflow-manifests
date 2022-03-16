@@ -10,8 +10,6 @@ from e2e.fixtures.clients import account_id
 
 from e2e.fixtures.cognito_dependencies import (
     cognito_bootstrap,
-    configure_ingress,
-    configure_kf_admin_role,
     post_deployment_dns_update,
 )
 
@@ -22,7 +20,7 @@ def kustomize_path():
 
 
 @pytest.fixture(scope="class")
-def configure_manifests(region, cluster, configure_ingress):
+def configure_manifests(region, cluster, cognito_bootstrap):
     print(
         "fixture to introduce dependency to setup cognito related resources before applying manifests"
     )
@@ -32,7 +30,7 @@ class TestCognito:
     @pytest.fixture(scope="class")
     def setup(self, metadata, post_deployment_dns_update):
         metadata_file = metadata.to_file()
-        print(metadata.params)
+        metadata.log()
         print("Created metadata file for TestSanity", metadata_file)
 
     def test_url_is_up(self, setup, cognito_bootstrap):
