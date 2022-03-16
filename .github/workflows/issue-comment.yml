@@ -1,0 +1,17 @@
+
+name: PR comment
+
+on: issue_comment
+
+jobs:
+  pr_commented:
+    # This job only runs for pull request comments
+    name: PR comment
+    if: github.event.issue.pull_request && github.event.comment.body == '/test' && ${{ github.actor == github.repository_owner}}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo Event body $GITHUB_CONTEXT; curl -v -X POST https://xglct405dg.execute-api.us-west-1.amazonaws.com/test/run-codebuild -d '{"pr_id": '"$NUMBER"'}'
+        env:
+          NUMBER: ${{ github.event.issue.number }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
