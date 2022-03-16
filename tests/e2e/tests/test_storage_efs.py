@@ -42,7 +42,7 @@ from e2e.fixtures.storage_efs_dependencies import (
 )
 from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
-    DEFAULT_NAMESPACE,
+    DEFAULT_SYSTEM_NAMESPACE,
 )
 from e2e.utils.utils import (
     unmarshal_yaml,
@@ -173,7 +173,6 @@ class TestEFS_Dynamic:
         setup_dynamic,
         kfp_client,
         account_id,
-        create_efs_volume,
         dynamic_provisioning,
     ):
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
@@ -187,7 +186,7 @@ class TestEFS_Dynamic:
         ).decode()
         assert f"arn:aws:iam::{account_id}:role" in sa_account
 
-        fs_id = create_efs_volume["file_system_id"]
+        fs_id = dynamic_provisioning["file_system_id"]
         assert "fs-" in fs_id
 
         CLAIM_NAME = dynamic_provisioning["efs_claim_dyn"]
