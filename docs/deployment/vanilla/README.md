@@ -284,7 +284,7 @@ kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 
 #### AWS Telemetry
 
-Install the AWS Kubeflow telemetry component. This is an optional component. See the [usage tracking documentation](TBD) for more information
+Install the AWS Kubeflow telemetry component. This is an optional component. See the [usage tracking documentation](../README.md#usage-tracking) for more information
 
 ```sh
 kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
@@ -339,7 +339,7 @@ For security reasons, we don't want to use the default password for the default 
     python3 -c 'from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident="2y").hash(getpass.getpass()))'
     ```
 
-2. Edit `dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
+2. Edit `../../../upstream/common/dex/base/config-map.yaml` and fill the relevant field with the hash of the password you chose:
 
     ```yaml
     ...

@@ -2,11 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+
+from e2e.fixtures import cluster
 from e2e.utils.cognito_bootstrap import common as utils
+from e2e.utils.config import configure_env_file
 
 from e2e.utils.cognito_bootstrap.aws.acm import AcmCertificate
 from e2e.utils.cognito_bootstrap.aws.cognito import CustomDomainCognitoUserPool
+from e2e.utils.cognito_bootstrap.aws.iam import IAMPolicy
 from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
+from e2e.utils.utils import (
+    load_json_file,
+    get_eks_client,
+    get_ec2_client,
+    rand_name,
+)
+
 from typing import Tuple
 
 
@@ -76,7 +87,7 @@ def create_certificates(
         root_certificate.wait_for_certificate_validation()
     else:
         logger.info(
-            f"Since your {root_domain_name} hosted zone is not managed by route53, please create a certificate for *.{root_hosted_zone.domain} by following this document: https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console."
+            f"Since your {root_hosted_zone.domain} hosted zone is not managed by route53, please create a certificate for *.{root_hosted_zone.domain} by following this document: https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console."
             "Make sure you validate your ceritificate using one of the methods mentioned in this document: https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html"
         )
         input("Press any key once the certificate status is ISSUED")
@@ -142,11 +153,75 @@ def create_cognito_userpool(
     return cognito_userpool, userpool_cloudfront_alias
 
 
+# Step 3: Configure Ingress and load balancer controller manifests
+def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str):
+
+    # annotate the ingress with auth related variables
+    configure_env_file(
+        env_file_path="../../awsconfigs/common/istio-ingress/overlays/cognito/params.env",
+        env_dict={
+            "CognitoUserPoolArn": cognito_userpool.arn,
+            "CognitoAppClientId": cognito_userpool.client_id,
+            "CognitoUserPoolDomain": cognito_userpool.userpool_domain,
+            "certArn": tls_cert_arn,
+        },
+    )
+
+
+def configure_alb_ingress_controller(
+    region: str, cluster_name: str, policy_name: str = None
+) -> Tuple[str, str]:
+    policy_name = policy_name or rand_name(f"alb_ingress_controller_{cluster_name}")
+    ec2_client = get_ec2_client(region)
+    eks_client = get_eks_client(region)
+
+    # create an iam service account with required permissions for the controller
+    cluster.associate_iam_oidc_provider(cluster_name, region)
+    alb_policy = IAMPolicy(
+        name = policy_name,
+        region=region
+    )
+    alb_policy.create(
+        policy_document=load_json_file("../../awsconfigs/infra_configs/iam_alb_ingress_policy.json")
+    )
+
+    alb_sa_name = "alb-ingress-controller"
+    cluster.create_iam_service_account(
+        alb_sa_name, "kubeflow", cluster_name, region, [alb_policy.arn]
+    )
+
+    # tag cluster subnet with kubernetes.io/cluster/<cluster_name> tag
+    # see prerequisites in https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+    cluster_desc = eks_client.describe_cluster(name=cluster_name)
+    ec2_client.create_tags(
+        Resources=cluster_desc["cluster"]["resourcesVpcConfig"]["subnetIds"],
+        Tags=[
+            {"Key": f"kubernetes.io/cluster/{cluster_name}", "Value": "shared"},
+        ],
+    )
+
+    # substitute the cluster_name for the load balancer controller
+    configure_env_file(
+        env_file_path="../../awsconfigs/common/aws-alb-ingress-controller/base/params.env",
+        env_dict={
+            "clusterName": cluster_name,
+        },
+    )
+
+    return {
+            "serviceAccount": {
+                "name": alb_sa_name,
+                "policyArn": alb_policy.arn
+            }
+        }
+
+
 if __name__ == "__main__":
     utils.print_banner("Reading Config")
     cfg = utils.load_cfg()
 
-    deployment_region = cfg["kubeflow"]["region"]
+    deployment_region = cfg["cluster"]["region"]
+    cluster_name = cfg["cluster"]["name"]
     subdomain_name = cfg["route53"]["subDomain"]["name"]
     root_domain_name = cfg["route53"]["rootDomain"]["name"]
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
@@ -188,4 +263,14 @@ if __name__ == "__main__":
     cfg["cognitoUserpool"]["appClientId"] = cognito_userpool.client_id
     cfg["cognitoUserpool"]["domain"] = cognito_userpool.userpool_domain
     cfg["cognitoUserpool"]["domainAliasTarget"] = cognito_userpool.cloudfront_domain
+    utils.write_cfg(cfg)
+
+    utils.print_banner("Configuring Ingress and load balancer controller manifests")
+    configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn)
+    alb_sa_details = configure_alb_ingress_controller(
+        deployment_region, cluster_name
+    )
+    cfg["kubeflow"] = {
+        "alb": alb_sa_details
+    }
     utils.write_cfg(cfg)

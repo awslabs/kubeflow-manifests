@@ -59,6 +59,8 @@ class Metadata:
         with open(filepath) as file:
             return Metadata(json.load(file))
 
+    def log(self):
+        print(json.dumps(self.params, indent=4))
 
 @pytest.fixture(scope="class")
 def metadata(request):

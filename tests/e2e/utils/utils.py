@@ -143,8 +143,11 @@ def curl_file_to_path(file, path):
     subprocess.call(cmd)
 
 
-def kubectl_apply(path):
-    cmd = f"kubectl apply -f {path}".split()
+def kubectl_apply(path, namespace=None):
+    if namespace:
+        cmd = f"kubectl apply -f {path} -n {namespace}".split()
+    else:
+        cmd = f"kubectl apply -f {path}".split()
     subprocess.call(cmd)
 
 
@@ -161,3 +164,21 @@ def kubectl_apply_kustomize(path):
 def kubectl_delete_kustomize(path):
     cmd = f"kubectl delete -k {path}".split()
     subprocess.call(cmd)
+
+def load_yaml_file(file_path: str):
+    with open(file_path, "r") as file:
+        content = file.read()
+
+    return yaml.safe_load(content)
+
+
+def write_yaml_file(yaml_content, file_path: str):
+    with open(file_path, "w") as file:
+        file.write(yaml.dump(yaml_content))
+
+def print_banner(step_name: str):
+    width=65
+    print("=" * width)
+    print(step_name.center(width))
+    print("=" * width)
+

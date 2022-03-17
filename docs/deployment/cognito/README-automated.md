@@ -8,7 +8,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
 
 ## Create required resources and deploy Kubeflow
 
-1. The following steps automate [section 1.0(Custom Domain)](./README.md#10-custom-domain), [section 2.0(certificates)](./README.md#20-certificate) and [section 3.0(Cognito user pool)](./README.md#30-cognito-user-pool) of the cognito guide to create a custom domain to host Kubeflow, TLS certificates for the domain and create a Cognito Userpool respectively.
+1. The following steps automate [section 1.0(Custom Domain)](./README.md#10-custom-domain) (creating a custom domain to host Kubeflow), [section 2.0(certificates)](./README.md#20-certificate) (TLS certificates for the domain), [section 3.0(Cognito user pool)](./README.md#30-cognito-user-pool) (creating a Cognito Userpool used for user authentication) and[section 4.0(Configure Ingress)](./README.md#40-configure-ingress) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
         ```
         pip install -r tests/e2e/requirements.txt
@@ -17,13 +17,14 @@ This guide assumes you have python3 installed and completed the pre-requisites f
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
             1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
         1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](./README.md#10-custom-domain) to understand why we use a subdomain.
-        1. Region where kubeflow will be deployed (i.e. cluster region) in `kubeflow.region` e.g. us-west-2.
+        1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
         1. The config file will look something like:
             1. ```
                 cognitoUserpool:
                     name: kubeflow-users
-                kubeflow:
+                cluster:
+                    name: kube-eks-cluster
                     region: us-west-2
                 route53:
                     rootDomain:
@@ -47,6 +48,12 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                 domain: auth.platform.example.com
                 name: kubeflow-users
             kubeflow:
+                alb:
+                    serviceAccount:
+                        name: alb-ingress-controller
+                        policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+            cluster:
+                name: kube-eks-cluster
                 region: us-west-2
             route53:
                 rootDomain:
@@ -59,9 +66,6 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                     name: platform.example.com
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
-        1. Use the values `cognitoUserpool.ARN`, `cognitoUserpool.appClientId`, `cognitoUserpool.domain` and `subdomain.us-west-2-certARN` (i.e. certificate ARN of subdomain in the region where cluster is) from config file in the next step.
-
-1. Follow the [section 4.0(Configure Ingress)](./README.md#40-configure-ingress) of [this guide](./README.md) to configure Ingress
 
 1. Follow the [section 5.0(Building manifests and deploying Kubeflow)](./README.md#50-building-manifests-and-deploying-kubeflow) to install Kubeflow
 
@@ -74,11 +78,14 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
             ```
         2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
-    1. Substitute the ALB address under `kubeflow.ALBDNS` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
+    1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
         1. ```
             kubeflow:
-                ALBDNS: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
-                region: us-west-2
+                alb:
+                    dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+                    serviceAccount:
+                        name: alb-ingress-controller
+                        policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
             ```
     1. Run the following script to update the subdomain with ALB address
         1. ```

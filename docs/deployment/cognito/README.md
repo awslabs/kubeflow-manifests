@@ -45,7 +45,8 @@ This guide assumes that you have:
         git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
         ```
 
-**Tip:** The following sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool and is good for a new user to understand the setup. If you prefer a automated setup for setting up these pre-requisites for deploying Kubeflow with Cognito, follow this [README](./README-automated.md)
+## (Optional) Automated setup
+The rest of the sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool using AWS Console and is good for a new user to understand the design and details. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow this [README](./README-automated.md) instead.
 
 ## 1.0 Custom domain
 
@@ -82,7 +83,11 @@ In this section, we will be creating certificate to enable TLS authentication at
 
 ## 3.0 Cognito User Pool
 
-1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults` and `Create pool`.
+1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults`.
+1. Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this [documentation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the `Required attributes` and select `email`.
+    1. ![cognito-email-required](./images/cognito-email-required.png)
+1. On the Policies page, select `Only allow administrators to create users` under `Do you want to allow users to sign themselves up?` and save changes. This step is optional but is recommended to have strict control over the users.
+1. Click on `Create pool` to create the user pool.
 1. Add an `App client` with any name and the default options.
     1. ![cognito-app-client-id](./images/cognito-app-client-id.png)
 1. In the `App client settings`, select `Authorization code grant` flow under OAuth-2.0 and check box `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. Also check box `Enabled Identity Providers`. 
@@ -313,7 +318,7 @@ In this section, we will be creating certificate to enable TLS authentication at
         istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
         ```
     2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
-1. When ALB is ready, copy the DNS name of that load balancer and create 2 CNAME entries to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com` and `*.default.platform.example.com`
+1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
     1. ![subdomain-*.platform-and-*.default-records](./images/subdomain-*.platform-and-*.default-records.png)
 1. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
     1. ![subdomain-A-record-updated](./images/subdomain-A-record-updated.png)
