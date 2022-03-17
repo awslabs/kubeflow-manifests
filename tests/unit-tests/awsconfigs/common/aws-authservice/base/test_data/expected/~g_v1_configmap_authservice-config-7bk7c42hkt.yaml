@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  LOGOUT_URL: https://auth.platformed.ryanstea.people.aws.dev/logout?client_id=5106c0gg1gmjmp83s1enh2dre4&logout_uri=https://kubeflow.platformed.ryanstea.people.aws.dev
-  PORT: "8082"
-kind: ConfigMap
-metadata:
-  name: authservice-config-7bk7c42hkt
-  namespace: istio-system

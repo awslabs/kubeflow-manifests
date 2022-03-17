@@ -87,7 +87,8 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. ![cognito-app-client-id](./images/cognito-app-client-id.png)
 1. In the `App client settings`, select `Authorization code grant` flow under OAuth-2.0 and check box `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. Also check box `Enabled Identity Providers`. 
     1. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
-    2. ![cognito-app-client-settings](./images/cognito-app-client-settings.png)
+    2. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
+    3. ![cognito-app-client-settings](./images/cognito-app-client-settings.png)
 1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
     1. ![cognito-active-domain](./images/cognito-active-domain.png)
     2. When it’s created, it will return the `Alias target` CloudFront address.

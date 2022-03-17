@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  LOGOUT_URL: ""
+  PORT: "8082"
+kind: ConfigMap
+metadata:
+  name: authservice-config-9c7k6mt52f
+  namespace: istio-system
