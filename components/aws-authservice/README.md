@@ -20,18 +20,17 @@ These are configurable environment variables used by AWS AuthService in [params.
 ## Build and Test
 If you wish to make custom changes to AWS AuthService you can modify [main.go](main.go)
 
-The image can be built using Docker.
-- make build
+The image can be built and tagged using Docker.
+- make build IMAGE_URI=<>
 
-Tag and push the image to ECR or any Container Image Library i.e(DockerHub)
-- make tag IMAGE_TAG=<>
+Finally push the image to ECR or any Container Image Library i.e(DockerHub)
 
 To use your new image you must modify
   - [kustomization](../../awsconfigs/common/aws-authservice/base/kustomization.yaml#L11)
 
 If user has any custom changes to the manifests, they can choose to modify the [manifests](../../awsconfigs/common/aws-authservice/base/) 
 
-### Configurable Options
+### Configurable Parameters
 In testing you must provide a LOGOUT_URL for AWS AuthService to redirect to in the [params.env](../../awsconfigs/common/aws-authservice/base/params.env) file.
 
 Finally apply the manifests 

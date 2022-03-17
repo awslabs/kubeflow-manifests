@@ -156,7 +156,6 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. ```
         printf '
         LOGOUT_URL='$CognitoLogoutURL'
-        PORT=8082
         ' > awsconfigs/common/aws-authservice/base/params.env
         ```
 1. Setup resources required for the application load balancer controller
