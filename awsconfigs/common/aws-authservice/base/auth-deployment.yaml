@@ -30,8 +30,3 @@ spec:
                 configMapKeyRef:
                   name: authservice-config
                   key: LOGOUT_URL
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: authservice-config
-                  key: PORT

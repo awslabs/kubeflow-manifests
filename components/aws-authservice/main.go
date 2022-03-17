@@ -28,7 +28,7 @@ var port string
 var redirectURL string
 
 func init() {
-	port = os.Getenv("PORT")
+	port = "8082"
 	redirectURL = os.Getenv("LOGOUT_URL")
 
 }
