@@ -30,6 +30,7 @@ from e2e.utils.constants import (
     DEFAULT_SYSTEM_NAMESPACE,
 )
 
+
 def wait_on_fsx_status(desired_status, fsx_client, file_system_id):
     def callback():
         response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
@@ -76,7 +77,9 @@ def create_fsx_driver_sa(
     fsx_deps = {}
     iam_client = boto3.client("iam")
 
-    FSx_POLICY_DOCUMENT = "../../docs/deployment/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    FSx_POLICY_DOCUMENT = (
+        "../../docs/deployment/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    )
     policy_name = rand_name("fsx-iam-policy-")
     policy_arn = [f"arn:aws:iam::{account_id}:policy/{policy_name}"]
 
@@ -203,8 +206,18 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
     dns_name = details_fsx_volume["dns_name"]
     mount_name = details_fsx_volume["mount_name"]
     claim_name = rand_name("fsx-claim-")
-    fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
-    fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    fsx_sc_filepath = (
+        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/sc.yaml"
+    )
+    fsx_pv_filepath = (
+        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
+    )
+    fsx_pvc_filepath = (
+        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    )
+    fsx_permissions_filepath = (
+        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+    )
     fsx_claim = {}
 
     def on_create():
@@ -216,12 +229,14 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
         fsx_pv["spec"]["csi"]["volumeAttributes"]["mountname"] = mount_name
         write_cfg(fsx_pv, fsx_pv_filepath)
 
-        # Add the namespace to the pvc.yaml file
+        # Update the values in the pvc.yaml file
         fsx_pvc = load_cfg(fsx_pvc_filepath)
-        fsx_pvc["metadata"]["namespace"] = DEFAULT_SYSTEM_NAMESPACE
+        fsx_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         fsx_pvc["metadata"]["name"] = claim_name
+        fsx_pvc["spec"]["volumeName"] = claim_name
         write_cfg(fsx_pvc, fsx_pvc_filepath)
 
+        kubectl_apply(fsx_sc_filepath)
         kubectl_apply(fsx_pv_filepath)
         kubectl_apply(fsx_pvc_filepath)
 
