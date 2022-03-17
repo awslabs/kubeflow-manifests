@@ -309,7 +309,7 @@ def create_db_instance(rds_client):
     print("Creating DB instance...")
 
     vpc_ids = get_cluster_vpc_ids()
-    vpc_security_group_ids = get_vpc_security_group_ids(vpc_ids)
+    vpc_security_group_id = get_vpc_security_group_id(vpc_ids)
 
     db_root_password = get_db_root_password_or_generate_one()
 
@@ -321,7 +321,7 @@ def create_db_instance(rds_client):
         Engine="mysql",
         MasterUsername=DB_ROOT_USER,
         MasterUserPassword=db_root_password,
-        VpcSecurityGroupIds=vpc_security_group_ids,
+        VpcSecurityGroupIds=[vpc_security_group_id],
         DBSubnetGroupName=DB_SUBNET_GROUP_NAME,
         BackupRetentionPeriod=DB_BACKUP_RETENTION_PERIOD,
         MultiAZ=True,
@@ -372,7 +372,7 @@ def get_cluster_vpc_ids():
     return list(map(get_vpc_id, vpcs))
 
 
-def get_vpc_security_group_ids(vpc_ids):
+def get_vpc_security_group_id(vpc_ids):
     ec2_client = get_ec2_client()
 
     security_groups = ec2_client.describe_security_groups(
@@ -384,6 +384,10 @@ def get_vpc_security_group_ids(vpc_ids):
             {
                 "Name": "vpc-id",
                 "Values": vpc_ids
+            },
+            {
+                "Name": "tag:aws:cloudformation:logical-id",
+                "Values": ["ClusterSharedNodeSecurityGroup"]
             }
         ]
     )["SecurityGroups"]
@@ -391,7 +395,8 @@ def get_vpc_security_group_ids(vpc_ids):
     def get_security_group_id(security_group):
         return security_group["GroupId"]
 
-    return list(map(get_security_group_id, security_groups))
+    # Note : We only need to return 1 security group because we use the shared node security group, this fixes https://github.com/awslabs/kubeflow-manifests/issues/137
+    return list(map(get_security_group_id, security_groups))[0]
 
 
 def wait_for_rds_db_instance_to_become_available(rds_client):
