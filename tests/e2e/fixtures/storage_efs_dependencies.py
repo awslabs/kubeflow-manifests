@@ -296,7 +296,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
     efs_permissions_filepath = (
         "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
     )
-    efs_auto_script_filepath = "storage_utils/auto-efs-setup.py"
+    efs_auto_script_filepath = "utils/auto-efs-setup.py"
     efs_claim_dyn = {}
     efs_client = get_efs_client(region)
 
