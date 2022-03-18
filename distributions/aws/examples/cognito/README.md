@@ -33,15 +33,17 @@ This guide assumes that you have:
         --managed
         ```
 
-1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release(e.g. v1.3.1-b1.0.0).
-    1. ```
-        export AWS_MANIFESTS_BUILD=<>
-        git clone https://github.com/awslabs/kubeflow-manifests.git
-        cd kubeflow-manifests
-        git checkout ${AWS_MANIFESTS_BUILD}
-        ```
+1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release.
+    1. Substitute the value for `AWS_RELEASE_VERSION`(e.g. v1.3.1-b1.0.0). Read more about [releases and versioning](../README.md#releases-and-versioning) policy if you are unsure about what the value of `AWS_RELEASE_VERSION` should be.
+        1. ```
+            export AWS_RELEASE_VERSION=<>
+            git clone https://github.com/awslabs/kubeflow-manifests.git
+            cd kubeflow-manifests
+            git checkout ${AWS_RELEASE_VERSION}
+            ```
 
-**Tip:** The following sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool and is good for a new user to understand the setup. If you prefer a automated setup for setting up these pre-requisites for deploying Kubeflow with Cognito, follow this [README](./README-automated.md)
+## (Optional) Automated setup
+The rest of the sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool using AWS Console and is good for a new user to understand the design and details. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow this [README](./README-automated.md) instead.
 
 ## 1.0 Custom domain
 

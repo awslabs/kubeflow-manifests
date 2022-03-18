@@ -33,13 +33,14 @@ This guide assumes that you have:
         --managed
         ```
 
-1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release(e.g. v1.3.1-b1.0.0).
-    1. ```
-        export AWS_MANIFESTS_BUILD=<>
-        git clone https://github.com/awslabs/kubeflow-manifests.git
-        cd kubeflow-manifests
-        git checkout ${AWS_MANIFESTS_BUILD}
-        ```
+1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release.
+    1. Substitute the value for `AWS_RELEASE_VERSION`(e.g. v1.3.1-b1.0.0). Read more about [releases and versioning](../README.md#releases-and-versioning) policy if you are unsure about what the value of `AWS_RELEASE_VERSION` should be.
+        1. ```
+            export AWS_RELEASE_VERSION=<>
+            git clone https://github.com/awslabs/kubeflow-manifests.git
+            cd kubeflow-manifests
+            git checkout ${AWS_RELEASE_VERSION}
+            ```
 
 ### Build Manifests and Install Kubeflow
 
