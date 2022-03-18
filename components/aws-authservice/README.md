@@ -21,9 +21,11 @@ These are configurable environment variables used by AWS AuthService in [params.
 If you wish to make custom changes to AWS AuthService you can modify [main.go](main.go)
 
 The image can be built and tagged using Docker.
-- make build IMAGE_URI=<>
+```
+make build IMAGE_URI=<>
+```
 
-Finally push the image to ECR or any Container Image Library i.e(DockerHub)
+Finally push the image to ECR or any Container Image Registry like Dockerhub
 
 To use your new image you must modify
   - [kustomization](../../awsconfigs/common/aws-authservice/base/kustomization.yaml#L11)
