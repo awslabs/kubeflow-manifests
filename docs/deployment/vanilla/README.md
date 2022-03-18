@@ -34,7 +34,7 @@ This guide assumes that you have:
         ```
 
 1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
-    1. Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
+    1. Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
         ```
         export KUBEFLOW_RELEASE_VERSION=<>
         export AWS_RELEASE_VERSION=<>
