@@ -22,16 +22,16 @@ The following steps show how to configure and deploy Kubeflow with supported AWS
    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
-2. Clone the `awslabs/kubeflow-manifest` repo, kubeflow/manifests repo and checkout the desired branches
-Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_MANIFESTS_BUILD`(e.g. v1.4.1-b1.0.0) with the branch or tag you want to use
-```
-export KUBEFLOW_RELEASE_VERSION=<>
-export AWS_MANIFESTS_BUILD=<>
-git clone https://github.com/awslabs/kubeflow-manifests.git
-cd kubeflow-manifests
-git checkout ${AWS_MANIFESTS_BUILD}
-git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
-```
+1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
+    - Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
+        ```
+        export KUBEFLOW_RELEASE_VERSION=<>
+        export AWS_RELEASE_VERSION=<>
+        git clone https://github.com/awslabs/kubeflow-manifests.git && cd kubeflow-manifests
+        git checkout ${AWS_RELEASE_VERSION}
+        git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
+        ```
+
 
 3. Create an EKS cluster
 

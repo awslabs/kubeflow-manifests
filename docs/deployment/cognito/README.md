@@ -32,16 +32,14 @@ This guide assumes that you have:
         --nodes-max 10 \
         --managed
         ```
-1. AWS IAM permissions to create roles and attach policies to roles.
 
-1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the desired branches
-    1. Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_MANIFESTS_BUILD`(e.g. v1.4.1-b1.0.0) with the branch or tag you want to use below
+1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
+    - Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
         ```
         export KUBEFLOW_RELEASE_VERSION=<>
-        export AWS_MANIFESTS_BUILD=<>
-        git clone https://github.com/awslabs/kubeflow-manifests.git
-        cd kubeflow-manifests
-        git checkout ${AWS_MANIFESTS_BUILD}
+        export AWS_RELEASE_VERSION=<>
+        git clone https://github.com/awslabs/kubeflow-manifests.git && cd kubeflow-manifests
+        git checkout ${AWS_RELEASE_VERSION}
         git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
         ```
 
