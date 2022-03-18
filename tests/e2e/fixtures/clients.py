@@ -20,6 +20,7 @@ from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
     DEFAULT_USERNAME,
 )
+from e2e.utils.utils import unmarshal_yaml
 
 
 def client_from_config(cluster, region):
@@ -136,3 +137,20 @@ def kfp_client(port_forward, host, client_namespace, session_cookie):
 @pytest.fixture(scope="class")
 def account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
+
+
+@pytest.fixture(scope="class")
+def patch_kfp_to_disable_cache(cluster, region):
+    disable_pipeline_caching_patch_file = (
+    "./resources/custom-resource-templates/patch-disable-pipeline-caching.yaml"
+    )
+    # Disable caching in KFP
+    # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
+    # This prevents artifacts from being uploaded to s3 for subsequent runs
+    patch_body = unmarshal_yaml(disable_pipeline_caching_patch_file)
+    k8s_admission_registration_api_client = (
+        create_k8s_admission_registration_api_client(cluster, region)
+    )
+    k8s_admission_registration_api_client.patch_mutating_webhook_configuration(
+        "cache-webhook-kubeflow", patch_body
+    )

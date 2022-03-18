@@ -532,7 +532,7 @@ parser.add_argument(
     help="Your cluster name (eg: mycluster-1)",
     required=True,
 )
-EFS_FILE_SYSTEM_NAME_DEFAULT = "Kubeflow-efs"
+EFS_FILE_SYSTEM_NAME_DEFAULT = "Kubeflow-efs-2"
 parser.add_argument(
     "--efs_file_system_name",
     type=str,
@@ -587,8 +587,10 @@ if __name__ == "__main__":
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
     EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy"
     EFS_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{EFS_IAM_POLICY_NAME}"
+
     EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = (
-        DIRECTORY_PATH + "dynamic-provisioning/sc.yaml"
+        DIRECTORY_PATH
+        + "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
     )
 
     main()

@@ -3,7 +3,7 @@ Module for helper methods to create and delete kubernetes custom resources (e.g.
 """
 
 from e2e.utils.utils import unmarshal_yaml
-from e2e.fixtures.clients import create_k8s_custom_objects_api_client
+from e2e.fixtures.clients import create_k8s_custom_objects_api_client, create_k8s_core_api_client
 
 from e2e.utils.constants import KUBEFLOW_GROUP
 
@@ -85,3 +85,14 @@ def get_ingress(cluster, region, name="istio-ingress", namespace="istio-system")
         plural="ingresses",
         name=name,
     )
+
+
+def get_pvc_status(cluster, region, namespace, name):
+    client = create_k8s_core_api_client(cluster, region)
+
+    pvc = client.read_namespaced_persistent_volume_claim_status(
+        namespace=namespace, name=name, pretty=True
+    )
+
+    return pvc.spec.volume_name, pvc.status.phase
+

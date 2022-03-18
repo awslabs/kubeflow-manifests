@@ -13,7 +13,6 @@ import boto3
 import mysql.connector
 import subprocess
 
-
 def safe_open(filepath, mode="r"):
     """
     Creates a directory if one does not exist when opening a file.

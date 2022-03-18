@@ -1,5 +1,3 @@
-import time
-from unicodedata import name
 import pytest
 import subprocess
 import boto3
@@ -32,6 +30,7 @@ from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
     DEFAULT_SYSTEM_NAMESPACE,
 )
+
 
 def get_file_system_id_from_name(efs_client, file_system_name):
     def name_matches(filesystem):
@@ -99,7 +98,11 @@ def create_efs_driver_sa(
         assert response["Policy"]["Arn"] is not None
 
         create_iam_service_account(
-            "efs-csi-controller-sa", DEFAULT_SYSTEM_NAMESPACE, cluster, region, policy_arn
+            "efs-csi-controller-sa",
+            DEFAULT_SYSTEM_NAMESPACE,
+            cluster,
+            region,
+            policy_arn,
         )
         efs_deps["efs_iam_policy_name"] = policy_name
 
@@ -293,9 +296,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
     efs_permissions_filepath = (
         "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
     )
-    efs_auto_script_filepath = (
-        "../../docs/deployment/add-ons/storage/efs/auto-efs-setup.py"
-    )
+    efs_auto_script_filepath = "storage_utils/auto-efs-setup.py"
     efs_claim_dyn = {}
     efs_client = get_efs_client(region)
 
@@ -304,6 +305,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
         efs_auto_script_absolute_filepath = os.path.join(
             os.path.abspath(sys.path[0]), "../" + efs_auto_script_filepath
         )
+
         st = os.stat(efs_auto_script_filepath)
         os.chmod(efs_auto_script_filepath, st.st_mode | stat.S_IEXEC)
         subprocess.call(
@@ -314,8 +316,6 @@ def dynamic_provisioning(metadata, region, request, cluster):
                 region,
                 "--cluster",
                 cluster,
-                "--directory",
-                "../../docs/deployment/add-ons/storage/efs/",
                 "--efs_file_system_name",
                 claim_name,
             ]
