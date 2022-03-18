@@ -23,13 +23,13 @@ The following steps show how to configure and deploy Kubeflow with supported AWS
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
 
-2. Clone the repo and checkout the release branch
-
-```
-git clone https://github.com/awslabs/kubeflow-manifests.git
-cd kubeflow-manifests
-git checkout v1.3-branch
-```
+1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release(e.g. v1.3.1-b1.0.0).
+    1. ```
+        export AWS_MANIFESTS_BUILD=<>
+        git clone https://github.com/awslabs/kubeflow-manifests.git
+        cd kubeflow-manifests
+        git checkout ${AWS_MANIFESTS_BUILD}
+        ```
 
 3. Create an EKS cluster
 

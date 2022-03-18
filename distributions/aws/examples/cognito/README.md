@@ -32,13 +32,13 @@ This guide assumes that you have:
         --nodes-max 10 \
         --managed
         ```
-1. AWS IAM permissions to create roles and attach policies to roles.
 
-1. Clone the `awslabs/kubeflow-manifest` repo and checkout release branch.
+1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release(e.g. v1.3.1-b1.0.0).
     1. ```
+        export AWS_MANIFESTS_BUILD=<>
         git clone https://github.com/awslabs/kubeflow-manifests.git
         cd kubeflow-manifests
-        git checkout v1.3-branch
+        git checkout ${AWS_MANIFESTS_BUILD}
         ```
 
 **Tip:** The following sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool and is good for a new user to understand the setup. If you prefer a automated setup for setting up these pre-requisites for deploying Kubeflow with Cognito, follow this [README](./README-automated.md)
