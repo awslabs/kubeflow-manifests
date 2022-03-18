@@ -23,7 +23,7 @@ The following steps show how to configure and deploy Kubeflow with supported AWS
      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
 1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
-    1. Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
+    - Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
         ```
         export KUBEFLOW_RELEASE_VERSION=<>
         export AWS_RELEASE_VERSION=<>
