@@ -30,9 +30,6 @@ from e2e.fixtures.clients import (
 from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
 
 from e2e.fixtures.storage_fsx_dependencies import (
-    install_fsx_csi_driver,
-    create_fsx_driver_sa,
-    create_fsx_volume,
     static_provisioning,
 )
 from e2e.utils.constants import (
@@ -74,7 +71,6 @@ class TestFSx:
         account_id,
         setup,
         kfp_client,
-        create_fsx_volume,
         static_provisioning,
     ):
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
@@ -89,7 +85,7 @@ class TestFSx:
         )
         assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
 
-        fs_id = create_fsx_volume["file_system_id"]
+        fs_id = static_provisioning["file_system_id"]
         assert "fs-" in fs_id
 
         CLAIM_NAME = static_provisioning["claim_name"]
