@@ -24,6 +24,7 @@ from e2e.fixtures.clients import (
     session_cookie,
     login,
     password,
+    patch_kfp_to_disable_cache,
 )
 
 from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
@@ -43,6 +44,7 @@ from e2e.utils.utils import (
     rand_name,
     wait_for_kfp_run_succeeded_from_run_id,
 )
+from e2e.utils.custom_resources import get_pvc_status
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
@@ -60,18 +62,8 @@ def kustomize_path():
 
 class TestFSx:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, kustomize, port_forward, static_provisioning):
+    def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
         def setup(self, metadata, kustomize, port_forward, static_provisioning):
-            # Disable caching in KFP
-            # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
-            # This prevents artifacts from being uploaded to s3 for subsequent runs
-            patch_body = unmarshal_yaml(DISABLE_PIPELINE_CACHING_PATCH_FILE)
-            k8s_admission_registration_api_client = (
-                create_k8s_admission_registration_api_client(cluster, region)
-            )
-            k8s_admission_registration_api_client.patch_mutating_webhook_configuration(
-                "cache-webhook-kubeflow", patch_body
-            )
 
             metadata_file = metadata.to_file()
             print(metadata.params)  # These needed to be logged
@@ -101,17 +93,13 @@ class TestFSx:
         assert "fs-" in fs_id
 
         CLAIM_NAME = static_provisioning["claim_name"]
-        claim_list = subprocess.check_output("kubectl get pvc -A".split()).decode()
-        assert CLAIM_NAME in claim_list
-
-        claim_entry = subprocess.check_output(
-            f"kubectl get pvc -n {DEFAULT_USER_NAMESPACE} {CLAIM_NAME} -o=jsonpath='{{.status.phase}}'".split()
-        ).decode()
-        # Claim is already bound at this point
-        assert "Bound" in claim_entry
+        pvc_name, claim_status = get_pvc_status(
+            cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
+        )
+        assert pvc_name == CLAIM_NAME
+        assert claim_status == "Bound"
 
         # TODO: The following can be put into a method or split this into different tests
-        # TODO: The following section needs more assertions
         # Create two Pipelines both mounted with the same EFS volume claim.
         # The first one writes a file to the volume, the second one reads it and verifies content.
         experiment_name = rand_name("fsx-static-experiment-")
@@ -142,3 +130,9 @@ class TestFSx:
         ).run_id
         print(f"read_pipeline run id is {read_run_id}")
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, read_run_id)
+
+        pvc_name, claim_status = get_pvc_status(
+            cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
+        )
+        assert pvc_name == CLAIM_NAME
+        assert claim_status == "Bound"

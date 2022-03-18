@@ -3,6 +3,7 @@ kind: PersistentVolume
 metadata:
   name: fsx-pv
 spec:
+  storageClassName: fsx-sc
   capacity:
     storage: 1200Gi
   volumeMode: Filesystem
