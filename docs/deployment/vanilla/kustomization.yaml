@@ -28,7 +28,7 @@ resources:
 # Kubeflow Pipelines
 - ../../../upstream/apps/pipeline/upstream/env/platform-agnostic-multi-user
 # KFServing
-- ../../../upstream/apps/kfserving/upstream/overlays/kubeflow
+- ../../../awsconfigs/apps/kserve
 # Katib
 - ../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
 # Central Dashboard

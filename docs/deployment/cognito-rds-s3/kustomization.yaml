@@ -21,7 +21,7 @@ resources:
 - ../../../upstream/common/istio-1-9/kubeflow-istio-resources/base
 
 # KFServing
-- ../../../upstream/apps/kfserving/upstream/overlays/kubeflow
+- ../../../awsconfigs/apps/kserve
 # Central Dashboard
 - ../../../upstream/apps/centraldashboard/upstream/overlays/istio
 # Notebooks
