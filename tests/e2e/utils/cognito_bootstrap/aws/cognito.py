@@ -95,7 +95,7 @@ class CustomDomainCognitoUserPool:
         else:
             return response
 
-    def create_userpool_client(self, client_name: str, callback_urls: list) -> str:
+    def create_userpool_client(self, client_name: str, callback_urls: list, logout_urls: list) -> str:
         try:
             response = self.cognito_client.create_user_pool_client(
                 UserPoolId=self.userpool_id,
@@ -103,6 +103,7 @@ class CustomDomainCognitoUserPool:
                 GenerateSecret=True,
                 SupportedIdentityProviders=["COGNITO"],
                 CallbackURLs=callback_urls,
+                LogoutURLs=logout_urls,
                 AllowedOAuthFlowsUserPoolClient=True,
                 AllowedOAuthFlows=["code"],
                 AllowedOAuthScopes=[

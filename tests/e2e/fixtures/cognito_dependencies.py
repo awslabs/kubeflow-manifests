@@ -7,7 +7,8 @@ from e2e.utils.cognito_bootstrap.cognito_pre_deployment import (
     create_certificates,
     create_cognito_userpool,
     configure_ingress,
-    configure_alb_ingress_controller
+    configure_aws_authservice,
+    configure_alb_ingress_controller,
 )
 from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.utils.cognito_bootstrap.cognito_resources_cleanup import (
@@ -40,11 +41,7 @@ def cognito_bootstrap(
         )
 
     subdomain_name = rand_name("platform") + "." + root_domain_name
-    cognito_deps = {"cluster": {
-        "region": region,
-        "name": cluster
-        }
-    }
+    cognito_deps = {"cluster": {"region": region, "name": cluster}}
 
     def on_create():
         root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -96,12 +93,9 @@ def cognito_bootstrap(
         }
 
         configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn)
-        alb_sa_details = configure_alb_ingress_controller(
-            region, cluster
-        )
-        cognito_deps["kubeflow"] = {
-            "alb": alb_sa_details
-        }
+        configure_aws_authservice(cognito_userpool, subdomain_hosted_zone.domain)
+        alb_sa_details = configure_alb_ingress_controller(region, cluster)
+        cognito_deps["kubeflow"] = {"alb": alb_sa_details}
 
     def on_delete():
         cfg = metadata.get("cognito_dependencies") or cognito_deps

@@ -25,6 +25,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Step 1: Create a subdomain for kubeflow deployment
+
+
 def create_subdomain_hosted_zone(
     subdomain_name: str,
     root_domain_name: str,
@@ -135,6 +137,7 @@ def create_cognito_userpool(
     cognito_userpool.create_userpool_client(
         client_name="kubeflow",
         callback_urls=[f"https://kubeflow.{subdomain_name}/oauth2/idpresponse"],
+        logout_urls=[f"https://kubeflow.{subdomain_name}"],
     )
     userpool_cloudfront_alias = cognito_userpool.create_userpool_domain()
     subdomain_hosted_zone.change_record_set(
@@ -176,12 +179,11 @@ def configure_alb_ingress_controller(
 
     # create an iam service account with required permissions for the controller
     cluster.associate_iam_oidc_provider(cluster_name, region)
-    alb_policy = IAMPolicy(
-        name = policy_name,
-        region=region
-    )
+    alb_policy = IAMPolicy(name=policy_name, region=region)
     alb_policy.create(
-        policy_document=load_json_file("../../awsconfigs/infra_configs/iam_alb_ingress_policy.json")
+        policy_document=load_json_file(
+            "../../awsconfigs/infra_configs/iam_alb_ingress_policy.json"
+        )
     )
 
     alb_sa_name = "alb-ingress-controller"
@@ -207,12 +209,19 @@ def configure_alb_ingress_controller(
         },
     )
 
-    return {
-            "serviceAccount": {
-                "name": alb_sa_name,
-                "policyArn": alb_policy.arn
-            }
-        }
+    return {"serviceAccount": {"name": alb_sa_name, "policyArn": alb_policy.arn}}
+
+
+def configure_aws_authservice(
+    cognito_userpool: CustomDomainCognitoUserPool, subdomain_name: str
+):
+    # substitute the LOGOUT_URL for the AWS AuthService to redirect to
+    configure_env_file(
+        env_file_path="../../awsconfigs/common/aws-authservice/base/params.env",
+        env_dict={
+            "LOGOUT_URL": f"{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}",
+        },
+    )
 
 
 if __name__ == "__main__":
@@ -266,10 +275,7 @@ if __name__ == "__main__":
 
     utils.print_banner("Configuring Ingress and load balancer controller manifests")
     configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn)
-    alb_sa_details = configure_alb_ingress_controller(
-        deployment_region, cluster_name
-    )
-    cfg["kubeflow"] = {
-        "alb": alb_sa_details
-    }
+    configure_aws_authservice(cognito_userpool, subdomain_hosted_zone.domain)
+    alb_sa_details = configure_alb_ingress_controller(deployment_region, cluster_name)
+    cfg["kubeflow"] = {"alb": alb_sa_details}
     utils.write_cfg(cfg)

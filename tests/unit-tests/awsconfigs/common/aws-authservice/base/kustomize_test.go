@@ -7,7 +7,7 @@ import (
 
 func TestKustomize(t *testing.T) {
 	testCase := &tests.KustomizeTestCase{
-		Package: "../../../../../../awsconfigs/common/aws-istio-envoy-filter/base",
+		Package: "../../../../../../awsconfigs/common/aws-authservice/base",
 		Expected: "test_data/expected",
 	}
 
