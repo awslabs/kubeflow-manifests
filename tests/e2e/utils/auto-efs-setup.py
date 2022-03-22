@@ -532,7 +532,7 @@ parser.add_argument(
     help="Your cluster name (eg: mycluster-1)",
     required=True,
 )
-EFS_FILE_SYSTEM_NAME_DEFAULT = "Kubeflow-efs-2"
+EFS_FILE_SYSTEM_NAME_DEFAULT = "Kubeflow-efs"
 parser.add_argument(
     "--efs_file_system_name",
     type=str,
