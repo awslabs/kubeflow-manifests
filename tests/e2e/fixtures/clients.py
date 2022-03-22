@@ -142,7 +142,7 @@ def account_id():
 @pytest.fixture(scope="class")
 def patch_kfp_to_disable_cache(cluster, region):
     disable_pipeline_caching_patch_file = (
-    "./resources/custom-resource-templates/patch-disable-pipeline-caching.yaml"
+        "./resources/custom-resource-templates/patch-disable-pipeline-caching.yaml"
     )
     # Disable caching in KFP
     # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps

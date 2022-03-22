@@ -319,7 +319,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
                 "--efs_file_system_name",
                 claim_name,
                 "--efs_security_group_name",
-                claim_name+"sg"
+                claim_name + "sg",
             ]
         )
 

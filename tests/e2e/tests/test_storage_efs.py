@@ -31,7 +31,7 @@ from e2e.fixtures.clients import (
     password,
     patch_kfp_to_disable_cache,
 )
-from e2e.utils.custom_resources import get_pvc_status
+from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
 
 from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
 
@@ -87,16 +87,19 @@ class TestEFS_Static:
         create_efs_volume,
         static_provisioning,
     ):
+        # TODO: Use the StorageV1Api once we move to the latest version of kfp and kubernetes
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "efs.csi.aws.com" in driver_list
 
-        pod_list = subprocess.check_output("kubectl get pods -A".split()).decode()
-        assert "efs-csi-controller" in pod_list
+        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","efs-csi-controller")
+        assert "efs-csi-controller" in name
+        assert status == "Running"
 
-        sa_account = subprocess.check_output(
-            "kubectl describe -n kube-system serviceaccount efs-csi-controller-sa".split()
-        ).decode()
-        assert f"arn:aws:iam::{account_id}:role" in sa_account
+        get_service_account
+        sa_account = get_service_account(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "efs-csi-controller-sa"
+        )
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
 
         fs_id = create_efs_volume["file_system_id"]
         assert "fs-" in fs_id
@@ -165,16 +168,19 @@ class TestEFS_Dynamic:
         account_id,
         dynamic_provisioning,
     ):
+        # TODO: Use the StorageV1Api once we move to the latest version of kfp and kubernetes
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "efs.csi.aws.com" in driver_list
 
-        pod_list = subprocess.check_output("kubectl get pods -A".split()).decode()
-        assert "efs-csi-controller" in pod_list
+        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","efs-csi-controller")
+        assert "efs-csi-controller" in name
+        assert status == "Running"
 
-        sa_account = subprocess.check_output(
-            "kubectl describe -n kube-system serviceaccount efs-csi-controller-sa".split()
-        ).decode()
-        assert f"arn:aws:iam::{account_id}:role" in sa_account
+        get_service_account
+        sa_account = get_service_account(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "efs-csi-controller-sa"
+        )
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
 
         fs_id = dynamic_provisioning["file_system_id"]
         assert "fs-" in fs_id
