@@ -17,9 +17,9 @@ from e2e.fixtures.cluster import cluster
 from e2e.fixtures.clients import (
     account_id,
     create_k8s_admission_registration_api_client,
-    port_forward,
     kfp_client,
     host,
+    port_forward,
     client_namespace,
     session_cookie,
     login,
@@ -44,7 +44,7 @@ from e2e.utils.utils import (
     rand_name,
     wait_for_kfp_run_succeeded_from_run_id,
 )
-from e2e.utils.custom_resources import get_pvc_status
+from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
@@ -63,11 +63,10 @@ def kustomize_path():
 class TestFSx:
     @pytest.fixture(scope="class")
     def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
-        def setup(self, metadata, kustomize, port_forward, static_provisioning):
 
-            metadata_file = metadata.to_file()
-            print(metadata.params)  # These needed to be logged
-            print("Created metadata file for TestFSx_Static", metadata_file)
+        metadata_file = metadata.to_file()
+        print(metadata.params)  # These needed to be logged
+        print("Created metadata file for TestFSx_Static", metadata_file)
 
     def test_pvc_with_volume(
         self,
@@ -81,13 +80,14 @@ class TestFSx:
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "fsx.csi.aws.com" in driver_list
 
-        pod_list = subprocess.check_output("kubectl get pods -A".split()).decode()
-        assert "fsx-csi-controller" in pod_list
+        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","fsx-csi-controller")
+        assert "fsx-csi-controller" in name
+        assert status == "Running"
 
-        sa_account = subprocess.check_output(
-            "kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa".split()
-        ).decode()
-        assert f"arn:aws:iam::{account_id}:role" in sa_account
+        sa_account = get_service_account(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "fsx-csi-controller-sa"
+        )
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
 
         fs_id = create_fsx_volume["file_system_id"]
         assert "fs-" in fs_id
@@ -100,7 +100,7 @@ class TestFSx:
         assert claim_status == "Bound"
 
         # TODO: The following can be put into a method or split this into different tests
-        # Create two Pipelines both mounted with the same EFS volume claim.
+        # Create two Pipelines both mounted with the same volume claim.
         # The first one writes a file to the volume, the second one reads it and verifies content.
         experiment_name = rand_name("fsx-static-experiment-")
         experiment_description = rand_name("fsx-description-")

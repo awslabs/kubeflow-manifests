@@ -95,7 +95,6 @@ class TestEFS_Static:
         assert "efs-csi-controller" in name
         assert status == "Running"
 
-        get_service_account
         sa_account = get_service_account(
             cluster, region, DEFAULT_SYSTEM_NAMESPACE, "efs-csi-controller-sa"
         )
