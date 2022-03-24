@@ -25,8 +25,10 @@ from e2e.utils.utils import (
     kubectl_delete_kustomize,
 )
 
-DEFAULT_NAMESPACE = "kube-system"
-
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    DEFAULT_SYSTEM_NAMESPACE,
+)
 
 def wait_on_fsx_status(desired_status, fsx_client, file_system_id):
     def callback():
@@ -91,7 +93,7 @@ def create_fsx_driver_sa(
         assert response["Policy"]["Arn"] is not None
 
         create_iam_service_account(
-            "fsx-csi-controller-sa", DEFAULT_NAMESPACE, cluster, region, policy_arn
+            "fsx-csi-controller-sa", DEFAULT_SYSTEM_NAMESPACE, cluster, region, policy_arn
         )
         fsx_deps["fsx_iam_policy_name"] = policy_name
 
@@ -216,7 +218,7 @@ def static_provisioning(metadata, region, request, cluster, create_fsx_volume):
 
         # Add the namespace to the pvc.yaml file
         fsx_pvc = load_cfg(fsx_pvc_filepath)
-        fsx_pvc["metadata"]["namespace"] = DEFAULT_NAMESPACE
+        fsx_pvc["metadata"]["namespace"] = DEFAULT_SYSTEM_NAMESPACE
         fsx_pvc["metadata"]["name"] = claim_name
         write_cfg(fsx_pvc, fsx_pvc_filepath)
 

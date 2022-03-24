@@ -1,14 +1,15 @@
-import time
 import pytest
 import subprocess
 import boto3
+import os
+import stat
+import sys
 
 from e2e.utils.config import metadata
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
 from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
@@ -25,8 +26,21 @@ from e2e.utils.utils import (
     kubectl_apply_kustomize,
     kubectl_delete_kustomize,
 )
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    DEFAULT_SYSTEM_NAMESPACE,
+)
 
-DEFAULT_NAMESPACE = "kube-system"
+
+def get_file_system_id_from_name(efs_client, file_system_name):
+    def name_matches(filesystem):
+        return filesystem["Name"] == file_system_name
+
+    file_systems = efs_client.describe_file_systems()["FileSystems"]
+
+    file_system = next(filter(name_matches, file_systems))
+
+    return file_system["FileSystemId"]
 
 
 def wait_on_efs_status(desired_status, efs_client, file_system_id):
@@ -84,7 +98,11 @@ def create_efs_driver_sa(
         assert response["Policy"]["Arn"] is not None
 
         create_iam_service_account(
-            "efs-csi-controller-sa", DEFAULT_NAMESPACE, cluster, region, policy_arn
+            "efs-csi-controller-sa",
+            DEFAULT_SYSTEM_NAMESPACE,
+            cluster,
+            region,
+            policy_arn,
         )
         efs_deps["efs_iam_policy_name"] = policy_name
 
@@ -220,6 +238,9 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     efs_pvc_filepath = (
         "../../docs/deployment/add-ons/storage/efs/static-provisioning/pvc.yaml"
     )
+    efs_permissions_filepath = (
+        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+    )
     efs_claim = {}
 
     def on_create():
@@ -229,15 +250,26 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         efs_pv["metadata"]["name"] = claim_name
         write_cfg(efs_pv, efs_pv_filepath)
 
-        # Add the namespace to the pvc.yaml file
+        # Update the values in the pvc.yaml file
         efs_pvc = load_cfg(efs_pvc_filepath)
-        efs_pvc["metadata"]["namespace"] = DEFAULT_NAMESPACE
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_pvc["metadata"]["name"] = claim_name
         write_cfg(efs_pvc, efs_pvc_filepath)
+
+        # Update the values in the permissions file
+        # Statically provisioned volume needs extra permissions
+        efs_permission = load_cfg(efs_permissions_filepath)
+        efs_permission["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_permission["metadata"]["name"] = "permissions" + claim_name
+        efs_permission["spec"]["template"]["spec"]["volumes"][0][
+            "persistentVolumeClaim"
+        ]["claimName"] = claim_name
+        write_cfg(efs_permission, efs_permissions_filepath)
 
         kubectl_apply(efs_sc_filepath)
         kubectl_apply(efs_pv_filepath)
         kubectl_apply(efs_pvc_filepath)
+        kubectl_apply(efs_permissions_filepath)
 
         efs_claim["claim_name"] = claim_name
 
@@ -245,7 +277,91 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         kubectl_delete(efs_pvc_filepath)
         kubectl_delete(efs_pv_filepath)
         kubectl_delete(efs_sc_filepath)
+        kubectl_delete(efs_permissions_filepath)
 
     return configure_resource_fixture(
         metadata, request, efs_claim, "efs_claim", on_create, on_delete
+    )
+
+
+@pytest.fixture(scope="class")
+def dynamic_provisioning(metadata, region, request, cluster):
+    claim_name = rand_name("efs-claim-auto-dyn-")
+    efs_pvc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"
+    )
+    efs_sc_filepath = (
+        "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
+    )
+    efs_permissions_filepath = (
+        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+    )
+    efs_auto_script_filepath = "utils/auto-efs-setup.py"
+    efs_claim_dyn = {}
+    efs_client = get_efs_client(region)
+
+    def on_create():
+        # Run the automated script to create the EFS Filesystem and the SC
+        efs_auto_script_absolute_filepath = os.path.join(
+            os.path.abspath(sys.path[0]), "../" + efs_auto_script_filepath
+        )
+
+        st = os.stat(efs_auto_script_filepath)
+        os.chmod(efs_auto_script_filepath, st.st_mode | stat.S_IEXEC)
+        subprocess.call(
+            [
+                "python",
+                efs_auto_script_absolute_filepath,
+                "--region",
+                region,
+                "--cluster",
+                cluster,
+                "--efs_file_system_name",
+                claim_name,
+                "--efs_security_group_name",
+                claim_name + "sg",
+            ]
+        )
+
+        file_system_id = get_file_system_id_from_name(efs_client, claim_name)
+
+        # PVC creation is not a part of the script
+        # Update the values in the pvc.yaml file
+        efs_pvc = load_cfg(efs_pvc_filepath)
+        efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
+        efs_pvc["metadata"]["name"] = claim_name
+        write_cfg(efs_pvc, efs_pvc_filepath)
+
+        kubectl_apply(efs_pvc_filepath)
+
+        efs_claim_dyn["efs_claim_dyn"] = claim_name
+        efs_claim_dyn["file_system_id"] = file_system_id
+
+    def on_delete():
+        kubectl_delete(efs_pvc_filepath)
+        kubectl_delete(efs_sc_filepath)
+
+        # Get FileSystem_ID
+        efs_claim_dyn = metadata.get("efs_claim_dyn") or efs_claim_dyn
+        fs_id = efs_claim_dyn["file_system_id"]
+
+        # Delete the Mount Targets
+        response = efs_client.describe_mount_targets(
+            FileSystemId=fs_id,
+        )
+        existing_mount_targets = response["MountTargets"]
+        for mount_target in existing_mount_targets:
+            mount_target_id = mount_target["MountTargetId"]
+            efs_client.delete_mount_target(
+                MountTargetId=mount_target_id,
+            )
+
+        # Delete the Filesystem
+        efs_client.delete_file_system(
+            FileSystemId=fs_id,
+        )
+        wait_on_efs_status("deleted", efs_client, fs_id)
+
+    return configure_resource_fixture(
+        metadata, request, efs_claim_dyn, "efs_claim_dyn", on_create, on_delete
     )

@@ -226,7 +226,7 @@ def delete_s3_bucket_contents(cfn_stack, request, region):
 PIPELINE_NAME = "[Demo] XGBoost - Iterative model training"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
-
+# TODO: This could be moved to utils and combined with the `wait_for_kfp_run_succeeded_from_run_id`
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
         resp = kfp_client.get_run(run.id)

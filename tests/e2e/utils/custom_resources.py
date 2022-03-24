@@ -3,7 +3,10 @@ Module for helper methods to create and delete kubernetes custom resources (e.g.
 """
 
 from e2e.utils.utils import unmarshal_yaml
-from e2e.fixtures.clients import create_k8s_custom_objects_api_client
+from e2e.fixtures.clients import (
+    create_k8s_custom_objects_api_client,
+    create_k8s_core_api_client,
+)
 
 from e2e.utils.constants import KUBEFLOW_GROUP
 
@@ -85,3 +88,35 @@ def get_ingress(cluster, region, name="istio-ingress", namespace="istio-system")
         plural="ingresses",
         name=name,
     )
+
+
+def get_pvc_status(cluster, region, namespace, name):
+    client = create_k8s_core_api_client(cluster, region)
+
+    pvc = client.read_namespaced_persistent_volume_claim_status(
+        namespace=namespace, name=name, pretty=True
+    )
+
+    return pvc.spec.volume_name, pvc.status.phase
+
+
+def get_service_account(cluster, region, namespace, name):
+    client = create_k8s_core_api_client(cluster, region)
+
+    service_account = client.read_namespaced_service_account(
+        namespace=namespace, name=name, pretty=True
+    )
+
+    return service_account.metadata.annotations["eks.amazonaws.com/role-arn"]
+
+
+def get_pod_from_label(cluster, region, namespace, label_key, label_value):
+    client = create_k8s_core_api_client(cluster, region)
+
+    pod = client.list_namespaced_pod(
+        namespace=namespace, label_selector=f"{label_key}={label_value}", pretty=True
+    )
+    name = pod.items[0].metadata.name
+    status = pod.items[0].status.phase
+
+    return name, status
