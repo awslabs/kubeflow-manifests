@@ -743,7 +743,6 @@ parser.add_argument(
     help=f"Default is set to {DB_SUBNET_GROUP_NAME_DEFAULT}",
     required=False
 )
-<<<<<<< HEAD
 parser.add_argument(
     '--s3_aws_access_key_id',
     type=str,
@@ -764,7 +763,6 @@ parser.add_argument(
     """,
     required=False
 )
-=======
 RDS_SECRET_NAME = "rds-secret"
 parser.add_argument(
     '--rds_secret_name',
@@ -782,7 +780,6 @@ parser.add_argument(
     required=False
 )
 
->>>>>>> 094e21b5 (Allow setting rds-secret name and s3-secret name in the auto setup script)
 args, _ = parser.parse_known_args()
 
 if __name__ == "__main__":
