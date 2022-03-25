@@ -615,13 +615,13 @@ def edit_pipeline_params_env_file(new_pipeline_params_env_lines, pipeline_params
     with open(pipeline_params_env_file, "w") as file:
         file.writelines(new_pipeline_params_env_lines)
 
-def read_yaml(file):
-    with open(file) as f:
-        return yaml.safe_load(f.read())
+def read_yaml(filename):
+    with open(filename) as file:
+        return yaml.safe_load(file.read())
 
-def write_yaml(file, contents):
-    with open(file, 'w') as f:
-        yaml.dump(contents, f)
+def write_yaml(filename, contents):
+    with open(filename, 'w') as file:
+        yaml.dump(contents, file)
 
 def update_secret_provider_class(secret_provider_class_file, secret_name):
     secret_provider = read_yaml(secret_provider_class_file)
