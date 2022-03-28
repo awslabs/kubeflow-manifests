@@ -4,11 +4,7 @@ import pytest
 
 from e2e.utils.utils import kubectl_apply
 
-from e2e.fixtures.cluster import (
-    associate_iam_oidc_provider,
-    create_iam_service_account,
-    delete_iam_service_account,
-)
+from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
 from e2e.utils.k8s_core_api import create_namespace
 
 from e2e.utils.constants import (
@@ -35,9 +31,6 @@ def aws_secrets_driver(cluster, region):
 
     iam_policies = [IAM_AWS_SSM_READ_ONLY_POLICY, IAM_SECRETS_MANAGER_READ_WRITE_POLICY]
 
-    delete_iam_service_account(
-        KUBEFLOW_SERVICE_ACCOUNT_NAME, KUBEFLOW_NAMESPACE, cluster, region
-    )
     create_iam_service_account(
         KUBEFLOW_SERVICE_ACCOUNT_NAME, KUBEFLOW_NAMESPACE, cluster, region, iam_policies
     )
