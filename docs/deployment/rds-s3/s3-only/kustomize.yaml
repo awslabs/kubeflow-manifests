@@ -14,7 +14,7 @@ resources:
 # Dex
 - ../../../upstream/common/dex/overlays/istio
 # KNative
-- ../../../upstream/common/knative/knative-serving/overlays/gateways
+- ../../../upstream/common/knative/knative-serving/base
 - ../../../upstream/common/knative/knative-eventing/base
 - ../../../upstream/common/istio-1-9/cluster-local-gateway/base
 # Kubeflow namespace
@@ -47,16 +47,14 @@ resources:
 - ../../../upstream/apps/training-operator/upstream/overlays/kubeflow
 # MPI Operator
 - ../../../upstream/apps/mpi-job/upstream/overlays/kubeflow
-# AWS Telemetry - This is an optional component. See usage tracking documentation for more information
-- ../../../awsconfigs/common/aws-telemetry
 
 # User namespace
 - ../../../upstream/common/user-namespace/base
 
 
-# Configured for AWS RDS and AWS S3
+# Configured for AWS S3
 
 # Kubeflow Pipelines
-- ../../../awsconfigs/apps/pipeline
+- ../../../awsconfigs/apps/pipeline/s3
 # Katib
 - ../../../awsconfigs/apps/katib-external-db-with-kubeflow
