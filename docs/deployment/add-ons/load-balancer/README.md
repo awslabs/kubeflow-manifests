@@ -1,6 +1,6 @@
 # Exposing Kubeflow over Load Balancer
 
-This tutorial shows how to expose Kubeflow over an external load balancer on AWS.
+This tutorial shows how to expose Kubeflow over a load balancer on AWS.
 
 ## Background
 
@@ -16,67 +16,96 @@ Follow this guide only if you are **not** using `Cognito` as the authentication 
 
 ## Prerequisites
 
-1. Kubeflow deployment with Dex as auth provider(default in Vanilla Kubeflow).
+1. Kubeflow deployment on EKS with Dex as auth provider(default in [Vanilla](../../vanilla/README.md) Kubeflow).
+1. Installed the tools mentioned in [prerequisite section of this](../../vanilla/README.md#prerequisites) document on the client machine.
 
+## Creating the load balancer
 
-## Create required resources and deploy ingress managed load balancer
+To make it easy to create the load balancer, you can use the [script](#run-the-script) provided in the instructions below. Following is a brief overview of what happens when you run the script:
+### Domain and Certificate creation
 
-1. The following steps automate:
-    - creating a custom domain to host Kubeflow
-    - TLS certificates for the domain using ACM
-    - Configuring ingress and load balancer controller manifests
-    - Building manifests and deploying the required components
-    - Updating the domain with ALB address
+As explained in the background section, you need a registered domain and TLS certificate to use HTTPS with load balancer. Since your top level domain(e.g. `example.com`) could have been registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM and Application Load Balancer, you will create a separate [sudomain](https://en.wikipedia.org/wiki/Subdomain) (e.g. `platform.example.com`) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain(`*.example.com`) and subdomain(`*.platform.example.com`).
 
+### Ingress and Load Balancer Controller configuration
 
-    1. Install dependencies for the scripts
-        ```
-        pip install -r tests/e2e/requirements.txt
-        ```
-    1. Substitute values in `tests/e2e/utils/load_balancer/config.yaml`.
-        1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
-            1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
-        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](./README.md#10-custom-domain) to understand why we use a subdomain.
-        1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
-        1. The config file will look something like:
-            1. ```
-                cluster:
-                    name: kube-eks-cluster
-                    region: us-west-2
-                route53:
-                    rootDomain:
-                        hostedZoneId: XXXX
-                        name: example.com
-                    subDomain:
-                        name: platform.example.com
-                ```
-    1. Run the script to create the resources
+After creating the subdomain and certificates, you will need to:
+- configure the parameters for [ingress](../../../../awsconfigs/common/istio-ingress/overlays/https/params.env) with the certificate ARN of the subdomain)
+- tag the cluster subnets as described in `Prerequisites` section in this [document](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html)
+- configure the parameters for [load balancer controller](../../../../awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name 
+- create an IAM role with [these permissions](../../../../awsconfigs/infra_configs/iam_alb_ingress_policy.json) for the load balancer controller to use via a service account(`alb-ingress-controller` service account in `kubeflow` namespace). You can use the [eksctl create iamserviceaccount](https://eksctl.io/usage/iamserviceaccounts/) command for this.
+
+You can then use `kubectl` and `kustomize` to build and install the components specified in this [kustomize](./kustomization.yaml) file.
+
+After installing the components, the script will wait for the ingress managed load balancer to be created and update the subdomain (`platform.example.com`) with a CNAME entry for `kubeflow.platform.example.com` pointing to the load balancer DNS. You can see the load balancer DNS by running `kubectl get ingress -n istio-system istio-ingress`.
+
+To summarize, what the script does or what you need to if you are doing it manually:
+    - Create a custom domain to host Kubeflow
+    - Create TLS certificates for the domain using ACM
+    - Configure the ingress and load balancer controller
+    - Build manifests and install the required components
+    - Update the domain with ALB address
+
+### Run the script
+
+1. Install dependencies for the script
+    ```
+    cd tests/e2e
+    pip install -r requirements.txt
+    ```
+1. Substitute values in `tests/e2e/utils/load_balancer/config.yaml`.
+    1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
+        1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
+    1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`.
+    1. Cluster name and region where kubeflow is deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
+    1. The config file will look something like:
         1. ```
-            cd tests/e2e
-            PYTHONPATH=.. python utils/load_balancer/setup_load_balancer.py
-            cd -
-            ```
-    1. The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
-        1. ```
-            kubeflow:
-                alb:
-                    dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
-                    serviceAccount:
-                        name: alb-ingress-controller
-                        policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
             cluster:
                 name: kube-eks-cluster
                 region: us-west-2
             route53:
                 rootDomain:
-                    certARN: arn:aws:acm:us-east-1:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af
-                    hostedZoneId: XXXXX
+                    hostedZoneId: XXXX
                     name: example.com
                 subDomain:
-                    us-west-2-certARN: arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726
-                    hostedZoneId: XXXXX
                     name: platform.example.com
-                    us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
+1. Run the script to create the resources
+    1. ```
+        PYTHONPATH=.. python utils/load_balancer/setup_load_balancer.py
+        ```
+1. The script will update the config file with the resource names/ids/ARNs it created. Following is a sample:
+    1. ```
+        kubeflow:
+            alb:
+                dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+                serviceAccount:
+                    name: alb-ingress-controller
+                    policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+        cluster:
+            name: kube-eks-cluster
+            region: us-west-2
+        route53:
+            rootDomain:
+                certARN: arn:aws:acm:us-west-2:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af
+                hostedZoneId: XXXXX
+                name: example.com
+            subDomain:
+                certARN: arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726
+                hostedZoneId: XXXXX
+                name: platform.example.com
+        ```
+1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
 
-    1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/).
+## Clean up
+
+To delete the resources created in this guide, run the following commands from the root of repository:
+Make sure you have the configuration file created by the script in `tests/e2e/utils/load_balancer/config.yaml`
+
+```
+cd tests/e2e
+pip install -r requirements.txt
+PYTHONPATH=.. python utils/load_balancer/lb_resources_cleanup.py
+cd -
+
+kustomize build kubeflow-manifests/docs/deployment/add-ons/load-balancer | kubectl delete -f -
+```
