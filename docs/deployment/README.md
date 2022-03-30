@@ -24,6 +24,10 @@ Installation steps can be found [here](add-ons/storage/efs)
 ### Using FSx for Lustre with Kubeflow
 Installation steps can be found [here](add-ons/storage/fsx-for-lustre)
 
+
+### CloudWatch Logging and Container Insights
+Amazon EKS offers Container Insights using Amazon CloudWatch which monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. You can use CloudWatch to collect and track metrics, which are variables you can measure for your resources and applications. FluentBit is used as the DaemonSet to send logs to CloudWatch Logs. Install AWS CloudWatch by following their [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html).
+
 ## Security
 
 The scripts in this repository are meant to be used for development/testing purposes. We highly recommend to follow AWS security best practice documentation while provisioning AWS resources. We have added few references below.
@@ -36,14 +40,6 @@ The scripts in this repository are meant to be used for development/testing purp
 [Security in Amazon Certificate Manager (ACM)](https://docs.aws.amazon.com/acm/latest/userguide/security.html)  
 [Security best practices for Amazon Cognito user pools](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)  
 [Security in Amazon Elastic Load Balancing (ELB)](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/security.html)
-
-## CloudWatch Logging and Container Insights
-Amazon EKS offers Container Insights using Amazon CloudWatch which monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. You can use CloudWatch to collect and track metrics, which are variables you can measure for your resources and applications. FluentBit can be used as the DaemonSet to send logs to CloudWatch Logs, and will send the following logs which contain metrics such as individual pod logs. Install AWS CloudWatch by following their [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html).
-   - /aws/containerinsights/Cluster_Name/application
-
-   - /aws/containerinsights/Cluster_Name/host
-
-   - /aws/containerinsights/Cluster_Name/dataplane
 
 ## Usage Tracking
 
