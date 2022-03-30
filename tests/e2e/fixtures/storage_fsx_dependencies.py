@@ -42,25 +42,11 @@ def get_fsx_mount_name(fsx_client, file_system_id):
     return response["FileSystems"][0]["LustreConfiguration"]["MountName"]
 
 
-def get_file_system_id_from_name(fsx_client, file_system_name):
-    def name_matches(filesystem):
-        return filesystem["Name"] == file_system_name
-
-    file_systems = fsx_client.describe_file_systems()["FileSystems"]
-
-    file_system = next(filter(name_matches, file_systems))
-
-    return file_system["FileSystemId"]
-
-
 @pytest.fixture(scope="class")
 def static_provisioning(metadata, region, request, cluster):
     claim_name = rand_name("fsx-claim-")
     fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
     fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
-    fsx_permissions_filepath = (
-        "../../docs/deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
-    )
     fsx_auto_script_filepath = "utils/auto-fsx-setup.py"
     fsx_client = get_fsx_client(region)
     fsx_claim = {}
@@ -71,8 +57,8 @@ def static_provisioning(metadata, region, request, cluster):
             os.path.abspath(sys.path[0]), "../" + fsx_auto_script_filepath
         )
 
-        st = os.stat(fsx_auto_script_filepath)
-        os.chmod(fsx_auto_script_filepath, st.st_mode | stat.S_IEXEC)
+        path_status = os.stat(fsx_auto_script_filepath)
+        os.chmod(fsx_auto_script_filepath, path_status.st_mode | stat.S_IEXEC)
         subprocess.call(
             [
                 "python",
@@ -92,7 +78,6 @@ def static_provisioning(metadata, region, request, cluster):
 
         with open("fsx-config.txt", "r") as f:
             file_system_id = f.read()
-        # file_system_id = get_file_system_id_from_name(fsx_client, claim_name)
         dns_name = get_fsx_dns_name(fsx_client, file_system_id)
         mount_name = get_fsx_mount_name(fsx_client, file_system_id)
 
@@ -122,13 +107,13 @@ def static_provisioning(metadata, region, request, cluster):
         kubectl_delete(fsx_pv_filepath)
 
         details_fsx_volume = metadata.get("fsx_claim") or fsx_claim
-        # file_system_id = details_fsx_volume["file_system_id"]
+        file_system_id = details_fsx_volume["file_system_id"]
 
-        # fsx_client.delete_file_system(
-        #     FileSystemId=file_system_id,
-        # )
+        fsx_client.delete_file_system(
+            FileSystemId=file_system_id,
+        )
 
-        # Find a way to delete the security group
+        # TODO: Find a way to delete the security group
 
     return configure_resource_fixture(
         metadata, request, fsx_claim, "fsx_claim", on_create, on_delete
