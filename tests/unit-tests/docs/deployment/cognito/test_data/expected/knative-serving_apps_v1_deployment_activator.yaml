@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    serving.knative.dev/release: v0.22.1
+  name: activator
+  namespace: knative-serving
+spec:
+  selector:
+    matchLabels:
+      app: activator
+      role: activator
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: activator
+        role: activator
+        serving.knative.dev/release: v0.22.1
+    spec:
+      containers:
+      - env:
+        - name: GOGC
+          value: "500"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/internal/serving
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:fed92af8b9779c97482906db8857f27b5d4826708b75d0298aa30fad8900671f
+        livenessProbe:
+          failureThreshold: 12
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
+          initialDelaySeconds: 15
+        name: activator
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        - containerPort: 8012
+          name: http1
+        - containerPort: 8013
+          name: h2c
+        readinessProbe:
+          failureThreshold: 12
+          httpGet:
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: activator
+            port: 8012
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 600Mi
+          requests:
+            cpu: 300m
+            memory: 60Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+      serviceAccountName: controller
+      terminationGracePeriodSeconds: 600

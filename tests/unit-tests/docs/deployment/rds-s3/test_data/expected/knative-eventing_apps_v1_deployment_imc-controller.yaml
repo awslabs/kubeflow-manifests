@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    app.kubernetes.io/name: knative-eventing
+    eventing.knative.dev/release: v0.22.1
+    knative.dev/high-availability: "true"
+    kustomize.component: knative
+  name: imc-controller
+  namespace: knative-eventing
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: knative-eventing
+      app.kubernetes.io/name: knative-eventing
+      kustomize.component: knative
+      messaging.knative.dev/channel: in-memory-channel
+      messaging.knative.dev/role: controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: knative-eventing
+        app.kubernetes.io/name: knative-eventing
+        kustomize.component: knative
+        messaging.knative.dev/channel: in-memory-channel
+        messaging.knative.dev/role: controller
+    spec:
+      containers:
+      - env:
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: knative.dev/inmemorychannel-controller
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: DISPATCHER_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_dispatcher@sha256:a6983f71c04619928199cc21e07ee6f1e1c87586621bc03b10c9ba1abd92bfa8
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory/channel_controller@sha256:904f42a768a9bc64999e7302d2bc7c1c48a08e74a82355cf57be513e6a124b82
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 8008
+          name: profiling
+        securityContext:
+          allowPrivilegeEscalation: false
+      enableServiceLinks: false
+      serviceAccountName: imc-controller

@@ -18,7 +18,10 @@ SEARCH_DIRS = [
     # after the move to v3 is done.
     # "tests/legacy_kustomizations",
 
-    "awsconfigs/common"
+    "awsconfig",
+    "docs/deployment/rds-s3",
+    "docs/deployment/cognito",
+    "docs/deployment/cognito-rds-s3",
 ]
 
 # The subdirectory to store the expected manifests in

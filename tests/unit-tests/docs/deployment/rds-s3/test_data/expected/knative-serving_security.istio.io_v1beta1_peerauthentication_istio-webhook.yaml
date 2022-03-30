@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  labels:
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: v0.22.1
+  name: istio-webhook
+  namespace: knative-serving
+spec:
+  portLevelMtls:
+    "8443":
+      mode: PERMISSIVE
+  selector:
+    matchLabels:
+      app: istio-webhook

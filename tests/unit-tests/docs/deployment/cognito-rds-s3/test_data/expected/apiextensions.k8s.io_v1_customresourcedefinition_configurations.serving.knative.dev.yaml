@@ -1,0 +1,45 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    duck.knative.dev/podspecable: "true"
+    knative.dev/crd-install: "true"
+    serving.knative.dev/release: v0.22.1
+  name: configurations.serving.knative.dev
+spec:
+  group: serving.knative.dev
+  names:
+    categories:
+    - all
+    - knative
+    - serving
+    kind: Configuration
+    plural: configurations
+    shortNames:
+    - config
+    - cfg
+    singular: configuration
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.latestCreatedRevisionName
+      name: LatestCreated
+      type: string
+    - jsonPath: .status.latestReadyRevisionName
+      name: LatestReady
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: Ready
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].reason
+      name: Reason
+      type: string
+    name: v1
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true
+    subresources:
+      status: {}

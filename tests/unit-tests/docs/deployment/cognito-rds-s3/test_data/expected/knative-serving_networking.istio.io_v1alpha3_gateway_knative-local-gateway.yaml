@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  labels:
+    networking.knative.dev/ingress-provider: istio
+    serving.knative.dev/release: v0.22.1
+  name: knative-local-gateway
+  namespace: knative-serving
+spec:
+  selector:
+    app: cluster-local-gateway
+    istio: cluster-local-gateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 8081
+      protocol: HTTP
