@@ -18,17 +18,6 @@ Follow this guide only if you are **not** using `Cognito` as the authentication 
 
 1. Kubeflow deployment with Dex as auth provider(default in Vanilla Kubeflow).
 
-## 1.0 Configure Ingress and Setup load balancer
-
-As explained in the [background](#background), 
-1. A registered domain. You can register a new domain or re-use an existing a domain. Follow the [section 1.0(Custom Domain)](../../cognito/README.md#10-custom-domain) of the guide to create a domain for hosting Kubeflow. Lets assume you created platform.example.com
-1. 
-
-
-by configuring an [Ingress](https://kubernetes.io/docs/user-guide/ingress) and using the AWS Load Balancer Controller to create an ingress managed [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html).
-
-identify and establish encrypted network connections over
-
 
 ## Create required resources and deploy ingress managed load balancer
 

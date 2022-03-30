@@ -46,7 +46,7 @@ This guide assumes that you have:
 ## (Optional) Automated setup
 The rest of the sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool using AWS Console and is good for a new user to understand the design and details. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow this [README](./README-automated.md) instead.
 
-## 1.0 Custom domain`platform.example.com`
+## 1.0 Custom domain
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your root domain can be registered anywhere. Follow these steps to configure the subdomain:
 
