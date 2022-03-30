@@ -1,16 +1,17 @@
-import boto3
-import json
 import pytest
 
 from e2e.utils.cognito_bootstrap.cognito_pre_deployment import (
-    create_subdomain_hosted_zone,
+    
     create_certificates,
     create_cognito_userpool,
     configure_ingress,
     configure_aws_authservice,
-    configure_alb_ingress_controller,
 )
-from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
+from e2e.utils.load_balancer.setup_load_balancer import (
+    create_subdomain_hosted_zone,
+    configure_load_balancer_controller,
+)
+
 from e2e.utils.cognito_bootstrap.cognito_resources_cleanup import (
     delete_cognito_dependency_resources,
 )
@@ -18,16 +19,10 @@ from e2e.utils.cognito_bootstrap.cognito_post_deployment import (
     update_hosted_zone_with_alb,
 )
 from e2e.utils.config import configure_resource_fixture
-from e2e.fixtures.cluster import associate_iam_oidc_provider
 from e2e.utils.utils import (
-    load_json_file,
     rand_name,
     wait_for,
-    get_iam_client,
-    get_eks_client,
-    get_ec2_client,
 )
-from e2e.utils.config import configure_env_file
 from e2e.utils.custom_resources import get_ingress
 
 
@@ -94,7 +89,7 @@ def cognito_bootstrap(
 
         configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn)
         configure_aws_authservice(cognito_userpool, subdomain_hosted_zone.domain)
-        alb_sa_details = configure_alb_ingress_controller(region, cluster)
+        alb_sa_details = configure_load_balancer_controller(region, cluster)
         cognito_deps["kubeflow"] = {"alb": alb_sa_details}
 
     def on_delete():

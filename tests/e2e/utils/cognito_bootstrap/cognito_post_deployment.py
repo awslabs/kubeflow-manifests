@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from e2e.utils.cognito_bootstrap import common as utils
+from e2e.utils.cognito_bootstrap import common
 
-from e2e.utils.cognito_bootstrap.aws.elbv2 import ElasticLoadBalancingV2
-from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
-
+from e2e.utils.aws.elbv2 import ElasticLoadBalancingV2
+from e2e.utils.aws.route53 import Route53HostedZone
+from e2e.utils.utils import print_banner, load_yaml_file
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,15 +49,16 @@ def update_hosted_zone_with_alb(
 
 
 if __name__ == "__main__":
-    utils.print_banner("Reading Config")
-    cfg = utils.load_cfg()
+    config_file_path = common.CONFIG_FILE
+    print_banner("Reading Config")
+    cfg = load_yaml_file(file_path=config_file_path)
 
     deployment_region = cfg["cluster"]["region"]
     subdomain_name = cfg["route53"]["subDomain"]["name"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     alb_dns = cfg["kubeflow"]["alb"]["dns"]
 
-    utils.print_banner("Updating hosted zone with ALB DNS")
+    print_banner("Updating hosted zone with ALB DNS")
     update_hosted_zone_with_alb(
         subdomain_name, subdomain_hosted_zone_id, alb_dns, deployment_region
     )

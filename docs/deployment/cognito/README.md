@@ -46,7 +46,7 @@ This guide assumes that you have:
 ## (Optional) Automated setup
 The rest of the sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool using AWS Console and is good for a new user to understand the design and details. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow this [README](./README-automated.md) instead.
 
-## 1.0 Custom domain
+## 1.0 Custom domain`platform.example.com`
 
 Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your root domain can be registered anywhere. Follow these steps to configure the subdomain:
 
@@ -59,9 +59,6 @@ Register a domain in any domain provider like [Route 53](https://docs.aws.amazon
         1.  Following is a screenshot of the record after creation in `example.com` hosted zone.
             1. ![root-domain-NS-created](./images/root-domain-NS-created.png)
 1. From this step onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of hosted zone in the following sections/steps of this guide are for the subdomain.
-1. In order to make Cognito to use custom domain name, A record is required to resolve `platform.example.com` as root domain, which can be a Route53 Alias to the ALB as well. Create a new record of type `A` with an arbitrary IP for now. Once we have ALB created, we will update the value later.
-    1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
-        1. ![subdomain-initial-A-record](./images/subdomain-initial-A-record.png)
 
 ## 2.0 Certificate
 
@@ -92,16 +89,20 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
     2. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
     3. ![cognito-app-client-settings](./images/cognito-app-client-settings.png)
-1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
-    1. ![cognito-active-domain](./images/cognito-active-domain.png)
-    2. When it’s created, it will return the `Alias target` CloudFront address.
-        1. Screenshot of the CloudFront URL for Cognito Domain name:
-            1. ![cognito-domain-cloudfront-url](./images/cognito-domain-cloudfront-url.png)
-        2.  Create a new record of type `A` for `auth.platform.example.com` with the value of the CloudFront URL.
-            1. Select the `alias` toggle and select Alias to Cloudfront distribution for creating the record
-            2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
-            3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
-                1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
+1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+    1. In order to use a custom domain, its root(i.e. `platform.example.com`) must have an valid A type record. Create a new record of type `A` in `platform.example.com` hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
+        1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
+            1. ![subdomain-initial-A-record](./images/subdomain-initial-A-record.png)
+    1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
+        1. ![cognito-active-domain](./images/cognito-active-domain.png)
+        2. When it’s created, it will return the `Alias target` CloudFront address.
+            1. Screenshot of the CloudFront URL for Cognito Domain name:
+                1. ![cognito-domain-cloudfront-url](./images/cognito-domain-cloudfront-url.png)
+            2.  Create a new record of type `A` for `auth.platform.example.com` with the value of the CloudFront URL.
+                1. Select the `alias` toggle and select Alias to Cloudfront distribution for creating the record
+                2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
+                3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
+                    1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
 
 ## 4.0 Configure Ingress
 
