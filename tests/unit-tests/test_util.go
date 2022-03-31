@@ -83,9 +83,8 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 
 	// Check that all the actual resources match the expected resources
 	for _, r := range actual.Resources() {
-		rKey := key(r.GetKind(), r.GetName())
+		rKey := key(r.GetKind(), r.GetName()+r.GetNamespace())
 		actualNames[rKey] = true
-
 		e, ok := expected[rKey]
 
 		if !ok {
@@ -146,7 +145,7 @@ func (r *expectedResource) Key() string {
 		return ""
 	}
 
-	return key(r.u.GetKind(), r.u.GetName())
+	return key(r.u.GetKind(), r.u.GetName()+r.u.GetNamespace())
 }
 
 // Pretty printing of file differences.

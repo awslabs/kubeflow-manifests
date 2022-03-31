@@ -38,5 +38,6 @@ modules:
 
 test: modules
 	@GO111MODULE=on $(GO) test -v ./awsconfigs/...
+	@GO111MODULE=on $(GO) test -v ./docs/deployment/...
 	@GO111MODULE=on $(GO) test -run TestCheckWebhookSelector -v github.com/kubeflow/manifests/tests/.
 	@GO111MODULE=on $(GO) test -run TestKustomizationHasDeprecatedEnv -v github.com/kubeflow/manifests/tests/.
