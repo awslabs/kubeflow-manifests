@@ -3,10 +3,6 @@ kind: Kustomization
 namespace: kubeflow
 bases:
 - ../../../upstream/apps/pipeline/upstream/env/platform-agnostic-multi-user
-- ../../common/aws-secrets-manager/base
-resources:
-- ./rds/secret-provider.yaml
-- ./s3/secret-provider.yaml
 configMapGenerator:
 - name: pipeline-install-config
   env: ./rds/params.env
@@ -26,9 +22,7 @@ generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - ./rds/disable-default-secret.yaml
-- ./rds/deployment_patch.yaml
 - ./s3/disable-default-secret.yaml
-- ./s3/deployment_patch.yaml
 - ./s3/aws-configuration-patch.yaml
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected

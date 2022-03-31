@@ -137,8 +137,10 @@ def cfn_stack(metadata, cluster, region, request):
 KFP_MANIFEST_FOLDER = "../../awsconfigs/apps/pipeline"
 KFP_RDS_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/rds/params.env"
 KFP_S3_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/s3/params.env"
-RDS_SECRET_PROVIDER_CLASS_FILE = KFP_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
-S3_SECRET_PROVIDER_CLASS_FILE = KFP_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
+
+AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manager"
+RDS_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
+S3_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
 
 
 @pytest.fixture(scope="class")

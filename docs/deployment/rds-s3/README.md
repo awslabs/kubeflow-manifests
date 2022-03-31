@@ -122,17 +122,66 @@ If you prefer to manually setup each components then you can follow this manual 
 
 3. Create Secrets in AWS Secrets Manager
 
-   1. [RDS] Configure a secret named `rds-secret` with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
-      - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
-      - ```
-        aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
-        ```
-   1. [S3] Configure a secret named `s3-secret` with your AWS credentials. These need to be long term credentials from an IAM user and not temporary.
-      - Find more details about configuring/getting your AWS credentials here:
-        https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
-      - ```
-        aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
-        ```
+   1. [RDS] Create the RDS secret and configure the secret provider:
+      1. Configure a secret, for example named `rds-secret`, with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
+         - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
+         - ```
+           aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
+           ```
+      1. Rename the `parameters.objects.objectName` field in [the rds secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml) to the name of the secret. 
+         - For example, if your secret name is `rds-secret-new`, the configuration would look like:
+         - ```
+           apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+           kind: SecretProviderClass
+           metadata:
+              name: rds-secret
+
+              ...
+              
+              parameters:
+                 objects: | 
+                 - objectName: "rds-secret-new" # This line was changed
+                   objectType: "secretsmanager"
+                   jmesPath:
+                      - path: "username"
+                         objectAlias: "user"
+                      - path: "password"
+                         objectAlias: "pass"
+                      - path: "host"
+                         objectAlias: "host"
+                      - path: "database"
+                         objectAlias: "database"
+                      - path: "port"
+                         objectAlias: "port"
+           ```
+         
+   1. [S3] Create the S3 secret and configure the secret provider:
+      1. Configure a secret, for example named `s3-secret`, with your AWS credentials. These need to be long term credentials from an IAM user and not temporary.
+         - Find more details about configuring/getting your AWS credentials here:
+           https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
+         - ```
+           aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
+           ```
+      1. Rename the `parameters.objects.objectName` field in [the s3 secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the secret. 
+         - For example, if your secret name is `s3-secret-new`, the configuration would look like:
+         - ```
+           apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+           kind: SecretProviderClass
+           metadata:
+             name: s3-secret
+
+             ...
+             
+             parameters:
+               objects: | 
+                 - objectName: "s3-secret-new" # This line was changed
+                   objectType: "secretsmanager"
+                   jmesPath:
+                       - path: "accesskey"
+                         objectAlias: "access"
+                       - path: "secretkey"
+                         objectAlias: "secret"           
+           ```
 
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 

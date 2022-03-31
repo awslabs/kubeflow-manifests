@@ -548,14 +548,14 @@ def setup_kubeflow_pipeline():
         return
 
     pipeline_rds_params_env_file = "../../../awsconfigs/apps/pipeline/rds/params.env"
-    pipeline_rds_secret_provider_class_file = "../../../awsconfigs/apps/pipeline/rds/secret-provider.yaml"
+    pipeline_rds_secret_provider_class_file = "../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
     pipeline_rds_params_env_lines = get_pipeline_params_env_lines(pipeline_rds_params_env_file)
     new_pipeline_rds_params_env_lines = get_updated_pipeline_rds_params_env_lines(db_instance_info, pipeline_rds_params_env_lines)
     edit_pipeline_params_env_file(new_pipeline_rds_params_env_lines, pipeline_rds_params_env_file)
     update_secret_provider_class(pipeline_rds_secret_provider_class_file, RDS_SECRET_NAME)
 
     pipeline_s3_params_env_file = "../../../awsconfigs/apps/pipeline/s3/params.env"
-    pipeline_s3_secret_provider_class_file = "../../../awsconfigs/apps/pipeline/s3/secret-provider.yaml"
+    pipeline_s3_secret_provider_class_file = "../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
     pipeline_s3_params_env_lines = get_pipeline_params_env_lines(pipeline_s3_params_env_file)
     new_pipeline_s3_params_env_lines = get_updated_pipeline_s3_params_env_lines(pipeline_s3_params_env_lines)
     edit_pipeline_params_env_file(new_pipeline_s3_params_env_lines, pipeline_s3_params_env_file)
