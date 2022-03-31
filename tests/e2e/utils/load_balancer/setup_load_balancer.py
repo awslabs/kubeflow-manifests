@@ -8,6 +8,7 @@ from e2e.utils.load_balancer import common
 from e2e.utils.config import configure_env_file
 from e2e.utils.custom_resources import get_ingress
 from e2e.utils.aws.acm import AcmCertificate
+from e2e.utils.aws.elbv2 import ElasticLoadBalancingV2
 from e2e.utils.aws.iam import IAMPolicy
 from e2e.utils.aws.route53 import Route53HostedZone
 from e2e.utils.utils import (
@@ -134,8 +135,9 @@ def configure_load_balancer_controller(
     )
 
     alb_sa_name = "alb-ingress-controller"
+    alb_sa_namespace = "kubeflow"
     cluster.create_iam_service_account(
-        alb_sa_name, "kubeflow", cluster_name, region, [alb_policy.arn]
+        alb_sa_name, alb_sa_namespace, cluster_name, region, [alb_policy.arn]
     )
 
     # tag cluster subnet with kubernetes.io/cluster/<cluster_name> tag
@@ -156,10 +158,18 @@ def configure_load_balancer_controller(
         },
     )
 
-    return {"serviceAccount": {"name": alb_sa_name, "policyArn": alb_policy.arn}}
+    return {
+        "serviceAccount": {
+            "name": alb_sa_name,
+            "namespace": alb_sa_namespace,
+            "policyArn": alb_policy.arn,
+        }
+    }
 
 
 def wait_for_alb_dns(cluster_name: str, region: str):
+    logger.info("waiting for ALB creation ...")
+
     def callback():
         ingress = get_ingress(cluster_name, region)
 
@@ -170,6 +180,16 @@ def wait_for_alb_dns(cluster_name: str, region: str):
             ingress["status"]["loadBalancer"]["ingress"][0].get("hostname", None)
             is not None
         )
+
+    wait_for(callback)
+
+
+def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "active"):
+    logger.info(f" {alb_dns} waiting for ALB status = {expected_status} ...")
+
+    alb = ElasticLoadBalancingV2(dns=alb_dns, region=region)
+    def callback():
+        assert alb.describe()["State"]["Code"] == expected_status
 
     wait_for(callback)
 
@@ -185,6 +205,7 @@ def dns_update(
     wait_for_alb_dns(cluster_name, region)
     ingress = get_ingress(cluster_name, region)
     alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+    wait_for_alb_status(alb_dns, region)
 
     _platform_record = subdomain_hosted_zone.generate_change_record(
         record_name="kubeflow." + subdomain_hosted_zone.domain,
@@ -232,6 +253,7 @@ if __name__ == "__main__":
     configure_ingress_manifest(subdomain_cert_deployment_region.arn)
     alb_sa_details = configure_load_balancer_controller(deployment_region, cluster_name)
     cfg["kubeflow"] = {"alb": alb_sa_details}
+    write_yaml_file(yaml_content=cfg, file_path=config_file_path)
 
     print_banner("Creating Ingress, load balancer and updating the domain's DNS record")
     create_ingress()

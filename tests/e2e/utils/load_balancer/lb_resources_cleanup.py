@@ -5,14 +5,18 @@ import logging
 import subprocess
 import time
 
+from e2e.fixtures import cluster
 from e2e.utils.load_balancer import common
 
 from e2e.utils.aws.acm import AcmCertificate
+from e2e.utils.aws.elbv2 import ElasticLoadBalancingV2
 from e2e.utils.aws.iam import IAMPolicy
 from e2e.utils.aws.route53 import Route53HostedZone
 from e2e.utils.utils import (
+    kubectl_delete_kustomize,
     print_banner,
     load_yaml_file,
+    wait_for,
 )
 
 
@@ -46,21 +50,42 @@ def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
         pass
 
 
+def delete_alb(alb_dns: str, region: str):
+    subprocess.call(f"kubectl delete ingress -n istio-system istio-ingress".split())
+    # load balancer controller does not place a finalizer on the ingress and so deleting the attached load balancer is asynhronous
+    # adding a random wait to allow controller to delete the load balancer
+    alb = ElasticLoadBalancingV2(dns=alb_dns, region=region)
+    logger.info(f"{alb_dns}: waiting for deletion ...")
+
+    def callback():
+        assert alb.describe() is None
+
+    wait_for(callback)
+
+
 def delete_policy(arn: str, region: str):
     try:
         policy = IAMPolicy(arn=arn, region=region)
-        policy.delete()
+        # retry because of delay in IAM service for the role deletion to free up in the policy attachments
+        def callback():
+            policy.delete()
+
+        wait_for(callback)
     except Exception:
         pass
 
 
+def delete_ingress():
+    kubectl_delete_kustomize(path=common.LB_KUSTOMIZE_PATH)
+
+
 def delete_lb_resources(cfg: dict):
     deployment_region = cfg["cluster"]["region"]
+    cluster_name = cfg["cluster"]["name"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
 
     subdomain_hosted_zone = None
-    root_hosted_zone = None
 
     if subdomain_hosted_zone_id:
         subdomain_name = cfg["route53"]["subDomain"]["name"]
@@ -95,22 +120,26 @@ def delete_lb_resources(cfg: dict):
         # delete ALB
         if "kubeflow" in cfg.keys():
             alb = cfg["kubeflow"].get("alb", None)
+            alb_dns = alb.get("dns", None)
             if alb:
-                subprocess.call(
-                    f"kubectl delete ingress -n istio-system istio-ingress".split()
-                )
-                # load balancer controller does not place a finalizer on the ingress and so deleting the attached load balancer is asynhronous
-                # adding a random wait to allow controller to delete the load balancer
-                # TODO: implement a better check
-                time.sleep(2 * 60)
-                alb_controller_policy_arn = alb["serviceAccount"]["policyArn"]
-                delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
+                if alb_dns:
+                    delete_alb(alb_dns=alb_dns, region=deployment_region)
+                alb_sa = alb.get("serviceAccount", None)
+                if alb_sa:
+                    cluster.delete_iam_service_account(
+                        alb_sa["name"], alb_sa["namespace"], cluster_name, deployment_region
+                    )
+                    alb_controller_policy_arn = alb_sa["policyArn"]
+                    delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
 
         # delete subdomain certs
         delete_cert(acm_certificate=subdomain_cert_deployment_region)
 
         # delete hosted zone
         subdomain_hosted_zone.delete_hosted_zone()
+
+        # delete installed components
+        delete_ingress()
 
 
 if __name__ == "__main__":

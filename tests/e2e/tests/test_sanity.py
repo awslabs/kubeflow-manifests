@@ -66,6 +66,8 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 def setup_load_balancer(metadata, region, request, cluster, kustomize, root_domain_name, root_domain_hosted_zone_id):
     
     lb_deps = {}
+    env_value = os.environ.copy()
+    env_value["PYTHONPATH"] = f"{os.getcwd()}/..:" + os.environ.get("PYTHONPATH", "")
     def on_create():
         if not root_domain_name or not root_domain_hosted_zone_id:
             pytest.fail(
@@ -89,18 +91,21 @@ def setup_load_balancer(metadata, region, request, cluster, kustomize, root_doma
             }
         }
         write_yaml_file(lb_config, LB_CONFIG_FILE)
-        
-        cmd = "PYTHONPATH=.. python utils/load_balancer/setup_load_balancer.py".split()
 
-        retcode = subprocess.call(cmd)
+        cmd = "python utils/load_balancer/setup_load_balancer.py".split()
+        retcode = subprocess.call(
+            cmd, stderr=subprocess.STDOUT, env=env_value
+        )
         assert retcode == 0
-        lb_deps = load_yaml_file(LB_CONFIG_FILE)
+        lb_deps["config"] = load_yaml_file(LB_CONFIG_FILE)
 
     def on_delete():
-        cmd = "PYTHONPATH=.. python utils/load_balancer/lb_resources_cleanup.py".split()
-
-        retcode = subprocess.call(cmd)
-        assert retcode == 0
+        if metadata.get("lb_deps"):
+            cmd = "python utils/load_balancer/lb_resources_cleanup.py".split()
+            retcode = subprocess.call(
+                cmd, stderr=subprocess.STDOUT, env=env_value
+            )
+            assert retcode == 0
 
     return configure_resource_fixture(
         metadata, request, lb_deps, "lb_deps", on_create, on_delete
@@ -109,9 +114,13 @@ def setup_load_balancer(metadata, region, request, cluster, kustomize, root_doma
 
 @pytest.fixture(scope="class")
 def host(setup_load_balancer):
-    print(setup_load_balancer["subDomain"]["name"])
-    host = "https://kubeflow." + setup_load_balancer["subDomain"]["name"]
+    print(setup_load_balancer["config"]["route53"]["subDomain"]["name"])
+    host = "https://kubeflow." + setup_load_balancer["config"]["route53"]["subDomain"]["name"]
     return host
+
+@pytest.fixture(scope="class")
+def port_forward(kustomize):
+    pass
 
 class TestSanity:
     @pytest.fixture(scope="class")

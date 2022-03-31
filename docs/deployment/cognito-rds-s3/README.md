@@ -15,7 +15,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [cognito guide](../cognito/README.md) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain) upto [section 4.0(Configure Ingress)](../cognito/README.md#40-configure-ingress) to:
+1. Follow the [cognito guide](../cognito/README.md) from [section 1.0(Custom Domain)](../cognito/README.md#10-custom-domain-and-certificates) upto [section 3.0(Configure Ingress)](../cognito/README.md#30-configure-ingress) to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -102,7 +102,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
         # Authservice
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -        
         ```
-1. Follow the rest of the cognito guide from [section 6.0(Updating the domain with ALB address)](../cognito/README.md#60-updating-the-domain-with-ALB-address) to:
+1. Follow the rest of the cognito guide from [section 5.0(Updating the domain with ALB address)](../cognito/README.md#50-updating-the-domain-with-ALB-address) to:
     1. Add/Update the DNS records in custom domain with the ALB address
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool

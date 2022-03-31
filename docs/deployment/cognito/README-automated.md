@@ -4,11 +4,11 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
 
 ## Prerequisites
 
-This guide assumes you have python3 installed and completed the pre-requisites from this [README](./README.md#prerequisites).
+This guide assumes you have python3.8 installed and completed the pre-requisites from this [README](./README.md#prerequisites).
 
 ## Create required resources and deploy Kubeflow
 
-1. The following steps automate [section 1.0(Custom Domain)](./README.md#10-custom-domain) (creating a custom domain to host Kubeflow), [section 2.0(certificates)](./README.md#20-certificate) (TLS certificates for the domain), [section 3.0(Cognito user pool)](./README.md#30-cognito-user-pool) (creating a Cognito Userpool used for user authentication) and[section 4.0(Configure Ingress)](./README.md#40-configure-ingress) (configuring ingress and load balancer controller manifests) of the cognito guide.
+1. The following steps automate [section 1.0(Custom domain and certificates)](./README.md#10-custom-domain-and-certificates) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)](./README.md#20-cognito-user-pool) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)](./README.md#30-configure-ingress) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
         ```
         pip install -r tests/e2e/requirements.txt
@@ -16,7 +16,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
     1. Substitute values in `tests/e2e/utils/cognito_bootstrap/config.yaml`.
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
             1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
-        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](./README.md#10-custom-domain) to understand why we use a subdomain.
+        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](../add-ons/load-balancer/README.md#create-domain-and-certificates) to understand why we use a subdomain.
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
         1. The config file will look something like:
@@ -51,6 +51,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                 alb:
                     serviceAccount:
                         name: alb-ingress-controller
+                        namespace: kubeflow
                         policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
             cluster:
                 name: kube-eks-cluster
@@ -67,7 +68,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
-1. Follow the [section 5.0(Building manifests and deploying Kubeflow)](./README.md#50-building-manifests-and-deploying-kubeflow) to install Kubeflow
+1. Follow the [section 4.0(Building manifests and deploying Kubeflow)](./README.md#40-building-manifests-and-deploying-kubeflow) to install Kubeflow
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
@@ -93,7 +94,7 @@ This guide assumes you have python3 installed and completed the pre-requisites f
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
-1. Follow the rest of the cognito guide from [section 7.0(Connecting to central dashboard)](./README.md#70-connecting-to-central-dashboard) to:
+1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)](./README.md#60-connecting-to-central-dashboard) to:
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
