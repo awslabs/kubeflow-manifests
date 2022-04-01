@@ -1,12 +1,19 @@
 import argparse
 import boto3
 import subprocess
-import string
-import random
-import yaml
-import urllib.request
 from shutil import which
 from time import sleep
+from utils import (
+    rand_name,
+    write_json_file,
+    get_eks_client,
+    get_ec2_client,
+    get_iam_client,
+    get_fsx_client,
+    get_iam_resource,
+    kubectl_apply_kustomize,
+    kubectl_apply,
+)
 
 
 def main():
@@ -20,22 +27,6 @@ def main():
     setup_fsx_provisioning()
 
     footer()
-
-
-def write_to_file(fs_id):
-    if WRITE_TO_FILE or WRITE_TO_FILE == "True":
-        with open("fsx-config.txt", "w") as fh:
-            fh.write(fs_id)
-
-
-def rand_name(prefix):
-    """
-    Returns a random string of 10 ascii lowercase characters appended to the prefix
-    """
-    suffix = "".join(
-        random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
-    )
-    return prefix + suffix
 
 
 def header():
@@ -65,7 +56,7 @@ def verify_oidc_provider_prerequisite():
 
 
 def is_oidc_provider_present() -> bool:
-    iam_client = get_iam_client()
+    iam_client = get_iam_client(CLUSTER_REGION)
     oidc_providers = iam_client.list_open_id_connect_providers()[
         "OpenIDConnectProviderList"
     ]
@@ -86,10 +77,6 @@ def is_oidc_provider_present() -> bool:
             return True
 
     return False
-
-
-def get_iam_client():
-    return boto3.client("iam", region_name=CLUSTER_REGION)
 
 
 def verify_eksctl_is_installed():
@@ -137,7 +124,7 @@ def setup_fsx_iam_policy():
 
 
 def does_need_to_create_fsx_iam_policy():
-    iam_resource = get_iam_resource()
+    iam_resource = get_iam_resource(CLUSTER_REGION)
     try:
         iam_resource.Policy(FSX_IAM_POLICY_ARN).load()
         return False
@@ -145,15 +132,11 @@ def does_need_to_create_fsx_iam_policy():
         return True
 
 
-def get_iam_resource():
-    return boto3.resource("iam", region_name=CLUSTER_REGION)
-
-
 def create_fsx_iam_policy():
     print("Creating FSx IAM policy...")
 
     fsx_policy_document = get_fsx_iam_policy_document()
-    iam_client = get_iam_client()
+    iam_client = get_iam_client(CLUSTER_REGION)
 
     response = iam_client.create_policy(
         PolicyName=FSX_IAM_POLICY_NAME,
@@ -216,17 +199,9 @@ def install_fsx_driver():
     FSx_DRIVER_VERSION = "v0.7.1"
     FSx_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{FSx_DRIVER_VERSION}"
 
-    kubectl_kustomize_apply(FSx_CSI_DRIVER)
+    kubectl_apply_kustomize(FSx_CSI_DRIVER)
 
     print("FSx driver installed!")
-
-
-def kubectl_kustomize_apply(file_name: str):
-    subprocess.run(["kubectl", "apply", "-k", file_name])
-
-
-def kubectl_apply(file_name: str):
-    subprocess.run(["kubectl", "apply", "-f", file_name, "--force"])
 
 
 def setup_fsx_file_system():
@@ -250,7 +225,7 @@ def setup_fsx_file_system():
 
 
 def does_need_to_create_fsx_file_system() -> bool:
-    fsx_client = get_fsx_client()
+    fsx_client = get_fsx_client(CLUSTER_REGION)
     fsx_file_systems = fsx_client.describe_file_systems()["FileSystems"]
 
     return not any(
@@ -259,12 +234,8 @@ def does_need_to_create_fsx_file_system() -> bool:
     )
 
 
-def get_fsx_client():
-    return boto3.client("fsx", region_name=CLUSTER_REGION)
-
-
 def does_need_to_create_fsx_security_group() -> bool:
-    ec2_client = get_ec2_client()
+    ec2_client = get_ec2_client(CLUSTER_REGION)
     fsx_security_groups_with_matching_name = ec2_client.describe_security_groups(
         Filters=[{"Name": "group-name", "Values": [FSX_SECURITY_GROUP_NAME]}]
     )["SecurityGroups"]
@@ -272,15 +243,11 @@ def does_need_to_create_fsx_security_group() -> bool:
     return len(fsx_security_groups_with_matching_name) == 0
 
 
-def get_ec2_client():
-    return boto3.client("ec2", region_name=CLUSTER_REGION)
-
-
 def create_fsx_security_group():
     print(f"Creating security group '{FSX_SECURITY_GROUP_NAME}'...")
 
-    eks_client = get_eks_client()
-    ec2_client = get_ec2_client()
+    eks_client = get_eks_client(CLUSTER_REGION)
+    ec2_client = get_ec2_client(CLUSTER_REGION)
 
     cluster_info = get_cluster_info(eks_client)
 
@@ -295,10 +262,6 @@ def create_fsx_security_group():
         ec2_client, FSX_SECURITY_GROUP_ID, cluster_security_group
     )
     print("Security group created!")
-
-
-def get_eks_client():
-    return boto3.client("eks", region_name=CLUSTER_REGION)
 
 
 def get_cluster_info(eks_client):
@@ -344,9 +307,9 @@ def authorize_security_group_ingress(
 def create_fsx_file_system():
     print("Creating fsx file system...")
 
-    fsx_client = get_fsx_client()
-    eks_client = get_eks_client()
-    ec2_client = get_ec2_client()
+    fsx_client = get_fsx_client(CLUSTER_REGION)
+    eks_client = get_eks_client(CLUSTER_REGION)
+    ec2_client = get_ec2_client(CLUSTER_REGION)
     cluster_info = get_cluster_info(eks_client)
     subnet_id = get_subnet_id(cluster_info)
     security_group_id = get_fsx_security_group_id(ec2_client)
@@ -359,13 +322,21 @@ def create_fsx_file_system():
         LustreConfiguration={"DeploymentType": "SCRATCH_2"},
     )
     FSX_FILE_SYSTEM_ID = response["FileSystem"]["FileSystemId"]
-    write_to_file(FSX_FILE_SYSTEM_ID)
-    print(f"fsx {FSX_FILE_SYSTEM_ID} created!")
+    write_fsx_config_to_file(security_group_id, FSX_FILE_SYSTEM_ID)
     wait_for_fsx_file_system_to_become_available(FSX_FILE_SYSTEM_ID)
+    print(f"fsx {FSX_FILE_SYSTEM_ID} created!")
+
+
+def write_fsx_config_to_file(sg_id, fs_id):
+    data_dict = {}
+    data_dict["security_group_id"] = sg_id
+    data_dict["file_system_id"] = fs_id
+    if WRITE_TO_FILE == "True" or WRITE_TO_FILE:
+        write_json_file(CONFIG_FILENAME, data_dict)
 
 
 def wait_for_fsx_file_system_to_become_available(file_system_id):
-    fsx_client = get_fsx_client()
+    fsx_client = get_fsx_client(CLUSTER_REGION)
 
     status = None
 
@@ -455,9 +426,17 @@ parser.add_argument(
     "--write_to_file",
     type=str,
     default="False",
-    help=f"Specify True if you want some parameters to be written to a file called `fsx-config.json`.",
+    help=f"Specify True if you want some parameters to be written to a file.",
     required=False,
 )
+parser.add_argument(
+    "--config_filename",
+    type=str,
+    default="fsx-config.json",
+    help=f"Specify the name of the config file. Default is `fsx-config.json`.",
+    required=False,
+)
+
 
 args, _ = parser.parse_known_args()
 
@@ -467,6 +446,7 @@ if __name__ == "__main__":
     FSX_FILE_SYSTEM_NAME = args.fsx_file_system_name
     FSX_SECURITY_GROUP_NAME = args.fsx_security_group_name
     WRITE_TO_FILE = args.write_to_file
+    CONFIG_FILENAME = args.config_filename
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
     FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy"

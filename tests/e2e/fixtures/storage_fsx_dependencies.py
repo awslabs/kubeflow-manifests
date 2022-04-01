@@ -12,23 +12,17 @@ from e2e.fixtures.cluster import cluster
 from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
-from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
 from e2e.utils.utils import (
     rand_name,
-    wait_for,
-    get_iam_client,
-    get_eks_client,
     get_ec2_client,
     get_fsx_client,
     kubectl_apply,
     kubectl_delete,
-    kubectl_apply_kustomize,
-    kubectl_delete_kustomize,
+    load_json_file,
 )
 
 from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
-    DEFAULT_SYSTEM_NAMESPACE,
 )
 
 
@@ -49,6 +43,8 @@ def static_provisioning(metadata, region, request, cluster):
     fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
     fsx_auto_script_filepath = "utils/auto-fsx-setup.py"
     fsx_client = get_fsx_client(region)
+    ec2_client = get_ec2_client(region)
+    config_filename = ".metadata/fsx-config.json"
     fsx_claim = {}
 
     def on_create():
@@ -73,11 +69,14 @@ def static_provisioning(metadata, region, request, cluster):
                 claim_name + "sg",
                 "--write_to_file",
                 "True",
+                "--config_filename",
+                config_filename,
             ]
         )
 
-        with open("fsx-config.txt", "r") as f:
-            file_system_id = f.read()
+        fsx_config = load_json_file(config_filename)
+        security_group_id = fsx_config["security_group_id"]
+        file_system_id = fsx_config["file_system_id"]
         dns_name = get_fsx_dns_name(fsx_client, file_system_id)
         mount_name = get_fsx_mount_name(fsx_client, file_system_id)
 
@@ -101,6 +100,7 @@ def static_provisioning(metadata, region, request, cluster):
 
         fsx_claim["claim_name"] = claim_name
         fsx_claim["file_system_id"] = file_system_id
+        fsx_claim["security_group_id"] = security_group_id
 
     def on_delete():
         kubectl_delete(fsx_pvc_filepath)
@@ -108,12 +108,18 @@ def static_provisioning(metadata, region, request, cluster):
 
         details_fsx_volume = metadata.get("fsx_claim") or fsx_claim
         file_system_id = details_fsx_volume["file_system_id"]
+        sg_id = details_fsx_volume["security_group_id"]
 
+        # delete the filesystem
         fsx_client.delete_file_system(
             FileSystemId=file_system_id,
         )
 
-        # TODO: Find a way to delete the security group
+        # delete the security group
+        ec2_client.delete_security_group(GroupId=sg_id)
+
+        # Delete the config file
+        os.remove(config_filename)
 
     return configure_resource_fixture(
         metadata, request, fsx_claim, "fsx_claim", on_create, on_delete

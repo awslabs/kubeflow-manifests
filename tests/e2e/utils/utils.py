@@ -13,6 +13,7 @@ import boto3
 import mysql.connector
 import subprocess
 
+
 def safe_open(filepath, mode="r"):
     """
     Creates a directory if one does not exist when opening a file.
@@ -109,6 +110,11 @@ def rand_name(prefix):
     return prefix + suffix
 
 
+def write_json_file(filepath, data):
+    with open(filepath, "w") as file:
+        json.dump(data, file)
+
+
 def load_json_file(filepath):
     with open(filepath) as file:
         return json.load(file)
@@ -120,6 +126,10 @@ def get_eks_client(region):
 
 def get_iam_client(region):
     return boto3.client("iam", region_name=region)
+
+
+def get_iam_resource(region):
+    return boto3.resource("iam", region_name=region)
 
 
 def get_ec2_client(region):
@@ -179,6 +189,7 @@ def kubectl_delete_kustomize(path):
     cmd = f"kubectl delete -k {path}".split()
     subprocess.call(cmd)
 
+
 def load_yaml_file(file_path: str):
     with open(file_path, "r") as file:
         content = file.read()
@@ -190,9 +201,9 @@ def write_yaml_file(yaml_content, file_path: str):
     with open(file_path, "w") as file:
         file.write(yaml.dump(yaml_content))
 
+
 def print_banner(step_name: str):
-    width=65
+    width = 65
     print("=" * width)
     print(step_name.center(width))
     print("=" * width)
-
