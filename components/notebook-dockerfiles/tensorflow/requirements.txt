@@ -13,9 +13,8 @@ ipywidgets==7.6.5
 
 # Kubeflow Related Packages
 kfp==1.8.6
-kfp-server-api==1.7.1 
+kfp-server-api==1.7.1
 kfserving==0.6.1
-ml-metadata==1.7.0
 
 # Common data science packages
 h5py==3.1.0

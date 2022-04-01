@@ -1,4 +1,4 @@
-# Using Kubeflow Notebooks on AWS
+# AWS Optimized Container Images for Kubeflow Notebooks
 
 The AWS Distribution of Kubeflow comes with four ready-to-use container images prebuilt on top of the [AWS Optimized Deep-Learning Containers](https://aws.amazon.com/machine-learning/containers/) for Tensorflow and Pytorch. 
 

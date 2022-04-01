@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.9.0-cpu-py38-ubuntu20.04
+ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/tensorflow-training:2.6.0-gpu-py38-cu112-ubuntu20.04
 
 FROM $BASE_IMAGE
 
@@ -6,11 +6,8 @@ ARG NB_USER=jovyan
 
 # TODO: User should be refactored instead of hard coded jovyan
 USER root
-
 ENV DEBIAN_FRONTEND noninteractive
-
 ENV NB_USER $NB_USER
-
 ENV NB_UID 1000
 ENV HOME /home/$NB_USER
 ENV NB_PREFIX /
@@ -83,13 +80,6 @@ RUN cd /tmp && \
     echo "12d20136605531b09a2c2dac02ccee85e1b874eb322ef6baf7561cd93f93c855 *tini" | sha256sum -c - && \
     mv tini /usr/local/bin/tini && \
     chmod +x /usr/local/bin/tini
-
-# Install Docker Client
-RUN cd /tmp && \
-    wget --quiet https://download.docker.com/linux/static/stable/x86_64/docker-19.03.8.tgz && \
-    tar xzvf docker-19.03.8.tgz && \
-    mv /tmp/docker/docker /usr/local/bin/docker && \
-    chmod +x /usr/local/bin/docker
 
 # NOTE: Beyond this point be careful of breaking out
 # or otherwise adding new layers with RUN, chown, etc.

@@ -80,13 +80,6 @@ RUN cd /tmp && \
     mv tini /usr/local/bin/tini && \
     chmod +x /usr/local/bin/tini
 
-# Install Docker Client
-RUN cd /tmp && \
-    wget --quiet https://download.docker.com/linux/static/stable/x86_64/docker-19.03.8.tgz && \
-    tar xzvf docker-19.03.8.tgz && \
-    mv /tmp/docker/docker /usr/local/bin/docker && \
-    chmod +x /usr/local/bin/docker
-
 # NOTE: Beyond this point be careful of breaking out
 # or otherwise adding new layers with RUN, chown, etc.
 # The image size can grow significantly.

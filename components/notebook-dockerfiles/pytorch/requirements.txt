@@ -15,7 +15,6 @@ ipywidgets==7.6.5
 kfp==1.8.6
 kfp-server-api==1.7.1
 kfserving==0.6.1
-ml-metadata==1.7.0
 
 # Common data science packages
 h5py==3.5.0
@@ -29,5 +28,4 @@ awscli==1.21.5
 boto3==1.19.5
 
 # pytorch packages
-#torchelastic==0.2.2 this currently causes a dependency conflict, should be fixed very soon
 fastai==2.5.3
