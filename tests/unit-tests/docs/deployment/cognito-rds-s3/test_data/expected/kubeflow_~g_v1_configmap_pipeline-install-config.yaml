@@ -4,17 +4,17 @@ data:
   appName: pipeline
   appVersion: 1.7.0
   autoUpdatePipelineDefaultVersion: "true"
-  bucketName: YOUR_S3_BUCKET_NAME
+  bucketName: unit-test-bucket
   cacheDb: cachedb
   cacheImage: gcr.io/google-containers/busybox
   cacheNodeRestrictions: "false"
   cronScheduleTimezone: UTC
-  dbHost: YOUR_RDS_ENDPOINT
+  dbHost: rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
   dbPort: "3306"
   defaultPipelineRoot: ""
   minioServiceHost: s3.amazonaws.com
-  minioServiceRegion: YOUR_AWS_REGION
-  mlmdDb: YOUR_METADATA_DB_NAME
+  minioServiceRegion: us-west-2
+  mlmdDb: test-db
   pipelineDb: mlpipeline
   warning: |
     1. Do not use kubectl to edit this configmap, because some values are used

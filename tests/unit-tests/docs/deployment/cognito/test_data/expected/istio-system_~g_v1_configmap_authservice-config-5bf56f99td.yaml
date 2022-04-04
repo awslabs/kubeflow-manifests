@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  LOGOUT_URL: https://auth.platform.test.people.aws.dev/logout?client_id=testClientID1234567890&logout_uri=https://kubeflow.platform.test.people.aws.dev
+kind: ConfigMap
+metadata:
+  name: authservice-config-5bf56f99td
+  namespace: istio-system
