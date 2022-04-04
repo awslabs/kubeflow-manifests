@@ -120,6 +120,10 @@ def get_s3_client(region):
     return boto3.client("s3", region_name=region)
 
 
+def get_logs_client(region):
+    return boto3.client("logs", region_name=region)
+
+
 def get_secrets_manager_client(region):
     return boto3.client("secretsmanager", region_name=region)
 
@@ -165,6 +169,7 @@ def kubectl_delete_kustomize(path):
     cmd = f"kubectl delete -k {path}".split()
     subprocess.call(cmd)
 
+
 def load_yaml_file(file_path: str):
     with open(file_path, "r") as file:
         content = file.read()
@@ -176,9 +181,9 @@ def write_yaml_file(yaml_content, file_path: str):
     with open(file_path, "w") as file:
         file.write(yaml.dump(yaml_content))
 
+
 def print_banner(step_name: str):
-    width=65
+    width = 65
     print("=" * width)
     print(step_name.center(width))
     print("=" * width)
-
