@@ -2,13 +2,9 @@ import subprocess
 import time
 import pytest
 
-from e2e.utils.config import metadata
+from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
-
 from e2e.fixtures.cluster import cluster
-
-from e2e.utils.config import configure_resource_fixture
-
 from e2e.utils.utils import get_eks_client, get_iam_client
 
 
@@ -19,8 +15,7 @@ def cloudwatch_bootstrap(metadata, region, request, cluster):
 
     def get_eks_nodegroup_role(ClusterName):
         eks_client = get_eks_client(region)
-        nodegroup = eks_client.list_nodegroups(
-            clusterName=ClusterName)["nodegroups"]
+        nodegroup = eks_client.list_nodegroups(clusterName=ClusterName)["nodegroups"]
         nodegroup = eks_client.describe_nodegroup(
             clusterName=ClusterName, nodegroupName=nodegroup[0]
         )
@@ -97,6 +92,25 @@ def wait_for_cloudwatch_logs(cloudwatch, ClusterName):
             )
             if len(fluent_bit_log_groups["logGroups"]) != 0:
                 return True
+            time.sleep(period_length)
+        return False
+
+    return wait()
+
+
+def wait_for_cloudwatch_metrics(cloudwatch, ClusterName):
+    def wait(period_length=10, periods=10):
+        for _ in range(periods):
+            cloudwatch_metrics = cloudwatch.list_metrics(
+                MetricName="IncomingLogEvents", Namespace="AWS/Logs"
+            )["Metrics"]
+            for metric in cloudwatch_metrics:
+                if (
+                    len(metric["Dimensions"]) > 0
+                    and metric["Dimensions"][0]["Value"]
+                    == f"/aws/containerinsights/{ClusterName}/application"
+                ):
+                    return True
             time.sleep(period_length)
         return False
 

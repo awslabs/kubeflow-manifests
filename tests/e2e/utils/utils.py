@@ -123,6 +123,9 @@ def get_s3_client(region):
 def get_logs_client(region):
     return boto3.client("logs", region_name=region)
 
+def get_cloudwatch_client(region):
+    return boto3.client("cloudwatch", region_name=region)
+
 
 def get_secrets_manager_client(region):
     return boto3.client("secretsmanager", region_name=region)
