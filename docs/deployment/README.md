@@ -28,6 +28,8 @@ Installation steps can be found [here](add-ons/storage/fsx-for-lustre)
 ### CloudWatch Logging and Container Insights
 Amazon EKS offers Container Insights using Amazon CloudWatch which monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. You can use CloudWatch to collect and track metrics, which are variables you can measure for your resources and applications. FluentBit is used as the DaemonSet to send logs to CloudWatch Logs. Install AWS CloudWatch by following their [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html).
 
+Installation steps can be found [here](add-ons/cloudwatch/README.md)
+
 ## Security
 
 The scripts in this repository are meant to be used for development/testing purposes. We highly recommend to follow AWS security best practice documentation while provisioning AWS resources. We have added few references below.
