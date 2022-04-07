@@ -85,6 +85,21 @@ def wait_for(callback, timeout=300, interval=30):
             time.sleep(interval)
 
 
+def wait_for_kfp_run_succeeded_from_run_id(kfp_client, run_id):
+    def callback():
+        resp = kfp_client.get_run(run_id)
+        status = resp.run.status
+
+        if "Failed" == status:
+            print(resp.run)
+            raise WaitForCircuitBreakerError("Pipeline run Failed")
+
+        print(f"{run_id} {status} .... waiting")
+        assert status == "Succeeded"
+
+    return wait_for(callback, 600)
+
+
 def rand_name(prefix):
     """
     Returns a random string of 10 ascii lowercase characters appended to the prefix
@@ -93,6 +108,11 @@ def rand_name(prefix):
         random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
     )
     return prefix + suffix
+
+
+def write_json_file(filepath, data):
+    with open(filepath, "w") as file:
+        json.dump(data, file)
 
 
 def load_json_file(filepath):
@@ -106,6 +126,10 @@ def get_eks_client(region):
 
 def get_iam_client(region):
     return boto3.client("iam", region_name=region)
+
+
+def get_iam_resource(region):
+    return boto3.resource("iam", region_name=region)
 
 
 def get_ec2_client(region):

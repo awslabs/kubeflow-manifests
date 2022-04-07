@@ -27,12 +27,12 @@ You can either use Automated or Manual setup
 The script automates all the Manual steps and is only for Dynamic Provisioning option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning.
 1. Install the script dependencies `pip install -r requirements.txt`
-2. Run the script
+2. Run the script from the `tests/e2e` directory - 
 ```
-python auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
 ```
 #### **Advanced customization**
-The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python auto-efs-setup.py --help`.
+The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
 
 ### 2.1 [Option 2] Manual setup
 If you prefer to manually setup each components then you can follow this manual guide.  
