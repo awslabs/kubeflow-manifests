@@ -6,6 +6,7 @@ import logging
 import os
 import shutil
 import subprocess
+from substitute_params import substitute_params
 
 # Search dirs should be directories to search for kustomization packages
 # that we want to test. These should be kustomization's that are doing
@@ -17,32 +18,10 @@ SEARCH_DIRS = [
     # TODO(https://github.com/kubeflow/manifests/issues/1052): Remove this
     # after the move to v3 is done.
     # "tests/legacy_kustomizations",
-    "awsconfig/common",
     "docs/deployment/rds-s3",
     "docs/deployment/cognito",
     "docs/deployment/cognito-rds-s3",
 ]
-
-SUBSTITUTION_VALUES = {
-    "aws_authservice_path": {
-        "LOGOUT_URL": "https://auth.platform.test.people.aws.dev/logout?client_id=testClientID1234567890&logout_uri=https://kubeflow.platform.test.people.aws.dev"
-    },
-    "aws_alb_ingress_controller_path": {"clusterName": "unit-test-cluster"},
-    "pipelines_path": {
-        "dbHost": "rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com",
-        "mlmdDb": "test-db",
-        "bucketName": "unit-test-bucket",
-        "minioServiceHost": "s3.amazonaws.com",
-        "minioServiceRegion": "us-west-2",
-    },
-    "istio_ingress_base_path": {"loadBalancerScheme": "internet-facing"},
-    "istio_ingress_overlay_path": {
-        "CognitoUserPoolArn": "arn:aws:cognito-idp:us-west-2:123456789:userpool/us-west-2_3MiwqOkHU",
-        "CognitoAppClientId": "1234567890abcdef",
-        "CognitoUserPoolDomain": "auth.platform.example.com",
-        "certArn": "arn:aws:acm:us-west-2:012345678912:certificate/9777e8d1-105e-4886-b42a-f35b67167fb5",
-    },
-}
 
 # The subdirectory to store the expected manifests in
 # We use a subdirectory of test_data because we could potentially
@@ -136,22 +115,6 @@ def write_go_test(test_path, package_name, package_dir):
         test_file.write(test_contents)
 
 
-def substitute_params(repo_root):
-    aws_configs_path = f"{repo_root}/awsconfigs"
-    env_file_paths = {
-        "pipelines_path": f"{aws_configs_path}/apps/pipeline/params.env",
-        "aws_authservice_path": f"{aws_configs_path}/common/aws-authservice/base/params.env",
-        "aws_alb_ingress_controller_path": f"{aws_configs_path}/common/aws-alb-ingress-controller/params.env",
-        "istio_ingress_base_path": f"{aws_configs_path}/common/istio-ingress/base/params.env",
-        "istio_ingress_overlay_path": f"{aws_configs_path}/common/istio-ingress/overlays/params.env",
-    }
-    for env_file in env_file_paths:
-        with open(env_file_paths[env_file], "w") as file:
-            for key, value in SUBSTITUTION_VALUES[env_file].items():
-                file.write(f"{key}={value}\n")
-    return
-
-
 if __name__ == "__main__":
 
     logging.basicConfig(
@@ -189,7 +152,7 @@ if __name__ == "__main__":
         searchpath=os.path.join(this_dir, "templates"))
     env = jinja2.Environment(loader=loader)
     template = env.get_template("kustomize_test.go.template")
-    substitute_params(repo_root)
+    substitute_params()
     for full_dir in changed_dirs:
         # Get the relative path of the kustomize directory.
         # This is the path relative to the repo root.
