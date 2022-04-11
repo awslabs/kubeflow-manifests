@@ -34,7 +34,7 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Create Load Balancer
 
-To make it easy to create the load balancer, you can use the [script provided in this section](#automated-script). If you prefer to use rhe automated scripts, you need to only execute the steps in the [automated script section](#automated-script). Read the following sections in this guide to understand what happens when you run the script or execute all the steps if you prefer to do it manually/hands-on.
+To make it easy to create the load balancer, you can use the [script provided in this section](#automated-script). If you prefer to use the automated scripts, you need to only execute the steps in the [automated script section](#automated-script). Read the following sections in this guide to understand what happens when you run the script or execute all the steps if you prefer to do it manually/hands-on.
 
 ### Create Domain and Certificates
 
@@ -91,8 +91,8 @@ Setup resources required for the load balancer controller:
                     aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${TAG_VALUE}
                 done
                 ```
-        1. `kubernetes.io/role/internal-elb`. Add this tag only to private subnet
-        1. `kubernetes.io/role/elb`. Add this tag only to public subnet.
+        1. `kubernetes.io/role/internal-elb`. Add this tag only to private subnets
+        1. `kubernetes.io/role/elb`. Add this tag only to public subnets
 1. Load balancer controller will use [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with for your EKS cluster by running the following command if your cluster doesn’t already have one:
     1.  ```
         eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
@@ -120,7 +120,7 @@ kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f -
     1. ```
         kubectl get ingress -n istio-system istio-ingress
         NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-        istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+        istio-ingress   <none>   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
         ```
     2. If `ADDRESS` is empty after a few minutes, check the logs of controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
@@ -160,7 +160,7 @@ kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f -
     1. ```
         kubeflow:
             alb:
-                dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+                dns: xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
                 serviceAccount:
                     name: alb-ingress-controller
                     namespace: kubeflow
