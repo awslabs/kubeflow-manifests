@@ -1,3 +1,5 @@
+import os
+import re
 import subprocess
 import time
 import pytest
@@ -5,7 +7,7 @@ import pytest
 from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
-from e2e.utils.utils import get_eks_client, get_iam_client
+from e2e.utils.utils import get_eks_client, get_iam_client, kubectl_apply
 
 
 @pytest.fixture(scope="class")
@@ -38,27 +40,35 @@ def cloudwatch_bootstrap(metadata, region, request, cluster):
 
     def install_cloudwatch_container_insights(ClusterName):
         LogRegion = region
-        FluentBitHttpPort = "2020"
-        FluentBitReadFromHead = "Off"
-        FluentBitHttpServer = "On"
-        FluentBitReadFromTail = "On"
-        cloudwatch_namespace_cmd = []
-        cloudwatch_namespace_cmd += "kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cloudwatch-namespace.yaml".split()
-        subprocess.call(cloudwatch_namespace_cmd)
-
-        fluent_bit_cmd = []
-        fluent_bit_cmd += f"kubectl create configmap fluent-bit-cluster-info \
---from-literal=cluster.name={ClusterName} \
---from-literal=http.server={FluentBitHttpServer} \
---from-literal=http.port={FluentBitHttpPort} \
---from-literal=read.head={FluentBitReadFromHead} \
---from-literal=read.tail={FluentBitReadFromTail} \
---from-literal=logs.region={LogRegion} -n amazon-cloudwatch".split()
-        subprocess.call(fluent_bit_cmd)
-
-        install_daemon_cmd = []
-        install_daemon_cmd += "kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluent-bit/fluent-bit.yaml".split()
-        subprocess.call(install_daemon_cmd)
+        FluentBitHttpPort = '"2020"'
+        FluentBitReadFromHead = '"Off"'
+        FluentBitHttpServer = '"On"'
+        FluentBitReadFromTail = '"On"'
+        replacements = [
+            ("{{cluster_name}}", ClusterName),
+            ("{{region_name}}", LogRegion),
+            ("{{http_server_port}}", FluentBitHttpPort),
+            ("{{http_server_toggle}}", FluentBitHttpServer),
+            ("{{read_from_tail}}", FluentBitReadFromTail),
+            ("{{read_from_head}}", FluentBitReadFromHead),
+        ]
+        cwagent_cmd = "curl -O https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml".split()
+        subprocess.call(cwagent_cmd)
+        with open("cwagent-fluent-bit-quickstart.yaml", "r") as quickstart:
+            replacements = [
+                ("{{cluster_name}}", ClusterName),
+                ("{{region_name}}", LogRegion),
+                ("{{http_server_port}}", FluentBitHttpPort),
+                ("{{http_server_toggle}}", FluentBitHttpServer),
+                ("{{read_from_tail}}", FluentBitReadFromTail),
+                ("{{read_from_head}}", FluentBitReadFromHead),
+            ]
+            substitute_env_vars = quickstart.read()
+            for old, new in replacements:
+                substitute_env_vars = re.sub(old, new, substitute_env_vars)
+        with open("cwagent-fluent-bit-quickstart.yaml", "w") as quickstart:
+            quickstart.write(substitute_env_vars)
+        kubectl_apply("cwagent-fluent-bit-quickstart.yaml")
 
     def on_create():
         ClusterName = metadata.get("cluster_name")
@@ -73,6 +83,10 @@ def cloudwatch_bootstrap(metadata, region, request, cluster):
         subprocess.call(cmd)
         nodeRole = get_eks_nodegroup_role(ClusterName)
         detach_cloudwatch_policy(nodeRole)
+        try:
+            os.remove("cwagent-fluent-bit-quickstart.yaml")
+        except:
+            print("File not found")
 
     return configure_resource_fixture(
         metadata,
