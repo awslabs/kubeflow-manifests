@@ -174,7 +174,7 @@ def create_fsx_iam_service_account():
             "--cluster",
             CLUSTER_NAME,
             "--attach-policy-arn",
-            FSX_IAM_POLICY_NAME,
+            FSX_IAM_POLICY_ARN,
             "--approve",
             "--override-existing-serviceaccounts",
             "--region",
@@ -449,7 +449,7 @@ if __name__ == "__main__":
     CONFIG_FILENAME = args.config_filename
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
-    FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy"
+    FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy"+FSX_FILE_SYSTEM_NAME
     FSX_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{FSX_IAM_POLICY_NAME}"
     FSX_STATIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/sc.yaml"
     FSX_SECURITY_GROUP_ID = ""
