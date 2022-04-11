@@ -13,7 +13,7 @@ This guide assumes that you have:
     - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
     - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
     - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
-      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+      - :warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
 1. Created an EKS cluster
     - If you do not have an existing cluster, run the following command to create an EKS cluster. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
@@ -312,7 +312,7 @@ kubectl get pods -n kubeflow-user-example-com
 
 #### Port-Forward
 
-The default way of accessing Kubeflow is via port-forward. This enables you to get started quickly without imposing any requirements on your environment. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
+To get started quickly you can access Kubeflow via port-forward. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
 
 ```sh
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
@@ -325,7 +325,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 #### Exposing Kubeflow over Load Balancer
 
-In order to expose Kubeflow over an external address you can setup AWS Application Load Balancer. This feature is in active development, please take a look at the following issue: [#67](https://github.com/awslabs/kubeflow-manifests/issues/67) to stay up to date on the progress.
+In order to expose Kubeflow over an external address you can setup AWS Application Load Balancer. Please take a look at the [load-balancer](../add-ons/load-balancer/README.md) guide to set it up.
 
 ### Change default user password
 

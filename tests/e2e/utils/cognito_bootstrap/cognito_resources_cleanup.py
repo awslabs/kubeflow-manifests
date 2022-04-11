@@ -1,13 +1,15 @@
-from email import policy
 import logging
-from e2e.utils.cognito_bootstrap import common as utils
+from e2e.utils.cognito_bootstrap import common
 
-from e2e.utils.cognito_bootstrap.aws.acm import AcmCertificate
-from e2e.utils.cognito_bootstrap.aws.elbv2 import ElasticLoadBalancingV2
-from e2e.utils.cognito_bootstrap.aws.cognito import CustomDomainCognitoUserPool
-from e2e.utils.cognito_bootstrap.aws.iam import IAMPolicy
-from e2e.utils.cognito_bootstrap.aws.route53 import Route53HostedZone
-
+from e2e.utils.aws.acm import AcmCertificate
+from e2e.utils.aws.cognito import CustomDomainCognitoUserPool
+from e2e.utils.aws.route53 import Route53HostedZone
+from e2e.utils.utils import print_banner, load_yaml_file
+from e2e.utils.load_balancer.lb_resources_cleanup import (
+    delete_cert,
+    delete_policy,
+    clean_root_domain,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,39 +37,6 @@ def delete_userpool(
         if userpool_cloudfront_alias:
             cognito_userpool.delete_userpool_domain()
         cognito_userpool.delete_userpool()
-    except Exception:
-        pass
-
-
-def delete_cert(acm_certificate):
-    try:
-        acm_certificate.delete()
-    except Exception:
-        pass
-
-
-def clean_root_domain(domain_name, hosted_zone_id, subdomain_hosted_zone):
-    root_hosted_zone = Route53HostedZone(
-        domain=domain_name,
-        id=hosted_zone_id,
-    )
-
-    try:
-        # delete the subdomain entry from the root domain
-        subdomain_NS_record = subdomain_hosted_zone.generate_change_record(
-            record_name=subdomain_hosted_zone.domain,
-            record_type="NS",
-            record_value=subdomain_hosted_zone.get_name_servers(),
-            action="DELETE",
-        )
-        root_hosted_zone.change_record_set([subdomain_NS_record])
-    except Exception:
-        pass
-
-def delete_policy(arn: str, region: str):
-    try:
-        policy = IAMPolicy(arn=arn, region=region)
-        policy.delete()
     except Exception:
         pass
 
@@ -130,10 +99,7 @@ def delete_cognito_dependency_resources(cfg: dict):
             alb = cfg["kubeflow"].get("alb", None)
             if alb:
                 alb_controller_policy_arn = alb["serviceAccount"]["policyArn"]
-                delete_policy(
-                    arn=alb_controller_policy_arn,
-                    region=deployment_region
-                )
+                delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
 
         # delete subdomain certs
         if deployment_region != "us-east-1":
@@ -145,6 +111,7 @@ def delete_cognito_dependency_resources(cfg: dict):
 
 
 if __name__ == "__main__":
-    utils.print_banner("Reading Config")
-    cfg = utils.load_cfg()
+    config_file_path = common.CONFIG_FILE
+    print_banner("Reading Config")
+    cfg = load_yaml_file(file_path=config_file_path)
     delete_cognito_dependency_resources(cfg)

@@ -6,12 +6,13 @@ Installs the vanilla distribution of kubeflow and validates the installation by:
 """
 
 import os
+import subprocess
 
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
-from e2e.utils.utils import wait_for, rand_name
-from e2e.utils.config import metadata
+from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file
+from e2e.utils.config import configure_resource_fixture, metadata
 
 from e2e.conftest import region
 
@@ -33,6 +34,7 @@ from e2e.utils.custom_resources import (
     delete_katib_experiment,
 )
 
+from e2e.utils.load_balancer.common import CONFIG_FILE as LB_CONFIG_FILE
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
@@ -60,10 +62,69 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 
     wait_for(callback)
 
+@pytest.fixture(scope="class")
+def setup_load_balancer(metadata, region, request, cluster, kustomize, root_domain_name, root_domain_hosted_zone_id):
+    
+    lb_deps = {}
+    env_value = os.environ.copy()
+    env_value["PYTHONPATH"] = f"{os.getcwd()}/..:" + os.environ.get("PYTHONPATH", "")
+    def on_create():
+        if not root_domain_name or not root_domain_hosted_zone_id:
+            pytest.fail(
+                "--root-domain-name and --root-domain-hosted-zone-id required for testing via load balancer"
+            )
+
+        subdomain_name = rand_name("platform") + "." + root_domain_name
+        lb_config = {
+            "cluster": {
+                "region": region,
+                "name": cluster
+            },
+            "route53": {
+                "rootDomain": {
+                    "name": root_domain_name,
+                    "hostedZoneId": root_domain_hosted_zone_id,
+                },
+                "subDomain": {
+                    "name": subdomain_name,
+                },
+            }
+        }
+        write_yaml_file(lb_config, LB_CONFIG_FILE)
+
+        cmd = "python utils/load_balancer/setup_load_balancer.py".split()
+        retcode = subprocess.call(
+            cmd, stderr=subprocess.STDOUT, env=env_value
+        )
+        assert retcode == 0
+        lb_deps["config"] = load_yaml_file(LB_CONFIG_FILE)
+
+    def on_delete():
+        if metadata.get("lb_deps"):
+            cmd = "python utils/load_balancer/lb_resources_cleanup.py".split()
+            retcode = subprocess.call(
+                cmd, stderr=subprocess.STDOUT, env=env_value
+            )
+            assert retcode == 0
+
+    return configure_resource_fixture(
+        metadata, request, lb_deps, "lb_deps", on_create, on_delete
+    )
+
+
+@pytest.fixture(scope="class")
+def host(setup_load_balancer):
+    print(setup_load_balancer["config"]["route53"]["subDomain"]["name"])
+    host = "https://kubeflow." + setup_load_balancer["config"]["route53"]["subDomain"]["name"]
+    return host
+
+@pytest.fixture(scope="class")
+def port_forward(kustomize):
+    pass
 
 class TestSanity:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, port_forward):
+    def setup(self, metadata, host):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestSanity", metadata_file)

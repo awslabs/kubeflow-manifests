@@ -13,7 +13,7 @@ This guide assumes that you have:
     - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://github.com/mikefarah/yq/#install))
     - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
     - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
-      - :warning: Kubeflow 1.3.0 is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
+      - :warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 
 1. Created an EKS cluster
     - If you do not have an existing cluster, run the following command to create an EKS cluster. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
@@ -43,43 +43,22 @@ This guide assumes that you have:
         git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
         ```
 
+## Background 
+
+Read the [background section](../add-ons/load-balancer/README.md#background) in the load balancer guide for information on the requirements for exposing Kubeflow over a load balancer.
+
+Read the [create domain and cerificate section](../add-ons/load-balancer/README.md#create-domain-and-certificates) for information on why we use subdomain for hosting Kubeflow.
+
 ## (Optional) Automated setup
 The rest of the sections in this guide walks you through each step for setting up domain, certificates and Cognito userpool using AWS Console and is good for a new user to understand the design and details. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow this [README](./README-automated.md) instead.
 
-## 1.0 Custom domain
+## 1.0 Custom domain and certificates
 
-Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for istio-ingressgateway, validation for the certificate manager, etc). In case your `example.com` zone is not managed by Route53, you need to delegate a [subdomain management in a Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingNewSubdomain.html). For uniformity, we have delegated the subdomain `platform.example.com` in this guide so your root domain can be registered anywhere. Follow these steps to configure the subdomain:
+1. Follow the [Create a subdomain](../add-ons/load-balancer/README.md#create-a-subdomain) section of the load balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
+1. Follow the [Create certificates for domain](../add-ons/load-balancer/README.md#create-certificates-for-domain) section of the load balancer guide to create certificates required for TLS.
 
-1. Goto Route53 and create a subdomain to host kubeflow:
-    1. Create a hosted zone for the desired subdomain e.g. `platform.example.com`.
-    1. Copy the value of NS type record from the subdomain hosted zone (`platform.example.com`)
-        1. ![subdomain-NS](./images/subdomain-NS.png)
-    1. Create a `NS` type of record in the root `example.com` hosted zone for the subdomain `platform.example.com`.
-        1. ![root-domain-NS-creating-NS](./images/root-domain-NS-creating-NS.png)
-        1.  Following is a screenshot of the record after creation in `example.com` hosted zone.
-            1. ![root-domain-NS-created](./images/root-domain-NS-created.png)
-1. From this step onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of hosted zone in the following sections/steps of this guide are for the subdomain.
-1. In order to make Cognito to use custom domain name, A record is required to resolve `platform.example.com` as root domain, which can be a Route53 Alias to the ALB as well. Create a new record of type `A` with an arbitrary IP for now. Once we have ALB created, we will update the value later.
-    1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
-        1. ![subdomain-initial-A-record](./images/subdomain-initial-A-record.png)
-
-## 2.0 Certificate
-
-In this section, we will be creating certificate to enable TLS authentication at Application Load Balancer. Create the certificates for the domains in the regions mentioned below by following [this document](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in the specified order.
-
-> **Note:**
-> - The ceritificates are valid only after successful [validation of domain ownership](https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html)
-    - Following is a screenshot showing a certificate has been issued. Note: Status turns to `Issued` after few minutes of validation.
-        - ![successfully-issued-certificate](./images/successfully-issued-certificate.png)
-> - If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone.
-    - Following is a screenshot of CNAME record of the certificate in `platform.example.com` hosted zone for DNS validation:
-            - ![DNS-record-for-certificate-validation](./images/DNS-record-for-certificate-validation.png)    
-
-1. Create a certificate in N.Virginia (us-east-1) for `*.example.com`.
-1. Create a certificate in N.Virginia (us-east-1) for `*.platform.example.com`. That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
-1. Create a certificate for `*.platform.example.com` in the region where your platform will be running(i.e. EKS cluster region). This required by the ingress-gateway in case the platform does not run in N.Virginia, in this example, Oregon.
-
-## 3.0 Cognito User Pool
+From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of hosted zone in the following sections/steps of this guide are for the subdomain.
+## 2.0 Cognito User Pool
 
 1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults`.
 1. Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this [documentation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the `Required attributes` and select `email`.
@@ -92,18 +71,23 @@ In this section, we will be creating certificate to enable TLS authentication at
     1. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
     2. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
     3. ![cognito-app-client-settings](./images/cognito-app-client-settings.png)
-1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
-    1. ![cognito-active-domain](./images/cognito-active-domain.png)
-    2. When it’s created, it will return the `Alias target` CloudFront address.
-        1. Screenshot of the CloudFront URL for Cognito Domain name:
-            1. ![cognito-domain-cloudfront-url](./images/cognito-domain-cloudfront-url.png)
-        2.  Create a new record of type `A` for `auth.platform.example.com` with the value of the CloudFront URL.
-            1. Select the `alias` toggle and select Alias to Cloudfront distribution for creating the record
-            2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
-            3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
-                1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
+1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+    1. In order to use a custom domain, its root(i.e. `platform.example.com`) must have an valid A type record. Create a new record of type `A` in `platform.example.com` hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
+        1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
+            1. ![subdomain-initial-A-record](./images/subdomain-initial-A-record.png)
+    1. If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the process similar to [section 2.0](../add-ons/load-balancer/README.md#create-certificates-for-domain). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
+    1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
+        1. ![cognito-active-domain](./images/cognito-active-domain.png)
+        2. When it’s created, it will return the `Alias target` CloudFront address.
+            1. Screenshot of the CloudFront URL for Cognito Domain name:
+                1. ![cognito-domain-cloudfront-url](./images/cognito-domain-cloudfront-url.png)
+            2.  Create a new record of type `A` for `auth.platform.example.com` with the value of the CloudFront URL.
+                1. Select the `alias` toggle and select Alias to Cloudfront distribution for creating the record
+                2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
+                3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
+                    1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
 
-## 4.0 Configure Ingress
+## 3.0 Configure Ingress
 
 1. Take note of the following values from the previous step or `awsconfigs/infra_configs/scripts/config.yaml` if you used automated guide(./README-automated.md):
     1. The Pool ARN of the user pool found in Cognito general settings.
@@ -122,25 +106,6 @@ In this section, we will be creating certificate to enable TLS authentication at
           export signOutURL=<>
           export CognitoLogoutURL=$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL
           ```
-1. Verify you are connected to right cluster, cluster has compute and the aws region is set to the region of cluster.
-    1. Substitute the value of CLUSTER_REGION below
-        ```
-        export CLUSTER_REGION=<>
-        aws configure set region $CLUSTER_REGION
-        ```
-    1. Substitute the value of CLUSTER_NAME below
-        ```
-        export CLUSTER_NAME=<>   
-        # Display the current cluster kubeconfig points to
-        kubectl config current-context
-        kubectl get nodes
-        aws eks describe-cluster --name $CLUSTER_NAME
-        ```
-    1. Verify the current directory is the root of the repository by running the following command
-        ```
-        # the output should be <path/to/kubeflow-manifests> directory
-        pwd
-        ```
 1. Substitute values for setting up Ingress.
     1. ```
         printf '
@@ -156,75 +121,8 @@ In this section, we will be creating certificate to enable TLS authentication at
         LOGOUT_URL='$CognitoLogoutURL'
         ' > awsconfigs/common/aws-authservice/base/params.env
         ```
-1. Setup resources required for the application load balancer controller
-    1. Make sure all the subnets(public and private) corresponding to the EKS cluster are tagged according to the `Prerequisites` section in this [document](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html). Ignore the requirement to have an existing ALB provisioned on the cluster. We will be deploying ALB controller version 1.1.5 in the later section.
-        1. Specifically check if the following tags exist on the subnets:
-            1. `kubernetes.io/cluster/cluster-name` (replace `cluster-name` with your cluster name e.g. `kubernetes.io/cluster/my-k8s-cluster`). Add this tag in both private and public subnets. If you created the cluster using eksctl, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of `TAG_VALUE` variable(`owned` or `shared`):
-                - ```
-                  export KIO_TAG_VALUE=<>
-                  export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME --output json | jq -r '.Subnets[].SubnetId')
-                  for i in "${CLUSTER_SUBNET_IDS[@]}"
-                  do
-                      aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${KIO_TAG_VALUE}
-                  done
-                  ```
-            1. `kubernetes.io/role/internal-elb`. Add this tag only to private subnet
-            1. `kubernetes.io/role/elb`. Add this tag only to public subnet.
-    1. Create an IAM role to use via service account. [IAM roles for service accounts (IRSA)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) allows fine-grained roles at the Kubernetes Pod level by combining an OpenID Connect (OIDC) identity provider with Kubernetes Service Account annotations. In this section, we will associate the EKS cluster with an OIDC provider and create an IAM role which will be assumed by the ALB and profiles controller Pod via its Service Account to access AWS services.
-        1. ```
-            # Verify cluster name and region are exported
-            echo $CLUSTER_REGION
-            echo $CLUSTER_NAME
-            ```
-        1. ```
-            export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-            
-            eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
-            --region ${CLUSTER_REGION} --approve
-            
-            export OIDC_PROVIDER_URL=$(aws eks describe-cluster --name $CLUSTER_NAME --region $CLUSTER_REGION --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
-            export IRSA_ROLE_NAME=kf-admin-${CLUSTER_REGION}-${CLUSTER_NAME}
-            
-            printf '{
-                "Version": "2012-10-17",
-                "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {
-                    "Federated": "arn:aws:iam::'$AWS_ACCOUNT_ID':oidc-provider/'$OIDC_PROVIDER_URL'"
-                    },
-                    "Action": "sts:AssumeRoleWithWebIdentity",
-                    "Condition": {
-                    "StringEquals": {
-                        "'$OIDC_PROVIDER_URL':aud": "sts.amazonaws.com",
-                        "'$OIDC_PROVIDER_URL':sub": [
-                        "system:serviceaccount:kubeflow:alb-ingress-controller",
-                        "system:serviceaccount:kubeflow:profiles-controller-service-account"
-                        ]
-                    }
-                    }
-                }
-                ]
-            }
-            ' > ./trust.json
-            
-            
-            aws iam create-role --role-name $IRSA_ROLE_NAME --assume-role-policy-document file://trust.json
-            aws iam put-role-policy --role-name $IRSA_ROLE_NAME --policy-name iam_alb_ingress_policy --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json
-            aws iam put-role-policy --role-name $IRSA_ROLE_NAME --policy-name iam_profile_controller_policy --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
-            
-            export IAM_ROLE_ARN_FOR_IRSA=$(aws iam get-role --role-name $IRSA_ROLE_NAME --output text --query 'Role.Arn')
-            ```
-    1. Annotate the service accounts with the IAM role
-        1. ```
-            yq e '.metadata.annotations."eks.amazonaws.com/role-arn" = env(IAM_ROLE_ARN_FOR_IRSA)' -i awsconfigs/common/aws-alb-ingress-controller/base/service-account.yaml
-            yq e '.metadata.annotations."eks.amazonaws.com/role-arn" = env(IAM_ROLE_ARN_FOR_IRSA)' -i upstream/apps/profiles/upstream/manager/service-account.yaml
-            ```
-    1. Substitute values for ALB deployment
-        1. ```
-            printf 'clusterName='$CLUSTER_NAME'' > awsconfigs/common/aws-alb-ingress-controller/base/params.env
-            ```
-## 5.0 Building manifests and deploying Kubeflow
+1. Follow the [Configure Load Balancer Controller](../add-ons/load-balancer/README.md#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
+## 4.0 Building manifests and deploying Kubeflow
 
 1. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command
@@ -305,7 +203,7 @@ In this section, we will be creating certificate to enable TLS authentication at
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -
         ```
 
-## 6.0 Updating the domain with ALB address
+## 5.0 Updating the domain with ALB address
 
 1. Check if ALB is provisioned. It takes around 3-5 minutes
     1. ```
@@ -322,7 +220,7 @@ In this section, we will be creating certificate to enable TLS authentication at
 1. Screenshot of all the record sets in hosted zone for reference
     1. ![subdomain-records-summary](./images/subdomain-records-summary.png)
 
-## 7.0 Connecting to Central dashboard
+## 6.0 Connecting to Central dashboard
 
 1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard:
     1. Head over to the Cognito console and create some users in `Users and groups`. These are the users who will login to the central dashboard.
