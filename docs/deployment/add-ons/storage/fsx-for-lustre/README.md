@@ -17,7 +17,22 @@ export CLUSTER_REGION=<clusterregion>
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 ```
 
-## 2.0 Install the FSx CSI Driver
+## 2.0 Setup FSx for Lustre
+You can either use Automated or Manual setup 
+
+### 2.1 [Option 1] Automated setup
+The script automates all the Manual steps.  
+It performs the required cluster configuration, creates an FSx file system and it also takes care of creating a storage class for static provisioning.
+1. Install the script dependencies `pip install -r requirements.txt`
+2. Run the script from the `tests/e2e` directory - 
+```
+python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
+```
+#### **Advanced customization**
+The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
+
+### 2.2 [Option 2] Manual setup
+#### 1. Install the FSx CSI Driver
 We recommend installing the FSx CSI Driver v0.7.1 directly from the [the aws-fsx-csi-driver github repo](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows - 
 
 ```
@@ -32,7 +47,7 @@ NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 fsx.csi.aws.com   false            false            Persistent   14s
 ```
 
-## 3.0 Create the IAM Policy for the CSI Driver
+#### 2. Create the IAM Policy for the CSI Driver
 The CSI driver's service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account `fsx-csi-controller-sa` with an IAM Role which has the required permissions.
 
 1. Create the policy using the json file provided as follows - 
@@ -60,14 +75,12 @@ eksctl create iamserviceaccount \
 kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
 ```
 
-## 4.0 Create an Instance of the FSx Filesystem
+#### 3. Create an Instance of the FSx Filesystem
 Please refer to the official [AWS FSx CSI Document](https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html) for detailed instructions on creating an FSx filesystem. 
 
 Note: For this README, we have assumed that you are creating your FSx Filesystem in the same VPC as your EKS Cluster. 
 
-## 5.0 Using FSx Storage in Kubeflow
-
-## 5.1 Static Provisioning
+#### 4. Static Provisioning
 [Using this sample from official Kubeflow Docs](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre) 
 
 1. Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
@@ -105,7 +118,7 @@ kubectl apply -f fsx-for-lustre/static-provisioning/pv.yaml
 kubectl apply -f fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
-## 5.2 Check your Setup
+6. Check your Setup
 Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
 ```
 kubectl get pv
@@ -124,7 +137,8 @@ fsx-claim   Bound    fsx-pv   1200Gi     RWX                           83s
 Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
 In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
-## 5.3 Using FSx volume as workspace or data volume for a notebook server 
+## 3.0 Using FSx Storage in Kubeflow
+### 3.1 Using FSx volume as workspace or data volume for a notebook server 
 
 Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - `public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`. Additionally, use the existing `fsx-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
 
@@ -144,7 +158,7 @@ yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM
 kubectl apply -f notebook-sample/set-permission-job.yaml
 ```
 
-## 5.4 Using FSx volume for a TrainingJob using TFJob Operator
+### 3.2 Using FSx volume for a TrainingJob using TFJob Operator
 The following section re-uses the PVC and the Tensorflow Kubeflow Notebook created in the previous steps to download a dataset to the FSx Volume. Then we spin up a TFjob which runs a image classification job using the data from the shared volume. 
 Source: https://www.tensorflow.org/tutorials/load_data/images
 

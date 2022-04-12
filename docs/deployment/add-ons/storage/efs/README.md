@@ -34,7 +34,7 @@ python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
 #### **Advanced customization**
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
 
-### 2.1 [Option 2] Manual setup
+### 2.2 [Option 2] Manual setup
 If you prefer to manually setup each components then you can follow this manual guide.  
 
 ```
