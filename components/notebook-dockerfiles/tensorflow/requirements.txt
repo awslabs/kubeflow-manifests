@@ -2,7 +2,7 @@
 
 # Jupyter related packages
 jupyter-console==6.4.0
-jupyterlab==3.0.16
+jupyterlab==3.0.17
 jupyterlab-git==0.33.0
 notebook==6.4.0
 ipykernel==5.5.5
