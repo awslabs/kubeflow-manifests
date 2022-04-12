@@ -4,7 +4,7 @@
 
 In AWS, [IRSA](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/) is a permissions management tool that allows applying AWS IAM permissions boundaries to Kubernetes service accounts (SA). This is useful, for example, to grant one SA permissions to upload test results to a certain bucket in S3 while granting another SA permissions to read from that bucket without modifying the contents. Because the IAM permissions apply to the SA, the permissions boundary is limited to the pod level rather than the nodegroup level. 
 
-In Kubeflow, IRSA is used to provide an isolation boundary at the profile level, allowing admins to scope profiles to their necessary IAM permissions to meet their AWS usage requirements. This is done by making the profile SA an IRSA.
+In Kubeflow, IRSA is used to provide an isolation boundary at the profile level, allowing admins to scope profiles to their necessary IAM permissions to meet their AWS usage requirements. This is done by making the profile SA an IRSA and by creating profiles with the `AwsIamForServiceAccount` plugin.
 
 Below are the steps to configure IRSA to be used with Kubeflow Profiles.
 
