@@ -16,13 +16,15 @@ ENV NB_PREFIX /
 # Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && apt-get install -yq --no-install-recommends \
+RUN apt-get update \
+  && apt-get install -yq --no-install-recommends \
   apt-transport-https \
   build-essential \
   bash \
   bzip2 \
   ca-certificates \
   curl \
+  emacs \
   g++ \
   git \
   gnupg \
@@ -31,17 +33,16 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
   locales \
   lsb-release \
   openssh-client \
+  python3-pip \
+  python3-dev \
+  python3-setuptools \
   sudo \
   unzip \
   vim \
   wget \
   zip \
-  emacs \
-  python3-pip \
-  python3-dev \
-  python3-setuptools \
-  && apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # install -- node.js
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -54,14 +55,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && rm -rf /var/lib/apt/lists/*
 
 # Install kubectl client
-RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install -y kubectl
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list \
+ && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+ && apt-get update \
+ && apt-get install -y kubectl
 
 # set locale configs
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+ && locale-gen
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -75,11 +76,11 @@ RUN useradd -M -s /bin/bash -N -u ${NB_UID} ${NB_USER} \
  && chown -R ${NB_USER}:users /usr/local/bin
 
 # Install Tini - used as entrypoint for container
-RUN cd /tmp && \
-    wget --quiet https://github.com/krallin/tini/releases/download/v0.18.0/tini && \
-    echo "12d20136605531b09a2c2dac02ccee85e1b874eb322ef6baf7561cd93f93c855 *tini" | sha256sum -c - && \
-    mv tini /usr/local/bin/tini && \
-    chmod +x /usr/local/bin/tini
+RUN cd /tmp \
+ && wget --quiet https://github.com/krallin/tini/releases/download/v0.18.0/tini  \
+ && echo "12d20136605531b09a2c2dac02ccee85e1b874eb322ef6baf7561cd93f93c855 *tini" | sha256sum -c - \
+ && mv tini /usr/local/bin/tini \
+ && chmod +x /usr/local/bin/tini
 
 # NOTE: Beyond this point be careful of breaking out
 # or otherwise adding new layers with RUN, chown, etc.
