@@ -12,4 +12,4 @@ resources:
 - ../../../../awsconfigs/apps/pipeline/s3
 
 # Katib
-- ../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
+- ../../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow

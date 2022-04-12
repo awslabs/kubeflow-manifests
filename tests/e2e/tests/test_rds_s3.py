@@ -142,6 +142,7 @@ AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manag
 RDS_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
 S3_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
 
+METADB_NAME = "metadata_db"
 
 @pytest.fixture(scope="class")
 def configure_manifests(cfn_stack, aws_secrets_driver, region):
@@ -180,6 +181,7 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
         env_file_path=KFP_RDS_PARAMS_ENV_FILE,
         env_dict={
             "dbHost": stack_outputs["RDSEndpoint"],
+            "mlmdDb": METADB_NAME,
         },
     )
 
@@ -424,7 +426,7 @@ class TestRDSS3:
             user=cfn_stack["params"]["DBUsername"],
             password=cfn_stack["params"]["DBPassword"],
             host=stack_outputs["RDSEndpoint"],
-            database="kubeflow",
+            database=METADB_NAME,
         )
 
         resp = mysql.query(

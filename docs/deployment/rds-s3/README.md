@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Kustomize Manifest can be used to deploy Kubeflow Pipelines and Katib with RDS and S3.
+This Kustomize Manifest can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
 
 ### RDS
 
@@ -12,24 +12,32 @@ In the [default kubeflow installation](../../../../example/kustomization.yaml), 
 
 As compared to using the MySQL setup in the default installation, using RDS provides the following advantages:
 - Easier to configure scalability and availability: RDS provides high availability and failover support for DB instances using Multi-AZ deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.
-- Persisted KFP and Katib data can be reused across Kubeflow versions: Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing the same RDS instance to be used across multiple Kubeflow deployments and versions.
+- Persisted KFP and Katib data can be reused across Kubeflow installations with the same Kubeflow version: Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing the same RDS instance to be used across multiple Kubeflow installations with the same Kubeflow version.
 - Higher level of customizability and management: RDS provides management features to facilitate changing database instance types, updating SQL versions, and more.
 
 ### S3
-[Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide//Welcome.html) is an object storage service that is highly scalable, available, secure, and performant. 
+[Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html) is an object storage service that is highly scalable, available, secure, and performant. 
 
 In the [default kubeflow installation](../../../../example/kustomization.yaml), the [KFP](../../../../apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
 
 Configuring MinIO to read and write to S3 provides the following advantages:
 - Higher scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.
-- Persisted KFP data can be reused across Kubeflow version: Using S3 decouples the KFP object datastore from the Kubeflow deployment, allowing the same S3 resources to be used across multiple Kubeflow deployments and versions.
+- Persisted KFP metadata can be reused across Kubeflow installations with same Kubeflow version: Using S3 decouples the KFP object datastore from the Kubeflow deployment, allowing the same S3 resources to be used across multiple Kubeflow installations with the same Kubeflow version.
 - Higher level of customizability and management: S3 provides management features to help optimize, organize, and configure access to your data to meet your specific business, organizational, and compliance requirements
 
 To get started with configuring and installing your Kubeflow installation with RDS and S3 follow the [install](#install) steps below to configure and deploy the Kustomize manifest.
 
 ## Install
 
-The following steps show how to configure and deploy Kubeflow with supported AWS services:
+The following steps show how to configure and deploy Kubeflow with supported AWS services.
+
+### Using only RDS or only S3
+
+Steps relevant only to the RDS installation will be prefixed with `[RDS]`.
+Steps relevant only to the S3 installation will be prefixed with `[S3]`.
+Steps without any prefixing are necessary for all installations.
+
+To install for either only RDS or S3 complete the steps relevant to your installation choice.
 
 ## 1.0 Prerequisites
 
@@ -154,6 +162,10 @@ If you prefer to manually setup each components then you can follow this manual 
                       - path: "port"
                          objectAlias: "port"
            ```
+         - One line command:
+           ```
+           yq e -i '.spec.parameters.objects |= sub("rds-secret","YOUR_SECRET_NAME")' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+           ```
          
    1. [S3] Create the S3 secret and configure the secret provider:
       1. Configure a secret, for example named `s3-secret`, with your AWS credentials. These need to be long term credentials from an IAM user and not temporary.
@@ -181,6 +193,10 @@ If you prefer to manually setup each components then you can follow this manual 
                          objectAlias: "access"
                        - path: "secretkey"
                          objectAlias: "secret"           
+           ```
+         - One line command:
+           ```
+           yq e -i '.spec.parameters.objects |= sub("s3-secret","YOUR_SECRET_NAME")' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
            ```
 
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
@@ -256,17 +272,10 @@ Once, everything is installed successfully, you can access the Kubeflow Central 
 
 Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
 
-## 4.0 Using only RDS or only S3
 
-### RDS only
-Follow the steps prefixed with [RDS] above.
+## 4.0 Verify the installation
 
-### S3 only
-Follow the steps prefixed with [S3] above.
-
-## 5.0 Verify the installation
-
-### 5.1 Verify RDS
+### 4.1 Verify RDS
 
 1. Connect to the RDS instance from a pod within the cluster
 
@@ -344,7 +353,7 @@ mysql> use kubeflow; show tables;
 mysql> select * from observation_logs;
 ```
 
-### 5.2 Verify S3
+### 4.2 Verify S3
 
 1. Access the Kubeflow Central Dashboard [by logging in to your cluster](../vanilla/README.md#connect-to-your-kubeflow-cluster) and navigate to Kubeflow Pipelines (under Pipelines).
 
@@ -354,7 +363,7 @@ mysql> select * from observation_logs;
 
 4. Verify the bucket is not empty and was populated by outputs of the experiment.
 
-## 6.0 Uninstall Kubeflow
+## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall:
 
