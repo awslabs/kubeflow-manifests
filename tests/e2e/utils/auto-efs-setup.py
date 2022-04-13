@@ -286,13 +286,23 @@ def get_vpc_id(cluster_info):
     return cluster_info["resourcesVpcConfig"]["vpcId"]
 
 
+# def get_cidr_block_ip(ec2_client, vpc_id):
+#     return ec2_client.describe_vpcs(
+#         Filters=[
+#             {"Name": "tag:alpha.eksctl.io/cluster-name", "Values": [CLUSTER_NAME]},
+#         ],
+#         VpcIds=[vpc_id],
+#     )["Vpcs"][0]["CidrBlock"]
+
 def get_cidr_block_ip(ec2_client, vpc_id):
-    return ec2_client.describe_vpcs(
-        Filters=[
-            {"Name": "tag:alpha.eksctl.io/cluster-name", "Values": [CLUSTER_NAME]},
-        ],
-        VpcIds=[vpc_id],
-    )["Vpcs"][0]["CidrBlock"]
+
+    # Get CIDR Range
+    response = ec2_client.describe_vpcs(
+        VpcIds=[
+            vpc_id,
+        ]
+    )
+    return response["Vpcs"][0]["CidrBlock"]
 
 
 def create_security_group_resource(ec2_client, vpc_id):
@@ -585,7 +595,7 @@ if __name__ == "__main__":
     DIRECTORY_PATH = args.directory
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
-    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy"
+    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy"+EFS_FILE_SYSTEM_NAME
     EFS_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{EFS_IAM_POLICY_NAME}"
 
     EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = (

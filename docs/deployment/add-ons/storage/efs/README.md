@@ -29,7 +29,10 @@ It performs the required cluster configuration, creates an EFS file system and i
 1. Install the script dependencies `pip install -r requirements.txt`
 2. Run the script from the `tests/e2e` directory - 
 ```
-python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
+export FILESYSTEM_NAME=<fs_name>
+export SG_NAME=<sg_name>
+
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $FILESYSTEM_NAME --efs_security_group_name $SG_NAME
 ```
 #### **Advanced customization**
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
@@ -156,6 +159,15 @@ Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also ch
 In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
 ## 3.0 Using EFS Storage in Kubeflow
+For the following sections, make sure to navigate back to the docs folder at the following path - 
+```
+ cd ../../docs/deployment/add-ons/storage
+```
+and also export the namespace as - 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+```
+
 ### 3.1 Changing the default Storage Class
 After installing Kubeflow, you can change the default Storage Class from `gp2` to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named `efs-sc`. You can check your storage classes by running `kubectl get sc`.  
   
