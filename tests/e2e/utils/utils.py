@@ -140,12 +140,13 @@ def get_cfn_client(region):
     return boto3.client("cloudformation", region_name=region)
 
 
-def get_s3_client(region):
-    return boto3.client("s3", region_name=region)
+def get_s3_client(region, access_key_id=None, secret_access_key_id=None):
+    return boto3.client("s3", region_name=region, aws_access_key_id=access_key_id,aws_secret_access_key=secret_access_key_id)
 
 
 def get_logs_client(region):
     return boto3.client("logs", region_name=region)
+
 
 def get_cloudwatch_client(region):
     return boto3.client("cloudwatch", region_name=region)
@@ -153,6 +154,10 @@ def get_cloudwatch_client(region):
 
 def get_secrets_manager_client(region):
     return boto3.client("secretsmanager", region_name=region)
+
+
+def get_rds_client(region):
+    return boto3.client("rds", region_name=region)
 
 
 def get_mysql_client(user, password, host, database) -> mysql.connector.MySQLConnection:
