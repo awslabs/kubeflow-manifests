@@ -10,44 +10,46 @@ Below are the steps to configure IRSA to be used with Kubeflow Profiles.
 
 # Configuration Steps
 
+The following steps should be run after deploying Kubeflow via the [provided deployment options](../../docs/deployment)
+
 1. Export the following variables for convenience
     ```
     export CLUSTER_NAME=<your cluster name>
-    export REGION=<your region>
-    export AWS_ACCOUNT_ID=<your aws account id>
+    export CLUSTER_REGION=<your region>
+    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
     export PROFILE_NAME=<the name of the profile to be created>
     ```
 
 1. Create an IAM policy using [the following policy document](../../awsconfigs/infra_configs/iam_profile_controller_policy.json)
     ```
     aws iam create-policy \
-    --region $REGION \
+    --region $CLUSTER_REGION \
     --policy-name kf-profile-controller-policy \
     --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
     ```
 
-1. Create an IRSA for the profile controller using the policy
+1. Associate IAM OIDC with the cluster
+    ```
+    aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
+
+    eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
+    ```
+
+1. Create an IRSA for the profile controller using the policy.
     ```
     eksctl create iamserviceaccount \
     --cluster=$CLUSTER_NAME \
     --name="profiles-controller-service-account" \
     --namespace=kubeflow \
     --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/kf-profile-controller-policy" \
-    --region=$REGION \
+    --region=$CLUSTER_REGION \
     --override-existing-serviceaccounts \
     --approve
     ```
 
-1. Associate IAM OIDC with the cluster
-    ```
-    aws --region $REGION eks update-kubeconfig --name $CLUSTER_NAME
-
-    eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $REGION --approve
-    ```
-
 1. Create an IAM trust policy to authorize federated requests from the OIDC provider
     ```
-    export OIDC_URL=$(aws eks describe-cluster --region $REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
+    export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
 
     cat <<EOF > trust.json
     {
@@ -56,7 +58,7 @@ Below are the steps to configure IRSA to be used with Kubeflow Profiles.
         {
         "Effect": "Allow",
         "Principal": {
-            "Federated": "arn:aws:iam::${AWS_ACC_NUM}:oidc-provider/${OIDC_URL}"
+            "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_URL}"
         },
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
@@ -84,38 +86,29 @@ Below are the steps to configure IRSA to be used with Kubeflow Profiles.
     export OIDC_ROLE_ARN=$(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query 'Role.Arn')
     ```
 
-1. Configure the profile user credentials via your auth provider
-   - If using `Dex` add the following user to the base deployment config map:
-     ```
-       - email: $PROFILE_NAME@kubeflow.org
-         hash: $2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72 # 12341234
-         username: $PROFILE_NAME
-         userID: "15841185641789"
-     ```
-   - If using `AWS Cognito` see the following documentation to create a user pool and add users `https://docs.aws.amazon.com/cognito/latest/developerguide/getting-started-with-cognito-user-pools.html`
-
 1. Create a profile using the `PROFILE_NAME` and `OIDC_ROLE_ARN`
     ```
     cat <<EOF > profile_iam.yaml
     apiVersion: kubeflow.org/v1
     kind: Profile
     metadata:
-    name: $PROFILE_NAME
+      name: ${PROFILE_NAME}
     spec:
-    owner:
+      owner:
         kind: User
-        name: $PROFILE_NAME@kubeflow.org
-    plugins:
-    - kind: AwsIamForServiceAccount
+        name: user@example.com
+      plugins:
+      - kind: AwsIamForServiceAccount
         spec:
-        awsIamRole: $OIDC_ROLE_ARN
+          awsIamRole: ${OIDC_ROLE_ARN}
     EOF
-    ```
 
-1. Deploy kubeflow via the available [deployment options](../../docs/deployment) or re-deploy the `profiiles-controller` pod to apply the profile configurations.
+    kubectl apply -f profile_iam.yaml
+    ```
 
 # Verify Profiles IRSA in Notebooks
 1. Create a notebook server through the central dashboard.
+1. Select the profile owner from the top left drop down menu for the profile you created.
 1. Create a notebook from [docs/component-guides/samples/profiles-irsa/verify_notebook.ipynb]()
 1. Run the notebook, there should be no errors.
 
