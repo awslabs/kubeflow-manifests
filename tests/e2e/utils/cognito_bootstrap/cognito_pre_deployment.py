@@ -117,7 +117,7 @@ def configure_aws_authservice(
     configure_env_file(
         env_file_path="../../awsconfigs/common/aws-authservice/base/params.env",
         env_dict={
-            "LOGOUT_URL": f"{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}",
+            "LOGOUT_URL": f"https://{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}",
         },
     )
 
