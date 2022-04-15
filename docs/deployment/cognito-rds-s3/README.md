@@ -83,7 +83,7 @@ Follow the pre-requisites section from [this guide](../prerequisites.md) and set
         kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
         # AWS Secret Manager
-        kustomize build awsconfigs/common/aws-secrets-manager/base | kubectl apply -f -
+        kustomize build awsconfigs/common/aws-secrets-manager | kubectl apply -f -
 
         # Kubeflow Pipelines
         kustomize build awsconfigs/apps/pipeline | kubectl apply -f -
