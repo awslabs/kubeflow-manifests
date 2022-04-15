@@ -98,7 +98,7 @@ The following steps should be run after deploying Kubeflow via the [provided dep
 
 1. Create an IAM policy to scope the permissions for the profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
 
-1. Create the IAM role with the scoped profile permissions.
+1. Create an IAM role for the profile using the scoped policy from the previous step.
     ```
     aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
 
