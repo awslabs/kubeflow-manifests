@@ -3,6 +3,7 @@ import json
 
 import pytest
 import boto3
+import yaml
 
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -14,7 +15,6 @@ from e2e.utils.utils import (
     get_cfn_client,
     get_ec2_client,
     get_s3_client,
-    get_secrets_manager_client,
     get_mysql_client,
 )
 from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
@@ -40,7 +40,7 @@ from e2e.fixtures.clients import (
     create_k8s_admission_registration_api_client,
 )
 
-from e2e.utils import mysql
+from e2e.utils import mysql_utils
 
 from e2e.utils.cloudformation_resources import (
     create_cloudformation_fixture,
@@ -109,6 +109,11 @@ def cfn_stack(metadata, cluster, region, request):
     instances = [i for r in resp["Reservations"] for i in r["Instances"]]
     security_groups = [i["SecurityGroups"][0]["GroupId"] for i in instances]
 
+    s3_secret = {
+        "accesskey": get_accesskey(request),
+        "secretkey": get_secretkey(request),
+    }
+
     return create_cloudformation_fixture(
         metadata=metadata,
         request=request,
@@ -124,78 +129,65 @@ def cfn_stack(metadata, cluster, region, request):
             "SecurityGroupId": security_groups[0],
             "DBUsername": rand_name("admin"),
             "DBPassword": rand_name("Kubefl0w"),
+            "S3SecretString": create_secret_string(s3_secret),
         },
     )
 
 
 KFP_MANIFEST_FOLDER = "../../awsconfigs/apps/pipeline"
-KFP_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/params.env"
+KFP_RDS_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/rds/params.env"
+KFP_S3_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/s3/params.env"
 
+AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manager"
+RDS_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
+S3_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
+
+METADB_NAME = "metadata_db"
 
 @pytest.fixture(scope="class")
-def rds_s3_secrets(cfn_stack, region, metadata, request):
-    """
-    Fixture to keep track of rds and s3 AWS secret creation.
-    These secrets can't be created as part of the CFN stack because
-    the CFN implementation of secrets manager appends a random string
-    to the end of a secret name. Our current integration with secrets
-    manager has hardcoded the secret names as 'rds-secret' and 's3-secret'
-    so having a random string appended to the end of the secret name
-    would not work with our current implementation.
-
-    Todo: allow secret names to be configurable parameters
-    """
-
+def configure_manifests(cfn_stack, aws_secrets_driver, region):
     cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-    rds_secret = {
-        "username": cfn_stack["params"]["DBUsername"],
-        "password": cfn_stack["params"]["DBPassword"],
-        "database": "kubeflow",
-        "host": stack_outputs["RDSEndpoint"],
-        "port": "3306",
-    }
-
-    s3_secret = {
-        "accesskey": get_accesskey(request),
-        "secretkey": get_secretkey(request),
-    }
-
-    def on_create():
-        secrets_manager_client = get_secrets_manager_client(region)
-        secrets_manager_client.create_secret(
-            Name="rds-secret-2",
-            SecretString=create_secret_string(rds_secret),
-        )
-        secrets_manager_client.create_secret(
-            Name="s3-secret-2",
-            SecretString=create_secret_string(s3_secret),
-        )
-
-    def on_delete():
-        secrets_manager_client = get_secrets_manager_client(region)
-        secrets_manager_client.delete_secret(
-            SecretId="rds-secret-2", ForceDeleteWithoutRecovery=True
-        )
-        secrets_manager_client.delete_secret(
-            SecretId="s3-secret-2", ForceDeleteWithoutRecovery=True
-        )
-
-    return configure_resource_fixture(
-        metadata, request, "created", "rds-s3-secrets", on_create, on_delete
+    rds_secret_provider = unmarshal_yaml(RDS_SECRET_PROVIDER_CLASS_FILE)
+    rds_secret_provider_objects = yaml.safe_load(
+        rds_secret_provider["spec"]["parameters"]["objects"]
+    )
+    rds_secret_provider_objects[0]["objectName"] = "-".join(
+        stack_outputs["RDSSecretName"].split(":")[-1].split("-")[:-1]
+    )
+    rds_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
+        rds_secret_provider_objects
     )
 
+    s3_secret_provider = unmarshal_yaml(S3_SECRET_PROVIDER_CLASS_FILE)
+    s3_secret_provider_objects = yaml.safe_load(
+        s3_secret_provider["spec"]["parameters"]["objects"]
+    )
+    s3_secret_provider_objects[0]["objectName"] = "-".join(
+        stack_outputs["S3SecretName"].split(":")[-1].split("-")[:-1]
+    )
+    s3_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
+        s3_secret_provider_objects
+    )
 
-@pytest.fixture(scope="class")
-def configure_manifests(cfn_stack, rds_s3_secrets, aws_secrets_driver, region):
-    cfn_client = get_cfn_client(region)
-    stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
+    with open(RDS_SECRET_PROVIDER_CLASS_FILE, "w") as file:
+        yaml.dump(rds_secret_provider, file)
+
+    with open(S3_SECRET_PROVIDER_CLASS_FILE, "w") as file:
+        yaml.dump(s3_secret_provider, file)
 
     configure_env_file(
-        env_file_path=KFP_PARAMS_ENV_FILE,
+        env_file_path=KFP_RDS_PARAMS_ENV_FILE,
         env_dict={
             "dbHost": stack_outputs["RDSEndpoint"],
+            "mlmdDb": METADB_NAME,
+        },
+    )
+
+    configure_env_file(
+        env_file_path=KFP_S3_PARAMS_ENV_FILE,
+        env_dict={
             "bucketName": stack_outputs["S3BucketName"],
             "minioServiceHost": "s3.amazonaws.com",
             "minioServiceRegion": region,
@@ -308,7 +300,7 @@ class TestRDSS3:
             database="mlpipeline",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from experiments where Name='{name}'"
         )
         assert len(resp) == 1
@@ -326,7 +318,7 @@ class TestRDSS3:
 
         kfp_client.delete_experiment(experiment.id)
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from experiments where Name='{name}'"
         )
         assert len(resp) == 0
@@ -396,7 +388,7 @@ class TestRDSS3:
             database="mlpipeline",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from run_details where UUID='{run.id}'"
         )
 
@@ -404,6 +396,20 @@ class TestRDSS3:
         assert resp[0]["DisplayName"] == job_name
         assert resp[0]["PipelineId"] == pipeline_id
         assert resp[0]["Conditions"] == "Succeeded"
+
+        mysql_client = get_mysql_client(
+            user=cfn_stack["params"]["DBUsername"],
+            password=cfn_stack["params"]["DBPassword"],
+            host=stack_outputs["RDSEndpoint"],
+            database=METADB_NAME,
+        )
+
+        resp = mysql_utils.query(
+            mysql_client, f"show tables"
+        )
+        tables_in_mldb = {t['Tables_in_metadata_db'] for t in resp}
+        expected_tables_in_mldb = {'ContextProperty', 'Execution', 'ParentType', 'Type', 'ParentContext', 'ArtifactProperty', 'Event', 'ExecutionProperty', 'Context', 'EventPath', 'Artifact', 'MLMDEnv', 'Association', 'TypeProperty', 'Attribution'}
+        assert expected_tables_in_mldb == tables_in_mldb
 
         kfp_client.delete_experiment(experiment.id)
 
@@ -437,7 +443,7 @@ class TestRDSS3:
             database="kubeflow",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client,
             f"select count(*) as count from observation_logs where trial_name like '{name}%'",
         )
