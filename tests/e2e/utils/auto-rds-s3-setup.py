@@ -2,6 +2,8 @@ import argparse
 import boto3
 import subprocess
 import json
+
+from importlib_metadata import metadata
 from utils import (
     get_ec2_client,
     get_iam_client,
@@ -20,13 +22,27 @@ def main():
     header()
 
     verify_prerequisites()
-
-    setup_s3()
-    setup_rds()
+    s3_client = get_s3_client(
+        region=CLUSTER_REGION,
+        access_key_id=S3_ACCESS_KEY_ID,
+        secret_access_key_id=S3_SECRET_ACCESS_KEY,
+    )
+    secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
+    setup_s3(s3_client, secrets_manager_client)
+    rds_client = get_rds_client(CLUSTER_REGION)
+    eks_client = get_eks_client(CLUSTER_REGION)
+    ec2_client = get_ec2_client(CLUSTER_REGION)
+    setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client)
     setup_cluster_secrets()
     setup_kubeflow()
 
     footer()
+    script_metadata = [f"bucket_name={S3_BUCKET_NAME}", f"db_instance_name={DB_INSTANCE_NAME}",
+                       f"db_subnet_group_name={DB_SUBNET_GROUP_NAME}"]
+    script_metadata = [metadata + '\n' for metadata in script_metadata]
+
+    with open("auto-rds-s3-setup-metadata", "w") as setup_metadata:
+        setup_metadata.writelines(script_metadata)
 
 
 def header():
@@ -105,22 +121,16 @@ def verify_kubectl_is_installed():
         )
 
 
-def setup_s3():
+def setup_s3(s3_client, secrets_manager_client):
     print("=================================================================")
     print("                          S3 Setup")
     print("=================================================================")
 
-    setup_s3_bucket()
-    setup_s3_secrets()
+    setup_s3_bucket(s3_client)
+    setup_s3_secrets(secrets_manager_client)
 
 
-def setup_s3_bucket():
-    s3_client = get_s3_client(
-        region=CLUSTER_REGION,
-        access_key_id=S3_ACCESS_KEY_ID,
-        secret_access_key_id=S3_SECRET_ACCESS_KEY,
-    )
-
+def setup_s3_bucket(s3_client):
     if not does_bucket_exist(s3_client):
         create_s3_bucket(s3_client)
     else:
@@ -146,9 +156,8 @@ def create_s3_bucket(s3_client):
     print("S3 bucket created!")
 
 
-def setup_s3_secrets():
+def setup_s3_secrets(secrets_manager_client):
     s3_secret_name = "s3-secret"
-    secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
 
     if not does_secret_already_exist(secrets_manager_client, s3_secret_name):
         create_s3_secret(secrets_manager_client, s3_secret_name)
@@ -181,18 +190,18 @@ def create_s3_secret(secrets_manager_client, s3_secret_name):
     print("S3 secret created!")
 
 
-def setup_rds():
+def setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client):
     print("=================================================================")
     print("                          RDS Setup")
     print("=================================================================")
 
-    rds_secret_name = "rds-secret"
-    rds_client = get_rds_client(CLUSTER_REGION)
-    secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
+    rds_secret_name = "rds-secreta"
 
     if not does_database_exist(rds_client):
         if not does_secret_already_exist(secrets_manager_client, rds_secret_name):
-            db_root_password = setup_db_instance(rds_client)
+            db_root_password = setup_db_instance(
+                rds_client, secrets_manager_client, eks_client, ec2_client
+            )
             create_rds_secret(secrets_manager_client,
                               rds_secret_name, db_root_password)
         else:
@@ -211,14 +220,16 @@ def does_database_exist(rds_client):
     return len(matching_databases) > 0
 
 
-def setup_db_instance(rds_client):
-    setup_db_subnet_group(rds_client)
-    return create_db_instance(rds_client)
+def setup_db_instance(rds_client, secrets_manager_client, eks_client, ec2_client):
+    setup_db_subnet_group(rds_client, eks_client, ec2_client)
+    return create_db_instance(
+        rds_client, secrets_manager_client, eks_client, ec2_client
+    )
 
 
-def setup_db_subnet_group(rds_client):
+def setup_db_subnet_group(rds_client, eks_client, ec2_client):
     if not does_db_subnet_group_exist(rds_client):
-        create_db_subnet_group(rds_client)
+        create_db_subnet_group(rds_client, eks_client, ec2_client)
     else:
         print(
             f"Skipping DB subnet group creation, DB subnet group '{DB_SUBNET_GROUP_NAME}' already exists!"
@@ -234,10 +245,10 @@ def does_db_subnet_group_exist(rds_client):
         return False
 
 
-def create_db_subnet_group(rds_client):
+def create_db_subnet_group(rds_client, eks_client, ec2_client):
     print("Creating DB subnet group...")
 
-    subnet_ids = get_cluster_private_subnet_ids()
+    subnet_ids = get_cluster_private_subnet_ids(eks_client, ec2_client)
 
     rds_client.create_db_subnet_group(
         DBSubnetGroupName=DB_SUBNET_GROUP_NAME,
@@ -248,9 +259,7 @@ def create_db_subnet_group(rds_client):
     print("DB subnet group created!")
 
 
-def get_cluster_private_subnet_ids():
-    eks_client = get_eks_client(CLUSTER_REGION)
-    ec2_client = get_ec2_client(CLUSTER_REGION)
+def get_cluster_private_subnet_ids(eks_client, ec2_client):
     subnet_ids = eks_client.describe_cluster(name=CLUSTER_NAME)["cluster"][
         "resourcesVpcConfig"
     ]["subnetIds"]
@@ -260,7 +269,6 @@ def get_cluster_private_subnet_ids():
     for subnet in subnets:
         for tags in subnet["Tags"]:
             if "SubnetPrivate" in tags["Value"]:
-                print("ep")
                 private_subnets.append(subnet)
 
     def get_subnet_id(subnet):
@@ -269,13 +277,14 @@ def get_cluster_private_subnet_ids():
     return list(map(get_subnet_id, private_subnets))
 
 
-def create_db_instance(rds_client):
+def create_db_instance(rds_client, secrets_manager_client, eks_client, ec2_client):
     print("Creating DB instance...")
 
-    vpc_ids = get_cluster_vpc_ids()
-    vpc_security_group_id = get_vpc_security_group_id(vpc_ids)
+    vpc_ids = get_cluster_vpc_ids(eks_client)
+    vpc_security_group_id = get_vpc_security_group_id(vpc_ids, ec2_client)
 
-    db_root_password = get_db_root_password_or_generate_one()
+    db_root_password = get_db_root_password_or_generate_one(
+        secrets_manager_client)
 
     rds_client.create_db_instance(
         DBName=DB_NAME,
@@ -302,10 +311,8 @@ def create_db_instance(rds_client):
     return db_root_password
 
 
-def get_db_root_password_or_generate_one():
+def get_db_root_password_or_generate_one(secrets_manager_client):
     if DB_ROOT_PASSWORD is None:
-        secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
-
         return secrets_manager_client.get_random_password(
             PasswordLength=32,
             ExcludeNumbers=False,
@@ -318,8 +325,7 @@ def get_db_root_password_or_generate_one():
         return DB_ROOT_PASSWORD
 
 
-def get_cluster_vpc_ids():
-    eks_client = get_eks_client(CLUSTER_REGION)
+def get_cluster_vpc_ids(eks_client):
     vpcs = eks_client.describe_cluster(name=CLUSTER_NAME)["cluster"][
         "resourcesVpcConfig"
     ]["vpcId"]
@@ -327,8 +333,7 @@ def get_cluster_vpc_ids():
     return vpcs
 
 
-def get_vpc_security_group_id(vpc_id):
-    ec2_client = get_ec2_client(CLUSTER_REGION)
+def get_vpc_security_group_id(vpc_id, ec2_client):
 
     security_groups = ec2_client.describe_security_groups(
         Filters=[
@@ -674,7 +679,6 @@ parser.add_argument(
     help="""
     This parameter allows to explicitly specify the access key ID to use for the setup.
     The access key ID is used to create the S3 bucket and is saved using the secrets manager.
-    If no value is provided the script will use the access key ID configured on your machine.
     """,
     required=True,
 )
@@ -684,7 +688,6 @@ parser.add_argument(
     help="""
     This parameter allows to explicitly specify the secret access key to use for the setup.
     The secret access key is used to create the S3 bucket and is saved using the secrets manager.
-    If no value is provided the script will use the secret access key configured on your machine.
     """,
     required=True,
 )

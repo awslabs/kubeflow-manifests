@@ -32,15 +32,17 @@ The following steps show how to configure and deploy Kubeflow with supported AWS
         git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
         ```
 
+1. Set EKS Cluster variables for EKS cluster creation and for use in automated setup scripts
+```
+export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
+export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
+```
 
 3. Create an EKS cluster
 
 Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
 
 ```
-export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
-export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-
 eksctl create cluster \
 --name ${CLUSTER_NAME} \
 --version 1.19 \
@@ -69,9 +71,9 @@ Note : The script will **not** delete any resource therefore if a resource alrea
 
 1. Install the script dependencies `pip install -r requirements.txt`
 2. Run the script  
-Replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_S3_BUCKET` with your values.
+Replace `CLUSTER_REGION`, `CLUSTER_NAME` and `YOUR_S3_BUCKET` with your values.
 ```
-python auto-rds-s3-setup.py --region YOUR_CLUSTER_REGION --cluster YOUR_CLUSTER_NAME --bucket YOUR_S3_BUCKET
+python auto-rds-s3-setup.py --region CLUSTER_REGION --cluster CLUSTER_NAME --bucket YOUR_S3_BUCKET
 ```  
 
 ### Advanced customization
