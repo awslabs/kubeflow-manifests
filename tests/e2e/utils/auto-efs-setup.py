@@ -376,18 +376,43 @@ def wait_for_efs_file_system_to_become_available(efs_file_system_creation_token)
 
 def create_efs_mount_targets(efs_file_system_creation_token):
     efs_client = get_efs_client()
+    eks_client = get_eks_client()
+    cluster_info = get_cluster_info(eks_client)
+    vpc_id = get_vpc_id(cluster_info)
+
     file_system_id = get_file_system_id_from_creation_token(
         efs_client, efs_file_system_creation_token
     )
+    print(f"Filesystem id is: {file_system_id}")
 
     ec2_client = get_ec2_client()
-    efs_security_group_id = get_efs_security_group_id(ec2_client)
-    subnet_ids = get_cluster_public_subnet_ids(ec2_client)
-
-    mount_target_ids = create_mount_targets(
-        efs_client, efs_security_group_id, file_system_id, subnet_ids
+    security_group_id = get_efs_security_group_id(ec2_client)
+    print(f"security_group_id: {security_group_id}")
+    # Get Subnet Ids
+    response = ec2_client.describe_subnets(
+        Filters=[
+            {
+                "Name": "vpc-id",
+                "Values": [
+                    vpc_id,
+                ],
+            },
+        ]
     )
-    wait_for_mount_target_to_become_available(efs_client, mount_target_ids)
+
+    # Create Mount Targets for each subnet - TODO: Check how many subnets this needs to be added to.
+    subnets = response["Subnets"]
+    print(f"subnets: {subnets}")
+    for subnet in subnets:
+        subnet_id = subnet["SubnetId"]
+        response = efs_client.create_mount_target(
+            FileSystemId=file_system_id,
+            SecurityGroups=[
+                security_group_id,
+            ],
+            SubnetId=subnet_id,
+        )
+    # wait_for_mount_target_to_become_available(efs_client, mount_target_ids)
 
 
 def get_file_system_id_from_creation_token(efs_client, efs_file_system_creation_token):
