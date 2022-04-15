@@ -21,21 +21,29 @@ export CLUSTER_REGION=<clusterregion>
 
 ## 2.0 Setup EFS
 
-You can either use Automated or Manual setup 
+You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between static and dynamic provisioning, so pick whichever suits you. On the other hand, for the automated script we currently only support dynamic provisioning. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
 ### 2.1 [Option 1] Automated setup
-The script automates all the Manual steps and is only for Dynamic Provisioning option.  
-It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning.
-1. Install the script dependencies `pip install -r requirements.txt`
-2. Run the script from the `tests/e2e` directory - 
+The script automates all the manual resource creation steps but is currently only available for Dynamic Provisioning option.  
+It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0. 
+1. Run the following commands from the `tests/e2e` dircetory
+2. Install the script dependencies 
 ```
-python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
+pip install -r requirements.txt
+```
+
+3. Run the automated script as follows. You can skip specifying the `efs_file_system_name` and `efs_security_group_name` if you are running the command for the first time in your account and want to use default values - 
+```
+export FILESYSTEM_NAME=<fs_name>
+export SG_NAME=<sg_name>
+
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $FILESYSTEM_NAME --efs_security_group_name $SG_NAME
 ```
 #### **Advanced customization**
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
 
 ### 2.2 [Option 2] Manual setup
-If you prefer to manually setup each components then you can follow this manual guide.  
+If you prefer to manually setup each components then you can follow this manual guide.  As mentioned, it you have two options between Static and Dynamic provisioing later in step 4 of this section.  
 
 ```
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
@@ -156,7 +164,20 @@ Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also ch
 In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
 ## 3.0 Using EFS Storage in Kubeflow
-### 3.1 Changing the default Storage Class
+### 3.1 Set up the environment
+For the following sections, make sure to navigate back to the docs folder at the following path - 
+```
+cd ../../docs/deployment/add-ons/storage
+```
+and also export the namespace as - 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+```
+export the claim name you plan to use 
+```
+export CLAIM_NAME=efs-claim
+```
+### 3.2 Changing the default Storage Class
 After installing Kubeflow, you can change the default Storage Class from `gp2` to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named `efs-sc`. You can check your storage classes by running `kubectl get sc`.  
   
 This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the `efs-sc` class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using `gp2` for workspace volumes and keep the EFS storage class for datasets/data volumes only.
@@ -172,29 +193,11 @@ kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.ku
 ```
 kubectl patch storageclass efs-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
-### 3.2 Creating and using EFS volumes as workspace or data volume for a notebook (Dynamic Provisioning)
 
-**Important : The following example only works if you setup dynamic provisioning.**
+Note: As mentioned, make sure to change your default storage class only after you have completed your Kubeflow deployment. The default Kubeflow components may not work well with a different storage class. 
 
-Here is an example that illustrates how to create a PVC for your dataset in `ReadWriteMany` mode meaning it can be used by many notebooks at the same time as well as how to create a notebook with a workspace volume for the notebook data and how to specify that you want to use your dataset volume as data volume.
-Note that both of these volumes are created under the storage class `efs-sc` which represents the EFS storage class created earlier.
-  
-
-https://user-images.githubusercontent.com/26939775/153103745-70f93ac5-88f3-4387-b40d-b585fca80af4.mp4
-
-
-### 3.3 Using existing EFS volume as workspace or data volume for a notebook (Static Provisioning)
-
-**Important : The following example only works if you setup static provisioning.**
-
-Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](./README.md#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - `public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`. Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
-
-In case the server does not start up in the expected time, do make sure to check - 
-1. The Notebook Controller Logs
-2. The specific notebook server instance pod's logs
-
-### Note about Permissions
-You might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. 
+### 3.3 Note about Permissions
+This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
 ```
 export CLAIM_NAME=efs-claim
@@ -205,7 +208,28 @@ yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM
 kubectl apply -f notebook-sample/set-permission-job.yaml
 ```
 
-### 3.4 Using EFS volume for a TrainingJob using TFJob Operator
+### 3.4 Creating and using EFS volumes as workspace or data volume for a notebook (Dynamic Provisioning)
+
+**Important : The following example only works if you setup dynamic provisioning.**
+
+Here is an example that illustrates how to create a PVC for your dataset in `ReadWriteMany` mode meaning it can be used by many notebooks at the same time as well as how to create a notebook with a workspace volume for the notebook data and how to specify that you want to use your dataset volume as data volume.
+Note that both of these volumes are created under the storage class `efs-sc` which represents the EFS storage class created earlier.
+  
+https://user-images.githubusercontent.com/26939775/153103745-70f93ac5-88f3-4387-b40d-b585fca80af4.mp4
+
+
+### 3.5 Using existing EFS volume as workspace or data volume for a notebook (Static Provisioning)
+
+**Important : The following example only works if you setup static provisioning.**
+
+Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](./README.md#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - `public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`. Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
+
+In case the server does not start up in the expected time, do make sure to check - 
+1. The Notebook Controller Logs
+2. The specific notebook server instance pod's logs
+
+
+### 3.6 Using EFS volume for a TrainingJob using TFJob Operator
 The following section re-uses the PVC and the Tensorflow Kubeflow Notebook created in the previous steps to download a dataset to the EFS Volume. Then we spin up a TFjob which runs a image classification job using the data from the shared volume. 
 Source: https://www.tensorflow.org/tutorials/load_data/images
 
@@ -289,3 +313,10 @@ kubectl delete sc efs-sc
 
 ### 4.4 Delete the EFS mount targets, filesystem and security group
 Use the steps in this [AWS Guide](https://docs.aws.amazon.com/efs/latest/ug/delete-efs-fs.html) to delete the EFS filesystem that you created.
+
+## 5.0 Known Issues:
+1. When you rerun the `eksctl create iamserviceaccount` to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In such a case you may need to do one or both of the following - 
+    a. Delete the cloudformation stack associated with this add-on role.
+    b. Delete the `efs-csi-controller-sa` service account and then re-run the required steps. If you used the auto-script, you can rerun it by specifying the same `filesystem-name` such that a new one is not created. 
+
+2. We have seen some issues when running these steps on multiple clusters sharing the same VPC.
