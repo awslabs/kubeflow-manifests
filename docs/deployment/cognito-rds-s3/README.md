@@ -83,7 +83,7 @@ Follow the pre-requisites section from [this guide](../rds-s3/README.md#1-prereq
         kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
         # AWS Secret Manager
-        kustomize build awsconfigs/common/aws-secrets-manager/base | kubectl apply -f -
+        kustomize build awsconfigs/common/aws-secrets-manager | kubectl apply -f -
 
         # Kubeflow Pipelines
         kustomize build awsconfigs/apps/pipeline | kubectl apply -f -

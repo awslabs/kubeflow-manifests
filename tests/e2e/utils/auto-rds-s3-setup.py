@@ -2,6 +2,7 @@ import argparse
 import boto3
 import subprocess
 import json
+import yaml
 
 from importlib_metadata import metadata
 from utils import (
@@ -157,13 +158,10 @@ def create_s3_bucket(s3_client):
 
 
 def setup_s3_secrets(secrets_manager_client):
-    s3_secret_name = "s3-secret"
-
-    if not does_secret_already_exist(secrets_manager_client, s3_secret_name):
-        create_s3_secret(secrets_manager_client, s3_secret_name)
+    if not does_secret_already_exist(secrets_manager_client, S3_SECRET_NAME):
+        create_s3_secret(secrets_manager_client, S3_SECRET_NAME)
     else:
-        print(
-            f"Skipping S3 secret creation, secret '{s3_secret_name}' already exists!")
+        print(f"Skipping S3 secret creation, secret '{S3_SECRET_NAME}' already exists!")
 
 
 def does_secret_already_exist(secrets_manager_client, secret_name):
@@ -195,18 +193,18 @@ def setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client):
     print("                          RDS Setup")
     print("=================================================================")
 
-    rds_secret_name = "rds-secreta"
-
     if not does_database_exist(rds_client):
-        if not does_secret_already_exist(secrets_manager_client, rds_secret_name):
-            db_root_password = setup_db_instance(
-                rds_client, secrets_manager_client, eks_client, ec2_client
+        if not does_secret_already_exist(secrets_manager_client, RDS_SECRET_NAME):
+            db_root_password = setup_db_instance(rds_client)
+            create_rds_secret(
+                secrets_manager_client,
+                RDS_SECRET_NAME,
+                db_root_password
             )
             create_rds_secret(secrets_manager_client,
                               rds_secret_name, db_root_password)
         else:
-            print(
-                f"Skipping RDS setup, secret '{rds_secret_name}' already exists!")
+            print(f"Skipping RDS setup, secret '{RDS_SECRET_NAME}' already exists!")
     else:
         print(
             f"Skipping RDS setup, DB instance '{DB_INSTANCE_NAME}' already exists!")
@@ -500,18 +498,19 @@ def setup_kubeflow_pipeline():
         print("Could not retrieve DB instance info, aborting Kubeflow pipeline setup!")
         return
 
-    pipeline_params_env_file = "../../../awsconfigs/apps/pipeline/params.env"
+    pipeline_rds_params_env_file = "../../../awsconfigs/apps/pipeline/rds/params.env"
+    pipeline_rds_secret_provider_class_file = "../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
+    pipeline_rds_params_env_lines = get_pipeline_params_env_lines(pipeline_rds_params_env_file)
+    new_pipeline_rds_params_env_lines = get_updated_pipeline_rds_params_env_lines(db_instance_info, pipeline_rds_params_env_lines)
+    edit_pipeline_params_env_file(new_pipeline_rds_params_env_lines, pipeline_rds_params_env_file)
+    update_secret_provider_class(pipeline_rds_secret_provider_class_file, RDS_SECRET_NAME)
 
-    pipeline_params_env_lines = get_pipeline_params_env_lines(
-        pipeline_params_env_file)
-
-    new_pipeline_params_env_lines = get_updated_pipeline_params_env_lines(
-        db_instance_info, pipeline_params_env_lines
-    )
-
-    edit_pipeline_params_env_file(
-        new_pipeline_params_env_lines, pipeline_params_env_file
-    )
+    pipeline_s3_params_env_file = "../../../awsconfigs/apps/pipeline/s3/params.env"
+    pipeline_s3_secret_provider_class_file = "../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
+    pipeline_s3_params_env_lines = get_pipeline_params_env_lines(pipeline_s3_params_env_file)
+    new_pipeline_s3_params_env_lines = get_updated_pipeline_s3_params_env_lines(pipeline_s3_params_env_lines)
+    edit_pipeline_params_env_file(new_pipeline_s3_params_env_lines, pipeline_s3_params_env_file)
+    update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
 
     print("Kubeflow pipeline setup done!")
 
@@ -522,7 +521,7 @@ def get_pipeline_params_env_lines(pipeline_params_env_file):
     return pipeline_params_env_lines
 
 
-def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_lines):
+def get_updated_pipeline_rds_params_env_lines(db_instance_info, pipeline_params_env_lines):
     db_host_pattern = "dbHost="
     db_host_new_line = db_host_pattern + \
         db_instance_info["Endpoint"]["Address"] + "\n"
@@ -531,6 +530,16 @@ def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_
     db_mlmd_db_new_line = db_mlmd_db_pattern + \
         db_instance_info["DBName"] + "\n"
 
+    new_pipeline_params_env_lines = []
+
+    for line in pipeline_params_env_lines:
+        line = replace_line(line, db_host_pattern, db_host_new_line)
+        line = replace_line(line, db_mlmd_db_pattern, db_mlmd_db_new_line)
+        new_pipeline_params_env_lines.append(line)
+
+    return new_pipeline_params_env_lines
+
+def get_updated_pipeline_s3_params_env_lines(pipeline_params_env_lines):
     bucket_name_pattern = "bucketName="
     bucket_name_new_line = bucket_name_pattern + S3_BUCKET_NAME + "\n"
 
@@ -540,8 +549,6 @@ def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_
     new_pipeline_params_env_lines = []
 
     for line in pipeline_params_env_lines:
-        line = replace_line(line, db_host_pattern, db_host_new_line)
-        line = replace_line(line, db_mlmd_db_pattern, db_mlmd_db_new_line)
         line = replace_line(line, bucket_name_pattern, bucket_name_new_line)
         line = replace_line(
             line, minio_service_region_pattern, minio_service_region_new_line
@@ -549,7 +556,6 @@ def get_updated_pipeline_params_env_lines(db_instance_info, pipeline_params_env_
         new_pipeline_params_env_lines.append(line)
 
     return new_pipeline_params_env_lines
-
 
 def replace_line(line, pattern, new_line):
     if line.startswith(pattern):
@@ -565,6 +571,27 @@ def edit_pipeline_params_env_file(
 
     with open(pipeline_params_env_file, "w") as file:
         file.writelines(new_pipeline_params_env_lines)
+
+def read_yaml(filename):
+    with open(filename) as file:
+        return yaml.safe_load(file.read())
+
+def write_yaml(filename, contents):
+    with open(filename, 'w') as file:
+        yaml.dump(contents, file)
+
+def update_secret_provider_class(secret_provider_class_file, secret_name):
+    secret_provider = read_yaml(secret_provider_class_file)
+
+    secret_provider_objects = yaml.safe_load(
+        secret_provider["spec"]["parameters"]["objects"]
+    )
+    secret_provider_objects[0]["objectName"] = secret_name
+    secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
+        secret_provider_objects
+    )
+
+    write_yaml(secret_provider_class_file, secret_provider)
 
 
 def footer():
@@ -691,6 +718,23 @@ parser.add_argument(
     """,
     required=True,
 )
+RDS_SECRET_NAME = "rds-secret"
+parser.add_argument(
+    '--rds_secret_name',
+    type=str,
+    default=RDS_SECRET_NAME,
+    help=f"Name of the secret containing RDS related credentials. Default is set to {RDS_SECRET_NAME}",
+    required=False
+)
+S3_SECRET_NAME = "s3-secret"
+parser.add_argument(
+    '--s3_secret_name',
+    type=str,
+    default=S3_SECRET_NAME,
+    help=f"Name of the secret containing S3 related credentials. Default is set to {S3_SECRET_NAME}",
+    required=False
+)
+
 args, _ = parser.parse_known_args()
 
 if __name__ == "__main__":
@@ -709,5 +753,7 @@ if __name__ == "__main__":
     DB_BACKUP_RETENTION_PERIOD = args.db_backup_retention_period
     DB_STORAGE_TYPE = args.db_storage_type
     DB_SUBNET_GROUP_NAME = args.db_subnet_group_name
+    RDS_SECRET_NAME = args.rds_secret_name
+    S3_SECRET_NAME = args.s3_secret_name
 
     main()

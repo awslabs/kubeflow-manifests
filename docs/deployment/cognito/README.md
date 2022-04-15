@@ -104,7 +104,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
           export CognitoUserPoolDomain=<>
           export certArn=<>
           export signOutURL=<>
-          export CognitoLogoutURL=$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL
+          export CognitoLogoutURL=https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL
           ```
 1. Substitute values for setting up Ingress.
     1. ```

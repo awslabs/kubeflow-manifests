@@ -8,7 +8,7 @@ from e2e.utils.utils import kubectl_apply
 from e2e.fixtures.cluster import create_iam_service_account
 
 AWS_CONFIGS_PATH = "../../awsconfigs/"
-SECRETS_MANAGER_KUSTOMIZE_FILE_BASE_PATH = f"{AWS_CONFIGS_PATH}common/aws-secrets-manager/base/"
+SECRETS_MANAGER_KUSTOMIZE_FILE_BASE_PATH = f"{AWS_CONFIGS_PATH}common/aws-secrets-manager/"
 SECRETS_MANAGER_KUSTOMIZE_FILE_PATH = f"{SECRETS_MANAGER_KUSTOMIZE_FILE_BASE_PATH}kustomization.yaml"
 POD_DEFAULT_FILE_PATH = "utils/notebooks/pod-default.yaml"
 
