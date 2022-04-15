@@ -8,6 +8,8 @@ import logging
 from botocore.exceptions import ClientError
 from typing import Any
 
+from e2e.utils.utils import wait_for
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,3 +57,21 @@ class IAMPolicy:
         except ClientError:
             logger.exception(f"failed to delete iam policy {self.arn}")
             raise
+    
+    def wait_for_policy_detachments(self):
+        """
+        Policies can't be deleted unless they are not attached to any IAM resources.
+
+        Describes any IAM resources this policy is attached to. If not attached to any resources, the method returns successfully. Else, times out.
+        """
+
+        def callback():
+            resp = self.iam_client.list_entities_for_policy(
+                PolicyArn=self.arn
+            )
+
+            assert len(resp['PolicyGroups']) == 0
+            assert len(resp['PolicyUsers']) == 0
+            assert len(resp['PolicyRoles']) == 0
+        
+        wait_for(callback)
