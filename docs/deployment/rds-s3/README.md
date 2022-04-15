@@ -8,21 +8,22 @@ This Kustomize Manifest can be used to deploy Kubeflow Pipelines (KFP) and Katib
 
 [Amazon Relational Database Service (RDS)](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.
 
-In the [default kubeflow installation](../../../../example/kustomization.yaml), the [KFP](../../../../apps/katib/upstream/components/mysql/mysql.yaml) and [Katib](../../../../apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
+In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](../../../upstream/apps/katib/upstream/components/mysql/mysql.yaml) and [Katib](../../../upstream/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
 
 As compared to using the MySQL setup in the default installation, using RDS provides the following advantages:
-- Easier to configure scalability and availability: RDS provides high availability and failover support for DB instances using Multi-AZ deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.
-- Persisted KFP and Katib data can be reused across Kubeflow installations with the same Kubeflow version: Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing the same RDS instance to be used across multiple Kubeflow installations with the same Kubeflow version.
+- Easier to configure availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events
+- Easy to configure scalability: While the default Kubeflow installation uses a EBS hosted Peristent Volume Claim that is AZ bound and does not support automatic online resizing, RDS can be configured to handle availability and scaling needs
+- KFP and Katib data can be persisted beyond single Kubeflow installations: Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing multiple Kubeflow installations to reuse the same RDS instance provided that the KFP component versions stores data in a format that is compatible with each other.
 - Higher level of customizability and management: RDS provides management features to facilitate changing database instance types, updating SQL versions, and more.
 
 ### S3
 [Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html) is an object storage service that is highly scalable, available, secure, and performant. 
 
-In the [default kubeflow installation](../../../../example/kustomization.yaml), the [KFP](../../../../apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
+In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](../../../upstream/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
 
 Configuring MinIO to read and write to S3 provides the following advantages:
 - Higher scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.
-- Persisted KFP metadata can be reused across Kubeflow installations with same Kubeflow version: Using S3 decouples the KFP object datastore from the Kubeflow deployment, allowing the same S3 resources to be used across multiple Kubeflow installations with the same Kubeflow version.
+- KFP artifacts can be persisted beyond single Kubeflow installations: Using S3 decouples the KFP artifact store from the Kubeflow deployment, allowing multiple Kubeflow installations to access the same artifacts provided that the KFP component versions stores data in a format that is compatible with each other.
 - Higher level of customizability and management: S3 provides management features to help optimize, organize, and configure access to your data to meet your specific business, organizational, and compliance requirements
 
 To get started with configuring and installing your Kubeflow installation with RDS and S3 follow the [install](#install) steps below to configure and deploy the Kustomize manifest.
@@ -34,10 +35,14 @@ The following steps show how to configure and deploy Kubeflow with supported AWS
 ### Using only RDS or only S3
 
 Steps relevant only to the RDS installation will be prefixed with `[RDS]`.
+
 Steps relevant only to the S3 installation will be prefixed with `[S3]`.
+
 Steps without any prefixing are necessary for all installations.
 
 To install for either only RDS or S3 complete the steps relevant to your installation choice.
+
+To install for both RDS and S3 complete all the below steps.
 
 ## 1.0 Prerequisites
 
@@ -121,6 +126,12 @@ If you prefer to manually setup each components then you can follow this manual 
 2. [RDS] Create an RDS Instance
 
     Refer to the [RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.MySQL.html) for steps on creating an `RDS MySQL instance`.
+
+    When creating the RDS instance for security and connectivity reasons we recommend that:
+    - The RDS instance is in the same VPC as the cluster
+    - The RDS instance subnets must belong to at least 2 private subnets within the VPC
+    - The RDS instance security group is the same security group used by the EKS node instances
+
     To complete the following steps you will need to keep track of the following:
     - `RDS database name` (not to be confused with the `DB identifier`)
     - `RDS database admin username`
@@ -137,6 +148,11 @@ If you prefer to manually setup each components then you can follow this manual 
            aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the rds secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml) to the name of the secret. 
+         - Two line command:
+           ```
+           export RDS_SECRET = <your rds secret name>
+           yq e -i '.spec.parameters.objects |= sub("rds-secret",env(RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+           ```
          - For example, if your secret name is `rds-secret-new`, the configuration would look like:
          - ```
            apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
@@ -162,10 +178,6 @@ If you prefer to manually setup each components then you can follow this manual 
                       - path: "port"
                          objectAlias: "port"
            ```
-         - One line command:
-           ```
-           yq e -i '.spec.parameters.objects |= sub("rds-secret","YOUR_SECRET_NAME")' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
-           ```
          
    1. [S3] Create the S3 secret and configure the secret provider:
       1. Configure a secret, for example named `s3-secret`, with your AWS credentials. These need to be long term credentials from an IAM user and not temporary.
@@ -175,6 +187,11 @@ If you prefer to manually setup each components then you can follow this manual 
            aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the s3 secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the secret. 
+         - Two line command:
+           ```
+           export S3_SECRET= <your s3 secret name>
+           yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
+           ```
          - For example, if your secret name is `s3-secret-new`, the configuration would look like:
          - ```
            apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
@@ -193,10 +210,6 @@ If you prefer to manually setup each components then you can follow this manual 
                          objectAlias: "access"
                        - path: "secretkey"
                          objectAlias: "secret"           
-           ```
-         - One line command:
-           ```
-           yq e -i '.spec.parameters.objects |= sub("s3-secret","YOUR_SECRET_NAME")' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
            ```
 
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
@@ -223,7 +236,7 @@ If you prefer to manually setup each components then you can follow this manual 
    ```
 
 5. Update the KFP configurations
-    1. [RDS] Configure the `awsconfigs/apps/pipeline/rds/params.env` file with the RDS endpoint url and the metadata db name.
+    1. [RDS] Configure the [RDS params file](../../../awsconfigs/apps/pipeline/rds/params.env) with the RDS endpoint url and the metadata db name.
 
        For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` and your metadata db name is `kubeflow` your `params.env` file should look like:
        ```
@@ -231,7 +244,7 @@ If you prefer to manually setup each components then you can follow this manual 
         mlmdDb=kubeflow
         ```
 
-    2. [S3] Configure the `awsconfigs/apps/pipeline/s3/params.env` file with with the `S3 bucket name`, and `S3 bucket region`..
+    2. [S3] Configure the [S3 params file](../../../awsconfigs/apps/pipeline/s3/params.env) with with the `S3 bucket name`, and `S3 bucket region`..
 
          For example, if your S3 bucket name is `kf-aws-demo-bucket` and s3 bucket region is `us-west-2` your `params.env` file should look like:
          ```
@@ -244,7 +257,7 @@ If you prefer to manually setup each components then you can follow this manual 
 
 Once you have the resources ready, you can continue on to deploying the Kubeflow manifests using the single line command below -
 
-Choose your deployment option below from:
+Choose one of the deployment options from below:
 
 - Deploying the configuration for both RDS and S3
 - Deploying the configuration for RDS only

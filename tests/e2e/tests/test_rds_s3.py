@@ -397,6 +397,20 @@ class TestRDSS3:
         assert resp[0]["PipelineId"] == pipeline_id
         assert resp[0]["Conditions"] == "Succeeded"
 
+        mysql_client = get_mysql_client(
+            user=cfn_stack["params"]["DBUsername"],
+            password=cfn_stack["params"]["DBPassword"],
+            host=stack_outputs["RDSEndpoint"],
+            database=METADB_NAME,
+        )
+
+        resp = mysql.query(
+            mysql_client, f"show tables"
+        )
+        tables_in_mldb = {t['Tables_in_metadata_db'] for t in resp}
+        expected_tables_in_mldb = {'ContextProperty', 'Execution', 'ParentType', 'Type', 'ParentContext', 'ArtifactProperty', 'Event', 'ExecutionProperty', 'Context', 'EventPath', 'Artifact', 'MLMDEnv', 'Association', 'TypeProperty', 'Attribution'}
+        assert expected_tables_in_mldb == tables_in_mldb
+
         kfp_client.delete_experiment(experiment.id)
 
     # todo: make test method reusable
@@ -426,7 +440,7 @@ class TestRDSS3:
             user=cfn_stack["params"]["DBUsername"],
             password=cfn_stack["params"]["DBPassword"],
             host=stack_outputs["RDSEndpoint"],
-            database=METADB_NAME,
+            database="kubeflow",
         )
 
         resp = mysql.query(

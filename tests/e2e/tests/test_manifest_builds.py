@@ -1,3 +1,8 @@
+"""
+Temporary test file to test kustomize manifests build successfully.
+Todo: These scenarios should be tested by our unit tests.
+"""
+
 import pytest
 import subprocess
 
