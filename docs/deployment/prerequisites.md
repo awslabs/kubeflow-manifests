@@ -21,7 +21,7 @@ This guide assumes that you have:
         export CLUSTER_REGION=$CLUSTER_REGION
         eksctl create cluster \
         --name ${CLUSTER_NAME} \
-        --version 1.19 \
+        --version 1.20 \
         --region ${CLUSTER_REGION} \
         --nodegroup-name linux-nodes \
         --node-type m5.xlarge \
