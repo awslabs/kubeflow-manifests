@@ -45,41 +45,7 @@ To install for either only RDS or S3 complete the steps relevant to your install
 To install for both RDS and S3 complete all the below steps.
 
 ## 1.0 Prerequisites
-
-1. Install CLI tools
-
-   - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
-   - [eksctl >= 0.56](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
-   - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
-   - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://github.com/mikefarah/yq/#install))
-   - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
-   - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
-     - :warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
-
-1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
-
-1. Set EKS Cluster variables for EKS cluster creation and for use in automated setup scripts
-```
-export CLUSTER_NAME=<YOUR_CLUSTER_NAME>
-export CLUSTER_REGION=<YOUR_CLUSTER_REGION>
-```
-
-1. Create an EKS cluster
-
-Run this command to create an EKS cluster by changing `<YOUR_CLUSTER_NAME>` and `<YOUR_CLUSTER_REGION>` to your preferred settings. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
-
-```
-eksctl create cluster \
---name ${CLUSTER_NAME} \
---version 1.19 \
---region ${CLUSTER_REGION} \
---nodegroup-name linux-nodes \
---node-type m5.xlarge \
---nodes 5 \
---nodes-min 1 \
---nodes-max 10 \
---managed
-```
+Follow the pre-requisites section from [this guide](../prerequisites.md)
 
 4. Create an OIDC provider for your cluster  
    **Important :**  
