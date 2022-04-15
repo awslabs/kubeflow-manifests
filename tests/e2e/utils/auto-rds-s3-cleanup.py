@@ -35,12 +35,6 @@ def delete_s3_bucket(metadata_dict, secrets_manager_client):
         SecretId=metadata_dict["s3_secret_name"], ForceDeleteWithoutRecovery=True
     )
 
-    try:
-        secrets_manager_client.describe_secret(SecretId=metadata_dict["s3_secret_name"])
-
-    except:
-        print("S3 secret has been successfully deleted")
-
 
 def delete_rds(metadata_dict, secrets_manager_client):
     rds_client = get_rds_client(CLUSTER_REGION)
@@ -73,24 +67,11 @@ def delete_rds(metadata_dict, secrets_manager_client):
     print("Deleting DB Subnet Group...")
 
     rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
-
-    assert (
-        rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
-        is None
-    )
     print("DB Subnet Group has been successfully deleted")
 
     secrets_manager_client.delete_secret(
         SecretId=metadata_dict["rds_secret_name"], ForceDeleteWithoutRecovery=True
     )
-
-    try:
-        secrets_manager_client.describe_secret(
-            SecretId=metadata_dict["rds_secret_name"]
-        )
-
-    except:
-        print("RDS secret has been successfully deleted")
 
 
 parser = argparse.ArgumentParser()
