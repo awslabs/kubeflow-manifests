@@ -1,8 +1,10 @@
-# AWS IAM for Kubeflow Profiles
+# Profiles Component Guide for Kubeflow on AWS
 
-## Background
+## AWS IAM for Kubeflow Profiles
 
-### Kubeflow Profiles
+### Background
+
+#### Kubeflow Profiles
 
 From the [official Kubeflow documentation](https://www.kubeflow.org/docs/components/multi-tenancy/overview/), a `Profile` is "a unique configuration for a user, which determines their access privileges and is defined by the Administrator". Additional details can be found [here](https://github.com/kubeflow/kubeflow/tree/d43aee19ad8b556273a627ad34367e7e56b5c97e/components/profile-controller).
 
@@ -12,17 +14,17 @@ To control the access by Profile users to resources outside of Kuberenetes, `Pro
 
 The `AwsIamForServiceAccount` plugin is such a Profile plugin which allows enforcing AWS IAM access control for Profile users in order to grant/limit access to AWS resources and services.
 
-### The Profiles Controller and the `AwsIamForServiceAccount` Plugin
+#### The Profiles Controller and the `AwsIamForServiceAccount` Plugin
 
 In order for the profile controller to interface with AWS IAM access control, the profiles controller pod must be recognized as an entity that can interface with IAM and be given the necessary permissions. This is done by using IAM Role Service Accounts (IRSA).
 
-In AWS EKS, [IRSA](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/) is a feature that allows enforcing AWS IAM permissions boundaries at the Kubernetes pod level. In a nutshell, a Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the necessary (temporary) credentials so that the pod can make requests to AWS services within the scope of role policy associated with the IRSA.
+In AWS EKS, [IRSA](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/) is a feature that allows enforcing AWS IAM permissions boundaries at the Kubernetes pod level. In a nutshell, a Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role arn and a token used to get the credentials so that the pod can make requests to AWS services within the scope of role policy associated with the IRSA.
 
-In order to enforce IAM permissions boundaries at the profile level, the profiles controller IRSA itself is not given the permissions required by the profiles. Instead, admins will create an IAM role for each profile and the profile controller IRSA will have permissions to access the admin created profile role and modify it to grant the `default-editor` SA in the profile namespsace permissions to assume the role. The `default-editor` SA in the profile namespace will also be annotated with the role arn. By doing both, EKS will then inject the necessary temporary credentials into the pod in the profile namespace, granting it the permissions defined in the profile role policy.
+In order to enforce IAM permissions boundaries at the profile level, the profiles controller IRSA itself is not given the permissions required by the profiles. Instead, admins will create an IAM role for each profile and the profile controller IRSA will have permissions to access the admin created profile role and modify it to grant the `default-editor` SA in the profile namespsace permissions to assume the role. The `default-editor` SA in the profile namespace will also be annotated with the role arn. By doing both, EKS will then inject the profile role arn and a token into the pod in the profile namespace, allowing it to receive the credentials that grant it the permissions defined in the profile role policy.
 
 The `default-editor` SA is used by various services in Kubeflow to launch resources in users namespace and hence the pods inherit the permissions of this service account. However, not all services do this by default.
 
-### Component Level Implementations
+#### Component Level Implementations
 
 As of writing, the following components have profile level support: Central Dashboard, Notebooks, Pipelines, AutoML (Katib), KFServing.
 
@@ -30,11 +32,11 @@ The following components have been tested to work with the `AwsIamForServiceAcco
 
 Support for the `AwsIamForServiceAccount` plugin in all the components that have profile level support is being actively worked on.
 
-Documentation and samples on using the `AwsIamForServiceAccount` plugin with the supported components can be found [here](./components).
+Documentation and samples on using the `AwsIamForServiceAccount` plugin in the [component guides](./) for the respective component.
 
-## Configuration Steps
+### Configuration Steps
 
-The following steps should be run after deploying Kubeflow via the [provided deployment options](../../../../docs/deployment).
+The following steps should be run after deploying Kubeflow via the [provided deployment options](../../docs/deployment).
 
 1. Export the following variables for convenience.
     ```
@@ -44,7 +46,7 @@ The following steps should be run after deploying Kubeflow via the [provided dep
     export PROFILE_NAME=<the name of the profile to be created>
     ```
 
-1. Create an IAM policy using [the following policy document](../../../../awsconfigs/infra_configs/iam_profile_controller_policy.json).
+1. Create an IAM policy using [the following policy document](../../awsconfigs/infra_configs/iam_profile_controller_policy.json).
     ```
     aws iam create-policy \
     --region $CLUSTER_REGION \
@@ -105,7 +107,15 @@ The following steps should be run after deploying Kubeflow via the [provided dep
     aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
     ```
 
-1. Create a profile using the `PROFILE_NAME` and `OIDC_ROLE_ARN`.
+1. Create a user in your configured auth provider or use an existing user. 
+
+   Export the user as a environment variable. For simplicity we will use the `user@example.com` user that is created by default by most of our provided deployment options.
+   ```
+   export PROFILE_USER="user@example.com"
+   ```
+
+1. Create a profile using the `PROFILE_NAME`. 
+
     ```
     cat <<EOF > profile_iam.yaml
     apiVersion: kubeflow.org/v1
@@ -115,7 +125,7 @@ The following steps should be run after deploying Kubeflow via the [provided dep
     spec:
       owner:
         kind: User
-        name: user@example.com
+        name: ${PROFILE_USER}
       plugins:
       - kind: AwsIamForServiceAccount
         spec:
@@ -125,7 +135,7 @@ The following steps should be run after deploying Kubeflow via the [provided dep
     kubectl apply -f profile_iam.yaml
     ```
 
-1. The configuration can be verified by creating and running a notebook in the following [steps](components/notebooks/README.md#try-it-out).
+1. The configuration can be verified by creating and running a notebook in the following [steps](notebooks.md#try-it-out).
 
 
 

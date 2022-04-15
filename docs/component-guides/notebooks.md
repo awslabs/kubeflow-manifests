@@ -1,3 +1,5 @@
+# Notebooks Component Guide for Kubeflow on AWS
+
 ## Setup RDS & S3 credentials access for notebooks & pipelines
 ### Use Cases
 - Be able to use `boto3` or aws libraries that require to pass in credentials in a notebook and specify credentials without hard coding them. Access the credentials via environment variables.  
@@ -72,3 +74,22 @@ import os
 
 print(os.environ['port'])
 ```  
+
+
+## AWS IAM for Kubeflow Profiles in Notebooks
+
+### Use Cases
+
+Access AWS resources through notebooks without exposing credentials.
+
+### Configuration
+
+Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found [here](../../../profile-iam). The prerequisite steps will go through creating a profile that uses the `AwsIamForServiceAccount` plugin.
+
+No additional configuration steps are required.
+
+### Try It Out
+1. Create a notebook server through the central dashboard.
+1. Select the profile name from the top left drop down menu for the profile you created.
+1. Create a notebook from [the sample](./samples/notebooks/verify_profile_iam_notebook.ipynb).
+1. Run the notebook, it should be able to list the S3 buckets present in your account.

@@ -239,7 +239,7 @@ class TestProfileIRSA:
         s3_bucket_name = rand_name("test-profile-irsa-bucket")
         notebook_file_path = (
             TO_ROOT_PATH
-            + "docs/deployment/add-ons/profile-iam/components/notebooks/samples/verify_notebook.ipynb"
+            + "docs/component-guides/samples/notebooks/verify_profile_iam_notebook.ipynb"
         )
 
         notebook_server_pvc_spec_file = (
