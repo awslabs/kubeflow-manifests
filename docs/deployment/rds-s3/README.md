@@ -8,7 +8,7 @@ This Kustomize Manifest can be used to deploy Kubeflow Pipelines (KFP) and Katib
 
 [Amazon Relational Database Service (RDS)](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.
 
-In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](../../../upstream/apps/katib/upstream/components/mysql/mysql.yaml) and [Katib](../../../upstream/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
+In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/katib/upstream/components/mysql/mysql.yaml) and [Katib](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
 
 As compared to using the MySQL setup in the default installation, using RDS provides the following advantages:
 - Easier to configure availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events
@@ -19,7 +19,7 @@ As compared to using the MySQL setup in the default installation, using RDS prov
 ### S3
 [Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html) is an object storage service that is highly scalable, available, secure, and performant. 
 
-In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](../../../upstream/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
+In the [default kubeflow installation](../../../docs/deployment/vanilla/kustomization.yaml), the [KFP](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml) component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.
 
 Configuring MinIO to read and write to S3 provides the following advantages:
 - Higher scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.
@@ -238,10 +238,10 @@ If you prefer to manually setup each components then you can follow this manual 
 5. Update the KFP configurations
     1. [RDS] Configure the [RDS params file](../../../awsconfigs/apps/pipeline/rds/params.env) with the RDS endpoint url and the metadata db name.
 
-       For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` and your metadata db name is `kubeflow` your `params.env` file should look like:
+       For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` and your metadata db name is `metadata_db` your `params.env` file should look like:
        ```
         dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-        mlmdDb=kubeflow
+        mlmdDb=metadata_db
         ```
 
     2. [S3] Configure the [S3 params file](../../../awsconfigs/apps/pipeline/s3/params.env) with with the `S3 bucket name`, and `S3 bucket region`..
