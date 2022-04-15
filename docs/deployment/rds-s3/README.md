@@ -145,12 +145,12 @@ If you prefer to manually setup each components then you can follow this manual 
       1. Configure a secret, for example named `rds-secret`, with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when following the steps in Create RDS Instance.
          - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look like:
          - ```
-           aws secretsmanager create-secret --name rds-secret --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
+           export RDS_SECRET=<your rds secret name>
+           aws secretsmanager create-secret --name $RDS_SECRET --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the rds secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml) to the name of the secret. 
-         - Two line command:
+         - One line command:
            ```
-           export RDS_SECRET = <your rds secret name>
            yq e -i '.spec.parameters.objects |= sub("rds-secret",env(RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
            ```
          - For example, if your secret name is `rds-secret-new`, the configuration would look like:
@@ -184,12 +184,12 @@ If you prefer to manually setup each components then you can follow this manual 
          - Find more details about configuring/getting your AWS credentials here:
            https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
          - ```
-           aws secretsmanager create-secret --name s3-secret --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
+           export S3_SECRET=<your s3 secret name>
+           aws secretsmanager create-secret --name S3_SECRET --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the s3 secret provider configuration](../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the secret. 
-         - Two line command:
+         - One line command:
            ```
-           export S3_SECRET= <your s3 secret name>
            yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
            ```
          - For example, if your secret name is `s3-secret-new`, the configuration would look like:
