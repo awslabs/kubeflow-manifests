@@ -2,7 +2,7 @@ import argparse
 from time import sleep
 import boto3
 
-from utils import get_rds_client, get_s3_client
+from utils import get_rds_client, get_s3_client, get_secrets_manager_client
 
 
 def main():
@@ -11,11 +11,12 @@ def main():
         for line in setup_metadata.readlines():
             metadata = line.split("=")
             metadata_dict[metadata[0]] = metadata[1].strip("\n")
-    delete_s3_bucket(metadata_dict)
-    delete_rds(metadata_dict)
+    secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
+    delete_s3_bucket(metadata_dict, secrets_manager_client)
+    delete_rds(metadata_dict, secrets_manager_client)
 
 
-def delete_s3_bucket(metadata_dict):
+def delete_s3_bucket(metadata_dict, secrets_manager_client):
     s3_client = get_s3_client(CLUSTER_REGION)
     s3_resource = boto3.resource("s3")
     bucket_name = metadata_dict["bucket_name"]
@@ -26,11 +27,22 @@ def delete_s3_bucket(metadata_dict):
     bucket.objects.all().delete()
     s3_client.delete_bucket(Bucket=bucket_name)
 
-    assert s3_client.describe_bucket(Bucket=bucket_name) is None
+    buckets = s3_client.list_buckets()["Buckets"]
+    assert any(bucket["Name"] == bucket_name for bucket in buckets) is False
     print("S3 bucket has been successfully deleted")
 
+    secrets_manager_client.delete_secret(
+        SecretId=metadata_dict["s3_secret_name"], ForceDeleteWithoutRecovery=True
+    )
 
-def delete_rds(metadata_dict):
+    try:
+        secrets_manager_client.describe_secret(SecretId=metadata_dict["s3_secret_name"])
+
+    except:
+        print("S3 secret has been successfully deleted")
+
+
+def delete_rds(metadata_dict, secrets_manager_client):
     rds_client = get_rds_client(CLUSTER_REGION)
     db_instance_name = metadata_dict["db_instance_name"]
     db_subnet_group_name = metadata_dict["db_subnet_group_name"]
@@ -67,6 +79,18 @@ def delete_rds(metadata_dict):
         is None
     )
     print("DB Subnet Group has been successfully deleted")
+
+    secrets_manager_client.delete_secret(
+        SecretId=metadata_dict["rds_secret_name"], ForceDeleteWithoutRecovery=True
+    )
+
+    try:
+        secrets_manager_client.describe_secret(
+            SecretId=metadata_dict["rds_secret_name"]
+        )
+
+    except:
+        print("RDS secret has been successfully deleted")
 
 
 parser = argparse.ArgumentParser()
