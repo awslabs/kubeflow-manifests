@@ -1,3 +1,0 @@
-bucket_name=apr14-bugbash-kfp
-db_instance_name=kubeflow-db
-db_subnet_group_name=kubeflow-db-subnet-group

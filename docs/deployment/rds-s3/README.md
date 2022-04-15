@@ -97,11 +97,14 @@ The script also handles cases where the resources already exist in which case it
 
 Note : The script will **not** delete any resource therefore if a resource already exists (eg: secret, database with the same name or S3 bucket etc), **it will skip the creation of those resources and use the existing resources instead**. This was done in order to prevent unwanted results such as accidental deletion. For instance, if a database with the same name already exists, the script will skip the database creation setup. If it's expected in your scenario, then perhaps this is fine for you, if you simply forgot to change the database name used for creation then this gives you the chance to retry the script with the proper value. See `python auto-rds-s3-setup.py --help` for the list of parameters as well as their default values.
 
-1. Install the script dependencies `pip install -r requirements.txt`
-2. Run the script  
-Replace `CLUSTER_REGION`, `CLUSTER_NAME` and `YOUR_S3_BUCKET` with your values.
+1. Navigate to the Navigate to `tests/e2e/utils` directory
 ```
-python auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket YOUR_S3_BUCKET
+cd ../../../tests/e2e/utils
+```
+2. Install the script dependencies `pip install -r requirements.txt`
+3. Export values for CLUSTER_REGION, CLUSTER_NAME and S3_BUCKET then run the script
+```
+python auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET
 ```  
 
 ### Advanced customization
@@ -386,3 +389,14 @@ kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io conf
 
 kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
 ```
+
+To uninstall AWS resources created by the automated setup run the cleanup script
+1. Navigate to the Navigate to `tests/e2e/utils` directory
+```
+cd ../../../tests/e2e/utils
+```
+2. Install the script dependencies `pip install -r requirements.txt`
+3. Export values for CLUSTER_REGION then run the script
+```
+python auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
+```  
