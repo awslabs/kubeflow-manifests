@@ -8,9 +8,9 @@ This guide describes how to use Amazon EFS as Persistent storage on top of an ex
 **Important :**
 You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
 
-2. At this point, you have likely cloned this repo and checked out the right branch. Navigate to the current directory - 
+2. At this point, you have likely cloned this repo and checked out the right branch. Let's save this path to help us naviagte to different paths in the rest of this doc - 
 ```
-cd kubeflow-manifests/docs/deployment/add-ons/storage/efs
+export GITHUB_ROOT=$(pwd)
 ```
 
 3. Make sure the following environment variables are set. 
@@ -26,7 +26,10 @@ You can either use Automated or Manual setup to set up the resources required. I
 ### 2.1 [Option 1] Automated setup
 The script automates all the manual resource creation steps but is currently only available for Dynamic Provisioning option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0. 
-1. Run the following commands from the `tests/e2e` dircetory
+1. Run the following commands from the `tests/e2e` directory as - 
+```
+cd $GITHUB_ROOT/tests/e2e
+```
 2. Install the script dependencies 
 ```
 pip install -r requirements.txt
@@ -106,6 +109,11 @@ Note: For this README, we have assumed that you are creating your EFS Filesystem
 #### Choose between dynamic and static provisioning  
 In the following section, you have to choose between setting up [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) or setting up static provisioning.
 
+For this section, navigate to the storage directory in docs as - 
+```
+cd $GITHUB_ROOT/docs/deployment/add-ons/storage/efs
+```
+
 #### 4. [Option 1] Dynamic Provisioning  
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the `dynamic-provisioning/sc.yaml` file by chaning `<YOUR_FILE_SYSTEM_ID>` with your `fs-xxxxxx` file system id. You can also change it using the following command :  
 ```
@@ -167,7 +175,7 @@ In the following two sections we will be using this PVC to create a notebook ser
 ### 3.1 Set up the environment
 For the following sections, make sure to navigate back to the docs folder at the following path - 
 ```
-cd ../../docs/deployment/add-ons/storage
+cd $GITHUB_ROOT/docs/deployment/add-ons/storage/
 ```
 and also export the namespace as - 
 ```
