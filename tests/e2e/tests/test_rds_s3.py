@@ -40,7 +40,7 @@ from e2e.fixtures.clients import (
     create_k8s_admission_registration_api_client,
 )
 
-from e2e.utils import mysql
+from e2e.utils import mysql_utils
 
 from e2e.utils.cloudformation_resources import (
     create_cloudformation_fixture,
@@ -300,7 +300,7 @@ class TestRDSS3:
             database="mlpipeline",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from experiments where Name='{name}'"
         )
         assert len(resp) == 1
@@ -318,7 +318,7 @@ class TestRDSS3:
 
         kfp_client.delete_experiment(experiment.id)
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from experiments where Name='{name}'"
         )
         assert len(resp) == 0
@@ -388,7 +388,7 @@ class TestRDSS3:
             database="mlpipeline",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"select * from run_details where UUID='{run.id}'"
         )
 
@@ -404,7 +404,7 @@ class TestRDSS3:
             database=METADB_NAME,
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client, f"show tables"
         )
         tables_in_mldb = {t['Tables_in_metadata_db'] for t in resp}
@@ -443,7 +443,7 @@ class TestRDSS3:
             database="kubeflow",
         )
 
-        resp = mysql.query(
+        resp = mysql_utils.query(
             mysql_client,
             f"select count(*) as count from observation_logs where trial_name like '{name}%'",
         )
