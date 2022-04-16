@@ -13,7 +13,7 @@ Installation steps can be found [here](cognito)
 ### Components configured for Cognito, RDS and S3
 Installation steps can be found [here](cognito-rds-s3)
 
-### Vanilla version with dex for auth and ebs volumes as PV
+### Vanilla
 Installation steps can be found [here](vanilla)
 
 ## Add Ons - Services/Components that can be integrated with a Kubeflow deployment
