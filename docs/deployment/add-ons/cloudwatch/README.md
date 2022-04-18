@@ -1,14 +1,14 @@
 # Installing CloudWatch ContainerInsights on EKS
 
 ## Verify Prerequisites
-The EKS Cluster will need a IAM role asscoiated with one of its worker nodes with CloudWatchAgentServerPolicy attached.
+The EKS Cluster will need IAM service account roles associated with CloudWatchAgentServerPolicy attached.
  ```
 export CLUSTER_NAME=<>
 export CLUSTER_REGION=<>
-export NODEGROUP_NAME=$(aws eks list-nodegroups --cluster-name $CLUSTER_NAME --region $CLUSTER_REGION | jq -r '.nodegroups[0]')
-export NODE_ROLE_NAME=$(aws eks describe-nodegroup --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME --region $CLUSTER_REGION --output json | jq -r '.nodegroup.nodeRole' | grep -o '[^/]*$')
- 
-aws iam attach-role-policy --role-name $NODE_ROLE_NAME --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLUSTER_NAME --approve
+eksctl create iamserviceaccount --name cloudwatch-agent --namespace amazon-cloudwatch --cluster $CLUSTER_NAME --region $CLUSTER_REGION --role-name cloudwatch-agent --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+eksctl create iamserviceaccount --name fluent-bit --namespace amazon-cloudwatch --cluster $CLUSTER_NAME --region $CLUSTER_REGION --role-name fluent-bit --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 ```
 
 ## Install
