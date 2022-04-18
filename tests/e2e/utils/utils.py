@@ -140,8 +140,8 @@ def get_cfn_client(region):
     return boto3.client("cloudformation", region_name=region)
 
 
-def get_s3_client(region, access_key_id=None, secret_access_key_id=None):
-    return boto3.client("s3", region_name=region, aws_access_key_id=access_key_id,aws_secret_access_key=secret_access_key_id)
+def get_s3_client(region):
+    return boto3.client("s3", region_name=region)
 
 
 def get_logs_client(region):

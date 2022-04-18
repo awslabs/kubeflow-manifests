@@ -5,14 +5,16 @@ import json
 import yaml
 
 from importlib_metadata import metadata
+from e2e.fixtures.cluster import create_iam_service_account
 from utils import (
     get_ec2_client,
-    get_iam_client,
     get_rds_client,
     get_eks_client,
     get_s3_client,
     get_secrets_manager_client,
     kubectl_apply,
+    print_banner,
+    write_yaml_file,
 )
 
 from shutil import which
@@ -25,8 +27,6 @@ def main():
     verify_prerequisites()
     s3_client = get_s3_client(
         region=CLUSTER_REGION,
-        access_key_id=S3_ACCESS_KEY_ID,
-        secret_access_key_id=S3_SECRET_ACCESS_KEY,
     )
     secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
     setup_s3(s3_client, secrets_manager_client)
@@ -45,59 +45,26 @@ def main():
         f"s3_secret_name={S3_SECRET_NAME}",
         f"rds_secret_name={RDS_SECRET_NAME}",
     ]
-    script_metadata = [metadata + "\n" for metadata in script_metadata]
-    with open("auto-rds-s3-setup-metadata", "w") as setup_metadata:
-        setup_metadata.writelines(script_metadata)
+    script_metadata = {}
+    script_metadata["S3"] = {"bucket": S3_BUCKET_NAME, "secretName": S3_SECRET_NAME}
+    script_metadata["RDS"] = {
+        "instanceName": DB_INSTANCE_NAME,
+        "secretName": RDS_SECRET_NAME,
+        "subnetGroupName": DB_SUBNET_GROUP_NAME,
+    }
+    write_yaml_file(
+        yaml_content=script_metadata, file_path="utils/auto-rds-s3-setup-metadata.yaml"
+    )
 
 
 def header():
-    print("=================================================================")
-    print("                         RDS S3 Setup")
+    print_banner("RDS S3 Setup")
 
 
 def verify_prerequisites():
-    print("=================================================================")
-    print("                   Prerequisites Verification")
-    print("=================================================================")
-
-    verify_oidc_provider_prerequisite()
+    print_banner("Prerequisites Verification")
     verify_eksctl_is_installed()
     verify_kubectl_is_installed()
-
-
-def verify_oidc_provider_prerequisite():
-    print("Verifying OIDC provider...")
-
-    if is_oidc_provider_present():
-        print("OIDC provider found")
-    else:
-        raise Exception(
-            f"Prerequisite not met : No OIDC provider found for cluster '{CLUSTER_NAME}'!"
-        )
-
-
-def is_oidc_provider_present() -> bool:
-    iam_client = get_iam_client(CLUSTER_REGION)
-    oidc_providers = iam_client.list_open_id_connect_providers()[
-        "OpenIDConnectProviderList"
-    ]
-
-    if len(oidc_providers) == 0:
-        return False
-
-    for oidc_provider in oidc_providers:
-        oidc_provider_tags = iam_client.get_open_id_connect_provider(
-            OpenIDConnectProviderArn=oidc_provider["Arn"]
-        )["Tags"]
-
-        if any(
-            tag["Key"] == "alpha.eksctl.io/cluster-name"
-            and tag["Value"] == CLUSTER_NAME
-            for tag in oidc_provider_tags
-        ):
-            return True
-
-    return False
 
 
 def verify_eksctl_is_installed():
@@ -127,10 +94,7 @@ def verify_kubectl_is_installed():
 
 
 def setup_s3(s3_client, secrets_manager_client):
-    print("=================================================================")
-    print("                          S3 Setup")
-    print("=================================================================")
-
+    print_banner("S3 Setup")
     setup_s3_bucket(s3_client)
     setup_s3_secrets(secrets_manager_client)
 
@@ -139,8 +103,7 @@ def setup_s3_bucket(s3_client):
     if not does_bucket_exist(s3_client):
         create_s3_bucket(s3_client)
     else:
-        print(
-            f"Skipping S3 bucket creation, bucket '{S3_BUCKET_NAME}' already exists!")
+        print(f"Skipping S3 bucket creation, bucket '{S3_BUCKET_NAME}' already exists!")
 
 
 def does_bucket_exist(s3_client):
@@ -154,8 +117,7 @@ def create_s3_bucket(s3_client):
     args = {"ACL": "private", "Bucket": S3_BUCKET_NAME}
     # CreateBucketConfiguration is necessary to provide LocationConstraint unless using default region of us-east-1
     if CLUSTER_REGION != "us-east-1":
-        args["CreateBucketConfiguration"] = {
-            "LocationConstraint": CLUSTER_REGION}
+        args["CreateBucketConfiguration"] = {"LocationConstraint": CLUSTER_REGION}
 
     s3_client.create_bucket(**args)
     print("S3 bucket created!")
@@ -165,8 +127,7 @@ def setup_s3_secrets(secrets_manager_client):
     if not does_secret_already_exist(secrets_manager_client, S3_SECRET_NAME):
         create_s3_secret(secrets_manager_client, S3_SECRET_NAME)
     else:
-        print(
-            f"Skipping S3 secret creation, secret '{S3_SECRET_NAME}' already exists!")
+        print(f"Skipping S3 secret creation, secret '{S3_SECRET_NAME}' already exists!")
 
 
 def does_secret_already_exist(secrets_manager_client, secret_name):
@@ -194,22 +155,18 @@ def create_s3_secret(secrets_manager_client, s3_secret_name):
 
 
 def setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client):
-    print("=================================================================")
-    print("                          RDS Setup")
-    print("=================================================================")
+    print_banner("RDS Setup")
 
     if not does_database_exist(rds_client):
         if not does_secret_already_exist(secrets_manager_client, RDS_SECRET_NAME):
             db_root_password = setup_db_instance(
-                rds_client, secrets_manager_client, eks_client, ec2_client)
-            create_rds_secret(secrets_manager_client,
-                              RDS_SECRET_NAME, db_root_password)
+                rds_client, secrets_manager_client, eks_client, ec2_client
+            )
+            create_rds_secret(secrets_manager_client, RDS_SECRET_NAME, db_root_password)
         else:
-            print(
-                f"Skipping RDS setup, secret '{RDS_SECRET_NAME}' already exists!")
+            print(f"Skipping RDS setup, secret '{RDS_SECRET_NAME}' already exists!")
     else:
-        print(
-            f"Skipping RDS setup, DB instance '{DB_INSTANCE_NAME}' already exists!")
+        print(f"Skipping RDS setup, DB instance '{DB_INSTANCE_NAME}' already exists!")
 
 
 def does_database_exist(rds_client):
@@ -238,8 +195,7 @@ def setup_db_subnet_group(rds_client, eks_client, ec2_client):
 
 def does_db_subnet_group_exist(rds_client):
     try:
-        rds_client.describe_db_subnet_groups(
-            DBSubnetGroupName=DB_SUBNET_GROUP_NAME)
+        rds_client.describe_db_subnet_groups(DBSubnetGroupName=DB_SUBNET_GROUP_NAME)
         return True
     except rds_client.exceptions.DBSubnetGroupNotFoundFault:
         return False
@@ -280,11 +236,9 @@ def get_cluster_private_subnet_ids(eks_client, ec2_client):
 def create_db_instance(rds_client, secrets_manager_client, eks_client, ec2_client):
     print("Creating DB instance...")
 
-    vpc_ids = get_cluster_vpc_ids(eks_client)
-    vpc_security_group_id = get_vpc_security_group_id(vpc_ids, ec2_client)
+    vpc_security_group_id = get_vpc_security_group_id(eks_client)
 
-    db_root_password = get_db_root_password_or_generate_one(
-        secrets_manager_client)
+    db_root_password = get_db_root_password_or_generate_one(secrets_manager_client)
 
     rds_client.create_db_instance(
         DBName=DB_NAME,
@@ -325,35 +279,13 @@ def get_db_root_password_or_generate_one(secrets_manager_client):
         return DB_ROOT_PASSWORD
 
 
-def get_cluster_vpc_ids(eks_client):
-    vpcs = eks_client.describe_cluster(name=CLUSTER_NAME)["cluster"][
+def get_vpc_security_group_id(eks_client):
+    security_group_id = eks_client.describe_cluster(name=CLUSTER_NAME)["cluster"][
         "resourcesVpcConfig"
-    ]["vpcId"]
-
-    return vpcs
-
-
-def get_vpc_security_group_id(vpc_id, ec2_client):
-
-    security_groups = ec2_client.describe_security_groups(
-        Filters=[
-            {"Name": "tag:alpha.eksctl.io/cluster-name",
-                "Values": [CLUSTER_NAME]},
-            {"Name": "vpc-id", "Values": [vpc_id]},
-            {
-                "Name": "tag:aws:cloudformation:logical-id",
-                "Values": ["ClusterSharedNodeSecurityGroup"],
-            },
-        ]
-    )["SecurityGroups"]
-
-    assert len(security_groups) > 0
-
-    def get_security_group_id(security_group):
-        return security_group["GroupId"]
+    ]["clusterSecurityGroupId"]
 
     # Note : We only need to return 1 security group because we use the shared node security group, this fixes https://github.com/awslabs/kubeflow-manifests/issues/137
-    return list(map(get_security_group_id, security_groups))[0]
+    return security_group_id
 
 
 def wait_for_rds_db_instance_to_become_available(rds_client):
@@ -412,9 +344,7 @@ def get_db_instance_info():
 
 
 def setup_cluster_secrets():
-    print("=================================================================")
-    print("                    Cluster Secrets Setup")
-    print("=================================================================")
+    print_banner("Cluster Secrets Setup")
 
     setup_iam_service_account()
     setup_secrets_provider()
@@ -426,27 +356,17 @@ def setup_iam_service_account():
 
 def create_secrets_iam_service_account():
     print("Creating secrets IAM service account...")
+    iam_policies = [
+        "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess",
+        "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+    ]
 
-    subprocess.run(
-        [
-            "eksctl",
-            "create",
-            "iamserviceaccount",
-            "--name",
-            "kubeflow-secrets-manager-sa",
-            "--namespace",
-            "kubeflow",
-            "--cluster",
-            CLUSTER_NAME,
-            "--attach-policy-arn",
-            "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess",
-            "--attach-policy-arn",
-            "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
-            "--approve",
-            "--override-existing-serviceaccounts",
-            "--region",
-            CLUSTER_REGION,
-        ]
+    create_iam_service_account(
+        service_account_name="kubeflow-secrets-manager-sa",
+        namespace="kubeflow",
+        cluster_name=CLUSTER_NAME,
+        region=CLUSTER_REGION,
+        iam_policy_arns=iam_policies,
     )
 
     print("Secrets IAM service account created!")
@@ -483,9 +403,7 @@ def install_secrets_store_csi_driver():
 
 
 def setup_kubeflow():
-    print("=================================================================")
-    print("                        Kubeflow Setup")
-    print("=================================================================")
+    print_banner("Kubeflow Setup")
 
     setup_kubeflow_pipeline()
 
@@ -500,9 +418,9 @@ def setup_kubeflow_pipeline():
         print("Could not retrieve DB instance info, aborting Kubeflow pipeline setup!")
         return
 
-    pipeline_rds_params_env_file = "../../../awsconfigs/apps/pipeline/rds/params.env"
+    pipeline_rds_params_env_file = "../../awsconfigs/apps/pipeline/rds/params.env"
     pipeline_rds_secret_provider_class_file = (
-        "../../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
+        "../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
     )
     pipeline_rds_params_env_lines = get_pipeline_params_env_lines(
         pipeline_rds_params_env_file
@@ -517,9 +435,9 @@ def setup_kubeflow_pipeline():
         pipeline_rds_secret_provider_class_file, RDS_SECRET_NAME
     )
 
-    pipeline_s3_params_env_file = "../../../awsconfigs/apps/pipeline/s3/params.env"
+    pipeline_s3_params_env_file = "../../awsconfigs/apps/pipeline/s3/params.env"
     pipeline_s3_secret_provider_class_file = (
-        "../../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
+        "../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
     )
     pipeline_s3_params_env_lines = get_pipeline_params_env_lines(
         pipeline_s3_params_env_file
@@ -530,8 +448,7 @@ def setup_kubeflow_pipeline():
     edit_pipeline_params_env_file(
         new_pipeline_s3_params_env_lines, pipeline_s3_params_env_file
     )
-    update_secret_provider_class(
-        pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
+    update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
 
     print("Kubeflow pipeline setup done!")
 
@@ -546,12 +463,10 @@ def get_updated_pipeline_rds_params_env_lines(
     db_instance_info, pipeline_params_env_lines
 ):
     db_host_pattern = "dbHost="
-    db_host_new_line = db_host_pattern + \
-        db_instance_info["Endpoint"]["Address"] + "\n"
+    db_host_new_line = db_host_pattern + db_instance_info["Endpoint"]["Address"] + "\n"
 
     db_mlmd_db_pattern = "mlmdDb="
-    db_mlmd_db_new_line = db_mlmd_db_pattern + \
-        db_instance_info["DBName"] + "\n"
+    db_mlmd_db_new_line = db_mlmd_db_pattern + db_instance_info["DBName"] + "\n"
 
     new_pipeline_params_env_lines = []
 
@@ -623,9 +538,7 @@ def update_secret_provider_class(secret_provider_class_file, secret_name):
 
 
 def footer():
-    print("=================================================================")
-    print("                   RDS S3 Setup Complete")
-    print("=================================================================")
+    print_banner("RDS S3 Setup Complete")
 
 
 parser = argparse.ArgumentParser()

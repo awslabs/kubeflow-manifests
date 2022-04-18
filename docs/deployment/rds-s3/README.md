@@ -46,6 +46,10 @@ To install for both RDS and S3 complete all the below steps.
 
 ## 1.0 Prerequisites
 Follow the pre-requisites section from [this guide](../prerequisites.md)
+1. Verify that your are in the root of this repository by running the pwd command. The path should be <PATH/kubeflow-manifests>
+  ```
+  pwd 
+  ```
 
 4. Create an OIDC provider for your cluster  
    **Important :**  
@@ -65,18 +69,25 @@ Note : The script will **not** delete any resource therefore if a resource alrea
 
 1. Navigate to the Navigate to `tests/e2e` directory
 ```
-cd ../../../tests/e2e
+cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
-3. Export values for CLUSTER_REGION, CLUSTER_NAME, S3_BUCKET, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY then run the script
+3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to allow read and write access to objects in an S3 bucket([policy example](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html)) where you want to store the Kubeflow artifacts. Use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user below:
+4. Export values for CLUSTER_REGION, CLUSTER_NAME, S3_BUCKET, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY then run the script
 ```
-python utils/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+export CLUSTER_REGION=
+export CLUSTER_NAME=
+export S3_BUCKET=
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+
+PYTHONPATH=.. python utils/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 ```  
 
 ### Advanced customization
 
 The script applies some sensible default values for the db user password, max storage, storage type, instance type etc but if you know what you are doing, you can always tweak those preferences by passing different values.  
-You can learn more about the different parameters by running `python auto-rds-s3-setup.py --help`.
+You can learn more about the different parameters by running `PYTHONPATH=.. python utils/auto-rds-s3-setup.py --help`.
 
 ### 2.2 **Option 2: Manual Setup**
 If you prefer to manually setup each components then you can follow this manual guide.  
@@ -357,12 +368,14 @@ kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
 ```
 
 To uninstall AWS resources created by the automated setup run the cleanup script
-1. Navigate to the Navigate to `tests/e2e/utils` directory
+1. Navigate to the Navigate to `tests/e2e` directory
 ```
-cd ../../../tests/e2e/utils
+cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
-3. Export values for CLUSTER_REGION then run the script
+3. Make sure you have the configuration file created by the script in `tests/e2e/utils/auto-rds-s3-setup-metadata.yaml`
+4. Export values for CLUSTER_REGION then run the script
 ```
-python auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
+EXPORT CLUSTER_REGION=
+PYTHONPATH=.. python auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
 ```  
