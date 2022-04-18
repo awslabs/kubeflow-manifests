@@ -5,7 +5,6 @@ import boto3
 import os, stat, sys
 
 from e2e.utils.config import metadata
-from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
@@ -19,6 +18,8 @@ from e2e.utils.utils import (
     kubectl_apply,
     kubectl_delete,
     load_json_file,
+    load_cfg,
+    write_cfg,
 )
 
 from e2e.utils.constants import (
