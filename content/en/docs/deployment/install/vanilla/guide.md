@@ -1,7 +1,7 @@
 +++
 title = "Vanilla Installation"
 description = "Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)"
-weight = 90
+weight = 50
 +++
 
 # Deploying Kubeflow on EKS
