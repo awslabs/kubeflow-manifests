@@ -24,7 +24,7 @@ export CLUSTER_REGION=<clusterregion>
 ```
 export PVC_NAMESPACE=kubeflow-user-example-com
 ```
-5. And finally, choose a name for the PVC that we will create. 
+5. And finally, choose a name for the fsx claim that we will create. In this guide we will use this variable as the name for the PV as well the PVC. 
 ```
 export CLAIM_NAME=<fsx-claim>
 ```
@@ -43,18 +43,20 @@ cd $GITHUB_ROOT/tests/e2e
 ```
 pip install -r requirements.txt
 ```
-3. Run the automated script as follows. You can skip specifying the `fsx_file_system_name` and `fsx_security_group_name` if you are running the command for the first time in your account and want to use default values as in option 1 below -  
-```
-export CLAIM_NAME=<fs_name>
-export SG_NAME=<sg_name>
+3. Run the automated script as follows.   
 
-python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --fsx_file_system_name $CLAIM_NAME --fsx_security_group_name $SG_NAME
+Note: If you want the script to create a new security group for FSx, specify a name for `SECURITY_GROUP_TO_CREATE`. On the other hand, if you want to use an existing Security group, you can specify that name too.
+```
+export SECURITY_GROUP_TO_CREATE=$CLAIM_NAME
+
+python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --fsx_file_system_name $CLAIM_NAME --fsx_security_group_name $SECURITY_GROUP_TO_CREATE
 ```
 
 4. The script above takes care of creating the `PersistentVolume (PV)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly. 
 The PVC needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 yq e '.spec.volumeName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 
 kubectl apply -f $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
@@ -143,7 +145,8 @@ yq e '.spec.csi.volumeAttributes.mountname = env(mount_name)' -i $GITHUB_STORAGE
 
 4. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
-yq e '.spec.volumeName = env(CLAIM_NAME)' -i GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.spec.volumeName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
@@ -169,18 +172,14 @@ NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 fsx-claim   Bound    fsx-pv   1200Gi     RWX                           83s
 ```
 
-Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
+## 3.0 Using FSx Storage in Kubeflow
 In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
-## 3.0 Using FSx Storage in Kubeflow
-### 3.1 Set up the environment
-For the following sections, make sure to navigate back to the docs folder at the following path - 
-```
-cd $GITHUB_STORAGE_DIR
-```
-also make sure you have exported the variables CLAIM_NAME and PVC_NAMESPACE as specied at the top. 
+### 3.1 Connect to the Kubeflow Dashboard
+Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
+For more details on how to access your Kubeflow dashboard, refer to one of the deployment READMEs based on your setup. If you used the vanilla deployment, you can follow this [README](https://github.com/awslabs/kubeflow-manifests/tree/main/docs/deployment/vanilla#connect-to-your-kubeflow-cluster).
 
-### 3.3 Note about Permissions
+### 3.2 Note about Permissions
 This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
 ```
@@ -192,7 +191,6 @@ kubectl apply -f $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 ```
 
 ### 3.2 Using FSx volume as workspace or data volume for a notebook server 
-
 Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - **`public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`**. Additionally, use the existing PVC as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
 
 In case the server does not start up in the expected time, do make sure to check - 
@@ -286,6 +284,8 @@ aws fsx delete-file-system --file-system-id $file_system_id
 Make sure to delete any other resources you have created such as security groups via the AWS Console or using awscli. 
 
 ## 5.0 Known Issues:
-When you rerun the `eksctl create iamserviceaccount` to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In such a case you may need to do one or both of the following - 
+ - When you rerun the `eksctl create iamserviceaccount` to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In such a case you may need to do one or both of the following - 
 1. Delete the cloudformation stack associated with this add-on role.
 2. Delete the `fsx-csi-controller-sa` service account and then re-run the required steps. If you used the auto-script, you can rerun it by specifying the same `filesystem-name` such that a new one is not created. 
+
+ - When using an FSx volume in a kubeflow notebook, the same PVC claim can be mounted to the same notebook only once as either the workspace volume or the data volume. Create two seperate PVCs on your FSx volume if you need to attach it twice to the notebook.  
