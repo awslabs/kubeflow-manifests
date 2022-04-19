@@ -45,10 +45,6 @@ pip install -r requirements.txt
 ```
 3. Run the automated script as follows. You can skip specifying the `fsx_file_system_name` and `fsx_security_group_name` if you are running the command for the first time in your account and want to use default values as in option 1 below -  
 ```
-# Option 1
-python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
-
-# Option 2:
 export CLAIM_NAME=<fs_name>
 export SG_NAME=<sg_name>
 
@@ -58,8 +54,8 @@ python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME 
 4. The script above takes care of creating the `PersistentVolume (PV)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly. 
 The PVC needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
-yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i fsx-for-lustre/static-provisioning/pvc.yaml
-yq e '.spec.volumeName = env(CLAIM_NAME)' -i fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.spec.volumeName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 
 kubectl apply -f $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 
@@ -147,7 +143,7 @@ yq e '.spec.csi.volumeAttributes.mountname = env(mount_name)' -i $GITHUB_STORAGE
 
 4. The `PersistentVolume` is a cluster scoped resource but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
 ```
-yq e '.spec.volumeName = env(FILESYSTEM_NAME)' -i fsx-for-lustre/static-provisioning/pvc.yaml
+yq e '.spec.volumeName = env(CLAIM_NAME)' -i GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 ```
 
@@ -184,9 +180,20 @@ cd $GITHUB_STORAGE_DIR
 ```
 also make sure you have exported the variables CLAIM_NAME and PVC_NAMESPACE as specied at the top. 
 
+### 3.3 Note about Permissions
+This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
+
+```
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+
+kubectl apply -f $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+```
+
 ### 3.2 Using FSx volume as workspace or data volume for a notebook server 
 
-Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - `public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`. Additionally, use the existing PVC as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
+Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - **`public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`**. Additionally, use the existing PVC as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
 
 In case the server does not start up in the expected time, do make sure to check - 
 1. The Notebook Controller Logs
