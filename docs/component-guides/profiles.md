@@ -1,4 +1,8 @@
-# Profiles Component Guide for Kubeflow on AWS
++++
+title = "Profiles"
+description = "Use AWS IAM for Kubeflow Profiles"
+weight = 50
++++
 
 ## AWS IAM for Kubeflow Profiles
 

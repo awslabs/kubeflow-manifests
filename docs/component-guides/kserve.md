@@ -1,4 +1,8 @@
-# Component Guide for KServe/KFServing on AWS
++++
+title = "KServe"
+description = "Model serving using KServe with Kubeflow on AWS"
+weight = 40
++++
 
 ## Model serving over Load Balancer
 
