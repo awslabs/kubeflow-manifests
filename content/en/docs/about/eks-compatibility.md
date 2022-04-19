@@ -38,6 +38,6 @@ Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kube
 
 ## Kubeflow v1.5 Support
 
-Support for Kubeflow-v1.5 is in active development. You can track the following issues to stay up-to-date on progress:
-  * v1.5 tracking issue (https://github.com/awslabs/kubeflow-manifests/issues/91)
+Support for Kubeflow-v1.5 is in active development. You can track the following issue to stay up to date on progress:
+  * [v1.5 tracking issue](https://github.com/awslabs/kubeflow-manifests/issues/91)
 
