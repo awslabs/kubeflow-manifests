@@ -87,7 +87,7 @@ PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION 
 ### Advanced customization
 
 The script applies some sensible default values for the db user password, max storage, storage type, instance type etc but if you know what you are doing, you can always tweak those preferences by passing different values.  
-You can learn more about the different parameters by running `PYTHONPATH=.. python utils/auto-rds-s3-setup.py --help`.
+You can learn more about the different parameters by running `PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --help`.
 
 ### 2.2 **Option 2: Manual Setup**
 If you prefer to manually setup each components then you can follow this manual guide.  
