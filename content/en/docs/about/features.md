@@ -11,7 +11,10 @@ Running Kubeflow on AWS gives you the following feature benefits and configurati
 ## Manage AWS compute environments
 * Provision and manage your **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)** clusters with **[eksctl](https://github.com/weaveworks/eksctl)** and easily configure multiple compute and GPU node configurations.
 * Use AWS-optimized container images, based on **[AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html)**, with Kubeflow Notebooks.
-* Integrate with **[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/)** for logging and metrics on EKS clusters and Kubeflow pods.
+
+## CloudWatch Logs and Metrics
+* Integrate Kubeflow on AWS with **[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/)** for persistent logging and metrics on EKS clusters and Kubeflow pods.
+* Use **[AWS ContainerInsights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html)** to collect, aggregate, and summarize metrics and logs from your containerized applications and microservices.
 
 ## Load balancing, certificates, and identity management
 * Manage external traffic with **[AWS Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)**.
