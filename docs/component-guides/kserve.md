@@ -17,11 +17,13 @@ Read the [background](../deployment/add-ons/load-balancer/README.md#background) 
 1. Verify the current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>` directory
 
 
-### Customize Knative Serving domain
+### Configure Knative Serving's domain
 
 KFServing uses Knative Serving for various things like serverless deployment, autoscaling, setting up network routing resources etc. For purpose of this guide, we will focus on the routes. The fully qualified domain name(FQDN) for a route in Knative Serving by default is `{route}.{namespace}.{default-domain}`. Knative Serving routes use `example.com` as the default domain ([Reference](https://knative.dev/docs/serving/using-a-custom-domain/#default-domain-name-settings)). For example, if you create an `InferenceService` resource called `sklearn-iris` in `staging` namespace. Its URL would be `http://sklearn-iris.staging.example.com`. This is also the default configuration in Knative Serving component deployed as part of your Kubeflow deployment. You will need to configure the default domain as per your deployment. Let's see how:
 
-As you understand from the [background](#background) section, we need to use a custom domain to configure HTTPS with load balancer. We recommend using HTTPS to to enable traffic encryption between the clients and your load balancer. So, if you are using `platform.example.com` domain to host Kubeflow, you will need to edit the `config-domain` ConfigMap in the `knative-serving` namespace to configure the `platform.example.com` to be used as the domain for the routes. **Follow the instructions** in the [procedure section of the using a custom domain guide](https://knative.dev/docs/serving/using-a-custom-domain/#procedure) on the Knative Serving documentation to configure the default domain used by Knative. You would remove the `_example` key and replace `example.com` with your domain e.g. `platform.example.com`. Following is a sample:
+As you understand from the [background](#background) section, we need to use a custom domain to configure HTTPS with load balancer. We recommend using HTTPS to to enable traffic encryption between the clients and your load balancer. So, if you are using `platform.example.com` domain to host Kubeflow, you will need to edit the `config-domain` ConfigMap in the `knative-serving` namespace to configure the `platform.example.com` to be used as the domain for the routes.
+
+**Follow the instructions** in the [procedure section of the using a custom domain guide](https://knative.dev/docs/serving/using-a-custom-domain/#procedure) on the Knative Serving documentation to configure the default domain used by Knative. You would remove the `_example` key and replace `example.com` with your domain e.g. `platform.example.com`. Following is a sample:
 
 ```
 apiVersion: v1
@@ -110,20 +112,37 @@ When ALB is ready/updated, copy the ADDRESS of that load balancer and create a C
     NAME           URL                                                READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
     sklearn-iris   http://sklearn-iris.staging.platform.example.com   True           100                              sklearn-iris-predictor-default-00001   3m31s
     ```
-1. Send an inference request using the sample python script below based on your auth provider:
-    - **[Cognito]** Run the [sample inference Python script](../../tests/e2e/utils/kserve/inference_sample_cognito.py) in by substituting the values for `KUBEFLOW_DOMAIN`(e.g. platform.example.com), `PROFILE_NAMESPACE`(e.g. staging), custom HTTP header name(e.g. `x-api-key`) and value(e.g. `token1`) according to the values configured in [ingress section](#create-ingress)
-        1. Output would look like:
+1. Send an inference request:
+    - Export the values for `KUBEFLOW_DOMAIN`(e.g. `platform.example.com`) and `PROFILE_NAMESPACE`(e.g. `staging`) according to your environment:
+        1. ```
+            export KUBEFLOW_DOMAIN="platform.example.com"
+            export PROFILE_NAMESPACE="staging"
             ```
-            python tests/e2e/utils/kserve/inference_sample_cognito.py
+    - Install dependencies for the script by running `pip install requests`
+    - Run the sample python script to send an inference request based on your auth provider:
+        - **[Cognito]** Run the [inference_sample_cognito.py](../../tests/e2e/utils/kserve/inference_sample_cognito.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](#create-ingress)
+            1. ```
+               export HTTP_HEADER_NAME="x-api-key"
+               export HTTP_HEADER_VALUE="token1"
 
-            Status Code 200
-            JSON Response  {'predictions': [1, 1]}
-            ```
-    - **[Dex]** Run the [sample inference Python script](../../tests/e2e/utils/kserve/inference_sample_dex.py) by substituting the values for `KUBEFLOW_DOMAIN`(e.g. platform.example.com), `PROFILE_NAMESPACE`(e.g. staging), `USERNAME` and `PASSWORD` according to your environment 
-        1. Output would look like:
-            ```
-            python tests/e2e/utils/kserve/inference_sample_dex.py
+               python tests/e2e/utils/kserve/inference_sample_cognito.py
+               ```
 
-            Status Code 200
-            JSON Response  {'predictions': [1, 1]}
-            ```
+                Output would look like:
+                ```
+                Status Code 200
+                JSON Response  {'predictions': [1, 1]}
+                ```
+        - **[Dex]** Run the [inference_sample_dex.py](../../tests/e2e/utils/kserve/inference_sample_dex.py) Python script by exporting the values for `USERNAME`(e.g. `user@example.com`), `PASSWORD` according to the user profile 
+            1. ```
+               export USERNAME="user@example.com"
+               export PASSWORD="12341234"
+
+               python tests/e2e/utils/kserve/inference_sample_dex.py
+               ```
+
+                Output would look like:
+                ```
+                Status Code 200
+                JSON Response  {'predictions': [1, 1]}
+                ```

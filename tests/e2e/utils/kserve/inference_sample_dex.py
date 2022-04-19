@@ -1,9 +1,10 @@
 import requests
+import os
 
-KUBEFLOW_DOMAIN = "kubeflow.example.com"
-PROFILE_NAMESPACE = "staging"
-USERNAME = "user@example.com"
-PASSWORD = "12341234"
+KUBEFLOW_DOMAIN = os.environ.get("KUBEFLOW_DOMAIN", "kubeflow.example.com")
+PROFILE_NAMESPACE = os.environ.get("PROFILE_NAMESPACE", "staging")
+USERNAME = os.environ.get("USERNAME", "user@example.com")
+PASSWORD = os.environ.get("PASSWORD", "12341234")
 
 URL = f"https://sklearn-iris.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}/v1/models/sklearn-iris:predict"
 HEADERS = {"Host": f"sklearn-iris.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}"}
