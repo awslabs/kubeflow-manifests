@@ -412,7 +412,7 @@ def setup_kubeflow_pipeline():
 
     rds_params = {
         "dbHost": db_instance_info["Endpoint"]["Address"],
-        "mlmdDb": db_instance_info["DBName"],
+        "mlmdDb": "metadb",
     }
     edit_pipeline_params_env_file(rds_params, pipeline_rds_params_env_file)
 
@@ -501,7 +501,7 @@ parser.add_argument(
     help=f"Unique identifier for the RDS database instance. Default is set to {DB_INSTANCE_NAME_DEFAULT}",
     required=False,
 )
-DB_NAME_DEFAULT = "metadb"
+DB_NAME_DEFAULT = "kubeflow"
 parser.add_argument(
     "--db_name",
     type=str,

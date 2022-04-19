@@ -72,7 +72,7 @@ Note : The script will **not** delete any resource therefore if a resource alrea
 cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
-3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to allow read and write access to objects in an S3 bucket([policy example](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html)) where you want to store the Kubeflow artifacts. Use the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user below:
+3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket location and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Use the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user below:
 4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` then run the script
 ```
 export CLUSTER_REGION=
