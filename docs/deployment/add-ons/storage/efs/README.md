@@ -21,10 +21,10 @@ export CLUSTER_REGION=<clusterregion>
 
 ## 2.0 Setup EFS
 
-You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between static and dynamic provisioning, so pick whichever suits you. On the other hand, for the automated script we currently only support dynamic provisioning. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
+You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between **static and dynamic provisioning**, so pick whichever suits you. On the other hand, for the automated script we currently only support **dynamic provisioning**. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
 ### 2.1 [Option 1] Automated setup
-The script automates all the manual resource creation steps but is currently only available for Dynamic Provisioning option.  
+The script automates all the manual resource creation steps but is currently only available for **Dynamic Provisioning** option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0. 
 1. Run the following commands from the `tests/e2e` directory as - 
 ```
@@ -35,8 +35,12 @@ cd $GITHUB_ROOT/tests/e2e
 pip install -r requirements.txt
 ```
 
-3. Run the automated script as follows. You can skip specifying the `efs_file_system_name` and `efs_security_group_name` if you are running the command for the first time in your account and want to use default values - 
+3. Run the automated script as follows. You can skip specifying the `efs_file_system_name` and `efs_security_group_name` if you are running the command for the first time in your account and want to use default values as in option 1 below - 
 ```
+# Option 1:
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME
+
+# Option 2:
 export FILESYSTEM_NAME=<fs_name>
 export SG_NAME=<sg_name>
 
@@ -46,7 +50,7 @@ python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME 
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
 
 ### 2.2 [Option 2] Manual setup
-If you prefer to manually setup each components then you can follow this manual guide.  As mentioned, it you have two options between Static and Dynamic provisioing later in step 4 of this section.  
+If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between **Static and Dynamic provisioing** later in step 4 of this section.  
 
 ```
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
@@ -208,7 +212,6 @@ Note: As mentioned, make sure to change your default storage class only after yo
 This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
 ```
-export CLAIM_NAME=efs-claim
 yq e '.metadata.name = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i notebook-sample/set-permission-job.yaml
 yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
@@ -274,7 +277,6 @@ yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_
 ```
 Also, specify the name of the PVC you created - 
 ```
-export CLAIM_NAME=efs-claim
 yq e '.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i training-sample/tfjob.yaml
 ```
 Make sure to run it in the same namespace as the claim - 
@@ -326,5 +328,3 @@ Use the steps in this [AWS Guide](https://docs.aws.amazon.com/efs/latest/ug/dele
 1. When you rerun the `eksctl create iamserviceaccount` to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In such a case you may need to do one or both of the following - 
     a. Delete the cloudformation stack associated with this add-on role.
     b. Delete the `efs-csi-controller-sa` service account and then re-run the required steps. If you used the auto-script, you can rerun it by specifying the same `filesystem-name` such that a new one is not created. 
-
-2. We have seen some issues when running these steps on multiple clusters sharing the same VPC.

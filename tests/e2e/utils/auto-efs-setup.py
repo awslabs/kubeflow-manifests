@@ -304,6 +304,7 @@ def create_security_group_resource(ec2_client, vpc_id):
         VpcId=vpc_id,
     )["GroupId"]
 
+
 def authorize_security_group_ingress(cidr_block_ip, ec2_client, security_group_id):
     tcp_port = 2049
     ec2_client.authorize_security_group_ingress(
@@ -334,7 +335,9 @@ def create_efs_file_system():
     )
     wait_for_efs_file_system_to_become_available(efs_file_system_creation_token)
     file_system_id = get_file_system_id_from_name(efs_client)
-    print(f"EFS filesystem {EFS_FILE_SYSTEM_NAME} created! filesystem id: {file_system_id}")
+    print(
+        f"EFS filesystem {EFS_FILE_SYSTEM_NAME} created! filesystem id: {file_system_id}"
+    )
     create_efs_mount_targets(file_system_id)
 
 
@@ -390,6 +393,7 @@ def get_efs_security_group_id(ec2_client):
         Filters=[{"Name": "group-name", "Values": [EFS_SECURITY_GROUP_NAME]}]
     )["SecurityGroups"][0]["GroupId"]
 
+
 def get_nodegroup_subnet_ids(eks_client):
     nodegroups = get_cluster_nodegroup(eks_client)
     print(f"CLUSTER NODEGROUPS:  {nodegroups}")
@@ -397,20 +401,19 @@ def get_nodegroup_subnet_ids(eks_client):
 
     for nodegroup in nodegroups:
         ng_subnets = eks_client.describe_nodegroup(
-            clusterName=CLUSTER_NAME,
-            nodegroupName=nodegroup
+            clusterName=CLUSTER_NAME, nodegroupName=nodegroup
         )["nodegroup"]["subnets"]
-        
+
         for subnet in ng_subnets:
             cluster_public_subnets.append(subnet)
 
     print("CLUSTER PUBLIC SUBNETS:  ", cluster_public_subnets)
     return cluster_public_subnets
 
+
 def get_cluster_nodegroup(eks_client):
-    return eks_client.list_nodegroups(
-        clusterName=CLUSTER_NAME
-    )["nodegroups"]
+    return eks_client.list_nodegroups(clusterName=CLUSTER_NAME)["nodegroups"]
+
 
 def create_mount_targets(efs_client, efs_security_group_id, file_system_id, subnet_ids):
     mount_target_ids = []
@@ -591,7 +594,7 @@ if __name__ == "__main__":
     DIRECTORY_PATH = args.directory
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
-    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy"+EFS_FILE_SYSTEM_NAME
+    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy" + EFS_FILE_SYSTEM_NAME
     EFS_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{EFS_IAM_POLICY_NAME}"
 
     EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = (
