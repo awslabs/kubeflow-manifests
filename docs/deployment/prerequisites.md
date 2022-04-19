@@ -21,7 +21,7 @@ This guide assumes that you have:
         export CLUSTER_NAME=$CLUSTER_NAME
         export CLUSTER_REGION=$CLUSTER_REGION
         ```
-        
+
     - Run the following command to create an EKS Cluster
         ```
         eksctl create cluster \
@@ -31,7 +31,7 @@ This guide assumes that you have:
         --nodegroup-name linux-nodes \
         --node-type m5.xlarge \
         --nodes 5 \
-        --nodes-min 1 \
+        --nodes-min 5 \
         --nodes-max 10 \
         --managed \
         --with-oidc
