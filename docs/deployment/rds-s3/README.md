@@ -72,8 +72,8 @@ Note : The script will **not** delete any resource therefore if a resource alrea
 cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
-3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to allow read and write access to objects in an S3 bucket([policy example](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html)) where you want to store the Kubeflow artifacts. Use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user below:
-4. Export values for CLUSTER_REGION, CLUSTER_NAME, S3_BUCKET, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY then run the script
+3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to allow read and write access to objects in an S3 bucket([policy example](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html)) where you want to store the Kubeflow artifacts. Use the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user below:
+4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` then run the script
 ```
 export CLUSTER_REGION=
 export CLUSTER_NAME=
@@ -81,7 +81,7 @@ export S3_BUCKET=
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 
-PYTHONPATH=.. python utils/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 ```  
 
 ### Advanced customization
@@ -373,9 +373,9 @@ To uninstall AWS resources created by the automated setup run the cleanup script
 cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
-3. Make sure you have the configuration file created by the script in `tests/e2e/utils/auto-rds-s3-setup-metadata.yaml`
-4. Export values for CLUSTER_REGION then run the script
+3. Make sure you have the configuration file created by the script in `tests/e2e/utils/rds-s3/metadata.yaml`
+4. Export values for `CLUSTER_REGION` then run the script
 ```
 EXPORT CLUSTER_REGION=
-PYTHONPATH=.. python auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
 ```  
