@@ -16,15 +16,14 @@ This guide assumes that you have:
 1. Creating an EKS cluster
     - If you do not have an existing cluster, run the following command to create an EKS cluster. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
     - Various controllers in Kubeflow deployment use IAM roles for service accounts(IRSA). An OIDC provider must exist for your cluster to use IRSA.
-        - **Note:** If you are using an existing cluster, Create an OIDC provider and associate it with for your EKS cluster by running the following command:
-        ```
-        eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
-        --region ${CLUSTER_REGION} --approve
-        ```
     - Substitute values for the `CLUSTER_NAME` and `CLUSTER_REGION` in the script below
         ```
         export CLUSTER_NAME=$CLUSTER_NAME
         export CLUSTER_REGION=$CLUSTER_REGION
+        ```
+        
+    - Run the following command to create an EKS Cluster
+        ```
         eksctl create cluster \
         --name ${CLUSTER_NAME} \
         --version 1.20 \
@@ -36,6 +35,11 @@ This guide assumes that you have:
         --nodes-max 10 \
         --managed \
         --with-oidc
+        ```
+    - **Note:** If you are using an existing cluster, Create an OIDC provider and associate it with for your EKS cluster by running the following command:
+        ```
+        eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
+        --region ${CLUSTER_REGION} --approve
         ```
 
 1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
