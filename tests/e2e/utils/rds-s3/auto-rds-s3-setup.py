@@ -52,6 +52,7 @@ def main():
         "secretName": RDS_SECRET_NAME,
         "subnetGroupName": DB_SUBNET_GROUP_NAME,
     }
+    script_metadata["CLUSTER"] = {"region": CLUSTER_REGION, "name": CLUSTER_NAME}
     write_yaml_file(
         yaml_content=script_metadata, file_path="utils/rds-s3/metadata.yaml"
     )
