@@ -13,7 +13,11 @@ from utils import (
     get_iam_resource,
     kubectl_apply_kustomize,
     kubectl_apply,
+    write_yaml_file,
+    load_yaml_file,
 )
+
+FSX_FILE_SYSTEM_ID = ""
 
 
 def main():
@@ -321,6 +325,7 @@ def create_fsx_file_system():
         StorageCapacity=1200,
         LustreConfiguration={"DeploymentType": "SCRATCH_2"},
     )
+    global FSX_FILE_SYSTEM_ID
     FSX_FILE_SYSTEM_ID = response["FileSystem"]["FileSystemId"]
     write_fsx_config_to_file(security_group_id, FSX_FILE_SYSTEM_ID)
     wait_for_fsx_file_system_to_become_available(FSX_FILE_SYSTEM_ID)
@@ -373,16 +378,44 @@ def setup_fsx_provisioning():
 
 def setup_static_provisioning():
     print("Setting up static provisioning...")
-
     apply_static_provisioning_storage_class()
-
+    apply_static_provisioning_persistent_volume()
     print("Static provisioning setup done!")
 
 
 def apply_static_provisioning_storage_class():
     print("Creating storage class...")
-    kubectl_apply(FSX_STATIC_PROVISIONING_STORAGE_CLASS_FILE_PATH)
+    kubectl_apply(FSX_STATIC_PROVISIONING_FILE_PATH + "/sc.yaml")
     print("Storage class created!")
+
+
+def apply_static_provisioning_persistent_volume():
+    print("Creating persistent volume...")
+    fsx_pv_filepath = FSX_STATIC_PROVISIONING_FILE_PATH + "/pv.yaml"
+    print(f"THis is filesystem id {FSX_FILE_SYSTEM_ID}")
+    dns_name = get_fsx_dns_name()
+    mount_name = get_fsx_mount_name()
+
+    fsx_pv = load_yaml_file(fsx_pv_filepath)
+    fsx_pv["spec"]["csi"]["volumeHandle"] = FSX_FILE_SYSTEM_ID
+    fsx_pv["metadata"]["name"] = FSX_FILE_SYSTEM_NAME
+    fsx_pv["spec"]["csi"]["volumeAttributes"]["dnsname"] = dns_name
+    fsx_pv["spec"]["csi"]["volumeAttributes"]["mountname"] = mount_name
+    write_yaml_file(fsx_pv, fsx_pv_filepath)
+    kubectl_apply(fsx_pv_filepath)
+    print("Persistent Volume created!")
+
+
+def get_fsx_dns_name():
+    fsx_client = get_fsx_client(CLUSTER_REGION)
+    response = fsx_client.describe_file_systems(FileSystemIds=[FSX_FILE_SYSTEM_ID])
+    return response["FileSystems"][0]["DNSName"]
+
+
+def get_fsx_mount_name():
+    fsx_client = get_fsx_client(CLUSTER_REGION)
+    response = fsx_client.describe_file_systems(FileSystemIds=[FSX_FILE_SYSTEM_ID])
+    return response["FileSystems"][0]["LustreConfiguration"]["MountName"]
 
 
 def footer():
@@ -449,10 +482,11 @@ if __name__ == "__main__":
     CONFIG_FILENAME = args.config_filename
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
-    FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy"+FSX_FILE_SYSTEM_NAME
+    FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy" + FSX_FILE_SYSTEM_NAME
     FSX_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{FSX_IAM_POLICY_NAME}"
-    FSX_STATIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/sc.yaml"
+    FSX_STATIC_PROVISIONING_FILE_PATH = (
+        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning"
+    )
     FSX_SECURITY_GROUP_ID = ""
-    FSX_FILE_SYSTEM_ID = ""
 
     main()
