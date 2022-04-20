@@ -1,7 +1,7 @@
 +++
 title = "KServe"
 description = "Model serving using KServe with Kubeflow on AWS"
-weight = 40
+weight = 30
 +++
 
 This tutorial shows how to set up a load balancer endpoint for serving prediction requests over an external DNS on AWS.

@@ -1,7 +1,7 @@
 +++
 title = "Pipelines"
 description = "Get started with Kubeflow Pipelines on Amazon EKS"
-weight = 30
+weight = 20
 +++
 
 For an overview of connecting to Kubeflow Pipelines using the SDK client, see [the Pipelines SDK guide](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/). 

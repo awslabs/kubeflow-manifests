@@ -1,7 +1,7 @@
 +++
 title = "Profiles"
 description = "Use AWS IAM for Kubeflow Profiles"
-weight = 50
+weight = 40
 +++
 
 ## Kubeflow Profiles
