@@ -8,7 +8,7 @@ This guide describes how to use Amazon FSx as Persistent storage on top of an ex
 **Important :**
 You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
 
-2. At this point, you have likely cloned this repo and checked out the right branch. Let's save this path to help us naviagte to different paths in the rest of this doc - 
+2. At this point, you have likely cloned this repo and checked out the right branch. Let's save this path to help us navigate to different paths in the rest of this doc - 
 ```
 export GITHUB_ROOT=$(pwd)
 export GITHUB_STORAGE_DIR="$GITHUB_ROOT/docs/deployment/add-ons/storage/"
@@ -52,8 +52,7 @@ export SECURITY_GROUP_TO_CREATE=$CLAIM_NAME
 python utils/auto-fsx-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --fsx_file_system_name $CLAIM_NAME --fsx_security_group_name $SECURITY_GROUP_TO_CREATE
 ```
 
-4. The script above takes care of creating the `PersistentVolume (PV)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly. 
-The PVC needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `fsx-for-lustre/static-provisioning/pvc.yaml` file accordingly. 
+4. The script above takes care of creating the `PersistentVolume (PV)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly but the PVC needs to be in the user namespace you will be accessing it from. 
 ```
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/fsx-for-lustre/static-provisioning/pvc.yaml
@@ -180,7 +179,7 @@ Once you have everything setup, Port Forward as needed and Login to the Kubeflow
 For more details on how to access your Kubeflow dashboard, refer to one of the deployment READMEs based on your setup. If you used the vanilla deployment, you can follow this [README](https://github.com/awslabs/kubeflow-manifests/tree/main/docs/deployment/vanilla#connect-to-your-kubeflow-cluster).
 
 ### 3.2 Note about Permissions
-This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
+This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
 ```
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
