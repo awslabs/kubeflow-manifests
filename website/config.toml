@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "http://judyhefl.in/kubeflow-manifests/"
 title = "Kubeflow on AWS"
 description = "Kubeflow makes deployment of ML Workflows on Kubernetes straightforward and automated"
 
@@ -106,7 +106,7 @@ disableKinds = ["taxonomy", "taxonomyTerm"]
 
   # A link to latest version of the docs. Used in the "version-banner" partial to
   # point people to the main doc site.
-  url_latest_version = "https://awslabs.github.io/kubeflow-manifests/docs"
+  url_latest_version = "http://judyhefl.in/kubeflow-manifests/docs/"
 
   # A variable used in various docs to determine URLs for config files etc.
   # To find occurrences, search the repo for 'params "githubbranch"'.
