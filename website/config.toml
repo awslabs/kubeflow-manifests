@@ -1,5 +1,5 @@
 baseURL = "http://judyhefl.in/kubeflow-manifests"
-title = "Kubeflow on AWS"
+title = "Kubeflow on AWS [STAGING]"
 description = "Kubeflow makes deployment of ML Workflows on Kubernetes straightforward and automated"
 
 enableRobotsTXT = true
