@@ -15,6 +15,31 @@ You can use Notebooks with Kubeflow on AWS to:
 
 Use [AWS-optimized Kubeflow Notebook servers](/docs/component-guides/notebook-servers/) to quickly get started with a range of framework, library, and hardware options. 
 
+## AWS-optimized Kubeflow Notebook servers
+
+Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html). 
+
+The following container images are available from the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/).
+
+```
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-gpu-py38-cu112
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-cpu-py38
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-gpu-py38-cu111
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
+```
+
+AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Available Deep Learning Containers Images](https://github.com/aws/deep-learning-containers/blob/master/available_images.md).
+
+Along with specific machine learning frameworks, these container images have additional pre-installed packages:
+- `kfp`
+- `kfserving` 
+- `h5py`
+- `pandas`
+- `awscli`
+- `boto3`
+
+For more information on gettings started with Kubeflow Notebooks, see the [Quickstart Guide](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
+
 ## RDS and S3 credentials for Kubeflow Pipelines and Notebooks
 
 Set up RDS and S3 credential access to be able to:
