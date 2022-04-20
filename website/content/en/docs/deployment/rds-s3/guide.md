@@ -1,7 +1,7 @@
 +++
 title = "RDS and S3"
 description = "Kustomize Manifests for RDS and S3"
-weight = 30
+weight = 40
 +++
 
 This Kustomize Manifest can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
