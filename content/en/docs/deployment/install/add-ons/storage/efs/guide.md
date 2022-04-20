@@ -1,4 +1,8 @@
-# Using Amazon EFS as Persistent Storage with Kubeflow
++++
+title = "EFS"
+description = "Use Amazon EFS as persistent storage with Kubeflow on AWS"
+weight = 10
++++
 
 This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.  
 

@@ -1,4 +1,8 @@
-# Using Amazon FSx as Persistent Storage with Kubeflow
++++
+title = "FSx for Lustre"
+description = "Use Amazon FSx as persistent storage with Kubeflow on AWS"
+weight = 20
++++
 
 This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.  
 
