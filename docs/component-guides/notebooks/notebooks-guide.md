@@ -1,13 +1,14 @@
 +++
 title = "Notebooks"
-description = "Kubeflow Notebooks component guide for Kubeflow on AWS"
+description = "Use Notebooks with Kubeflow on AWS to experiment with model development"
 weight = 10
 +++
 
 [Kubeflow Notebooks](https://www.kubeflow.org/docs/components/notebooks/) provide a way to run web-based development environments inside your Kubernetes cluster by running them inside Pods. Users can create Notebook containers directly in the cluster, rather than locally on their workstations. Access control is managed by Kubeflow’s RBAC, enabling easier notebook sharing across the organization. 
 
 You can use Notebooks with Kubeflow on AWS to: 
-* Manage Kubeflow pipeline runs
+* Experiment on training scripts and model development.
+* Manage Kubeflow pipeline runs.
 * Integrate with Tensorboard for visualization.
 * Use EFS and FSx to share data and models across nodes.
 * USE EFS and FSx for dynamic volume sizing.
@@ -26,13 +27,14 @@ Set up RDS and S3 credential access to be able to:
 The following steps create a Kubernetes `mysql-secret` and `mlpipeline-minio-artifact` Secret with RDS and S3 credentials specified in the AWS Secrets Manager created while deploying the platform. This is a sample for demonstrating how you can use [`PodDefault` resource](https://github.com/kubeflow/kubeflow/blob/master/components/admission-webhook/README.md) and Secrets in Notebooks to access the metadata database and and artifacts in S3 bucket created by pipelines. Make sure you create separate database and IAM users and corresponding secrets in Secrets Manager for your users if you want fine grain access control and auditing.  
 
 ### Set up Secrets access
-1. Navigate inside the script directory.
+1. Verify that your are in the root of your repository by running the `pwd` command. The path should be `PATH/kubeflow-manifests`.
 ```
-cd ../../tests/e2e
+pwd
 ```
 
-2. Install the script dependencies.
+2. Navigate to the test scripts directory and install the dependencies.
 ```shell
+cd tests/e2e
 pip install -r requirements.txt
 ```
 

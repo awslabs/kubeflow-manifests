@@ -1,6 +1,6 @@
 +++
 title = "Component Guides"
-description = "Explore component and add-on guides for Kubeflow on AWS"
+description = "Explore component guides for Kubeflow on AWS"
 weight = 30
 +++
 
