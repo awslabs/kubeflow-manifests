@@ -1,4 +1,8 @@
-# Deploying Kubeflow with Amazon Cognito as idP, RDS and S3
++++
+title = "Cognito, RDS, and S3"
+description = "Deploying Kubeflow with Amazon Cognito as idP, RDS and S3"
+weight = 40
++++
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider, RDS for database and S3 for artifact storage.
 

@@ -1,8 +1,12 @@
++++
+title = "Vanilla Installation"
+description = "Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)"
+weight = 50
++++
+
 # Deploying Kubeflow on EKS
 
-This guide describes how to deploy vanilla Kubeflow on AWS EKS. This vanilla version has very minimal changes to the upstream Kubeflow manifests. Here are the changes  
-- Kubeflow Notebook configuration has been modified to include some [custom container images](../../../components/notebook-dockerfiles) built on [AWS DLC](https://github.com/aws/deep-learning-containers/blob/master/available_images.md)
-- [Usage Tracking](../README.md#usage-tracking)
+This guide describes how to deploy Kubeflow on AWS EKS
 
 ## Prerequisites
 

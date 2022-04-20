@@ -1,4 +1,8 @@
-# CloudWatch ContainerInsights on EKS
++++
+title = "CloudWatch"
+description = "Set up CloudWatch ContainerInsights on Amazon EKS"
+weight = 30
++++
 
 ## Verify Prerequisites
 The EKS  Cluster will need IAM service account roles associated with CloudWatchAgentServerPolicy attached.
