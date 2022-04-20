@@ -24,8 +24,8 @@ from e2e.utils.utils import (
     kubectl_delete,
     kubectl_apply_kustomize,
     kubectl_delete_kustomize,
-    load_cfg,
-    write_cfg,
+    load_yaml_file,
+    write_yaml_file,
 )
 from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
@@ -246,26 +246,26 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
 
     def on_create():
         # Add the filesystem_id to the pv.yaml file
-        efs_pv = load_cfg(efs_pv_filepath)
+        efs_pv = load_yaml_file(efs_pv_filepath)
         efs_pv["spec"]["csi"]["volumeHandle"] = fs_id
         efs_pv["metadata"]["name"] = claim_name
-        write_cfg(efs_pv, efs_pv_filepath)
+        write_yaml_file(efs_pv, efs_pv_filepath)
 
         # Update the values in the pvc.yaml file
-        efs_pvc = load_cfg(efs_pvc_filepath)
+        efs_pvc = load_yaml_file(efs_pvc_filepath)
         efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_pvc["metadata"]["name"] = claim_name
-        write_cfg(efs_pvc, efs_pvc_filepath)
+        write_yaml_file(efs_pvc, efs_pvc_filepath)
 
         # Update the values in the permissions file
         # Statically provisioned volume needs extra permissions
-        efs_permission = load_cfg(efs_permissions_filepath)
+        efs_permission = load_yaml_file(efs_permissions_filepath)
         efs_permission["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_permission["metadata"]["name"] = "permissions" + claim_name
         efs_permission["spec"]["template"]["spec"]["volumes"][0][
             "persistentVolumeClaim"
         ]["claimName"] = claim_name
-        write_cfg(efs_permission, efs_permissions_filepath)
+        write_yaml_file(efs_permission, efs_permissions_filepath)
 
         kubectl_apply(efs_sc_filepath)
         kubectl_apply(efs_pv_filepath)
@@ -328,10 +328,10 @@ def dynamic_provisioning(metadata, region, request, cluster):
 
         # PVC creation is not a part of the script
         # Update the values in the pvc.yaml file
-        efs_pvc = load_cfg(efs_pvc_filepath)
+        efs_pvc = load_yaml_file(efs_pvc_filepath)
         efs_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         efs_pvc["metadata"]["name"] = claim_name
-        write_cfg(efs_pvc, efs_pvc_filepath)
+        write_yaml_file(efs_pvc, efs_pvc_filepath)
 
         kubectl_apply(efs_pvc_filepath)
 

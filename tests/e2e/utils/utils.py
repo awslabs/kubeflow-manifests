@@ -214,14 +214,3 @@ def print_banner(step_name: str):
     print("=" * width)
     print(step_name.center(width))
     print("=" * width)
-
-def load_cfg(file_path: str):
-    with open(file_path, "r") as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
-
-def write_cfg(config: dict, file_path: str):
-    with open(file_path, "w") as stream:
-        yaml.safe_dump(config, stream)
