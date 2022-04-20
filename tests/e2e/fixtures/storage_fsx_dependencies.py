@@ -5,7 +5,6 @@ import boto3
 import os, stat, sys
 
 from e2e.utils.config import metadata
-from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
@@ -19,6 +18,8 @@ from e2e.utils.utils import (
     kubectl_apply,
     kubectl_delete,
     load_json_file,
+    load_yaml_file,
+    write_yaml_file,
 )
 
 from e2e.utils.constants import (
@@ -81,19 +82,19 @@ def static_provisioning(metadata, region, request, cluster):
         mount_name = get_fsx_mount_name(fsx_client, file_system_id)
 
         # Add the filesystem_id to the pv.yaml file
-        fsx_pv = load_cfg(fsx_pv_filepath)
+        fsx_pv = load_yaml_file(fsx_pv_filepath)
         fsx_pv["spec"]["csi"]["volumeHandle"] = file_system_id
         fsx_pv["metadata"]["name"] = claim_name
         fsx_pv["spec"]["csi"]["volumeAttributes"]["dnsname"] = dns_name
         fsx_pv["spec"]["csi"]["volumeAttributes"]["mountname"] = mount_name
-        write_cfg(fsx_pv, fsx_pv_filepath)
+        write_yaml_file(fsx_pv, fsx_pv_filepath)
 
         # Update the values in the pvc.yaml file
-        fsx_pvc = load_cfg(fsx_pvc_filepath)
+        fsx_pvc = load_yaml_file(fsx_pvc_filepath)
         fsx_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         fsx_pvc["metadata"]["name"] = claim_name
         fsx_pvc["spec"]["volumeName"] = claim_name
-        write_cfg(fsx_pvc, fsx_pvc_filepath)
+        write_yaml_file(fsx_pvc, fsx_pvc_filepath)
 
         kubectl_apply(fsx_pv_filepath)
         kubectl_apply(fsx_pvc_filepath)

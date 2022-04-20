@@ -264,10 +264,10 @@ def create_efs_security_group():
     eks_client = get_eks_client()
     ec2_client = get_ec2_client()
 
-    cluster_info = get_cluster_info(eks_client)
-
-    vpc_id = get_vpc_id(cluster_info)
+    vpc_id = get_vpc_id(eks_client)
+    print("VPC_ID:  ", vpc_id)
     cidr_block_ip = get_cidr_block_ip(ec2_client, vpc_id)
+    print("CIDR: ", cidr_block_ip)
     security_group_id = create_security_group_resource(ec2_client, vpc_id)
     authorize_security_group_ingress(cidr_block_ip, ec2_client, security_group_id)
 
@@ -282,17 +282,19 @@ def get_cluster_info(eks_client):
     return eks_client.describe_cluster(name=CLUSTER_NAME)["cluster"]
 
 
-def get_vpc_id(cluster_info):
-    return cluster_info["resourcesVpcConfig"]["vpcId"]
+def get_vpc_id(eks_client):
+    response = eks_client.describe_cluster(name=CLUSTER_NAME)
+    return response["cluster"]["resourcesVpcConfig"]["vpcId"]
 
 
 def get_cidr_block_ip(ec2_client, vpc_id):
-    return ec2_client.describe_vpcs(
-        Filters=[
-            {"Name": "tag:alpha.eksctl.io/cluster-name", "Values": [CLUSTER_NAME]},
-        ],
-        VpcIds=[vpc_id],
-    )["Vpcs"][0]["CidrBlock"]
+    # Get CIDR Range
+    response = ec2_client.describe_vpcs(
+        VpcIds=[
+            vpc_id,
+        ]
+    )
+    return response["Vpcs"][0]["CidrBlock"]
 
 
 def create_security_group_resource(ec2_client, vpc_id):
@@ -331,10 +333,12 @@ def create_efs_file_system():
             {"Key": "Name", "Value": EFS_FILE_SYSTEM_NAME},
         ],
     )
-    print("EFS file system created!")
     wait_for_efs_file_system_to_become_available(efs_file_system_creation_token)
-
-    create_efs_mount_targets(efs_file_system_creation_token)
+    file_system_id = get_file_system_id_from_name(efs_client)
+    print(
+        f"EFS filesystem {EFS_FILE_SYSTEM_NAME} created! filesystem id: {file_system_id}"
+    )
+    create_efs_mount_targets(file_system_id)
 
 
 def generate_creation_token(size=64, chars=string.ascii_uppercase) -> str:
@@ -364,15 +368,13 @@ def wait_for_efs_file_system_to_become_available(efs_file_system_creation_token)
     print("EFS file system is available!")
 
 
-def create_efs_mount_targets(efs_file_system_creation_token):
+def create_efs_mount_targets(file_system_id):
     efs_client = get_efs_client()
-    file_system_id = get_file_system_id_from_creation_token(
-        efs_client, efs_file_system_creation_token
-    )
 
+    eks_client = get_eks_client()
     ec2_client = get_ec2_client()
     efs_security_group_id = get_efs_security_group_id(ec2_client)
-    subnet_ids = get_cluster_public_subnet_ids(ec2_client)
+    subnet_ids = get_nodegroup_subnet_ids(eks_client)
 
     mount_target_ids = create_mount_targets(
         efs_client, efs_security_group_id, file_system_id, subnet_ids
@@ -392,18 +394,25 @@ def get_efs_security_group_id(ec2_client):
     )["SecurityGroups"][0]["GroupId"]
 
 
-def get_cluster_public_subnet_ids(ec2_client):
-    subnets = ec2_client.describe_subnets(
-        Filters=[
-            {"Name": "tag:alpha.eksctl.io/cluster-name", "Values": [CLUSTER_NAME]},
-            {"Name": "tag:aws:cloudformation:logical-id", "Values": ["SubnetPublic*"]},
-        ]
-    )["Subnets"]
+def get_nodegroup_subnet_ids(eks_client):
+    nodegroups = get_cluster_nodegroup(eks_client)
+    print(f"CLUSTER NODEGROUPS:  {nodegroups}")
+    cluster_public_subnets = []
 
-    def get_subnet_id(subnet):
-        return subnet["SubnetId"]
+    for nodegroup in nodegroups:
+        ng_subnets = eks_client.describe_nodegroup(
+            clusterName=CLUSTER_NAME, nodegroupName=nodegroup
+        )["nodegroup"]["subnets"]
 
-    return list(map(get_subnet_id, subnets))
+        for subnet in ng_subnets:
+            cluster_public_subnets.append(subnet)
+
+    print("CLUSTER PUBLIC SUBNETS:  ", cluster_public_subnets)
+    return cluster_public_subnets
+
+
+def get_cluster_nodegroup(eks_client):
+    return eks_client.list_nodegroups(clusterName=CLUSTER_NAME)["nodegroups"]
 
 
 def create_mount_targets(efs_client, efs_security_group_id, file_system_id, subnet_ids):
@@ -585,7 +594,7 @@ if __name__ == "__main__":
     DIRECTORY_PATH = args.directory
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
-    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy"+EFS_FILE_SYSTEM_NAME
+    EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy" + EFS_FILE_SYSTEM_NAME
     EFS_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{EFS_IAM_POLICY_NAME}"
 
     EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = (
