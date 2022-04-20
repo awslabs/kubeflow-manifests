@@ -50,44 +50,4 @@ For more information, see the [Amazon FSx for Lustre CSI Driver](https://github.
 
 ### RDS issues
 
-If you run into CloudFormation deployment errors, see the [CloudFormation troubleshooting guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html).
-
-If you have connectivity issues with Amazon RDS, launch a `mysql-client` container and try connecting to your RDS endpoint. This will let you know if you have network connectivity with the database and also if the database was created and is configured properly.
-
-```
-# Remember to change your RDS endpoint, DB username and DB Password
-$ kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql -h <YOUR RDS ENDPOINT> -u admin -pKubefl0w                                                              
-If you don't see a command prompt, try pressing enter.
-
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| kubeflow           |
-| mlpipeline         |
-| mysql              |
-| performance_schema |
-+--------------------+
-5 rows in set (0.00 sec)
-
-mysql> use mlpipeline; show tables;
-Reading table information for completion of table and column names
-You can turn off this feature to get a quicker startup with -A
-
-Database changed
-+----------------------+
-| Tables_in_mlpipeline |
-+----------------------+
-| db_statuses          |
-| default_experiments  |
-| experiments          |
-| jobs                 |
-| pipeline_versions    |
-| pipelines            |
-| resource_references  |
-| run_details          |
-| run_metrics          |
-+----------------------+
-9 rows in set (0.00 sec)
-```
+To troubleshoot RDS issues, follow the [installation verification steps](/docs/deployment/install/rds-s3/guide/#40-verify-the-installation).
