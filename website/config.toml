@@ -1,4 +1,4 @@
-baseURL = "http://judyhefl.in/kubeflow-manifests/"
+baseURL = "http://judyhefl.in/kubeflow-manifests"
 title = "Kubeflow on AWS"
 description = "Kubeflow makes deployment of ML Workflows on Kubernetes straightforward and automated"
 
