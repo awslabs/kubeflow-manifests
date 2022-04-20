@@ -4,7 +4,7 @@ description = "Familiarize yourself with Kubeflow on AWS release cadences and ve
 weight = 20
 +++
 
-Kubeflow on AWS releases are built on top of Kubeflow releases and therefore use the following naming convention: `{KUBEFLOW_RELEASE_VERSION}-aws-b{BUILD_NUMBER}`.
+Kubeflow on AWS releases are built on top of open source Kubeflow releases and therefore use the following naming convention: `{KUBEFLOW_RELEASE_VERSION}-aws-b{BUILD_NUMBER}`.
 
 * Ex: Kubeflow v1.3.1 on AWS version 1.0.0 will have the version `v1.3.1-aws-b1.0.0`.
 
