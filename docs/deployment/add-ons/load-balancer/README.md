@@ -101,7 +101,7 @@ Setup resources required for the load balancer controller:
     1. ```
         export LBC_POLICY_NAME=alb_ingress_controller_${CLUSTER_REGION}_${CLUSTER_NAME}
         export LBC_POLICY_ARN=$(aws iam create-policy --policy-name $LBC_POLICY_NAME --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query 'Policy.Arn')
-        eksctl create iamserviceaccount --name alb-ingress-controller --namespace kubeflow --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn ${LBC_POLICY_ARN} --override-existing-serviceaccounts --approve
+        eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn ${LBC_POLICY_ARN} --override-existing-serviceaccounts --approve
         ```
 1. Configure the parameters for [load balancer controller](../../../../awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name
     1. ```

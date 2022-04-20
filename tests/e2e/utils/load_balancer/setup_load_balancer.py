@@ -134,8 +134,8 @@ def configure_load_balancer_controller(
         )
     )
 
-    alb_sa_name = "alb-ingress-controller"
-    alb_sa_namespace = "kubeflow"
+    alb_sa_name = "aws-load-balancer-controller"
+    alb_sa_namespace = "kube-system"
     cluster.create_iam_service_account(
         alb_sa_name, alb_sa_namespace, cluster_name, region, [alb_policy.arn]
     )
