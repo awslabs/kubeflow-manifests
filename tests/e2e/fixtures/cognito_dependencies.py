@@ -2,7 +2,7 @@ import pytest
 
 from e2e.utils.cognito_bootstrap.cognito_pre_deployment import (
     
-    create_certificates,
+    create_certificates_cognito,
     create_cognito_userpool,
     configure_ingress,
     configure_aws_authservice,
@@ -60,7 +60,7 @@ def cognito_bootstrap(
             root_certificate,
             subdomain_cert_n_virginia,
             subdomain_cert_deployment_region,
-        ) = create_certificates(region, subdomain_hosted_zone, root_hosted_zone)
+        ) = create_certificates_cognito(region, subdomain_hosted_zone, root_hosted_zone)
 
         cognito_deps["route53"]["rootDomain"]["certARN"] = root_certificate.arn
 
