@@ -5,7 +5,7 @@ on:
     branches:
       - kf-aws-website  # Set a branch to trigger deployment
     paths:
-      - website/** # Set a directory to trigger deployment
+#      - website/** # Set a directory to trigger deployment
   pull_request:
 
 jobs:
@@ -28,8 +28,8 @@ jobs:
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/kf-aws-website/website'
+        if: github.ref == 'refs/heads/kf-aws-website'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: website-publish-test # Set a publishing branch
-          publish_dir: ./public
+        #  publish_dir: ./public
