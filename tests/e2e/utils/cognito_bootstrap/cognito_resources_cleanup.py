@@ -10,6 +10,7 @@ from e2e.utils.load_balancer.lb_resources_cleanup import (
     delete_policy,
     clean_root_domain,
 )
+from e2e.fixtures import cluster
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,6 +44,7 @@ def delete_userpool(
 
 def delete_cognito_dependency_resources(cfg: dict):
     deployment_region = cfg["cluster"]["region"]
+    cluster_name = cfg["cluster"]["name"]
     subdomain_hosted_zone_id = cfg["route53"]["subDomain"].get("hostedZoneId", None)
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
 
@@ -98,8 +100,13 @@ def delete_cognito_dependency_resources(cfg: dict):
         if "kubeflow" in cfg.keys():
             alb = cfg["kubeflow"].get("alb", None)
             if alb:
-                alb_controller_policy_arn = alb["serviceAccount"]["policyArn"]
-                delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
+                alb_sa = alb.get("serviceAccount", None)
+                if alb_sa:
+                    cluster.delete_iam_service_account(
+                        alb_sa["name"], alb_sa["namespace"], cluster_name, deployment_region
+                    )
+                    alb_controller_policy_arn = alb_sa["policyArn"]
+                    delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
 
         # delete subdomain certs
         if deployment_region != "us-east-1":
