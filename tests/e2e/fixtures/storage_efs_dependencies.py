@@ -287,6 +287,7 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
 
 @pytest.fixture(scope="class")
 def dynamic_provisioning(metadata, region, request, cluster):
+    associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("efs-claim-auto-dyn-")
     efs_pvc_filepath = (
         "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"

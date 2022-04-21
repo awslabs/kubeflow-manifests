@@ -7,7 +7,7 @@ import os, stat, sys
 from e2e.utils.config import metadata
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.conftest import region
-from e2e.fixtures.cluster import cluster
+from e2e.fixtures.cluster import cluster, associate_iam_oidc_provider
 from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
@@ -39,6 +39,7 @@ def get_fsx_mount_name(fsx_client, file_system_id):
 
 @pytest.fixture(scope="class")
 def static_provisioning(metadata, region, request, cluster):
+    associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("fsx-claim-")
     fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
     fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
