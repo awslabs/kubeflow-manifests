@@ -26,7 +26,6 @@ from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
 )
 
-
 def get_fsx_dns_name(fsx_client, file_system_id):
     response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["DNSName"]
@@ -118,7 +117,8 @@ def static_provisioning(metadata, region, request, cluster):
         )
 
         # delete the security group
-        ec2_client.delete_security_group(GroupId=sg_id)
+        # TODO: This needs to be fixed. we need to wait for fsx volume to be deleted but fsx does not provided a deleted status, needs a workaround. 
+        # ec2_client.delete_security_group(GroupId=sg_id)
 
         # Delete the config file
         os.remove(config_filename)

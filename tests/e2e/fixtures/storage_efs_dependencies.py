@@ -275,10 +275,10 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         efs_claim["claim_name"] = claim_name
 
     def on_delete():
+        kubectl_delete(efs_permissions_filepath)
         kubectl_delete(efs_pvc_filepath)
         kubectl_delete(efs_pv_filepath)
-        kubectl_delete(efs_sc_filepath)
-        kubectl_delete(efs_permissions_filepath)
+        kubectl_delete(efs_sc_filepath)   
 
     return configure_resource_fixture(
         metadata, request, efs_claim, "efs_claim", on_create, on_delete
