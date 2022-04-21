@@ -66,7 +66,7 @@ def delete_cognito_dependency_resources(cfg: dict):
             )
             root_cert_arn = cfg["route53"]["rootDomain"].get("certARN", None)
             if root_cert_arn:
-                delete_cert(acm_certificate=AcmCertificate(arn=root_cert_arn))
+                delete_cert(acm_certificate=AcmCertificate(arn=root_cert_arn, region=deployment_region))
 
         subdomain_cert_deployment_region = subdomain_cert_n_virginia = None
         subdomain_cert_deployment_region_arn = cfg["route53"]["subDomain"].get(
