@@ -1,7 +1,7 @@
 +++
 title = "Cognito"
 description = "Deploying Kubeflow with AWS Cognito as idP"
-weight = 20
+weight = 30
 +++
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB's public DNS names are not supported.

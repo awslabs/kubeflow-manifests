@@ -1,7 +1,7 @@
 +++
 title = "RDS and S3"
 description = "Kustomize Manifests for RDS and S3"
-weight = 30
+weight = 40
 +++
 
 This Kustomize Manifest can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
@@ -376,8 +376,6 @@ cd tests/e2e
 ```
 2. Install the script dependencies `pip install -r requirements.txt`
 3. Make sure you have the configuration file created by the script in `tests/e2e/utils/rds-s3/metadata.yaml`
-4. Export values for `CLUSTER_REGION` then run the script
 ```
-EXPORT CLUSTER_REGION=
-PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py --region $CLUSTER_REGION 
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py
 ```  

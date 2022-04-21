@@ -15,6 +15,7 @@ You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/l
 2. At this point, you have likely cloned this repo and checked out the right branch. Let's save this path to help us naviagte to different paths in the rest of this doc - 
 ```
 export GITHUB_ROOT=$(pwd)
+export GITHUB_STORAGE_DIR="$GITHUB_ROOT/docs/deployment/add-ons/storage/"
 ```
 
 3. Make sure the following environment variables are set. 
@@ -23,12 +24,22 @@ export CLUSTER_NAME=<clustername>
 export CLUSTER_REGION=<clusterregion>
 ```
 
+4. Also, based on your setup, export the name of the user namespace you are planning to use - 
+```
+export PVC_NAMESPACE=kubeflow-user-example-com
+```
+5. And finally, choose a name for the EFS claim that we will create. In this guide we will use this variable as the name for the PV as well the PVC. 
+```
+export CLAIM_NAME=<efs-claim>
+```
+
+
 ## 2.0 Setup EFS
 
-You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between static and dynamic provisioning, so pick whichever suits you. On the other hand, for the automated script we currently only support dynamic provisioning. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
+You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between **static and dynamic provisioning**, so pick whichever suits you. On the other hand, for the automated script we currently only support **dynamic provisioning**. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
 ### 2.1 [Option 1] Automated setup
-The script automates all the manual resource creation steps but is currently only available for Dynamic Provisioning option.  
+The script automates all the manual resource creation steps but is currently only available for **Dynamic Provisioning** option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0. 
 1. Run the following commands from the `tests/e2e` directory as - 
 ```
@@ -39,18 +50,28 @@ cd $GITHUB_ROOT/tests/e2e
 pip install -r requirements.txt
 ```
 
-3. Run the automated script as follows. You can skip specifying the `efs_file_system_name` and `efs_security_group_name` if you are running the command for the first time in your account and want to use default values - 
-```
-export FILESYSTEM_NAME=<fs_name>
-export SG_NAME=<sg_name>
+3. Run the automated script as follows - 
 
-python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $FILESYSTEM_NAME --efs_security_group_name $SG_NAME
+Note: If you want the script to create a new security group for EFS, specify a name here. On the other hand, if you want to use an existing Security group, you can specify that name too. We have used the same name as the claim we are going to create -
+```
+export SECURITY_GROUP_TO_CREATE=$CLAIM_NAME
+
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $CLAIM_NAME --efs_security_group_name $SECURITY_GROUP_TO_CREATE
+```
+
+4. The script above takes care of creating the `StorageClass (SC)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly. 
+The PVC needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `efs/dynamic-provisioning/pvc.yaml` file accordingly. 
+```
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
+
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
 ```
 #### **Advanced customization**
 The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing `python utils/auto-efs-setup.py --help`.
 
 ### 2.2 [Option 2] Manual setup
-If you prefer to manually setup each components then you can follow this manual guide.  As mentioned, it you have two options between Static and Dynamic provisioing later in step 4 of this section.  
+If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between **Static and Dynamic provisioing** later in step 4 of this section.  
 
 ```
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
@@ -113,25 +134,27 @@ Note: For this README, we have assumed that you are creating your EFS Filesystem
 #### Choose between dynamic and static provisioning  
 In the following section, you have to choose between setting up [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) or setting up static provisioning.
 
-For this section, navigate to the storage directory in docs as - 
-```
-cd $GITHUB_ROOT/docs/deployment/add-ons/storage/efs
-```
-
 #### 4. [Option 1] Dynamic Provisioning  
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the `dynamic-provisioning/sc.yaml` file by chaning `<YOUR_FILE_SYSTEM_ID>` with your `fs-xxxxxx` file system id. You can also change it using the following command :  
 ```
-file_system_id=$file_system_id yq e '.parameters.fileSystemId = env(file_system_id)' -i dynamic-provisioning/sc.yaml
+file_system_id=$file_system_id yq e '.parameters.fileSystemId = env(file_system_id)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/sc.yaml
 ```  
   
 2. Create the storage class using the following command :  
 ```
-kubectl apply -f dynamic-provisioning/sc.yaml
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/sc.yaml
 ```  
 3. Verify your setup by checking which storage classes are created for your cluster. You can use the following command  
 ```
 kubectl get sc
 ```  
+4. The `StorageClass` is a cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Let's edit the pvc.yaml accordingly 
+```
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
+
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
+```
 
 Note : The `StorageClass` is a cluster scoped resource which means we only need to do this step once per cluster. 
 
@@ -140,25 +163,27 @@ Note : The `StorageClass` is a cluster scoped resource which means we only need 
 
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the last line of the static-provisioning/pv.yaml file to specify the `volumeHandle` field to point to your EFS filesystem. Replace `$file_system_id` if it is not already set. 
 ```
-file_system_id=$file_system_id yq e '.spec.csi.volumeHandle = env(file_system_id)' -i static-provisioning/pv.yaml
+file_system_id=$file_system_id yq e '.spec.csi.volumeHandle = env(file_system_id)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
 ```
 
 2. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `static-provisioning/pvc.yaml` file accordingly. 
 ```
-export PVC_NAMESPACE=kubeflow-user-example-com
-yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i static-provisioning/pvc.yaml
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
 ```
 
 3. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
 ```
-kubectl apply -f static-provisioning/sc.yaml
-kubectl apply -f static-provisioning/pv.yaml
-kubectl apply -f static-provisioning/pvc.yaml
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/sc.yaml
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
+kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
 ```
 
-4. Check your Setup
+### 2.3 Check your Setup
 Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
 ```
+# Only for Static Provisioning
 kubectl get pv
 
 NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                 STORAGECLASS   REASON   AGE
@@ -166,29 +191,20 @@ efs-pv  5Gi        RWX            Retain           Bound    kubeflow-user-exampl
 ```
 
 ```
+# Both Static and Dynamic Provisioning
 kubectl get pvc -n $PVC_NAMESPACE
 
 NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 efs-claim   Bound    efs-pv   5Gi        RWX            efs-sc         5d16h
 ```
 
-Now, Port Forward as needed and Login to the Kubeflow dashboard. You can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
+## 3.0 Using EFS Storage in Kubeflow
 In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data. 
 
-## 3.0 Using EFS Storage in Kubeflow
-### 3.1 Set up the environment
-For the following sections, make sure to navigate back to the docs folder at the following path - 
-```
-cd $GITHUB_ROOT/docs/deployment/add-ons/storage/
-```
-and also export the namespace as - 
-```
-export PVC_NAMESPACE=kubeflow-user-example-com
-```
-export the claim name you plan to use 
-```
-export CLAIM_NAME=efs-claim
-```
+### 3.1 Connect to the Kubeflow Dashboard
+Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
+For more details on how to access your Kubeflow dashboard, refer to one of the deployment READMEs based on your setup. If you used the vanilla deployment, you can follow this [README](https://github.com/awslabs/kubeflow-manifests/tree/main/docs/deployment/vanilla#connect-to-your-kubeflow-cluster).
+
 ### 3.2 Changing the default Storage Class
 After installing Kubeflow, you can change the default Storage Class from `gp2` to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named `efs-sc`. You can check your storage classes by running `kubectl get sc`.  
   
@@ -212,27 +228,14 @@ Note: As mentioned, make sure to change your default storage class only after yo
 This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
 ```
-export CLAIM_NAME=efs-claim
-yq e '.metadata.name = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
-yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i notebook-sample/set-permission-job.yaml
-yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i notebook-sample/set-permission-job.yaml
+yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
+yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 
-kubectl apply -f notebook-sample/set-permission-job.yaml
+kubectl apply -f $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 ```
 
-### 3.4 Creating and using EFS volumes as workspace or data volume for a notebook (Dynamic Provisioning)
-
-**Important : The following example only works if you setup dynamic provisioning.**
-
-Here is an example that illustrates how to create a PVC for your dataset in `ReadWriteMany` mode meaning it can be used by many notebooks at the same time as well as how to create a notebook with a workspace volume for the notebook data and how to specify that you want to use your dataset volume as data volume.
-Note that both of these volumes are created under the storage class `efs-sc` which represents the EFS storage class created earlier.
-  
-https://user-images.githubusercontent.com/26939775/153103745-70f93ac5-88f3-4387-b40d-b585fca80af4.mp4
-
-
-### 3.5 Using existing EFS volume as workspace or data volume for a notebook (Static Provisioning)
-
-**Important : The following example only works if you setup static provisioning.**
+### 3.4 Using existing EFS volume as workspace or data volume for a notebook
 
 Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](./README.md#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the notebook configuration options - `public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`. Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
 
@@ -278,7 +281,6 @@ yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_
 ```
 Also, specify the name of the PVC you created - 
 ```
-export CLAIM_NAME=efs-claim
 yq e '.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i training-sample/tfjob.yaml
 ```
 Make sure to run it in the same namespace as the claim - 
@@ -330,5 +332,3 @@ Use the steps in this [AWS Guide](https://docs.aws.amazon.com/efs/latest/ug/dele
 1. When you rerun the `eksctl create iamserviceaccount` to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In such a case you may need to do one or both of the following - 
     a. Delete the cloudformation stack associated with this add-on role.
     b. Delete the `efs-csi-controller-sa` service account and then re-run the required steps. If you used the auto-script, you can rerun it by specifying the same `filesystem-name` such that a new one is not created. 
-
-2. We have seen some issues when running these steps on multiple clusters sharing the same VPC.

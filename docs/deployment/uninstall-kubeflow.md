@@ -1,7 +1,7 @@
 +++
 title = "Uninstall Kubeflow"
 description = "Delete Kubeflow deployments and Amazon EKS clusters"
-weight = 30
+weight = 80
 +++
 
 ## Uninstall Kubeflow on AWS
