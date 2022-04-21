@@ -13,8 +13,6 @@ You can use Notebooks with Kubeflow on AWS to:
 * Use EFS and FSx to share data and models across nodes.
 * USE EFS and FSx for dynamic volume sizing.
 
-Use [AWS-optimized Kubeflow Notebook servers](/docs/component-guides/notebook-servers/) to quickly get started with a range of framework, library, and hardware options. 
-
 ## AWS-optimized Kubeflow Notebook servers
 
 Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html). 
