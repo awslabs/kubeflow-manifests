@@ -8,7 +8,7 @@ For general errors related to Kubernetes and Amazon EKS, please refer to the [Am
 
 ### Validate prerequisites
 
-You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites](https://github.com/awslabs/kubeflow-manifests/tree/v1.3-branch/distributions/aws/examples/vanilla#prerequisites) installed. 
+You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites](/docs/deployment/prerequisites/) installed. 
 
 ### ALB fails to provision
 
@@ -50,4 +50,4 @@ For more information, see the [Amazon FSx for Lustre CSI Driver](https://github.
 
 ### RDS issues
 
-To troubleshoot RDS issues, follow the [installation verification steps](/docs/deployment/install/rds-s3/guide/#40-verify-the-installation).
+To troubleshoot RDS issues, follow the [installation verification steps](/docs/deployment/rds-s3/guide/#40-verify-the-installation).

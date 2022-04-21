@@ -36,11 +36,11 @@ The following components have been tested to work with the `AwsIamForServiceAcco
 
 Integration with the `AwsIamForServiceAccount` plugin is being actively worked on for all components with Profile-level support. 
 
-You can find documentation about the `AwsIamForServiceAccount` plugin for specific components in the individual [component guides](/docs/component-guides/).
+You can find documentation about the `AwsIamForServiceAccount` plugin for specific components in the individual [component guides](/docs/component-guides/). Read on for general configuration instructions.
 
 ## Configuration steps
 
-After installing Kubeflow on AWS with one of the available [deployment options](/docs/deployment/install/), you can configure Kubeflow Profiles with the following steps: 
+After installing Kubeflow on AWS with one of the available [deployment options](/docs/deployment/), you can configure Kubeflow Profiles with the following steps: 
 
 1. Define the following environment variables:
     ```bash
@@ -138,7 +138,9 @@ After installing Kubeflow on AWS with one of the available [deployment options](
     kubectl apply -f profile_iam.yaml
     ```
 
-10. Verify your configuration by [creating and running](/docs/component-guides/notebooks-guide/#try-it-out) a [Kubeflow Notebook](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
+## Use Kubeflow Profiles with Notebooks
+
+Verify your configuration by [creating and running](/docs/component-guides/notebooks/#try-it-out) a [Kubeflow Notebook](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
 
 
 
