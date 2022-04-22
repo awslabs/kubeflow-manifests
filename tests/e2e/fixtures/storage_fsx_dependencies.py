@@ -5,10 +5,9 @@ import boto3
 import os, stat, sys
 
 from e2e.utils.config import metadata
-from e2e.utils.cognito_bootstrap.common import load_cfg, write_cfg
 from e2e.fixtures.kustomize import kustomize, configure_manifests
 from e2e.conftest import region
-from e2e.fixtures.cluster import cluster
+from e2e.fixtures.cluster import cluster, associate_iam_oidc_provider
 from e2e.fixtures.clients import account_id
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
@@ -19,12 +18,13 @@ from e2e.utils.utils import (
     kubectl_apply,
     kubectl_delete,
     load_json_file,
+    load_yaml_file,
+    write_yaml_file,
 )
 
 from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
 )
-
 
 def get_fsx_dns_name(fsx_client, file_system_id):
     response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
@@ -38,6 +38,7 @@ def get_fsx_mount_name(fsx_client, file_system_id):
 
 @pytest.fixture(scope="class")
 def static_provisioning(metadata, region, request, cluster):
+    associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("fsx-claim-")
     fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
     fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
@@ -81,19 +82,19 @@ def static_provisioning(metadata, region, request, cluster):
         mount_name = get_fsx_mount_name(fsx_client, file_system_id)
 
         # Add the filesystem_id to the pv.yaml file
-        fsx_pv = load_cfg(fsx_pv_filepath)
+        fsx_pv = load_yaml_file(fsx_pv_filepath)
         fsx_pv["spec"]["csi"]["volumeHandle"] = file_system_id
         fsx_pv["metadata"]["name"] = claim_name
         fsx_pv["spec"]["csi"]["volumeAttributes"]["dnsname"] = dns_name
         fsx_pv["spec"]["csi"]["volumeAttributes"]["mountname"] = mount_name
-        write_cfg(fsx_pv, fsx_pv_filepath)
+        write_yaml_file(fsx_pv, fsx_pv_filepath)
 
         # Update the values in the pvc.yaml file
-        fsx_pvc = load_cfg(fsx_pvc_filepath)
+        fsx_pvc = load_yaml_file(fsx_pvc_filepath)
         fsx_pvc["metadata"]["namespace"] = DEFAULT_USER_NAMESPACE
         fsx_pvc["metadata"]["name"] = claim_name
         fsx_pvc["spec"]["volumeName"] = claim_name
-        write_cfg(fsx_pvc, fsx_pvc_filepath)
+        write_yaml_file(fsx_pvc, fsx_pvc_filepath)
 
         kubectl_apply(fsx_pv_filepath)
         kubectl_apply(fsx_pvc_filepath)
@@ -116,7 +117,8 @@ def static_provisioning(metadata, region, request, cluster):
         )
 
         # delete the security group
-        ec2_client.delete_security_group(GroupId=sg_id)
+        # TODO: This needs to be fixed. we need to wait for fsx volume to be deleted but fsx does not provided a deleted status, needs a workaround. 
+        # ec2_client.delete_security_group(GroupId=sg_id)
 
         # Delete the config file
         os.remove(config_filename)

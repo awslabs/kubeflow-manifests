@@ -14,14 +14,16 @@ from e2e.utils.utils import (
 
 def main():
     metadata = load_yaml_file("utils/rds-s3/metadata.yaml")
-    secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
+    region = metadata["CLUSTER"]["region"]
+    cluster_name = metadata["CLUSTER"]["name"]
+    secrets_manager_client = get_secrets_manager_client(region)
     delete_s3_bucket(metadata, secrets_manager_client)
-    delete_rds(metadata, secrets_manager_client)
-    uninstall_secrets_manager()
+    delete_rds(metadata, secrets_manager_client, region)
+    uninstall_secrets_manager(region, cluster_name)
 
 
-def delete_s3_bucket(metadata, secrets_manager_client):
-    s3_client = get_s3_client(CLUSTER_REGION)
+def delete_s3_bucket(metadata, secrets_manager_client, region):
+    s3_client = get_s3_client(region)
     s3_resource = boto3.resource("s3")
     bucket_name = metadata["S3"]["bucket"]
 
@@ -36,8 +38,8 @@ def delete_s3_bucket(metadata, secrets_manager_client):
     )
 
 
-def delete_rds(metadata, secrets_manager_client):
-    rds_client = get_rds_client(CLUSTER_REGION)
+def delete_rds(metadata, secrets_manager_client, region):
+    rds_client = get_rds_client(region)
     db_instance_name = metadata["RDS"]["instanceName"]
     db_subnet_group_name = metadata["RDS"]["subnetGroupName"]
 
@@ -74,7 +76,7 @@ def delete_rds(metadata, secrets_manager_client):
     )
 
 
-def uninstall_secrets_manager():
+def uninstall_secrets_manager(region, cluster_name):
     kubectl_delete(
         "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretproviderclass.yaml"
     )
@@ -101,31 +103,11 @@ def uninstall_secrets_manager():
     delete_iam_service_account(
         service_account_name="kubeflow-secrets-manager-sa",
         namespace="kubeflow",
-        cluster_name=CLUSTER_NAME,
-        region=CLUSTER_REGION,
+        cluster_name=cluster_name,
+        region=region,
     )
     print("IAM service account kubeflow-secrets-manager-sa successfully deleted")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--region",
-        type=str,
-        metavar="CLUSTER_REGION",
-        help="Your cluster region code (eg: us-east-2)",
-        required=True,
-    )
-    parser.add_argument(
-        "--cluster",
-        type=str,
-        metavar="CLUSTER_NAME",
-        help="Your cluster name (eg: mycluster-1)",
-        required=True,
-    )
-    args, _ = parser.parse_known_args()
-
-    CLUSTER_REGION = args.region
-    CLUSTER_NAME = args.cluster
-
     main()

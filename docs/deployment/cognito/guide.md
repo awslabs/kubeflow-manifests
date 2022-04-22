@@ -65,12 +65,12 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. Export the values:
         1. 
           ```
-          export CognitoUserPoolArn=<>
-          export CognitoAppClientId=<>
-          export CognitoUserPoolDomain=<>
-          export certArn=<>
-          export signOutURL=<>
-          export CognitoLogoutURL=https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL
+          export CognitoUserPoolArn="<YOUR_USER_POOL_ARN>"
+          export CognitoAppClientId="<YOUR_APP_CLIENT_ID>"
+          export CognitoUserPoolDomain="<YOUR_USER_POOL_DOMAIN>"
+          export certArn="<YOUR_ACM_CERTIFICATE_ARN>"
+          export signOutURL="<YOUR_SIGN_OUT_URL>"
+          export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
           ```
 1. Substitute values for setting up Ingress.
     1. ```
