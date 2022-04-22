@@ -8,86 +8,87 @@ This tutorial shows how to expose Kubeflow over a load balancer on AWS.
 
 ## Before you begin
 
-Follow this guide only if you are **not** using `Cognito` as the authentication provider in your deployment. Cognito integrated deployment is configured with AWS Load Balancer controller by default to create an ingress managed application load balancer and exposes Kubeflow via a hosted domain.
+Follow this guide only if you are **not** using `Cognito` as the authentication provider in your deployment. Cognito-integrated deployment is configured with the AWS Load Balancer controller by default to create an ingress-managed Application Load Balancer and exposes Kubeflow via a hosted domain.
 
 ## Background
 
-Kubeflow does not offer a generic solution for connecting to Kubeflow over a load balancer because this process is highly dependent on your environment/cloud provider. On AWS, we use the [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) which satisfies the Kubernetes [Ingress resource](https://kubernetes.io/docs/concepts/services-networking/ingress/) to create an [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) (ALB). When you create a Kubernetes `Ingress`, an ALB is provisioned that load balances application traffic.
+Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the [AWS Load Balancer (ALB) controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/), which satisfies the Kubernetes [Ingress resource](https://kubernetes.io/docs/concepts/services-networking/ingress/) to create an [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) (ALB). When you create a Kubernetes `Ingress`, an ALB is provisioned that load balances application traffic.
 
-In order to connect to Kubeflow using a LoadBalancer, we need to setup HTTPS. The reason is that many of the Kubeflow web apps (e.g., Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
+In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the load balancer. [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) is a service that lets you easily provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services and your internal connected resources. To create a certificate for use with the load balancer, [you must specify a domain name](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates) i.e. certificates cannot be created for ALB DNS. You can register your domain using any domain service provider such as [Route53](https://aws.amazon.com/route53/), GoDoddy etc.
+To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, [you must specify a domain name](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates) (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as [Route53](https://aws.amazon.com/route53/), or GoDoddy.
 
 ## Prerequisites
-
-1. Kubeflow deployment on EKS with Dex as auth provider(default in [Vanilla](../../vanilla/README.md) Kubeflow).
-1. Installed the tools mentioned in [prerequisite section of this](../../vanilla/README.md#prerequisites) document on the client machine.
-1. Verify you are connected to right cluster, cluster has compute and the aws region is set to the region of cluster.
-    1. Verify cluster name and region are exported
-        ```
+This guide assumes that you have: 
+1. A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the [Vanilla](/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
+1. Installed the tools mentioned in the [general prerequisites](/docs/deployment/prerequisites/) guide on the client machine.
+1. Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
+    1. Verify that your cluster name and region are exported:
+        ```bash
         echo $CLUSTER_REGION
         echo $CLUSTER_NAME
         ```
-    1. Display the current cluster kubeconfig points to
-        ```
+    1. Display the current cluster that kubeconfig points to:
+        ```bash
         kubectl config current-context
         aws eks describe-cluster --name $CLUSTER_NAME
         ```
-1. Verify the current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>` directory
-
+1. Verify that the current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>`.
 
 ## Create Load Balancer
 
-To make it easy to create the load balancer, you can use the [script provided in this section](#automated-script). If you prefer to use the automated scripts, you need to only execute the steps in the [automated script section](#automated-script). Read the following sections in this guide to understand what happens when you run the script or execute all the steps if you prefer to do it manually/hands-on.
+To make it easy to create the Load Balancer, you can use the [script provided in this section](#automated-script). If you prefer to use the automated scripts, you only need to follow the steps in the [automated script section](#automated-script). Read the following sections in this guide to understand what happens when you run the automated script. This guide also walks you through all of the setup steps if you prefer to do things manually.
 
-### Create Domain and Certificates
+### Create domain and certificates
 
-As explained in the background section, you need a registered domain and TLS certificate to use HTTPS with load balancer. Since your top level domain(e.g. `example.com`) could have been registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM and Application Load Balancer, you will create a separate [sudomain](https://en.wikipedia.org/wiki/Subdomain) (e.g. `platform.example.com`) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain(`*.example.com`) and subdomain(`*.platform.example.com`) in the region where your platform will be running(i.e. EKS cluster region).
+You need a registered domain and TLS certificate to use HTTPS with Load Balancer. Since your top level domain (e.g. `example.com`) can be registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM, and Application Load Balancer, you will create a separate [sudomain](https://en.wikipedia.org/wiki/Subdomain) (e.g. `platform.example.com`) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain (`*.example.com`) and subdomain (`*.platform.example.com`) in the region where your platform will run (your EKS cluster region).
 
 #### Create a subdomain
 
-1. Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy.com etc. Lets assume this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records you will have to add (wildcard for ALB DNS, validation for the certificate manager, etc)
-1. Goto Route53 and create a subdomain to host kubeflow:
+1. Register a domain in any domain provider like [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or GoDaddy. For this guide, we assume that this domain is `example.com`. It is handy to have a domain managed by Route53 to deal with all the DNS records that you will have to add (wildcard for ALB DNS, validation for the certificate manager, etc).
+1. Goto Route53 and create a subdomain to host Kubeflow:
     1. Create a hosted zone for the desired subdomain e.g. `platform.example.com`.
     1. Copy the value of NS type record from the subdomain hosted zone (`platform.example.com`)
         1. ![subdomain-NS](./files/subdomain-NS.png)
-    1. Create a `NS` type of record in the root `example.com` hosted zone for the subdomain `platform.example.com`.
+    1. Create an `NS` type of record in the root `example.com` hosted zone for the subdomain `platform.example.com`.
         1. ![root-domain-NS-creating-NS](./files/root-domain-NS-creating-NS.png)
-        1.  Following is a screenshot of the record after creation in `example.com` hosted zone.
+        1.  The following image is a screenshot of the record after creation in `example.com` hosted zone.
             1. ![root-domain-NS-created](./files/root-domain-NS-created.png)
 
-From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of hosted zone in the following sections/steps of this guide are for the subdomain.
+From this point onwards, we will create and update the DNS records **only in the subdomain**. All of the images of the hosted zone in the following steps of this guide are for the subdomain.
+
 #### Create certificates for domain
 
-Create the certificates for the domains in the region where your platform will be running(i.e. EKS cluster region) by following [this document](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in the specified order.
+To create the certificates for the domains in the region where your platform will run (i.e. EKS cluster region), follow the steps in the [Request a public certificate using the console](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) guide.
 
-> **Note:**
-> - The ceritificates are valid only after successful [validation of domain ownership](https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html)
-    - Following is a screenshot showing a certificate has been issued. Note: Status turns to `Issued` after few minutes of validation.
-        - ![successfully-issued-certificate](./files/successfully-issued-certificate.png)
-> - If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone.
-    - Following is a screenshot of CNAME record of the certificate in `platform.example.com` hosted zone for DNS validation:
-            - ![DNS-record-for-certificate-validation](./files/DNS-record-for-certificate-validation.png)    
+> Note: The certificates are valid only after successful [validation of domain ownership](https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html).
+    
+The following image is a screenshot showing that a certificate has been issued.
+> Note: Status turns to `Issued` after a few minutes of validation.
+![successfully-issued-certificate](./files/successfully-issued-certificate.png)
 
-1. Create a certificate for `*.example.com` in the region where your platform will be running
-1. Create a certificate for `*.platform.example.com` in the region where your platform will be running
+If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the `platform.example.com` hosted zone for DNS validation:
+![DNS-record-for-certificate-validation](./files/DNS-record-for-certificate-validation.png)    
+
+1. Create a certificate for `*.example.com` in the region where your platform will run.
+1. Create a certificate for `*.platform.example.com` in the region where your platform will run.
 
 ### Configure Ingress
 
 1. Export the ARN of the certificate created for `*.platform.example.com`:
         1. `export certArn=<>`
-1. Configure the parameters for [ingress](../../../../awsconfigs/common/istio-ingress/overlays/https/params.env) with the certificate ARN of the subdomain
-    1. ```
+1. Configure the parameters for [ingress](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/https/params.env) with the certificate ARN of the subdomain.
+    1. ```bash
         printf 'certArn='$certArn'' > awsconfigs/common/istio-ingress/overlays/https/params.env
         ```
-### Configure Load Balancer Controller
+### Configure Load Balancer controller
 
-Setup resources required for the load balancer controller:
+Set up resources required for the Load Balancer controller:
 
-1. Make sure all the subnets(public and private) corresponding to the EKS cluster are tagged according to the `Prerequisites` section in this [document](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html). Ignore the requirement to have an existing ALB provisioned on the cluster. We will be deploying load balancer controller version 1.1.5 in the later section.
-    1. Specifically check if the following tags exist on the subnets:
-        1. `kubernetes.io/cluster/cluster-name` (replace `cluster-name` with your cluster name e.g. `kubernetes.io/cluster/my-k8s-cluster`). Add this tag in both private and public subnets. If you created the cluster using eksctl, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of `TAG_VALUE` variable(`owned` or `shared`). Use `shared` as tag value if you have more than one cluster using the subnets:
-            - ```
+1. Make sure that all the subnets(public and private) corresponding to the EKS cluster are tagged according to the `Prerequisites` section in the [Application load balancing on Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html) guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
+    1. Check if the following tags exist on the subnets:
+        1. `kubernetes.io/cluster/cluster-name` (replace `cluster-name` with your cluster name e.g. `kubernetes.io/cluster/my-k8s-cluster`). Add this tag in both private and public subnets. If you created the cluster using `eksctl`, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of `TAG_VALUE` variable(`owned` or `shared`). Use `shared` as the tag value if you have more than one cluster using the subnets:
+            - ```bash
                 export TAG_VALUE=<>
                 export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME --output json | jq -r '.Subnets[].SubnetId')
                 for i in "${CLUSTER_SUBNET_IDS[@]}"
@@ -97,30 +98,30 @@ Setup resources required for the load balancer controller:
                 ```
         1. `kubernetes.io/role/internal-elb`. Add this tag only to private subnets
         1. `kubernetes.io/role/elb`. Add this tag only to public subnets
-1. Load balancer controller will use [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with for your EKS cluster by running the following command if your cluster doesn’t already have one:
-    1.  ```
+1. The Load balancer controller will use [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
+    1.  ```bash
         eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
         ```
-1. Create an IAM role with [these permissions](../../../../awsconfigs/infra_configs/iam_alb_ingress_policy.json) for the load balancer controller to use via a service account to access AWS services.
-    1. ```
+1. Create an IAM role with [the necessary permissions](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json) for the Load Balancer controller to use via a service account to access AWS services.
+    1. ```bash
         export LBC_POLICY_NAME=alb_ingress_controller_${CLUSTER_REGION}_${CLUSTER_NAME}
         export LBC_POLICY_ARN=$(aws iam create-policy --policy-name $LBC_POLICY_NAME --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query 'Policy.Arn')
         eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn ${LBC_POLICY_ARN} --override-existing-serviceaccounts --approve
         ```
-1. Configure the parameters for [load balancer controller](../../../../awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name
-    1. ```
+1. Configure the parameters for [load balancer controller](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name
+    1. ```bash
         printf 'clusterName='$CLUSTER_NAME'' > awsconfigs/common/aws-alb-ingress-controller/base/params.env
         ```
 
 ### Build Manifests and deploy components
-Run the following command to build and install the components specified in this [kustomize](./kustomization.yaml) file.
-```
+Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/add-ons/load-balancer/kustomization.yaml) file.
+```bash
 while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 ### Update the domain with ALB address
 
-1. Check if ALB is provisioned. It takes around 3-5 minutes
+1. Check if ALB is provisioned. This may take a few minutes.
     1. ```
         kubectl get ingress -n istio-system istio-ingress
         NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
@@ -135,17 +136,17 @@ while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f
 ### Automated script
 
 1. Install dependencies for the script
-    ```
+    ```bash
     cd tests/e2e
     pip install -r requirements.txt
     ```
 1. Substitute values in `tests/e2e/utils/load_balancer/config.yaml`.
-    1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
-        1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
-    1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`.
-    1. Cluster name and region where kubeflow is deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
-    1. The config file will look something like:
-        1. ```
+    1. Register root domain in `route53.rootDomain.name`. For this example, assume that this domain is `example.com`.
+        1. If your domain is managed in Route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
+    1. Name of the sudomain that you want to use to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`.
+    1. Cluster name and region where Kubeflow is deployed in `cluster.name` and `cluster.region` (e.g. `us-west-2`), respectively.
+    1. The Config file will look something like:
+        1. ```yaml
             cluster:
                 name: kube-eks-cluster
                 region: us-west-2
@@ -156,12 +157,12 @@ while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f
                 subDomain:
                     name: platform.example.com
             ```
-1. Run the script to create the resources
-    1. ```
+1. Run the script to create the resources.
+    1. ```bash
         PYTHONPATH=.. python utils/load_balancer/setup_load_balancer.py
         ```
-1. The script will update the config file with the resource names/ids/ARNs it created. Following is a sample:
-    1. ```
+1. The script will update the Config file with the resource names, IDs, and ARNs that it created. Refer to the following example for more information:
+    1. ```yaml
         kubeflow:
             alb:
                 dns: xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
@@ -186,10 +187,9 @@ while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f
 
 ## Clean up
 
-To delete the resources created in this guide, run the following commands from the root of repository:
-Make sure you have the configuration file created by the script in `tests/e2e/utils/load_balancer/config.yaml`. If you did not use the script, plugin the name/ARN/id of the resources you created in the configuration file by referring the sample in Step 4 of [previous section](#automated-script)
-
-```
+To delete the resources created in this guide, run the following commands from the root of your repository:
+> Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/load_balancer/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the [previous section](#automated-script).
+```bash
 cd tests/e2e
 PYTHONPATH=.. python utils/load_balancer/lb_resources_cleanup.py
 cd -

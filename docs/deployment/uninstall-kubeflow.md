@@ -13,11 +13,13 @@ kubectl get profile
 kubectl delete profile --all
 ```
 
-Then, delete the Kubeflow deployment with the following command:
+You can delete a Kubeflow deployment by running the `kubectl delete` command on the manifest according to the deployment option you chose. For example, to delete a vanilla installation, run the following command:
 
 ```bash
-kustomize build example | kubectl delete -f 
+kustomize build docs/deployment/vanilla/ | kubectl delete -f -
 ```
+
+This command assumes that you have the repository in the same state as when you installed Kubeflow.
 
 Cleanup steps for specific deployment options can be found in their respective [installation guides](/docs/deployment/). 
 

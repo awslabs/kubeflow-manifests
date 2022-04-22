@@ -6,7 +6,7 @@ weight = 60
 
 # Deploying Kubeflow on EKS
 
-This guide describes how to deploy Kubeflow on AWS EKS
+This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
 
 ## Prerequisites
 
