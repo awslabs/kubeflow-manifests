@@ -1,44 +1,88 @@
-# Notebooks Component Guide for Kubeflow on AWS
++++
+title = "Notebooks"
+description = "Use Notebooks with Kubeflow on AWS to experiment with model development"
+weight = 10
++++
 
-## Setup RDS & S3 credentials access for notebooks & pipelines
-### Use Cases
-- Be able to use `boto3` or aws libraries that require to pass in credentials in a notebook and specify credentials without hard coding them. Access the credentials via environment variables.  
-- Be able to use [ml-metadata](https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md) in a notebook (eg: to explore metadata) and specify the credentials needed by using environment variables.
-- Be able to use [ml-metadata](https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md) to query metadata during a pipeline run by passing a kubernetes secret to a pipeline component.  
-- Be able to use `boto3` or aws libraries that require to pass in credentials in a Kubeflow Pipeline Component. 
+[Kubeflow Notebooks](https://www.kubeflow.org/docs/components/notebooks/) provide a way to run web-based development environments inside your Kubernetes cluster by running them inside Pods. Users can create Notebook containers directly in the cluster, rather than locally on their workstations. Access control is managed by Kubeflow’s RBAC, enabling easier notebook sharing across the organization. 
 
-The following script creates a kubernetes `mysql-secret` and `mlpipeline-minio-artifact` secrets with RDS & S3 credentials specified in AWS Secrets Manager created while deploying the platform. This is a sample for demonstrating how you can use [`PodDefault` resource](https://github.com/kubeflow/kubeflow/blob/master/components/admission-webhook/README.md) and secrets in Notebooks to access the metadata database and and artifacts in S3 bucket created by pipelines. Make sure you create separate database and IAM users and corresponding secrets in Secrets Manager for your users if you want fine grain access control and auditing.  
+You can use Notebooks with Kubeflow on AWS to: 
+* Experiment on training scripts and model development.
+* Manage Kubeflow pipeline runs.
+* Integrate with Tensorboard for visualization.
+* Use EFS and FSx to share data and models across nodes.
+* USE EFS and FSx for dynamic volume sizing.
 
-### Setup the secrets access
-1. Navigate inside the script directory.
+## AWS-optimized Kubeflow Notebook servers
+
+Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html). 
+
+The following container images are available from the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/).
+
 ```
-cd ../../tests/e2e
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-gpu-py38-cu112
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-cpu-py38
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-gpu-py38-cu111
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
 ```
-2. Install the script dependencies.
+
+AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Available Deep Learning Containers Images](https://github.com/aws/deep-learning-containers/blob/master/available_images.md).
+
+Along with specific machine learning frameworks, these container images have additional pre-installed packages:
+- `kfp`
+- `kfserving` 
+- `h5py`
+- `pandas`
+- `awscli`
+- `boto3`
+
+For more information on gettings started with Kubeflow Notebooks, see the [Quickstart Guide](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
+
+## RDS and S3 credentials for Kubeflow Pipelines and Notebooks
+
+Set up RDS and S3 credential access to be able to:
+
+- Use `boto3` or AWS libraries that require credentials in a Notebook, specify credentials without hard coding them, and access the credentials through environment variables.  
+- Explore metadata using [ml-metadata](https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md) in a Notebook and specify the necessary credentials using environment variables.
+- Use [ml-metadata](https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md) to query metadata during a pipeline run by passing a Kubernetes Secret to a pipeline component.  
+- Use `boto3` or AWS libraries that require credentials in a Kubeflow Pipelines component. 
+
+The following steps create a Kubernetes `mysql-secret` and `mlpipeline-minio-artifact` Secret with RDS and S3 credentials specified in the AWS Secrets Manager created while deploying the platform. This is a sample for demonstrating how you can use [`PodDefault` resource](https://github.com/kubeflow/kubeflow/blob/master/components/admission-webhook/README.md) and Secrets in Notebooks to access the metadata database and and artifacts in S3 bucket created by pipelines. Make sure you create separate database and IAM users and corresponding secrets in Secrets Manager for your users if you want fine grain access control and auditing.  
+
+### Set up Secrets access
+1. Verify that your are in the root of your repository by running the `pwd` command. The path should be `PATH/kubeflow-manifests`.
+```
+pwd
+```
+
+2. Navigate to the test scripts directory and install the dependencies.
 ```shell
+cd tests/e2e
 pip install -r requirements.txt
 ```
-3. Execute the script, replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_NAMESPACE` with the appropriate values.  
-Note that `YOUR_NAMESPACE` represents the namespace the secrets will be setup for.  
-For instance if your notebooks and pipelines will be in `kubeflow-user-example-com`, then you would use `kubeflow-user-example-com` in place of `YOUR_NAMESPACE`.
+
+3. Replace `YOUR_CLUSTER_REGION`, `YOUR_CLUSTER_NAME` and `YOUR_NAMESPACE` with the appropriate values and run the script. 
+
+> Note: `YOUR_NAMESPACE` represents the namespace that the Secrets will be set up in. For example, if your Notebooks and pipelines will be in the `kubeflow-user-example-com` namespace, then you would use `kubeflow-user-example-com` in place of `YOUR_NAMESPACE`. The namespace must exist before executing the script. 
+
 ```shell
 PYTHONPATH=.. python utils/notebooks/setup_secrets_access.py --region YOUR_CLUSTER_REGION --cluster YOUR_CLUSTER_NAME --profile-namespace YOUR_NAMESPACE
 ```  
-You can always do `PYTHONPATH=.. python utils/notebooks/setup_secrets_access.py --help` to learn more about the parameters available.    
 
-**Note :** The namespace must exist before executing the script.   
+Use the help flag to learn more about available parameters:
+```bash
+PYTHONPATH=.. python utils/notebooks/setup_secrets_access.py --help
+```
 
-### (Optional) Set PodDefault selected by default in notebook UI  
-The Kubeflow notebook UI allows to select credentials configurations when creating a notebook, by default no configuration is selected but we can add the `PodDefault` label created in the previous step to the list of selected configuration.  
-This results in having the `PodDefault` already selected when creating a new notebook, otherwise the user must select it manually in the notebook UI.  
-You can learn more about Kubeflow Notebooks [here](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/#detailed-steps)
+### (Optional) Update default Notebook configurations
+
+No Kubeflow Notebook configuration is selected by default. You can make the `PodDefault` resources that you created the default credential configuration when creating a Notebook. If you do not follow this step, you must manually select this in the Notebook UI. For more information on set up details, see the [Detailed Steps](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/#detailed-steps) in the Kubeflow Notebooks Quickstart Guide. 
   
-**Important Note :**
-Making this configuration default will introduce a dependency for the secrets and PodDefault to be available in all profile namespaces. Profile namespaces which do not have this resource will see failure in new notebook server creation if this PodDefault is not created.
+> Note: Making this configuration default introduces a dependency. The Secrets and PodDefault must be available in all Profile namespaces. If the Secrets and PodDefault resources are not available in a Profile namespaces, newly created Notebook servers in that Profile namespace will fail.
 
-This change can be done before or after installing Kubeflow, here is how to make this modification depending on these 2 options.  
+Update the default Kubeflow Notebook configuration either before or after installing Kubeflow. 
 
-#### **Option 1: Update notebook UI config before installing Kubeflow**
+#### Option 1: Before installing Kubeflow
 Modify the file `awsconfigs/apps/jupyter-web-app/configs/spawner_ui_config.yaml`
 ```yaml
   configurations:
@@ -46,13 +90,13 @@ Modify the file `awsconfigs/apps/jupyter-web-app/configs/spawner_ui_config.yaml`
     value:
       - add-aws-secret
 ```  
-#### **Option 2: Update notebook UI config after installing Kubeflow**  
-We can update the notebook UI config at runtime by using the following command :  
-```shel
+#### Option 2: After installing Kubeflow
+Update the Notebook configuration at runtime with the following command:  
+```bash
 kubectl edit $(kubectl get cm -n kubeflow -l app=jupyter-web-app -o=name | grep 'web-app-config') -n kubeflow
 ```  
 
-Modify the configuration :  
+Modify the configuration:  
 ```yaml
   configurations:
     # List of labels to be selected, these are the labels from PodDefaults
@@ -60,36 +104,34 @@ Modify the configuration :
       - add-aws-secret
 ```  
   
-Once you are done making the changes you can save and exit your editor and restart the notebook deployment to apply the changes.   
+Save and exit your editor. Then, restart the Notebook deployment to apply the changes.   
 
 ```shell
 kubectl rollout restart deployment jupyter-web-app-deployment -n kubeflow
 ```
-### Verify notebook credentials configuration  
-To verify that your `PodDefault` setup was done successfully, navigate to the notebook creation UI and make sure you can select the `PodDefault`.  
+### Verify Notebook credentials
+
+Find `PodDefault` in the Notebook creation page to verify that your setup was done successfully. 
 ![](https://user-images.githubusercontent.com/26939775/155630906-0eecf1d9-3fb1-4d01-a85e-1cff46dc37e9.png)  
-Then create a notebook and check that the environment variables are accessible :  
+
+Create a Notebook and check that the environment variables are accessible.
 ```python
 import os
 
 print(os.environ['port'])
 ```  
 
-
 ## AWS IAM for Kubeflow Profiles in Notebooks
 
-### Use Cases
-
-Access AWS resources through notebooks without exposing credentials.
+Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) to securely access AWS resources through Kubeflow Notebooks.
 
 ### Configuration
 
-Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found [here](../../../profile-iam). The prerequisite steps will go through creating a profile that uses the `AwsIamForServiceAccount` plugin.
+Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
 
-No additional configuration steps are required.
+### Try it out
 
-### Try It Out
-1. Create a notebook server through the central dashboard.
-1. Select the profile name from the top left drop down menu for the profile you created.
-1. Create a notebook from [the sample](./samples/notebooks/verify_profile_iam_notebook.ipynb).
-1. Run the notebook, it should be able to list the S3 buckets present in your account.
+1. Create a Notebook server through the central dashboard.
+2. Navigate to the top left drop down menu and select the profile name for the profile that you created.
+3. Create a Notebook using the [Verify Profile IAM](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/component-guides/samples/notebooks/verify_profile_iam_notebook.ipynb) Notebook sample.
+4. Run the Notebook. You should see the S3 buckets present in your account.
