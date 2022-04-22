@@ -13,7 +13,7 @@ You may experience issues due to version incompatibility. Before diving into mor
 ### ALB fails to provision
 
 If you see that your istio-ingress `ADDRESS` is empty after more than a few minutes, it is possible that something is misconfigured in your ALB ingress controller.
-```shell
+```bash
 kubectl get ingress -n istio-system
 NAME            HOSTS   ADDRESS   PORTS   AGE
 istio-ingress   *                 80      3min
@@ -21,15 +21,21 @@ istio-ingress   *                 80      3min
 
 Check the AWS ALB Ingress Controller logs for errors.
 ```shell
-kubectl -n kubeflow logs $(kubectl get pods -n kubeflow --selector=app=aws-alb-ingress-controller --output=jsonpath={.items..metadata.name}) 
+kubectl -n kube-system logs $(kubectl get pods -n kube-system --selector=app.kubernetes.io/name=aws-load-balancer-controller --output=jsonpath={.items..metadata.name})
 ```
 
-```
-E1024 09:02:59.934318       1 :0] kubebuilder/controller "msg"="Reconciler error" "error"="failed to build LoadBalancer configuration due to retrieval of subnets failed to resolve 2 qualified subnets. Subnets must contain the kubernetes.io/cluster/\u003ccluster name\u003e tag with a value of shared or owned and the kubernetes.io/role/elb tag signifying it should be used for ALBs Additionally, there must be at least 2 subnets with unique availability zones as required by ALBs. Either tag subnets to meet this requirement or use the subnets annotation on the ingress resource to explicitly call out what subnets to use for ALB creation. The subnets that did resolve were []"  "controller"="alb-ingress-controller" "request"={"Namespace":"istio-system","Name":"istio-ingress"}
+If the logs indicate issues with a missing clustername, check the following ConfigMap:
+```bash
+kubectl get configmaps -n kube-system aws-load-balancer-controller-config -o yaml
 ```
 
-Please check `kubectl get configmaps aws-alb-ingress-controller-config -n kubeflow -o yaml` and make any needed changes.
-
+Make sure that the ConfigMap has the correct EKS cluster name assigned to the `clusterName` variable.
+```bash
+apiVersion: v1
+kind: ConfigMap
+data:
+  clusterName: your-eks-cluster-name
+```
 If this does not resolve the error, it is possible that your subnets are not tagged so that Kubernetes knows which subnets to use for external load balancers. To fix this, ensure that your cluster's public subnets are tagged with the **Key**: ```kubernetes.io/role/elb``` and **Value**: ```1```. See the Prerequisites section for application load balancing in the [Amazon EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html) for further details.
 
 ### FSx issues

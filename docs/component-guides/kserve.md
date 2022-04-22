@@ -14,7 +14,7 @@ Read the [background](/docs/deployment/add-ons/load-balancer/guide/#background) 
 
 This guide assumes that you have:
 
-1. The necessary [prerequisites](/docs/deployment/prerequisites), including a Kubeflow deployment.
+1. The necessary [prerequisites](/docs/deployment/prerequisites/), including a Kubeflow deployment.
 2. The [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) configured with one of the following deployment options:
     - A Cognito-integrated deployment that is configured with the [AWS Load Balancer controller by default](/docs/deployment/cognito/guide#30-configure-ingress).
     - A deployment that is not integrated with Cognito (for example, the [Vanilla deployment](/docs/deployment/vanilla/guide/), which uses Dex as an auth provider), but have followed the [Exposing Kubeflow over Load Balancer guide](/docs/deployment/add-ons/load-balancer/guide/).

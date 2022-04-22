@@ -20,21 +20,22 @@ In order for the Profile controller to get the necessary permissions, the Profil
 
 IRSA allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
 
-For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
+For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+
+### Admin considerations
+
+- Kubeflow admins will need to create an IAM role for each Profile with the desired scoped permissions.
+- The Profile controller does not have the permissions specified in the Profile roles.
+- The Profile controller has permissions to modify the Profile roles, which it will do to grant assume role permissions to the `default-editor` service account (SA) present in the Profile's namespace.
+- A `default-editor` SA exists in every Profile's namespace and will be annotated with the role ARN created for the profile. Pods annotated with the SA name will be granted the Profile role permissions.
+- The `default-editor` SA is used by various services in Kubeflow to launch resources in Profile namespaces. However, not all services do this by default.
 
 ### Component-level implementations
-
-The following components have Profile-level support: 
-- Central Dashboard
-- Notebooks
-- Pipelines
-- AutoML (Katib)
-- KFServing
 
 The following components have been tested to work with the `AwsIamForServiceAccount` plugin: 
 - Notebooks
 
-Integration with the `AwsIamForServiceAccount` plugin is being actively worked on for all components with Profile-level support. 
+Integration with the `AwsIamForServiceAccount` plugin is actively being worked on for all components with [Profile-level support](https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration). 
 
 You can find documentation about the `AwsIamForServiceAccount` plugin for specific components in the individual [component guides](/docs/component-guides/). Read on for general configuration instructions.
 
@@ -118,7 +119,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export PROFILE_USER="user@example.com"
    ```
 
-9. Create a profile using the `PROFILE_NAME`. 
+9. Create a Profile using the `PROFILE_NAME`. 
     ```bash
     cat <<EOF > profile_iam.yaml
     apiVersion: kubeflow.org/v1
