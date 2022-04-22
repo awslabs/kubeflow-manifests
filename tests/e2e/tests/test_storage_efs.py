@@ -143,6 +143,11 @@ class TestEFS_Static:
         print(f"read_pipeline run id is {read_run_id}")
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, read_run_id)
 
+        write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
+        read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
+        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
+        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
+
 
 class TestEFS_Dynamic:
     @pytest.fixture(scope="class")
@@ -229,3 +234,8 @@ class TestEFS_Dynamic:
             cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
         )
         assert claim_status == "Bound"
+
+        write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
+        read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
+        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
+        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
