@@ -27,11 +27,11 @@ This guide assumes that you have:
 
 Use [Knative Serving](https://knative.dev/docs/serving/) to set up network routing resources.
 
-The default fully qualified domain name (FQDN) for a route in Knative Serving is `{route}.{namespace}.{default-domain}`. Knative Serving routes use `example.com` as the default domain. For example, if you create an `InferenceService` resource called `sklearn-iris` in the `staging` namespace, the default domain would be `http://sklearn-iris.staging.example.com`.
+The default fully qualified domain name (FQDN) for a route in Knative Serving is `{route}.{namespace}.{default-domain}`. Knative Serving routes use `example.com` as the default domain. If you create an `InferenceService` resource called `sklearn-iris` in the `staging` namespace without changing the default domain, the resulting `InfererenceService` domain would be `http://sklearn-iris.staging.example.com`.
 
-We recommend using HTTPS to enable traffic encryption between the clients and your Load Balancer. For example, if you use the `platform.example.com` domain to host Kubeflow, you will need to edit the `config-domain` ConfigMap in the `knative-serving` namespace to configure the `platform.example.com` to be used as the domain for the routes.
+To host an `InferenceService` on the same domain that you use to host Kubeflow (for example, `platform.example.com`), then you will need to edit the `config-domain` ConfigMap in the `knative-serving` namespace to configure `platform.example.com` to be used as the domain for the routes.
 
-Edit the ConfigMap to change the default domain as per your deployment. Remove the `_example` key and replace `example.com` with your domain (e.g. `platform.example.com`). 
+Edit the ConfigMap to change the default domain as per your deployment. Remove the `_example` key and replace `example.com` with your domain (e.g. `platform.example.com`).
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -177,7 +177,7 @@ Run the [inference_sample_cognito.py](https://github.com/awslabs/kubeflow-manife
 export HTTP_HEADER_NAME="x-api-key"
 export HTTP_HEADER_VALUE="token1"
 
-python tests/e2e/utils/kserve/inference_sample_cognito.py
+python inference_sample_cognito.py
 ```
 
 The output should look similar to the following:
@@ -192,7 +192,7 @@ Run the [inference_sample_dex.py](https://github.com/awslabs/kubeflow-manifests/
 export USERNAME="user@example.com"
 export PASSWORD="12341234"
 
-python tests/e2e/utils/kserve/inference_sample_dex.py
+python inference_sample_dex.py
 ```
 
 The output should look similar to the following:
