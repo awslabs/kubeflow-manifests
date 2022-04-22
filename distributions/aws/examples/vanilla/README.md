@@ -33,7 +33,7 @@ This guide assumes that you have:
         --managed
         ```
 
-1. Clone the `awslabs/kubeflow-manifest` repo and checkout a release.
+1. Clone the `awslabs/kubeflow-manifests` repo and checkout a release.
     1. Substitute the value for `AWS_RELEASE_VERSION`(e.g. v1.3.1-b1.0.0). Read more about [releases and versioning](../README.md#releases-and-versioning) policy if you are unsure about what the value of `AWS_RELEASE_VERSION` should be.
         1. ```
             export AWS_RELEASE_VERSION=<>
