@@ -19,11 +19,11 @@ Then, delete the Kubeflow deployment with the following command:
 kustomize build example | kubectl delete -f 
 ```
 
-Cleanup steps for specific deployment options can be found in their respective [installation guides](/docs/deployment/install/). 
+Cleanup steps for specific deployment options can be found in their respective [installation guides](/docs/deployment/). 
 
 > Note: This will not delete your Amazon EKS cluster.
 
-## (Optional) Delete Amazon EKS Cluster
+## (Optional) Delete Amazon EKS cluster
 
 If you created a dedicated Amazon EKS cluster for Kubeflow using `eksctl`, you can delete it with the following command:
 
