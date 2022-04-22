@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.93.0" />
+<meta name="robots" content="index, follow">
+
+<script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/"
+      },
+      "articleSection" : "docs",
+      "name" : "Pipelines",
+      "headline" : "Pipelines",
+      "description" : "Get started with Kubeflow Pipelines on Amazon EKS",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "0001",
+      "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
+      "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/pipelines\/",
+      "wordCount" : "567",
+      "keywords" : [ "Kubeflow" ]
+  }
+  </script>
+
+<link rel="shortcut icon" href="/kubeflow-manifests/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kubeflow-manifests/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="manifest" href="/kubeflow-manifests/favicons/manifest.json">
+<meta name="msapplication-config" content="/kubeflow-manifests/favicons/browserconfig.xml" />
+<meta name="msapplication-TileColor" content="#4279f4">
+<meta name="theme-color" content="#4279f4">
+
+<title>Pipelines | Kubeflow on AWS</title>
+<meta name="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
+<meta property="og:title" content="Pipelines" />
+<meta property="og:description" content="Get started with Kubeflow Pipelines on Amazon EKS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-04-19T20:20:32-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="Pipelines">
+<meta itemprop="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
+<meta itemprop="dateModified" content="2022-04-19T20:20:32-07:00" />
+<meta itemprop="wordCount" content="567">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pipelines"/>
+<meta name="twitter:description" content="Get started with Kubeflow Pipelines on Amazon EKS"/>
+
+
+
+
+<link rel="preload" href="/kubeflow-manifests/scss/main.min.b275c0f5fd67c46ede305b867783e2f2c77df1c8e5b6fa9630975c6588ebfe2b.css" as="style">
+<link href="/kubeflow-manifests/scss/main.min.b275c0f5fd67c46ede305b867783e2f2c77df1c8e5b6fa9630975c6588ebfe2b.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-135379910-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
+        <a class="navbar-brand" href="/kubeflow-manifests/">
+		<span class="navbar-logo"></span><span class="text-uppercase font-weight-bold">Kubeflow on AWS</span>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/docs/" ><i class='fas fa-book pr-2'></i><span>Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/awslabs/kubeflow-manifests" target="_blank" ><i class='fab fa-github pr-2'></i><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown mt-1 mt-lg-0 mr-2">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    <input type="search" class="form-control td-search-input" placeholder="&#xf002; Search this site…" aria-label="Search this site…" autocomplete="off">
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocs-li">
+  <a href="/kubeflow-manifests/docs/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-kubeflow-manifestsdocs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsabout-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsabout-check"/>
+  <label for="m-kubeflow-manifestsdocsabout-check"><a href="/kubeflow-manifests/docs/about/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsabout"><span class="">About</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsaboutfeatures-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsaboutfeatures-check"/>
+  <label for="m-kubeflow-manifestsdocsaboutfeatures-check"><a href="/kubeflow-manifests/docs/about/features/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsaboutfeatures"><span class="">AWS Features for Kubeflow</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsaboutreleases-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsaboutreleases-check"/>
+  <label for="m-kubeflow-manifestsdocsaboutreleases-check"><a href="/kubeflow-manifests/docs/about/releases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsaboutreleases"><span class="">Releases and Versioning</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsabouteks-compatibility-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsabouteks-compatibility-check"/>
+  <label for="m-kubeflow-manifestsdocsabouteks-compatibility-check"><a href="/kubeflow-manifests/docs/about/eks-compatibility/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsabouteks-compatibility"><span class="">Amazon EKS and Kubeflow Compatibility</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsaboutsecurity-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsaboutsecurity-check"/>
+  <label for="m-kubeflow-manifestsdocsaboutsecurity-check"><a href="/kubeflow-manifests/docs/about/security/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsaboutsecurity"><span class="">Security</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsaboutusage-tracking-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsaboutusage-tracking-check"/>
+  <label for="m-kubeflow-manifestsdocsaboutusage-tracking-check"><a href="/kubeflow-manifests/docs/about/usage-tracking/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsaboutusage-tracking"><span class="">Usage Tracking</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeployment-check"/>
+  <label for="m-kubeflow-manifestsdocsdeployment-check"><a href="/kubeflow-manifests/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeployment"><span class="">Deployment</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentinstall-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstall-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstall-check"><a href="/kubeflow-manifests/docs/deployment/install/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentinstall"><span class="">Install Kubeflow</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallprerequisites-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallprerequisites-check"><a href="/kubeflow-manifests/docs/deployment/install/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallprerequisites"><span class="">Prerequisites</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/install/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoguide"><span class="">Cognito</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallrds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/install/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallrds-s3guide"><span class="">RDS and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallcognito-rds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallcognito-rds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/install/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallcognito-rds-s3guide"><span class="">Cognito, RDS, and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallvanillaguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallvanillaguide-check"><a href="/kubeflow-manifests/docs/deployment/install/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallvanillaguide"><span class="">Vanilla Installation</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentinstalladd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstalladd-ons-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstalladd-ons-check"><a href="/kubeflow-manifests/docs/deployment/install/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentinstalladd-ons"><span class="">Add-ons</span></a></label>
+  
+  <ul class="ul-4 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstorageefsguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstorageefsguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstorageefsguide-check"><a href="/kubeflow-manifests/docs/deployment/install/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstorageefsguide"><span class="">EFS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstoragefsx-for-lustreguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstoragefsx-for-lustreguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/docs/deployment/install/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstalladd-onscloudwatchguide-check"><a href="/kubeflow-manifests/docs/deployment/install/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstalladd-onsload-balancerguide-check"><a href="/kubeflow-manifests/docs/deployment/install/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstalladd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoreadme-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoreadme-automated-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentinstallcognitoreadme-automated-check"><a href="/kubeflow-manifests/docs/deployment/install/cognito/readme-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentinstallcognitoreadme-automated"><span class=""></span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-check"><a href="/kubeflow-manifests/docs/deployment/uninstall-kubeflow/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow"><span class="">Uninstall Kubeflow</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guides-check" checked/>
+  <label for="m-kubeflow-manifestsdocscomponent-guides-check"><a href="/kubeflow-manifests/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocscomponent-guides"><span class="">Component Guides</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check" checked/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidespipelines-check"><a href="/kubeflow-manifests/docs/component-guides/pipelines/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidespipelines"><span class="td-sidebar-nav-active-item">Pipelines</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserve-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guideskserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskserve"><span class="">KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesprofiles-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesprofiles-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidesprofiles-check"><a href="/kubeflow-manifests/docs/component-guides/profiles/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesprofiles"><span class="">Profiles</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocstroubleshooting-aws-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocstroubleshooting-aws-check"/>
+  <label for="m-kubeflow-manifestsdocstroubleshooting-aws-check"><a href="/kubeflow-manifests/docs/troubleshooting-aws/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocstroubleshooting-aws"><span class="">Troubleshooting</span></a></label>
+  
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+<a href="https://github.com/awslabs/kubeflow-manifests/docs/tree/master/content/en/docs/component-guides/pipelines.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/docs/edit/master/content/en/docs/component-guides/pipelines.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/docs/new/master/content/en/docs/component-guides/pipelines.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/docs/issues/new?title=Pipelines" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+  
+</div>
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#authenticate-kubeflow-pipelines-using-sdk-inside-cluster">Authenticate Kubeflow Pipelines using SDK inside cluster</a></li>
+    <li><a href="#authenticate-kubeflow-pipelines-using-sdk-outside-cluster">Authenticate Kubeflow Pipelines using SDK outside cluster</a>
+      <ul>
+        <li><a href="#dex"><strong>Dex</strong></a></li>
+        <li><a href="#cognito"><strong>Cognito</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#s3-access-from-kubeflow-pipelines">S3 Access from Kubeflow Pipelines</a>
+      <ul>
+        <li><a href="#configure-containers-to-use-aws-credentials">Configure containers to use AWS credentials</a></li>
+        <li><a href="#example-pipeline">Example Pipeline</a></li>
+      </ul>
+    </li>
+    <li><a href="#support-s3-as-a-source-for-kubeflow-pipelines-output-viewers">Support S3 as a source for Kubeflow Pipelines output viewers</a></li>
+    <li><a href="#support-tensorboard-in-kubeflow-pipelines">Support TensorBoard in Kubeflow Pipelines</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/">Documentation</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/">Component Guides</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/">Pipelines</a>
+  </li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>Pipelines</h1>
+	<div class="lead">Get started with Kubeflow Pipelines on Amazon EKS</div>
+	<header class="article-meta">
+		
+
+  
+    
+
+
+  
+    
+
+
+  
+
+		
+	</header>    
+	<p>For an overview of connecting to Kubeflow Pipelines using the SDK client, see <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/">the Pipelines SDK guide</a>.</p>
+<h2 id="authenticate-kubeflow-pipelines-using-sdk-inside-cluster">Authenticate Kubeflow Pipelines using SDK inside cluster</h2>
+<p>Refer to the following guide to connect to Kubeflow Pipelines from <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-the-same-cluster">inside your cluster</a>.</p>
+<h2 id="authenticate-kubeflow-pipelines-using-sdk-outside-cluster">Authenticate Kubeflow Pipelines using SDK outside cluster</h2>
+<p>Refer to the following guide to connect to Kubeflow Pipelines from <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-outside-your-cluster">outside your cluster</a>.</p>
+<p>Refer to the following steps to use <code>kfp</code> to pass a cookie from your browser after you log into Kubeflow. The following example uses a Chrome browser.</p>
+<p><img src="/docs/images/aws/kfp-sdk-browser-cookie.png"
+alt="KFP SDK Browser Cookie"
+class="mt-3 mb-3 border border-info rounded"></p>
+<p><img src="/docs/images/aws/kfp-sdk-browser-cookie-detail.png"
+alt="KFP SDK Browser Cookie Detail"
+class="mt-3 mb-3 border border-info rounded"></p>
+<p>Once you get a cookie, authenticate <code>kfp</code> by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.</p>
+<h3 id="dex"><strong>Dex</strong></h3>
+<p>If you want to use port forwarding to access Kubeflow, run the following command and use <code>http://localhost:8080/pipeline</code> as the host.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+</span></span></code></pre></div><p>Pass the cookie from your browser:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># This is the &#34;Domain&#34; in your cookies. Eg: &#34;localhost:8080&#34; or &#34;&lt;ingress_alb_address&gt;.elb.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">kubeflow_gateway_endpoint</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_KUBEFLOW_GATEWAY_ENDPOINT&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">authservice_session_cookie</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_COOKIE&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_NAMESPACE&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">client</span> <span style="color:#ce5c00;font-weight:bold">=</span> kfp.Client<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">host</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;http://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span style="color:#000">cookies</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;authservice_session={authservice_session_cookie}&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>client.list_experiments<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span>namespace<span style="color:#ce5c00;font-weight:bold">)</span>
+</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see <a href="/docs/deployment/install/vanilla/vanilla/#exposing-kubeflow-over-load-balancer">Exposing Kubeflow over Load Balancer</a> and use the ALB address as the Kubeflow Endpoint.</p>
+<p>To do programmatic authentication with Dex, refer to the following comments under <a href="https://github.com/kubeflow/kfctl/issues/140">issue #140</a> in the <code>kfctl</code> repository: <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304">#140 (comment)</a> and <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529">#140 (comment)</a>.</p>
+<h3 id="cognito"><strong>Cognito</strong></h3>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># This is the &#34;Domain&#34; in your cookies. eg: kubeflow.&lt;platform.example.com&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">kubeflow_gateway_endpoint</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_KUBEFLOW_HTTPS_GATEWAY_ENDPOINT&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">alb_session_cookie0</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_COOKIE_0&gt;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">alb_session_cookie1</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_COOKIE_1&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;YOUR_NAMESPACE&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">client</span> <span style="color:#ce5c00;font-weight:bold">=</span> kfp.Client<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">host</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;https://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span style="color:#000">cookies</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;AWSELBAuthSessionCookie-0={alb_session_cookie0};AWSELBAuthSessionCookie-1={alb_session_cookie1}&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>client.list_experiments<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span>namespace<span style="color:#ce5c00;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="s3-access-from-kubeflow-pipelines">S3 Access from Kubeflow Pipelines</h2>
+<p>It is recommended to use AWS credentials to manage S3 access for Kubeflow Pipelines. <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM Role for Service Accounts</a> requires applications to use the latest AWS SDK to support the <code>assume-web-identity-role</code>. This requirement is in development, and progress can be tracked in the <a href="https://github.com/kubeflow/pipelines/issues/3405">open GitHub issue</a>.</p>
+<p>A Kubernetes Secret is required by Kubeflow Pipelines and applications to access S3. Be sure that the Kubernetes Secret has S3 read and write access.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Secret
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: aws-secret
+</span></span><span style="display:flex;"><span>  namespace: kubeflow
+</span></span><span style="display:flex;"><span>type: Opaque
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  AWS_ACCESS_KEY_ID: &lt;YOUR_BASE64_ACCESS_KEY&gt;
+</span></span><span style="display:flex;"><span>  AWS_SECRET_ACCESS_KEY: &lt;YOUR_BASE64_SECRET_ACCESS&gt;
+</span></span></code></pre></div><ul>
+<li>YOUR_BASE64_ACCESS_KEY: Base64 string of <code>AWS_ACCESS_KEY_ID</code></li>
+<li>YOUR_BASE64_SECRET_ACCESS: Base64 string of <code>AWS_SECRET_ACCESS_KEY</code></li>
+</ul>
+<blockquote>
+<p>Note: To get a Base64 string, run <code>echo -n $AWS_ACCESS_KEY_ID | base64</code></p>
+</blockquote>
+<h3 id="configure-containers-to-use-aws-credentials">Configure containers to use AWS credentials</h3>
+<p>In order for <code>ml-pipeline-ui</code> to read these artifacts:</p>
+<ol>
+<li>
+<p>Create a Kubernetes secret <code>aws-secret</code> in the <code>kubeflow</code> namespace.</p>
+</li>
+<li>
+<p>Update deployment <code>ml-pipeline-ui</code> to use AWS credential environment variables by running <code>kubectl edit deployment ml-pipeline-ui -n kubeflow</code>.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>apiVersion: extensions/v1beta1
+</span></span><span style="display:flex;"><span>kind: Deployment
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: ml-pipeline-ui
+</span></span><span style="display:flex;"><span>  namespace: kubeflow
+</span></span><span style="display:flex;"><span>  ...
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  template:
+</span></span><span style="display:flex;"><span>    spec:
+</span></span><span style="display:flex;"><span>      containers:
+</span></span><span style="display:flex;"><span>      - env:
+</span></span><span style="display:flex;"><span>        - name: AWS_ACCESS_KEY_ID
+</span></span><span style="display:flex;"><span>          valueFrom:
+</span></span><span style="display:flex;"><span>            secretKeyRef:
+</span></span><span style="display:flex;"><span>              key: AWS_ACCESS_KEY_ID
+</span></span><span style="display:flex;"><span>              name: aws-secret
+</span></span><span style="display:flex;"><span>        - name: AWS_SECRET_ACCESS_KEY
+</span></span><span style="display:flex;"><span>          valueFrom:
+</span></span><span style="display:flex;"><span>            secretKeyRef:
+</span></span><span style="display:flex;"><span>              key: AWS_SECRET_ACCESS_KEY
+</span></span><span style="display:flex;"><span>              name: aws-secret
+</span></span><span style="display:flex;"><span>        ....
+</span></span><span style="display:flex;"><span>        image: gcr.io/ml-pipeline/frontend:0.2.0
+</span></span><span style="display:flex;"><span>        name: ml-pipeline-ui
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="example-pipeline">Example Pipeline</h3>
+<p>If you write any files to S3 in your application, use <code>use_aws_secret</code> to attach an AWS secret to access S3.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">kfp.aws</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">use_aws_secret</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">s3_op</span><span style="color:#000;font-weight:bold">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">boto3</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">s3</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">boto3</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">client</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;s3&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">region_name</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;region&gt;&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">s3</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create_bucket</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;&lt;test&gt;&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">CreateBucketConfiguration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;LocationConstraint&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&lt;region&gt;&#34;</span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">s3_op</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">create_component_from_func</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">s3_op</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">base_image</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;python&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">packages_to_install</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;boto3&#34;</span><span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#5c35cc;font-weight:bold">@dsl</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">pipeline</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">name</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;S3 KFP Component&#34;</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;Tests S3 Access from KFP&#34;</span><span style="color:#000;font-weight:bold">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">s3_pipeline</span><span style="color:#000;font-weight:bold">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">s3_op</span><span style="color:#000;font-weight:bold">()</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">set_display_name</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;S3 KFP Component&#34;</span><span style="color:#000;font-weight:bold">)</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">apply</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000">use_aws_secret</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;aws-secret&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;AWS_ACCESS_KEY_ID&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;AWS_SECRET_ACCESS_KEY&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000">kfp_client</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">kfp</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Client</span><span style="color:#000;font-weight:bold">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">namespace</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;kubeflow-user-example-com&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#000">run_id</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">kfp_client</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create_run_from_pipeline_func</span><span style="color:#000;font-weight:bold">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000">s3_pipeline</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">namespace</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">arguments</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000;font-weight:bold">{}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">)</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">run_id</span>
+</span></span></code></pre></div><h2 id="support-s3-as-a-source-for-kubeflow-pipelines-output-viewers">Support S3 as a source for Kubeflow Pipelines output viewers</h2>
+<p>Support for S3 Artifact Store is in active development. You can track the <a href="https://github.com/awslabs/kubeflow-manifests/issues/117">open issue</a> to stay up-to-date on progress.</p>
+<h2 id="support-tensorboard-in-kubeflow-pipelines">Support TensorBoard in Kubeflow Pipelines</h2>
+<p>Support for TensorBoard in Kubeflow Pipelines is in active development. You can track the <a href="https://github.com/awslabs/kubeflow-manifests/issues/118">open issue</a> to stay up-to-date on progress.</p>
+
+	
+		<style>
+  .feedback--answer {
+    display: inline-block;
+  }
+  .feedback--answer-no {
+    margin-left: 1em;
+  }
+  .feedback--response {
+    display: none;
+    margin-top: 1em;
+  }
+  .feedback--response__visible {
+    display: block;
+  }
+</style>
+<div class="card mt-4 col-12 col-sm-6">
+  <div class="card-body">
+    <h3 class="card-title">Feedback</h3>
+    <p class="card-text">Was this page helpful?</p>
+    <button class="btn btn-primary feedback--answer feedback--answer-yes" style="width: 5rem;">Yes</button>
+    <button class="btn btn-primary feedback--answer feedback--answer-no" style="width: 5rem;">No</button>
+    <p class="feedback--response feedback--response-yes">
+      Glad to hear it! Please <a href="https://github.com/awslabs/kubeflow-manifests/issues/new?assignees=&labels=documentation&template=documentation-request.md&title=">tell us how we can improve</a>.
+    </p>
+    <p class="feedback--response feedback--response-no">
+      Sorry to hear that. Please <a href="https://github.com/awslabs/kubeflow-manifests/issues/new?assignees=&labels=documentation&template=documentation-request.md&title=">tell us how we can improve</a>.
+    </p>
+  </div>
+</div>
+<script>
+  const yesButton = document.querySelector('.feedback--answer-yes');
+  const noButton = document.querySelector('.feedback--answer-no');
+  const yesResponse = document.querySelector('.feedback--response-yes');
+  const noResponse = document.querySelector('.feedback--response-no');
+  const disableButtons = () => {
+    yesButton.disabled = true;
+    noButton.disabled = true;
+  };
+  const sendFeedback = (value) => {
+    if (typeof ga !== 'function') return;
+    const args = {
+      command: 'send',
+      hitType: 'event',
+      category: 'Helpful',
+      action: 'click',
+      label: window.location.pathname,
+      value: value
+    };
+    ga(args.command, args.hitType, args.category, args.action, args.label, args.value);
+  };
+  yesButton.addEventListener('click', () => {
+    yesResponse.classList.add('feedback--response__visible');
+    disableButtons();
+    sendFeedback(1);
+  });
+  noButton.addEventListener('click', () => {
+    noResponse.classList.add('feedback--response__visible');
+    disableButtons();
+    sendFeedback(0);
+  });
+</script>
+
+		<br />
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+  Last modified April 19, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/ea3c69aff5d03dce79257b33642663908b2929f3">Syncing About, Deployment, and Components section (ea3c69a)</a>
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark pt-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/kubeflow-manifests/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/kubeflow-manifests/js/main.min.d33ba880dcae2a9badacbf2fb5e36200904b2b546035ace68e637312fcf7d133.js" integrity="sha256-0zuogNyuKputrL8vteNiAJBLK1RgNazmjmNzEvz30TM=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

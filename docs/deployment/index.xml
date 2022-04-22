@@ -1,0 +1,60 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – Deployment</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/</link>
+    <description>Recent content in Deployment on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Install Kubeflow</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Uninstall Kubeflow</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;uninstall-kubeflow-on-aws&#34;&gt;Uninstall Kubeflow on AWS&lt;/h2&gt;
+&lt;p&gt;First, delete all existing Kubeflow profiles.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl get profile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl delete profile --all
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, delete the Kubeflow deployment with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build example &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl delete -f 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Cleanup steps for specific deployment options can be found in their respective &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/&#34;&gt;installation guides&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: This will not delete your Amazon EKS cluster.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;optional-delete-amazon-eks-cluster&#34;&gt;(Optional) Delete Amazon EKS Cluster&lt;/h2&gt;
+&lt;p&gt;If you created a dedicated Amazon EKS cluster for Kubeflow using &lt;code&gt;eksctl&lt;/code&gt;, you can delete it with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;eksctl delete cluster --region &lt;span style=&#34;color:#000&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --name &lt;span style=&#34;color:#000&#34;&gt;$CLUSTER_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;Note: It is possible that parts of the CloudFormation deletion will fail depending upon modifications made post-creation. In that case, manually delete the eks-xxx role in IAM, then the ALB, the EKS target groups, and the subnets of that particular cluster. Then, retry the command to delete the nodegroups and the cluster.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For more detailed information on deletion options, see &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html&#34;&gt;Deleting an Amazon EKS cluster&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>
