@@ -10,46 +10,9 @@ This guide describes how to deploy Kubeflow on AWS EKS
 
 ## Prerequisites
 
-This guide assumes that you have:
+Be sure that you have satisfied the [installation prerequisites](/docs/deployment/prerequisites/) before working through this guide.
 
-1. Installed the following tools on the client machine
-    - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
-    - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
-    - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
-    - [yq](https://mikefarah.gitbook.io/yq) - A command line tool for YAML processing. (For Linux environments, use the [wget plain binary installation](https://mikefarah.gitbook.io/yq/#wget))
-    - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
-    - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
-      - :warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
-
-1. Created an EKS cluster
-    - If you do not have an existing cluster, run the following command to create an EKS cluster. More details about cluster creation via `eksctl` can be found [here](https://eksctl.io/usage/creating-and-managing-clusters/).
-    - Substitute values for the CLUSTER_NAME and CLUSTER_REGION in the script below
-        ```
-        export CLUSTER_NAME=$CLUSTER_NAME
-        export CLUSTER_REGION=$CLUSTER_REGION
-        eksctl create cluster \
-        --name ${CLUSTER_NAME} \
-        --version 1.19 \
-        --region ${CLUSTER_REGION} \
-        --nodegroup-name linux-nodes \
-        --node-type m5.xlarge \
-        --nodes 5 \
-        --nodes-min 1 \
-        --nodes-max 10 \
-        --managed
-        ```
-
-1. Clone the `awslabs/kubeflow-manifest` repo, `kubeflow/manifests` repo and checkout the release branches.
-    - Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](../../community/releases.md#releases-and-versioning) policy if you are unsure about what these values should be.
-        ```
-        export KUBEFLOW_RELEASE_VERSION=<>
-        export AWS_RELEASE_VERSION=<>
-        git clone https://github.com/awslabs/kubeflow-manifests.git && cd kubeflow-manifests
-        git checkout ${AWS_RELEASE_VERSION}
-        git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
-        ```
-
-### Build Manifests and Install Kubeflow
+### Build Manifests and install Kubeflow
 
 There two options for installing Kubeflow official components and common services with kustomize.
 
@@ -59,12 +22,12 @@ There two options for installing Kubeflow official components and common service
 Option 1 targets ease of deployment for end users. \
 Option 2 targets customization and ability to pick and choose individual components.
 
-:warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+> Warning: In both options, we use a default email (`user@example.com`) and password (`12341234`). For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
 
 ---
 **NOTE**
 
-`kubectl apply` commands may fail on the first try. This is inherent in how Kubernetes and `kubectl` work (e.g., CR must be created after CRD becomes ready). The solution is to simply re-run the command until it succeeds. For the single-line command, we have included a bash one-liner to retry the command.
+`kubectl apply` commands may fail on the first try. This is inherent in how Kubernetes and `kubectl` work (e.g., CR must be created after CRD becomes ready). The solution is to re-run the command until it succeeds. For the single-line command, we have included a bash one-liner to retry the command.
 
 ---
 
@@ -76,25 +39,26 @@ You can install all Kubeflow official components (residing under `apps`) and all
 while ! kustomize build docs/deployment/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
-Once, everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](#connect-to-your-kubeflow-cluster).
+Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging into your cluster](#connect-to-your-kubeflow-cluster).
 
-Congratulations! You can now start experimenting and running your end-to-end ML workflows with Kubeflow.
+You can now start experimenting and running your end-to-end ML workflows with Kubeflow!
 
 ### Install individual components
 
-In this section, we will install each Kubeflow official component (under `apps`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`.
+This section lists an installation command for each official Kubeflow component (under `apps`) and each common service (under `common`) using just `kubectl` and `kustomize`.
 
-If all the following commands are executed, the result is the same as in the above section of the single command installation. The purpose of this section is to:
+If you run all of the following commands, the end result is the same as installing everything through the [single command installation](#install-with-a-single-command). 
 
+The purpose of this section is to:
 - Provide a description of each component and insight on how it gets installed.
 - Enable the user or distribution owner to pick and choose only the components they need.
 
 #### cert-manager
 
-cert-manager is used by many Kubeflow components to provide certificates for
+`cert-manager` is used by many Kubeflow components to provide certificates for
 admission webhooks.
 
-Install cert-manager:
+Install `cert-manager`:
 
 ```sh
 kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
@@ -104,7 +68,7 @@ kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 #### Istio
 
 Istio is used by many Kubeflow components to secure their traffic, enforce
-network authorization and implement routing policies.
+network authorization, and implement routing policies.
 
 Install Istio:
 
@@ -116,7 +80,7 @@ kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
 
 #### Dex
 
-Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following [the relevant section](#change-default-user-password).
+Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with the email `user@example.com`. By default, the user's password is `12341234`. For any production Kubeflow deployment, you should change the default password by following the steps in [Change default user password](#change-default-user-password).
 
 Install Dex:
 
@@ -126,7 +90,9 @@ kustomize build common/dex/overlays/istio | kubectl apply -f -
 
 #### OIDC AuthService
 
-The OIDC AuthService extends your Istio Ingress-Gateway capabilities, to be able to function as an OIDC client:
+The OIDC AuthService extends your Istio Ingress-Gateway capabilities to be able to function as an OIDC client:
+
+Install OIDC AuthService:
 
 ```sh
 kustomize build common/oidc-authservice/base | kubectl apply -f -
@@ -143,18 +109,20 @@ kustomize build common/knative/knative-serving/base | kubectl apply -f -
 kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
 ```
 
-Optionally, you can install Knative Eventing which can be used for inference request logging:
+Optionally, you can install Knative Eventing, which can be used for inference request logging.
+
+Install Knative Eventing:
 
 ```sh
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
-#### Kubeflow Namespace
+#### Kubeflow namespace
 
-Create the namespace where the Kubeflow components will live in. This namespace
+Create the namespace where the Kubeflow components will live. This namespace
 is named `kubeflow`.
 
-Install kubeflow namespace:
+Install the `kubeflow` namespace:
 
 ```sh
 kustomize build common/kubeflow-namespace/base | kubectl apply -f -
@@ -162,11 +130,11 @@ kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
 #### Kubeflow Roles
 
-Create the Kubeflow ClusterRoles, `kubeflow-view`, `kubeflow-edit` and
+Create the Kubeflow ClusterRoles `kubeflow-view`, `kubeflow-edit`, and
 `kubeflow-admin`. Kubeflow components aggregate permissions to these
 ClusterRoles.
 
-Install kubeflow roles:
+Install Kubeflow roles:
 
 ```sh
 kustomize build common/kubeflow-roles/base | kubectl apply -f -
@@ -175,11 +143,11 @@ kustomize build common/kubeflow-roles/base | kubectl apply -f -
 #### Kubeflow Istio Resources
 
 Create the Istio resources needed by Kubeflow. This kustomization currently
-creates an Istio Gateway named `kubeflow-gateway`, in namespace `kubeflow`.
+creates an Istio Gateway named `kubeflow-gateway` in the `kubeflow` namespace.
 If you want to install with your own Istio, then you need this kustomization as
 well.
 
-Install istio resources:
+Install Istio resources:
 
 ```sh
 kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
@@ -239,9 +207,9 @@ Install the Jupyter Web App official Kubeflow component:
 kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
-#### Profiles + KFAM
+#### Profiles and Kubeflow Access-Management (KFAM)
 
-Install the Profile Controller and the Kubeflow Access-Management (KFAM) official Kubeflow
+Install the Profile controller and the Kubeflow Access-Management (KFAM) official Kubeflow
 components:
 
 ```sh
@@ -264,7 +232,7 @@ Install the Tensorboards Web App official Kubeflow component:
 kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
-Install the Tensorboard Controller official Kubeflow component:
+Install the Tensorboard controller official Kubeflow component:
 
 ```sh
 kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
@@ -288,21 +256,21 @@ kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 
 #### AWS Telemetry
 
-Install the AWS Kubeflow telemetry component. This is an optional component. See the [usage tracking documentation](../README.md#usage-tracking) for more information
+Install the AWS Kubeflow telemetry component. This is an optional component. See [Usage Tracking](/docs/about/usage-tracking/) for more information
 
 ```sh
 kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 ```
 
-#### User Namespace
+#### User namespace
 
-Finally, create a new namespace for the the default user (named `kubeflow-user-example-com`).
+Finally, create a new namespace for the the default user. In this example, the namespace is called `kubeflow-user-example-com`.
 
 ```sh
 kustomize build common/user-namespace/base | kubectl apply -f -
 ```
 
-### Connect to your Kubeflow Cluster
+### Connect to your Kubeflow cluster
 
 After installation, it will take some time for all Pods to become ready. Make sure all Pods are ready before trying to connect, otherwise you might get unexpected errors. To check that all Kubeflow-related Pods are ready, use the following commands:
 
@@ -318,7 +286,7 @@ kubectl get pods -n kubeflow-user-example-com
 
 #### Port-Forward
 
-To get started quickly you can access Kubeflow via port-forward. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
+To get started quickly, you can access Kubeflow via port-forward. Run the following to port-forward Istio's Ingress-Gateway to local port `8080`:
 
 ```sh
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
@@ -331,11 +299,11 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 #### Exposing Kubeflow over Load Balancer
 
-In order to expose Kubeflow over an external address you can setup AWS Application Load Balancer. Please take a look at the [load-balancer](../add-ons/load-balancer/README.md) guide to set it up.
+In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the [Load Balancer guide](/docs/deployment/add-ons/load-balancer/guide/) to set it up.
 
 ### Change default user password
 
-For security reasons, we don't want to use the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
+For security reasons, we do not recommend using the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:
 
 1. Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
