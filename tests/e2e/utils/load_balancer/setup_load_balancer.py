@@ -11,6 +11,7 @@ from e2e.utils.aws.acm import AcmCertificate
 from e2e.utils.aws.elbv2 import ElasticLoadBalancingV2
 from e2e.utils.aws.iam import IAMPolicy
 from e2e.utils.aws.route53 import Route53HostedZone
+from e2e.fixtures.kustomize import apply_kustomize
 from e2e.utils.utils import (
     kubectl_apply_kustomize,
     load_json_file,
@@ -134,8 +135,8 @@ def configure_load_balancer_controller(
         )
     )
 
-    alb_sa_name = "alb-ingress-controller"
-    alb_sa_namespace = "kubeflow"
+    alb_sa_name = "aws-load-balancer-controller"
+    alb_sa_namespace = "kube-system"
     cluster.create_iam_service_account(
         alb_sa_name, alb_sa_namespace, cluster_name, region, [alb_policy.arn]
     )
@@ -195,7 +196,10 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
 
 
 def create_ingress():
-    kubectl_apply_kustomize(path=common.LB_KUSTOMIZE_PATH)
+    def callback():
+        apply_kustomize(path=common.LB_KUSTOMIZE_PATH)
+
+    wait_for(callback)
 
 
 def dns_update(
