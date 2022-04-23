@@ -31,7 +31,6 @@
 &lt;li&gt;Use EFS and FSx to share data and models across nodes.&lt;/li&gt;
 &lt;li&gt;USE EFS and FSx for dynamic volume sizing.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Use &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/notebook-servers/&#34;&gt;AWS-optimized Kubeflow Notebook servers&lt;/a&gt; to quickly get started with a range of framework, library, and hardware options.&lt;/p&gt;
 &lt;h2 id=&#34;aws-optimized-kubeflow-notebook-servers&#34;&gt;AWS-optimized Kubeflow Notebook servers&lt;/h2&gt;
 &lt;p&gt;Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on &lt;a href=&#34;https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html&#34;&gt;AWS Deep Learning Containers&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The following container images are available from the &lt;a href=&#34;https://gallery.ecr.aws/c9e4w0g3/&#34;&gt;Amazon Elastic Container Registry (Amazon ECR)&lt;/a&gt;.&lt;/p&gt;
@@ -137,10 +136,10 @@
 &lt;h2 id=&#34;authenticate-kubeflow-pipelines-using-sdk-outside-cluster&#34;&gt;Authenticate Kubeflow Pipelines using SDK outside cluster&lt;/h2&gt;
 &lt;p&gt;Refer to the following guide to connect to Kubeflow Pipelines from &lt;a href=&#34;https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-outside-your-cluster&#34;&gt;outside your cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Refer to the following steps to use &lt;code&gt;kfp&lt;/code&gt; to pass a cookie from your browser after you log into Kubeflow. The following example uses a Chrome browser.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://awslabs.github.io/kubeflow-manifests/docs/images/aws/kfp-sdk-browser-cookie.png&#34;
+&lt;p&gt;&lt;img src=&#34;images/kfp-sdk-browser-cookie.png&#34;
 alt=&#34;KFP SDK Browser Cookie&#34;
 class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://awslabs.github.io/kubeflow-manifests/docs/images/aws/kfp-sdk-browser-cookie-detail.png&#34;
+&lt;p&gt;&lt;img src=&#34;images/kfp-sdk-browser-cookie-detail.png&#34;
 alt=&#34;KFP SDK Browser Cookie Detail&#34;
 class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Once you get a cookie, authenticate &lt;code&gt;kfp&lt;/code&gt; by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.&lt;/p&gt;
@@ -157,7 +156,7 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#000&#34;&gt;client&lt;/span&gt; &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt; kfp.Client&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;host&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;f&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;http://{kubeflow_gateway_endpoint}/pipeline&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#000&#34;&gt;cookies&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;f&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;authservice_session={authservice_session_cookie}&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;client.list_experiments&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;namespace&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;namespace&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you want to set up application load balancing (ALB) with Dex, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/vanilla/vanilla/#exposing-kubeflow-over-load-balancer&#34;&gt;Exposing Kubeflow over Load Balancer&lt;/a&gt; and use the ALB address as the Kubeflow Endpoint.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you want to set up application load balancing (ALB) with Dex, see the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Load Balancer&lt;/a&gt; and use the ALB address as the Kubeflow Endpoint.&lt;/p&gt;
 &lt;p&gt;To do programmatic authentication with Dex, refer to the following comments under &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140&#34;&gt;issue #140&lt;/a&gt; in the &lt;code&gt;kfctl&lt;/code&gt; repository: &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304&#34;&gt;#140 (comment)&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529&#34;&gt;#140 (comment)&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;cognito&#34;&gt;&lt;strong&gt;Cognito&lt;/strong&gt;&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# This is the &amp;#34;Domain&amp;#34; in your cookies. eg: kubeflow.&amp;lt;platform.example.com&amp;gt;&lt;/span&gt;
@@ -189,40 +188,6 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: To get a Base64 string, run &lt;code&gt;echo -n $AWS_ACCESS_KEY_ID | base64&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h3 id=&#34;configure-containers-to-use-aws-credentials&#34;&gt;Configure containers to use AWS credentials&lt;/h3&gt;
-&lt;p&gt;In order for &lt;code&gt;ml-pipeline-ui&lt;/code&gt; to read these artifacts:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Create a Kubernetes secret &lt;code&gt;aws-secret&lt;/code&gt; in the &lt;code&gt;kubeflow&lt;/code&gt; namespace.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Update deployment &lt;code&gt;ml-pipeline-ui&lt;/code&gt; to use AWS credential environment variables by running &lt;code&gt;kubectl edit deployment ml-pipeline-ui -n kubeflow&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apiVersion: extensions/v1beta1
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kind: Deployment
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;metadata:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  name: ml-pipeline-ui
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  namespace: kubeflow
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  ...
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  template:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    spec:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      containers:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - env:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        - name: AWS_ACCESS_KEY_ID
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          valueFrom:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            secretKeyRef:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              key: AWS_ACCESS_KEY_ID
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              name: aws-secret
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        - name: AWS_SECRET_ACCESS_KEY
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          valueFrom:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            secretKeyRef:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              key: AWS_SECRET_ACCESS_KEY
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              name: aws-secret
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ....
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        image: gcr.io/ml-pipeline/frontend:0.2.0
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        name: ml-pipeline-ui
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;/ol&gt;
 &lt;h3 id=&#34;example-pipeline&#34;&gt;Example Pipeline&lt;/h3&gt;
 &lt;p&gt;If you write any files to S3 in your application, use &lt;code&gt;use_aws_secret&lt;/code&gt; to attach an AWS secret to access S3.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;kfp.aws&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;use_aws_secret&lt;/span&gt;
@@ -271,32 +236,34 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
         
         &lt;p&gt;This tutorial shows how to set up a load balancer endpoint for serving prediction requests over an external DNS on AWS.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Note: Kubeflow on AWS v1.4 uses &lt;a href=&#34;https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition&#34;&gt;KFServing&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Note: Kubeflow on AWS v1.4 uses &lt;a href=&#34;https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition&#34;&gt;KFServing&lt;/a&gt;. The KFServing project is now called KServe.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/add-ons/load-balancer/guide/#background&#34;&gt;background&lt;/a&gt; section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background&lt;/a&gt; section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;This guide assumes that you have:&lt;/p&gt;
 &lt;ol&gt;
+&lt;li&gt;The necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;, including a Kubeflow deployment.&lt;/li&gt;
 &lt;li&gt;The &lt;a href=&#34;https://kubernetes-sigs.github.io/aws-load-balancer-controller/&#34;&gt;AWS Load Balancer controller&lt;/a&gt; configured with one of the following deployment options:
 &lt;ul&gt;
-&lt;li&gt;A Cognito-integrated deployment that is configured with the &lt;a href=&#34;../deployment/cognito/README.md#30-configure-ingress&#34;&gt;AWS Load Balancer controller by default&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;A deployment that is not integrated with Cognito (for example, the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/vanilla/guide/&#34;&gt;Vanilla deployment&lt;/a&gt;, which uses Dex as an auth provider), but have followed the &lt;a href=&#34;../deployment/add-ons/load-balancer/README.md&#34;&gt;Exposing Kubeflow over Load Balancer guide&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A Cognito-integrated deployment that is configured with the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide#30-configure-ingress&#34;&gt;AWS Load Balancer controller by default&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A deployment that is not integrated with Cognito (for example, the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla deployment&lt;/a&gt;, which uses Dex as an auth provider), but have followed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Exposing Kubeflow over Load Balancer guide&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;A subdomain for hosting Kubeflow. For this guide, we will use the domain &lt;code&gt;platform.example.com&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;An existing &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation&#34;&gt;profile namespace&lt;/a&gt; for a user in Kubeflow. For this guide, we will use the example profile namespace &lt;code&gt;staging&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Verified that your current directory is the root of the repository by running the &lt;code&gt;pwd&lt;/code&gt; command. The output should be &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt; directory.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;configure-a-domain&#34;&gt;Configure a domain&lt;/h2&gt;
-&lt;p&gt;Use &lt;a href=&#34;https://knative.dev/docs/serving/&#34;&gt;Knative Serving&lt;/a&gt; to set up network routing resources by following the &lt;a href=&#34;https://knative.dev/docs/serving/using-a-custom-domain/#procedure&#34;&gt;Changing the default domain&lt;/a&gt; procedure.&lt;/p&gt;
-&lt;p&gt;The default fully qualified domain name (FQDN) for a route in Knative Serving is &lt;code&gt;{route}.{namespace}.{default-domain}&lt;/code&gt;. Knative Serving routes use &lt;code&gt;example.com&lt;/code&gt; as the default domain. For example, if you create an &lt;code&gt;InferenceService&lt;/code&gt; resource called &lt;code&gt;sklearn-iris&lt;/code&gt; in the &lt;code&gt;staging&lt;/code&gt; namespace, the default domain would be &lt;code&gt;http://sklearn-iris.staging.example.com&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Edit the ConfigMap to change the default domain as per your deployment.&lt;/p&gt;
+&lt;h2 id=&#34;configure-a-default-domain-with-knative-serving&#34;&gt;Configure a default domain with KNative Serving&lt;/h2&gt;
+&lt;p&gt;Use &lt;a href=&#34;https://knative.dev/docs/serving/&#34;&gt;Knative Serving&lt;/a&gt; to set up network routing resources.&lt;/p&gt;
+&lt;p&gt;The default fully qualified domain name (FQDN) for a route in Knative Serving is &lt;code&gt;{route}.{namespace}.{default-domain}&lt;/code&gt;. Knative Serving routes use &lt;code&gt;example.com&lt;/code&gt; as the default domain. If you create an &lt;code&gt;InferenceService&lt;/code&gt; resource called &lt;code&gt;sklearn-iris&lt;/code&gt; in the &lt;code&gt;staging&lt;/code&gt; namespace without changing the default domain, the resulting &lt;code&gt;InfererenceService&lt;/code&gt; domain would be &lt;code&gt;http://sklearn-iris.staging.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To host an &lt;code&gt;InferenceService&lt;/code&gt; on the same domain that you use to host Kubeflow (for example, &lt;code&gt;platform.example.com&lt;/code&gt;), then you will need to edit the &lt;code&gt;config-domain&lt;/code&gt; ConfigMap in the &lt;code&gt;knative-serving&lt;/code&gt; namespace to configure &lt;code&gt;platform.example.com&lt;/code&gt; to be used as the domain for the routes.&lt;/p&gt;
+&lt;p&gt;Edit the ConfigMap to change the default domain as per your deployment. Remove the &lt;code&gt;_example&lt;/code&gt; key and replace &lt;code&gt;example.com&lt;/code&gt; with your domain (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;).&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apiVersion: v1
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kind: ConfigMap
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;data:
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  platform.example.com: &amp;#34;&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;...
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We recommend using HTTPS to enable traffic encryption between the clients and your Load Balancer. For example, if you use the &lt;code&gt;platform.example.com&lt;/code&gt; domain to host Kubeflow, you will need to edit the &lt;code&gt;config-domain&lt;/code&gt; ConfigMap in the &lt;code&gt;knative-serving&lt;/code&gt; namespace to configure the &lt;code&gt;platform.example.com&lt;/code&gt; to be used as the domain for the routes.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For more detailed instructions, see the KNative Serving &lt;a href=&#34;https://knative.dev/docs/serving/using-a-custom-domain/#procedure&#34;&gt;Changing the default domain&lt;/a&gt; procedure.&lt;/p&gt;
 &lt;h2 id=&#34;request-a-certificate&#34;&gt;Request a certificate&lt;/h2&gt;
 &lt;p&gt;Request a certificate in AWS Certificate Manager (ACM) to get TLS support from the Load Balancer.&lt;/p&gt;
 &lt;h3 id=&#34;certificate-request-background&#34;&gt;Certificate request background&lt;/h3&gt;
@@ -313,18 +280,15 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;li&gt;For example, &lt;code&gt;*.platform.example.com&lt;/code&gt; can protect &lt;code&gt;staging.platform.example.com&lt;/code&gt;, and &lt;code&gt;prod.platform.example.com&lt;/code&gt;, but it cannot protect &lt;code&gt;sklearn-iris.staging.platform.example.com&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;create-a-certificate&#34;&gt;Create a certificate&lt;/h3&gt;
-&lt;p&gt;Create an ACM certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; and &lt;code&gt;*.staging.platform.example.com&lt;/code&gt; by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create certificates for domain&lt;/a&gt; Load Balancer guide installation guide.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Note: Both of these domains should be requested in the same certificate&lt;/p&gt;
+&lt;p&gt;Note: Both of these domains should be requested in the same certificate
+Create an ACM certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; and &lt;code&gt;*.staging.platform.example.com&lt;/code&gt; in your cluster&amp;rsquo;s region by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create certificates for domain&lt;/a&gt; steps in the Load Balancer installation guide.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Once the certificate status changes to &lt;code&gt;Issued&lt;/code&gt;, export the ARN of the certificate created:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;certArn&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you are using Cognito for user authentication, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#cognito&#34;&gt;Cognito&lt;/a&gt;. If you use Dex as the auth provider in your Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#dex&#34;&gt;Dex&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;cognito-ingress&#34;&gt;Cognito ingress&lt;/h2&gt;
-&lt;p&gt;It is not currently possible to programatically authenticate a request that uses Amazon Cognito for user authentication through Load Balancer.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;For example, you cannot generate &lt;code&gt;AWSELBAuthSessionCookie&lt;/code&gt; cookies by using the access tokens from Cognito.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;It is not currently possible to programatically authenticate a request that uses Amazon Cognito for user authentication through Load Balancer. You cannot generate &lt;code&gt;AWSELBAuthSessionCookie&lt;/code&gt; cookies by using the access tokens from Cognito.&lt;/p&gt;
 &lt;p&gt;To work around this, it is necessary to create a new Load Balancer endpoint for serving traffic that authorizes based on custom strings specified in a predefined HTTP header.&lt;/p&gt;
 &lt;p&gt;Use an ingress to set the &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#http-header-conditions&#34;&gt;HTTP header conditions&lt;/a&gt; on your Load Balancer. This creates rules that route requests based on HTTP headers. This can be used for service-to-service communication in your application.&lt;/p&gt;
 &lt;h3 id=&#34;create-ingress&#34;&gt;Create ingress&lt;/h3&gt;
@@ -375,7 +339,7 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;/ol&gt;
 &lt;p&gt;Once your Load Balancer is ready, move on to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records&#34;&gt;Add DNS records&lt;/a&gt; step to add a DNS record for the staging subdomain.&lt;/p&gt;
 &lt;h2 id=&#34;add-dns-records&#34;&gt;Add DNS records&lt;/h2&gt;
-&lt;p&gt;Once your ingress-managed Load Balancer is ready, copy the &lt;code&gt;ADDRESS&lt;/code&gt; of that Load Balancer and create a &lt;code&gt;CNAME&lt;/code&gt; entry to it in &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Amazon Route 53&lt;/a&gt; under the subdomain for &lt;code&gt;*.staging.platform.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Once your ingress-managed Load Balancer is ready, copy the &lt;code&gt;ADDRESS&lt;/code&gt; of that Load Balancer and create a &lt;code&gt;CNAME&lt;/code&gt; entry to it in &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Amazon Route 53&lt;/a&gt; under your subdomain (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.staging.platform.example.com&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;run-a-sample-inferenceservice&#34;&gt;Run a sample InferenceService&lt;/h2&gt;
 &lt;h3 id=&#34;create-an-authorizationpolicy&#34;&gt;Create an &lt;code&gt;AuthorizationPolicy&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;Namespaces created by the Kubeflow profile controller have a missing authorization policy that prevents the KFServing predictor and transformer from working.&lt;/p&gt;
@@ -404,7 +368,7 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;HTTP_HEADER_NAME&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;x-api-key&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;HTTP_HEADER_VALUE&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;token1&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;python tests/e2e/utils/kserve/inference_sample_cognito.py
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;python inference_sample_cognito.py
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output should look similar to the following:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Status Code &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;200&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;JSON Response  &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;predictions&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;1, 1&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]}&lt;/span&gt;
@@ -413,7 +377,7 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;USERNAME&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;user@example.com&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;PASSWORD&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;12341234&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;python tests/e2e/utils/kserve/inference_sample_dex.py
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;python inference_sample_dex.py
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output should look similar to the following:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Status Code &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;200&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;JSON Response  &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;predictions&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;[&lt;/span&gt;1, 1&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;]}&lt;/span&gt;
@@ -439,23 +403,23 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;p&gt;In order for the Profile controller to get the necessary permissions, the Profile controller pod must be recognized as an entity that can interface with AWS IAM. This is done by using &lt;a href=&#34;https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/&#34;&gt;IAM roles for service accounts (IRSA)&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;IRSA allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.&lt;/p&gt;
 &lt;p&gt;For more information, see &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html&#34;&gt;Amazon EKS IAM roles for service accounts&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;component-level-implementations&#34;&gt;Component-level implementations&lt;/h3&gt;
-&lt;p&gt;The following components have Profile-level support:&lt;/p&gt;
+&lt;h3 id=&#34;admin-considerations&#34;&gt;Admin considerations&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Central Dashboard&lt;/li&gt;
-&lt;li&gt;Notebooks&lt;/li&gt;
-&lt;li&gt;Pipelines&lt;/li&gt;
-&lt;li&gt;AutoML (Katib)&lt;/li&gt;
-&lt;li&gt;KFServing&lt;/li&gt;
+&lt;li&gt;Kubeflow admins will need to create an IAM role for each Profile with the desired scoped permissions.&lt;/li&gt;
+&lt;li&gt;The Profile controller does not have the permissions specified in the Profile roles.&lt;/li&gt;
+&lt;li&gt;The Profile controller has permissions to modify the Profile roles, which it will do to grant assume role permissions to the &lt;code&gt;default-editor&lt;/code&gt; service account (SA) present in the Profile&amp;rsquo;s namespace.&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;default-editor&lt;/code&gt; SA exists in every Profile&amp;rsquo;s namespace and will be annotated with the role ARN created for the profile. Pods annotated with the SA name will be granted the Profile role permissions.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;default-editor&lt;/code&gt; SA is used by various services in Kubeflow to launch resources in Profile namespaces. However, not all services do this by default.&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h3 id=&#34;component-level-implementations&#34;&gt;Component-level implementations&lt;/h3&gt;
 &lt;p&gt;The following components have been tested to work with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Notebooks&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Integration with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin is being actively worked on for all components with Profile-level support.&lt;/p&gt;
-&lt;p&gt;You can find documentation about the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin for specific components in the individual &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/&#34;&gt;component guides&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Integration with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin is actively being worked on for all components with &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration&#34;&gt;Profile-level support&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can find documentation about the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin for specific components in the individual &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/&#34;&gt;component guides&lt;/a&gt;. Read on for general configuration instructions.&lt;/p&gt;
 &lt;h2 id=&#34;configuration-steps&#34;&gt;Configuration steps&lt;/h2&gt;
-&lt;p&gt;After installing Kubeflow on AWS with one of the available &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/&#34;&gt;deployment options&lt;/a&gt;, you can configure Kubeflow Profiles with the following steps:&lt;/p&gt;
+&lt;p&gt;After installing Kubeflow on AWS with one of the available &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt;, you can configure Kubeflow Profiles with the following steps:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Define the following environment variables:&lt;/p&gt;
@@ -527,7 +491,7 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;PROFILE_USER&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;user@example.com&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Create a profile using the &lt;code&gt;PROFILE_NAME&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Create a Profile using the &lt;code&gt;PROFILE_NAME&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cat &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; profile_iam.yaml
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;apiVersion: kubeflow.org/v1
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;kind: Profile
@@ -545,10 +509,9 @@ class=&#34;mt-3 mb-3 border border-info rounded&#34;&gt;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl apply -f profile_iam.yaml
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Verify your configuration by &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/notebooks-guide/#try-it-out&#34;&gt;creating and running&lt;/a&gt; a &lt;a href=&#34;https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/&#34;&gt;Kubeflow Notebook&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
 &lt;/ol&gt;
+&lt;h2 id=&#34;use-kubeflow-profiles-with-notebooks&#34;&gt;Use Kubeflow Profiles with Notebooks&lt;/h2&gt;
+&lt;p&gt;Verify your configuration by &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/notebooks/#try-it-out&#34;&gt;creating and running&lt;/a&gt; a &lt;a href=&#34;https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/&#34;&gt;Kubeflow Notebook&lt;/a&gt;.&lt;/p&gt;
 
       </description>
     </item>
