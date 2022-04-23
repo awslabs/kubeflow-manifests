@@ -127,7 +127,7 @@ Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html
 
 ### Configuration
 
-Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
+Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
 
 ### Try it out
 

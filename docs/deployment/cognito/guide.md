@@ -11,13 +11,13 @@ This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your 
 - create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB's public DNS names)
 
 ## Prerequisites
-Check to make sure that you have the necessary [prerequisites](/docs/deployment/prerequisites/).
+Check to make sure that you have the necessary [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/).
 
 ## Background 
 
-Read the [background section](/docs/deployment/add-ons/load-balancer/guide/#background) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
+Read the [background section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
 
-Read the [create domain and certificate section](/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
+Read the [create domain and certificate section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
 
 ## (Optional) Automated setup
 The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md).
@@ -184,7 +184,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
         istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
         ```
-    2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
+    2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
     1. ![subdomain-*.platform-and-*.default-records](./images/subdomain-*.platform-and-*.default-records.png)
 1. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.

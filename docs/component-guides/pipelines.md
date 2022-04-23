@@ -47,7 +47,7 @@ client = kfp.Client(host=f"http://{kubeflow_gateway_endpoint}/pipeline", cookies
 client.list_experiments(namespace=namespace)
 ```
 
-If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/docs/deployment/add-ons/load-balancer/guide/) and use the ALB address as the Kubeflow Endpoint.
+If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) and use the ALB address as the Kubeflow Endpoint.
 
 To do programmatic authentication with Dex, refer to the following comments under [issue #140](https://github.com/kubeflow/kfctl/issues/140) in the `kfctl` repository: [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304) and [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529).
 

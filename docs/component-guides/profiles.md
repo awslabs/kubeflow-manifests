@@ -41,7 +41,7 @@ You can find documentation about the `AwsIamForServiceAccount` plugin for specif
 
 ## Configuration steps
 
-After installing Kubeflow on AWS with one of the available [deployment options](/docs/deployment/), you can configure Kubeflow Profiles with the following steps: 
+After installing Kubeflow on AWS with one of the available [deployment options](/kubeflow-manifests/docs/deployment/), you can configure Kubeflow Profiles with the following steps: 
 
 1. Define the following environment variables:
     ```bash
@@ -141,7 +141,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
 
 ## Use Kubeflow Profiles with Notebooks
 
-Verify your configuration by [creating and running](/docs/component-guides/notebooks/#try-it-out) a [Kubeflow Notebook](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
+Verify your configuration by [creating and running](/kubeflow-manifests/docs/component-guides/notebooks/#try-it-out) a [Kubeflow Notebook](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
 
 
 
