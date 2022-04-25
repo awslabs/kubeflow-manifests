@@ -18,27 +18,27 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/component-guides/notebooks/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/fsx-for-lustre/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
@@ -53,12 +53,12 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/cloudwatch/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
@@ -68,27 +68,27 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/component-guides/profiles/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
@@ -98,7 +98,7 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
@@ -108,7 +108,7 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>
@@ -118,7 +118,7 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/</loc>
-    <lastmod>2022-04-22T16:37:50-07:00</lastmod>
+    <lastmod>2022-04-25T10:31:29-07:00</lastmod>
   </url>
   
   <url>

@@ -24,9 +24,9 @@
         
         &lt;p&gt;This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
-&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
@@ -181,7 +181,7 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
 &lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
 &lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.&lt;/p&gt;
-&lt;p&gt;For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;32-changing-the-default-storage-class&#34;&gt;3.2 Changing the default Storage Class&lt;/h3&gt;
 &lt;p&gt;After installing Kubeflow, you can change the default Storage Class from &lt;code&gt;gp2&lt;/code&gt; to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named &lt;code&gt;efs-sc&lt;/code&gt;. You can check your storage classes by running &lt;code&gt;kubectl get sc&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the &lt;code&gt;efs-sc&lt;/code&gt; class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using &lt;code&gt;gp2&lt;/code&gt; for workspace volumes and keep the EFS storage class for datasets/data volumes only.&lt;/p&gt;
@@ -246,7 +246,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl describe tfjob image-classification-pvc -n $PVC_NAMESPACE
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
-&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl delete tfjob -n $PVC_NAMESPACE image-classification-pvc
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
@@ -281,9 +281,9 @@ b. Delete the &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; service account and
         
         &lt;p&gt;This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
-&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
@@ -416,7 +416,7 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
 &lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
 &lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.
-For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;32-note-about-permissions&#34;&gt;3.2 Note about permissions&lt;/h3&gt;
 &lt;p&gt;This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;yq e &amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39; -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
@@ -468,7 +468,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl describe tfjob image-classification-pvc -n $PVC_NAMESPACE
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
-&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl delete tfjob -n $PVC_NAMESPACE image-classification-pvc
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
@@ -517,14 +517,14 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To verify the installation, you can run the &lt;code&gt;list-metrics&lt;/code&gt; command and check that metrics have been created. It may take up to 15 minutes for the metrics to populate.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;aws cloudwatch list-metrics --namespace ContainerInsights --region &lt;span style=&#34;color:#000&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;An example of the logs that will be available after installation are the logs of the Pods on your cluster. This way, the Pod logs can still be accessed past their default storage time. This also allows for an easy way to view logs for all Pods on your cluster without having to directly connect to your EKS cluster.&lt;/p&gt;
-&lt;p&gt;The logs can be accessed by through CloudWatch log groups &lt;img src=&#34;./images/cloudwatch-logs.png&#34; alt=&#34;cloudwatch&#34;&gt;&lt;/p&gt;
-&lt;p&gt;To view individual Pod logs, select &lt;code&gt;/aws/containerinsights/YOUR_CLUSTER_NAME/application&lt;/code&gt;. &lt;img src=&#34;./images/cloudwatch-application-logs.png&#34; alt=&#34;application&#34;&gt;&lt;/p&gt;
-&lt;p&gt;The following image is an example of the &lt;code&gt;jupyter-web-app&lt;/code&gt; Pod logs available through CloudWatch. &lt;img src=&#34;./images/cloudwatch-pod-logs.png&#34; alt=&#34;jupyter-logs&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The logs can be accessed by through CloudWatch log groups &lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/images/cloudwatch-logs.png&#34; alt=&#34;cloudwatch&#34;&gt;&lt;/p&gt;
+&lt;p&gt;To view individual Pod logs, select &lt;code&gt;/aws/containerinsights/YOUR_CLUSTER_NAME/application&lt;/code&gt;. &lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/images/cloudwatch-application-logs.png&#34; alt=&#34;application&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The following image is an example of the &lt;code&gt;jupyter-web-app&lt;/code&gt; Pod logs available through CloudWatch. &lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/images/cloudwatch-pod-logs.png&#34; alt=&#34;jupyter-logs&#34;&gt;&lt;/p&gt;
 &lt;p&gt;For a full list of metrics that are provided by default, see &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-EKS.html&#34;&gt;Amazon EKS and Kubernetes Container Insights metrics&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The metrics are grouped by varying parameters such as Cluster, Namespace, or PodName.
-&lt;img src=&#34;./images/cloudwatch-metrics.png&#34; alt=&#34;cloudwatch-metrics&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/images/cloudwatch-metrics.png&#34; alt=&#34;cloudwatch-metrics&#34;&gt;&lt;/p&gt;
 &lt;p&gt;The following image is an example of the graphed metrics for the &lt;code&gt;istio-system&lt;/code&gt; namespace that deals with internet traffic.
-&lt;img src=&#34;./images/cloudwatch-namespace-metrics.png&#34; alt=&#34;cloudwatch-namespace-metrics&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/images/cloudwatch-namespace-metrics.png&#34; alt=&#34;cloudwatch-namespace-metrics&#34;&gt;&lt;/p&gt;
 &lt;p&gt;See &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html&#34;&gt;Viewing available metrics&lt;/a&gt; for more information on CloudWatch metrics. Select the ContainerInsights metric namespace.&lt;/p&gt;
 &lt;p&gt;You can see the full list of logs and metrics through the &lt;a href=&#34;https://console.aws.amazon.com/cloudwatch/&#34;&gt;Amazon CloudWatch AWS Console&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;uninstall&#34;&gt;Uninstall&lt;/h2&gt;
@@ -555,8 +555,8 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;This guide assumes that you have:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla&lt;/a&gt; deployment of Kubeflow on AWS).&lt;/li&gt;
-&lt;li&gt;Installed the tools mentioned in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites&lt;/a&gt; guide on the client machine.&lt;/li&gt;
+&lt;li&gt;A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla&lt;/a&gt; deployment of Kubeflow on AWS).&lt;/li&gt;
+&lt;li&gt;Installed the tools mentioned in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites&lt;/a&gt; guide on the client machine.&lt;/li&gt;
 &lt;li&gt;Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
 &lt;ol&gt;
 &lt;li&gt;Verify that your cluster name and region are exported:
@@ -583,15 +583,15 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;li&gt;Create a hosted zone for the desired subdomain e.g. &lt;code&gt;platform.example.com&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Copy the value of NS type record from the subdomain hosted zone (&lt;code&gt;platform.example.com&lt;/code&gt;)
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;./files/subdomain-NS.png&#34; alt=&#34;subdomain-NS&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-NS.png&#34; alt=&#34;subdomain-NS&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;Create an &lt;code&gt;NS&lt;/code&gt; type of record in the root &lt;code&gt;example.com&lt;/code&gt; hosted zone for the subdomain &lt;code&gt;platform.example.com&lt;/code&gt;.
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;./files/root-domain-NS-creating-NS.png&#34; alt=&#34;root-domain-NS-creating-NS&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-creating-NS.png&#34; alt=&#34;root-domain-NS-creating-NS&#34;&gt;&lt;/li&gt;
 &lt;li&gt;The following image is a screenshot of the record after creation in &lt;code&gt;example.com&lt;/code&gt; hosted zone.
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;./files/root-domain-NS-created.png&#34; alt=&#34;root-domain-NS-created&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-created.png&#34; alt=&#34;root-domain-NS-created&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
@@ -608,10 +608,10 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;p&gt;The following image is a screenshot showing that a certificate has been issued.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: Status turns to &lt;code&gt;Issued&lt;/code&gt; after a few minutes of validation.
-&lt;img src=&#34;./files/successfully-issued-certificate.png&#34; alt=&#34;successfully-issued-certificate&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/successfully-issued-certificate.png&#34; alt=&#34;successfully-issued-certificate&#34;&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone for DNS validation:
-&lt;img src=&#34;./files/DNS-record-for-certificate-validation.png&#34; alt=&#34;DNS-record-for-certificate-validation&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/DNS-record-for-certificate-validation.png&#34; alt=&#34;DNS-record-for-certificate-validation&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a certificate for &lt;code&gt;*.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
 &lt;li&gt;Create a certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
@@ -696,7 +696,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;li&gt;
 &lt;p&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;./files/subdomain-*.platform-record.png&#34; alt=&#34;subdomain-*.platform-record&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-*.platform-record.png&#34; alt=&#34;subdomain-*.platform-record&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;
