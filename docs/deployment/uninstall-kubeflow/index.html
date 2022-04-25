@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-04-22T16:37:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-04-25T10:31:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Uninstall Kubeflow">
 <meta itemprop="description" content="Delete Kubeflow deployments and Amazon EKS clusters">
-<meta itemprop="dateModified" content="2022-04-22T16:37:50-07:00" />
+<meta itemprop="dateModified" content="2022-04-25T10:31:29-07:00" />
 <meta itemprop="wordCount" content="195">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Uninstall Kubeflow"/>
@@ -359,7 +359,7 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>You can delete a Kubeflow deployment by running the <code>kubectl delete</code> command on the manifest according to the deployment option you chose. For example, to delete a vanilla installation, run the following command:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kustomize build docs/deployment/vanilla/ <span style="color:#000;font-weight:bold">|</span> kubectl delete -f -
 </span></span></code></pre></div><p>This command assumes that you have the repository in the same state as when you installed Kubeflow.</p>
-<p>Cleanup steps for specific deployment options can be found in their respective <a href="/docs/deployment/">installation guides</a>.</p>
+<p>Cleanup steps for specific deployment options can be found in their respective <a href="/kubeflow-manifests/docs/deployment/">installation guides</a>.</p>
 <blockquote>
 <p>Note: This will not delete your Amazon EKS cluster.</p>
 </blockquote>
@@ -438,7 +438,7 @@ if (!doNotTrack) {
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/7747ce6a29fa19f2266c7c5d05e3a0339da5608a">Kubeflow 1.4 documentation pages (7747ce6a)</a>
+  Last modified April 25, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/e9d942149f6c21f30f62b42e57a135d921c79051">Sync docs changes for website build (e9d94214)</a>
 </div>
 
 </div>

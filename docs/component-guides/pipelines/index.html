@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-04-22T16:37:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-04-25T10:31:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Pipelines">
 <meta itemprop="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
-<meta itemprop="dateModified" content="2022-04-22T16:37:50-07:00" />
+<meta itemprop="dateModified" content="2022-04-25T10:31:29-07:00" />
 <meta itemprop="wordCount" content="486">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pipelines"/>
@@ -370,12 +370,8 @@ if (!doNotTrack) {
 <h2 id="authenticate-kubeflow-pipelines-using-sdk-outside-cluster">Authenticate Kubeflow Pipelines using SDK outside cluster</h2>
 <p>Refer to the following guide to connect to Kubeflow Pipelines from <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-outside-your-cluster">outside your cluster</a>.</p>
 <p>Refer to the following steps to use <code>kfp</code> to pass a cookie from your browser after you log into Kubeflow. The following example uses a Chrome browser.</p>
-<p><img src="images/kfp-sdk-browser-cookie.png"
-alt="KFP SDK Browser Cookie"
-class="mt-3 mb-3 border border-info rounded"></p>
-<p><img src="images/kfp-sdk-browser-cookie-detail.png"
-alt="KFP SDK Browser Cookie Detail"
-class="mt-3 mb-3 border border-info rounded"></p>
+<p><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/d1c113ea2d6dc584ce3d0fcb301a92a90dac762a/docs/component-guides/images/kfp-sdk-browser-cookie.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/component-guides/images/kfp-sdk-browser-cookie-detail.png" alt=""></p>
 <p>Once you get a cookie, authenticate <code>kfp</code> by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.</p>
 <h3 id="dex"><strong>Dex</strong></h3>
 <p>If you want to use port forwarding to access Kubeflow, run the following command and use <code>http://localhost:8080/pipeline</code> as the host.</p>
@@ -390,7 +386,7 @@ class="mt-3 mb-3 border border-info rounded"></p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#000">client</span> <span style="color:#ce5c00;font-weight:bold">=</span> kfp.Client<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">host</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;http://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span style="color:#000">cookies</span><span style="color:#ce5c00;font-weight:bold">=</span>f<span style="color:#4e9a06">&#34;authservice_session={authservice_session_cookie}&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span>client.list_experiments<span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#000">namespace</span><span style="color:#ce5c00;font-weight:bold">=</span>namespace<span style="color:#ce5c00;font-weight:bold">)</span>
-</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see the <a href="/docs/deployment/add-ons/load-balancer/guide/">Load Balancer</a> and use the ALB address as the Kubeflow Endpoint.</p>
+</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see the <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/">Load Balancer</a> and use the ALB address as the Kubeflow Endpoint.</p>
 <p>To do programmatic authentication with Dex, refer to the following comments under <a href="https://github.com/kubeflow/kfctl/issues/140">issue #140</a> in the <code>kfctl</code> repository: <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304">#140 (comment)</a> and <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529">#140 (comment)</a>.</p>
 <h3 id="cognito"><strong>Cognito</strong></h3>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8f5902;font-style:italic"># This is the &#34;Domain&#34; in your cookies. eg: kubeflow.&lt;platform.example.com&gt;</span>
@@ -523,7 +519,7 @@ class="mt-3 mb-3 border border-info rounded"></p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/7747ce6a29fa19f2266c7c5d05e3a0339da5608a">Kubeflow 1.4 documentation pages (7747ce6a)</a>
+  Last modified April 25, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/e9d942149f6c21f30f62b42e57a135d921c79051">Sync docs changes for website build (e9d94214)</a>
 </div>
 
 </div>

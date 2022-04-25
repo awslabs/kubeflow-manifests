@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-04-22T16:37:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-04-25T10:31:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Load Balancer">
 <meta itemprop="description" content="Expose Kubeflow over Load Balancer on AWS">
-<meta itemprop="dateModified" content="2022-04-22T16:37:50-07:00" />
+<meta itemprop="dateModified" content="2022-04-25T10:31:29-07:00" />
 <meta itemprop="wordCount" content="1560">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Load Balancer"/>
@@ -377,8 +377,8 @@ if (!doNotTrack) {
 <h2 id="prerequisites">Prerequisites</h2>
 <p>This guide assumes that you have:</p>
 <ol>
-<li>A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the <a href="/docs/deployment/vanilla/guide/">Vanilla</a> deployment of Kubeflow on AWS).</li>
-<li>Installed the tools mentioned in the <a href="/docs/deployment/prerequisites/">general prerequisites</a> guide on the client machine.</li>
+<li>A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">Vanilla</a> deployment of Kubeflow on AWS).</li>
+<li>Installed the tools mentioned in the <a href="/kubeflow-manifests/docs/deployment/prerequisites/">general prerequisites</a> guide on the client machine.</li>
 <li>Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
 <ol>
 <li>Verify that your cluster name and region are exported:
@@ -405,15 +405,15 @@ if (!doNotTrack) {
 <li>Create a hosted zone for the desired subdomain e.g. <code>platform.example.com</code>.</li>
 <li>Copy the value of NS type record from the subdomain hosted zone (<code>platform.example.com</code>)
 <ol>
-<li><img src="./files/subdomain-NS.png" alt="subdomain-NS"></li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-NS.png" alt="subdomain-NS"></li>
 </ol>
 </li>
 <li>Create an <code>NS</code> type of record in the root <code>example.com</code> hosted zone for the subdomain <code>platform.example.com</code>.
 <ol>
-<li><img src="./files/root-domain-NS-creating-NS.png" alt="root-domain-NS-creating-NS"></li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-creating-NS.png" alt="root-domain-NS-creating-NS"></li>
 <li>The following image is a screenshot of the record after creation in <code>example.com</code> hosted zone.
 <ol>
-<li><img src="./files/root-domain-NS-created.png" alt="root-domain-NS-created"></li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-created.png" alt="root-domain-NS-created"></li>
 </ol>
 </li>
 </ol>
@@ -430,10 +430,10 @@ if (!doNotTrack) {
 <p>The following image is a screenshot showing that a certificate has been issued.</p>
 <blockquote>
 <p>Note: Status turns to <code>Issued</code> after a few minutes of validation.
-<img src="./files/successfully-issued-certificate.png" alt="successfully-issued-certificate"></p>
+<img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/successfully-issued-certificate.png" alt="successfully-issued-certificate"></p>
 </blockquote>
 <p>If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the <code>platform.example.com</code> hosted zone for DNS validation:
-<img src="./files/DNS-record-for-certificate-validation.png" alt="DNS-record-for-certificate-validation"></p>
+<img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/DNS-record-for-certificate-validation.png" alt="DNS-record-for-certificate-validation"></p>
 <ol>
 <li>Create a certificate for <code>*.example.com</code> in the region where your platform will run.</li>
 <li>Create a certificate for <code>*.platform.example.com</code> in the region where your platform will run.</li>
@@ -518,7 +518,7 @@ if (!doNotTrack) {
 <li>
 <p>When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (<code>platform.example.com</code>) for <code>*.platform.example.com</code></p>
 <ol>
-<li><img src="./files/subdomain-*.platform-record.png" alt="subdomain-*.platform-record"></li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-*.platform-record.png" alt="subdomain-*.platform-record"></li>
 </ol>
 </li>
 <li>
@@ -667,7 +667,7 @@ if (!doNotTrack) {
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/7747ce6a29fa19f2266c7c5d05e3a0339da5608a">Kubeflow 1.4 documentation pages (7747ce6a)</a>
+  Last modified April 25, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/e9d942149f6c21f30f62b42e57a135d921c79051">Sync docs changes for website build (e9d94214)</a>
 </div>
 
 </div>

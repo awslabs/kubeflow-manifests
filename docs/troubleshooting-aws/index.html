@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-04-22T16:37:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-04-25T10:31:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Troubleshooting">
 <meta itemprop="description" content="Diagnose and fix issues you may encounter in your Kubeflow deployment">
-<meta itemprop="dateModified" content="2022-04-22T16:37:50-07:00" />
+<meta itemprop="dateModified" content="2022-04-25T10:31:29-07:00" />
 <meta itemprop="wordCount" content="318">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Troubleshooting"/>
@@ -357,7 +357,7 @@ if (!doNotTrack) {
 	</header>    
 	<p>For general errors related to Kubernetes and Amazon EKS, please refer to the <a href="https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting.html">Amazon EKS User Guide</a> troubleshooting section. For issues with cluster creation or modification with <code>eksctl</code>, see the <a href="https://eksctl.io/usage/troubleshooting/"><code>eksctl</code> troubleshooting</a> page.</p>
 <h3 id="validate-prerequisites">Validate prerequisites</h3>
-<p>You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct <a href="/docs/deployment/prerequisites/">prerequisites</a> installed.</p>
+<p>You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct <a href="/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a> installed.</p>
 <h3 id="alb-fails-to-provision">ALB fails to provision</h3>
 <p>If you see that your istio-ingress <code>ADDRESS</code> is empty after more than a few minutes, it is possible that something is misconfigured in your ALB ingress controller.</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ingress -n istio-system
@@ -381,7 +381,7 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>Use the <code>kubectl logs</code> command to get more information on Pods that use these resources.</p>
 <p>For more information, see the <a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">Amazon FSx for Lustre CSI Driver</a> GitHub repository. Troubleshooting information for specific FSx filesystems can be found in the <a href="https://docs.aws.amazon.com/fsx/index.html">Amazon FSx documentation</a>.</p>
 <h3 id="rds-issues">RDS issues</h3>
-<p>To troubleshoot RDS issues, follow the <a href="/docs/deployment/rds-s3/guide/#40-verify-the-installation">installation verification steps</a>.</p>
+<p>To troubleshoot RDS issues, follow the <a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/#40-verify-the-installation">installation verification steps</a>.</p>
 
 	
 		<style>
@@ -450,7 +450,7 @@ if (!doNotTrack) {
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/7747ce6a29fa19f2266c7c5d05e3a0339da5608a">Kubeflow 1.4 documentation pages (7747ce6a)</a>
+  Last modified April 25, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/e9d942149f6c21f30f62b42e57a135d921c79051">Sync docs changes for website build (e9d94214)</a>
 </div>
 
 </div>
