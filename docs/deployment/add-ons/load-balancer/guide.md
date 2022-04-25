@@ -20,8 +20,8 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Prerequisites
 This guide assumes that you have: 
-1. A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the [Vanilla](/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
-1. Installed the tools mentioned in the [general prerequisites](/docs/deployment/prerequisites/) guide on the client machine.
+1. A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the [Vanilla](/kubeflow-manifests/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
+1. Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) guide on the client machine.
 1. Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
     1. Verify that your cluster name and region are exported:
         ```bash
