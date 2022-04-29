@@ -15,6 +15,7 @@ ipywidgets==7.6.5
 kfp==1.8.6
 kfp-server-api==1.7.1
 kfserving==0.6.1
+kubeflow-training==1.4.0
 
 # Common data science packages
 h5py==3.5.0
