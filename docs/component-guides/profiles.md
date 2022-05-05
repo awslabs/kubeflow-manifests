@@ -59,6 +59,8 @@ After installing Kubeflow on AWS with one of the available [deployment options](
     --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
     ```
 
+    As a principle of least privilege, we recommend scoping the resources in the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) to the specific policy arns of the policies created in step 6. 
+
 3. Associate IAM OIDC with your cluster.
     ```bash
     aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
