@@ -55,6 +55,17 @@ def wait_on_efs_status(desired_status, efs_client, file_system_id):
 
     wait_for(callback)
 
+def wait_on_mount_target_status(desired_status, efs_client, file_system_id):
+    def callback():
+        response = efs_client.describe_file_systems(
+            FileSystemId=file_system_id,
+        )
+        number_of_mount_targets = response["FileSystems"][0]["NumberOfMountTargets"]
+        print(f"{file_system_id} has {number_of_mount_targets} mount targets .... waiting")
+        if desired_status == "deleted": assert number_of_mount_targets == 0
+        else: assert number_of_mount_targets > 0
+
+    wait_for(callback)
 
 @pytest.fixture(scope="class")
 def install_efs_csi_driver(metadata, region, request, cluster, kustomize):
@@ -96,7 +107,8 @@ def create_efs_driver_sa(
             PolicyName=policy_name,
             PolicyDocument=policy,
         )
-        assert response["Policy"]["Arn"] is not None
+        policy_arn = response["Policy"]["Arn"]
+        assert policy_arn is not None
 
         create_iam_service_account(
             "efs-csi-controller-sa",
@@ -106,12 +118,13 @@ def create_efs_driver_sa(
             policy_arn,
         )
         efs_deps["efs_iam_policy_name"] = policy_name
+        efs_deps["efs_iam_policy_arn"] = policy_arn
 
     def on_delete():
         details_efs_deps = metadata.get("efs_deps") or efs_deps
-        policy_name = details_efs_deps["efs_iam_policy_name"]
+        policy_arn = details_efs_deps["efs_iam_policy_arn"]
         iam_client.delete_policy(
-            PolicyName=policy_name,
+            PolicyArn=policy_arn,
         )
 
     return configure_resource_fixture(
@@ -211,11 +224,14 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
                 MountTargetId=mount_target_id,
             )
 
+        wait_on_mount_target_status("deleted", efs_client, fs_id)
+
         # Delete the Filesystem
+
         efs_client.delete_file_system(
             FileSystemId=fs_id,
         )
-        wait_on_efs_status("deleted", efs_client, fs_id)
+        wait_on_efs_status("deleting", efs_client, fs_id)
 
         # Delete the Security Group
         ec2_client.delete_security_group(GroupId=sg_id)
@@ -358,11 +374,14 @@ def dynamic_provisioning(metadata, region, request, cluster):
                 MountTargetId=mount_target_id,
             )
 
+        wait_on_mount_target_status("deleted", efs_client, fs_id)
+
         # Delete the Filesystem
+
         efs_client.delete_file_system(
             FileSystemId=fs_id,
         )
-        wait_on_efs_status("deleted", efs_client, fs_id)
+        wait_on_efs_status("deleting", efs_client, fs_id)
 
     return configure_resource_fixture(
         metadata, request, efs_claim_dyn, "efs_claim_dyn", on_create, on_delete
