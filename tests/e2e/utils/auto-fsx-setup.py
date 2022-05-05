@@ -324,6 +324,9 @@ def create_fsx_file_system():
         SecurityGroupIds=[security_group_id],
         StorageCapacity=1200,
         LustreConfiguration={"DeploymentType": "SCRATCH_2"},
+        Tags=[
+            {"Key": "Name", "Value": FSX_FILE_SYSTEM_NAME},
+        ],
     )
     global FSX_FILE_SYSTEM_ID
     FSX_FILE_SYSTEM_ID = response["FileSystem"]["FileSystemId"]
