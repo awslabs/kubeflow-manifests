@@ -26,6 +26,7 @@ from e2e.utils.utils import (
     kubectl_delete_kustomize,
     load_yaml_file,
     write_yaml_file,
+    get_security_group_id_from_name,
 )
 from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
@@ -55,17 +56,40 @@ def wait_on_efs_status(desired_status, efs_client, file_system_id):
 
     wait_for(callback)
 
+
+def wait_on_efs_deletion(efs_client, file_system_id):
+    def callback():
+        try:
+            response = efs_client.describe_file_systems(
+                FileSystemId=file_system_id,
+            )
+            number_of_file_systems_with_id = len(response["FileSystems"])
+            print(
+                f"{file_system_id} has {number_of_file_systems_with_id} results .... waiting"
+            )
+            assert number_of_file_systems_with_id == 0
+        except efs_client.exceptions.FileSystemNotFound:
+            return True
+
+    wait_for(callback)
+
+
 def wait_on_mount_target_status(desired_status, efs_client, file_system_id):
     def callback():
         response = efs_client.describe_file_systems(
             FileSystemId=file_system_id,
         )
         number_of_mount_targets = response["FileSystems"][0]["NumberOfMountTargets"]
-        print(f"{file_system_id} has {number_of_mount_targets} mount targets .... waiting")
-        if desired_status == "deleted": assert number_of_mount_targets == 0
-        else: assert number_of_mount_targets > 0
+        print(
+            f"{file_system_id} has {number_of_mount_targets} mount targets .... waiting"
+        )
+        if desired_status == "deleted":
+            assert number_of_mount_targets == 0
+        else:
+            assert number_of_mount_targets > 0
 
     wait_for(callback)
+
 
 @pytest.fixture(scope="class")
 def install_efs_csi_driver(metadata, region, request, cluster, kustomize):
@@ -107,8 +131,7 @@ def create_efs_driver_sa(
             PolicyName=policy_name,
             PolicyDocument=policy,
         )
-        policy_arn = response["Policy"]["Arn"]
-        assert policy_arn is not None
+        assert response["Policy"]["Arn"] is not None
 
         create_iam_service_account(
             "efs-csi-controller-sa",
@@ -118,13 +141,12 @@ def create_efs_driver_sa(
             policy_arn,
         )
         efs_deps["efs_iam_policy_name"] = policy_name
-        efs_deps["efs_iam_policy_arn"] = policy_arn
 
     def on_delete():
         details_efs_deps = metadata.get("efs_deps") or efs_deps
         policy_arn = details_efs_deps["efs_iam_policy_arn"]
         iam_client.delete_policy(
-            PolicyArn=policy_arn,
+            PolicyArn=policy_arn[0],
         )
 
     return configure_resource_fixture(
@@ -232,6 +254,7 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
             FileSystemId=fs_id,
         )
         wait_on_efs_status("deleting", efs_client, fs_id)
+        wait_on_efs_deletion(efs_client, fs_id)
 
         # Delete the Security Group
         ec2_client.delete_security_group(GroupId=sg_id)
@@ -294,7 +317,7 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
         kubectl_delete(efs_permissions_filepath)
         kubectl_delete(efs_pvc_filepath)
         kubectl_delete(efs_pv_filepath)
-        kubectl_delete(efs_sc_filepath)   
+        kubectl_delete(efs_sc_filepath)
 
     return configure_resource_fixture(
         metadata, request, efs_claim, "efs_claim", on_create, on_delete
@@ -305,6 +328,7 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
 def dynamic_provisioning(metadata, region, request, cluster):
     associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("efs-claim-auto-dyn-")
+    security_group_name = claim_name + "-sg"
     efs_pvc_filepath = (
         "../../docs/deployment/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"
     )
@@ -317,6 +341,8 @@ def dynamic_provisioning(metadata, region, request, cluster):
     efs_auto_script_filepath = "utils/auto-efs-setup.py"
     efs_claim_dyn = {}
     efs_client = get_efs_client(region)
+    ec2_client = get_ec2_client(region)
+    eks_client = get_eks_client(region)
 
     def on_create():
         # Run the automated script to create the EFS Filesystem and the SC
@@ -337,7 +363,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
                 "--efs_file_system_name",
                 claim_name,
                 "--efs_security_group_name",
-                claim_name + "sg",
+                security_group_name,
             ]
         )
 
@@ -381,7 +407,12 @@ def dynamic_provisioning(metadata, region, request, cluster):
         efs_client.delete_file_system(
             FileSystemId=fs_id,
         )
-        wait_on_efs_status("deleting", efs_client, fs_id)
+        wait_on_efs_deletion(efs_client, fs_id)
+
+        security_group_id = get_security_group_id_from_name(
+            ec2_client, eks_client, security_group_name, cluster
+        )
+        ec2_client.delete_security_group(GroupId=security_group_id)
 
     return configure_resource_fixture(
         metadata, request, efs_claim_dyn, "efs_claim_dyn", on_create, on_delete
