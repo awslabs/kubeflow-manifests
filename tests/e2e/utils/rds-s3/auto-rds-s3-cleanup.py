@@ -17,7 +17,7 @@ def main():
     region = metadata["CLUSTER"]["region"]
     cluster_name = metadata["CLUSTER"]["name"]
     secrets_manager_client = get_secrets_manager_client(region)
-    delete_s3_bucket(metadata, secrets_manager_client)
+    delete_s3_bucket(metadata, secrets_manager_client, region)
     delete_rds(metadata, secrets_manager_client, region)
     uninstall_secrets_manager(region, cluster_name)
 
