@@ -22,6 +22,7 @@ generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - ./rds/disable-default-secret.yaml
+- ./rds/disable-mysql-pv-claim.yaml
 - ./s3/disable-default-secret.yaml
 - ./s3/aws-configuration-patch.yaml
 # Identifier for application manager to apply ownerReference.

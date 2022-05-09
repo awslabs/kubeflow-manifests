@@ -11,6 +11,7 @@ generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - disable-default-secret.yaml
+- disable-mysql-pv-claim.yaml
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected
 # when application is deleted.
