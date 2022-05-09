@@ -4,7 +4,7 @@ import subprocess
 import json
 import yaml
 
-from importlib_metadata import metadata
+from importlib.metadata import metadata
 from e2e.fixtures.cluster import create_iam_service_account
 from e2e.utils.config import configure_env_file
 from e2e.utils.utils import (
