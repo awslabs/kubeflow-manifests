@@ -79,7 +79,7 @@ cd tests/e2e
 ```bash
 pip install -r requirements.txt
 ```
-3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with the permissions in [auto-setup-iam-policy.json](https://github.com/kubeflow/manifests/blob/v1.4-branch/tests/e2e/utils/rds-s3/auto-setup-iam-policy.json). Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step.
+3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with the permissions in [auto-setup-iam-policy.json](https://github.com/kubeflow/manifests/blob/main/tests/e2e/utils/rds-s3/auto-setup-iam-policy.json). Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step.
 4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY`. Then, run the `auto-rds-s3-setup.py` script.
 ```
 export CLUSTER_REGION=
