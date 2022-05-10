@@ -21,6 +21,7 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
+- ./rds/disable-mysql-pv-claim.yaml
 - ./rds/disable-default-secret.yaml
 - ./s3/disable-default-secret.yaml
 - ./s3/aws-configuration-patch.yaml
