@@ -1,0 +1,17 @@
+name: PR comment
+
+on: issue_comment
+
+jobs:
+  pr_commented:
+    # This job only runs for pull request comments
+    name: PR comment
+    if: github.event.issue.pull_request && github.event.comment.body == '/test'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+        # todo: Change endpoint once test stack is deployed
+          echo Event body $GITHUB_CONTEXT; curl -v -X POST https://zg5ki2u7h8.execute-api.us-west-2.amazonaws.com/prod/ -d '{"pr_id": '"$NUMBER"'}'
+        env:
+          NUMBER: ${{ github.event.issue.number }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
