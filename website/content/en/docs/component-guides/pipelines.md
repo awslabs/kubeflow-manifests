@@ -67,26 +67,18 @@ client.list_experiments(namespace=namespace)
 
 User profiles can be granted permissions to access AWS resources. Pipelines under the profile namespace will have access to AWS resources as specified in the user profile's `awsIamRole`.
 
-## Configuration steps
+The instructions for managing AWS permissions for user profiles can be found [here](/kubeflow-manifests/docs/component-guides/profiles). The below [Example Pipeline](#example-pipeline) can be used to verify the configuration.
 
-Generic configuration steps to configure user profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+### Example Pipeline
 
-The below configuration steps provide an end to end example of configuring user profiles with IAM permissions and using them with the KFP SDK.
+In the below example, the `namespace` passed as a parameter to the `kfp_client` is the profile namespace. Change the `namespace` variable to match the profile namespace in which the pipeline will be deployed and ran in.
 
-### Prerequisites
-
-Deploy Kubeflow using the [vanilla](/kubeflow-manifests/docs/deployment/vanilla) deployment option.
-
-### Create the profile
-
-1. Define the following environment variables:
-
-   ```bash
-   export CLUSTER_NAME=<your cluster name>
-   export CLUSTER_REGION=<your region>
-   export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-   export PROFILE_NAME=<the name of the profile to be created>
-   ```
+```bash
+export CLUSTER_NAME=<your cluster name>
+export CLUSTER_REGION=<your region>
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+export PROFILE_NAME=<the name of the profile to be created>
+```
 
 2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
 
@@ -97,13 +89,18 @@ Deploy Kubeflow using the [vanilla](/kubeflow-manifests/docs/deployment/vanilla)
    --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
    ```
 
-3. Associate IAM OIDC with your cluster.
+@dsl.pipeline(
+name="S3 KFP Component",
+description="Tests S3 Access from KFP",
+)
+def s3_pipeline():
+s3_op().set_display_name("S3 KFP Component")
 
-   ```bash
-   aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
+```bash
+aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
 
-   eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
-   ```
+eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
+```
 
 4. Create an IRSA for the Profile controller using the policy.
 
