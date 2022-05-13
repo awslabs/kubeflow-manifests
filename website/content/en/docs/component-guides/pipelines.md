@@ -4,7 +4,7 @@ description = "Get started with Kubeflow Pipelines on Amazon EKS"
 weight = 20
 +++
 
-For an overview of connecting to Kubeflow Pipelines using the SDK client, see [the Pipelines SDK guide](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/). 
+For an overview of connecting to Kubeflow Pipelines using the SDK client, see [the Pipelines SDK guide](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/).
 
 ## Authenticate Kubeflow Pipelines using SDK inside cluster
 
@@ -20,9 +20,9 @@ Refer to the following steps to use `kfp` to pass a cookie from your browser aft
 
 ![](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/pipelines/kfp-sdk-browser-cookie-detail.png)  
 
-Once you get a cookie, authenticate `kfp` by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples. 
+Once you get a cookie, authenticate `kfp` by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.
 
-### **Dex** 
+### **Dex**
 
 If you want to use port forwarding to access Kubeflow, run the following command and use `http://localhost:8080/pipeline` as the host.
 
@@ -30,7 +30,8 @@ If you want to use port forwarding to access Kubeflow, run the following command
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
 ```
 
-Pass the cookie from your browser: 
+Pass the cookie from your browser:
+
 ```bash
 # This is the "Domain" in your cookies. Eg: "localhost:8080" or "<ingress_alb_address>.elb.amazonaws.com"
 kubeflow_gateway_endpoint="<YOUR_KUBEFLOW_GATEWAY_ENDPOINT>"
@@ -62,32 +63,15 @@ client = kfp.Client(host=f"https://{kubeflow_gateway_endpoint}/pipeline", cookie
 client.list_experiments(namespace=namespace)
 ```
 
-## S3 Access from Kubeflow Pipelines
+## AWS Access from Kubeflow Pipelines
 
-It is recommended to use AWS credentials to manage S3 access for Kubeflow Pipelines. [IAM Role for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) requires applications to use the latest AWS SDK to support the `assume-web-identity-role`. This requirement is in development, and progress can be tracked in the [open GitHub issue](https://github.com/kubeflow/pipelines/issues/3405).
+User profiles can be granted permissions to access AWS resources. Pipelines under the profile namespace will have access to AWS resources as specified in the user profile's `awsIamRole`.
 
-A Kubernetes Secret is required by Kubeflow Pipelines and applications to access S3. Be sure that the Kubernetes Secret has S3 read and write access.
+The instructions for managing AWS permissions for user profiles can be found [here](/kubeflow-manifests/docs/component-guides/profiles). The below [Example Pipeline](#example-pipeline) can be used to verify the configuration.
 
-```
-apiVersion: v1
-kind: Secret
-metadata:
-  name: aws-secret
-  namespace: kubeflow
-type: Opaque
-data:
-  AWS_ACCESS_KEY_ID: <YOUR_BASE64_ACCESS_KEY>
-  AWS_SECRET_ACCESS_KEY: <YOUR_BASE64_SECRET_ACCESS>
-```
+### Example Pipeline
 
-- YOUR_BASE64_ACCESS_KEY: Base64 string of `AWS_ACCESS_KEY_ID`
-- YOUR_BASE64_SECRET_ACCESS: Base64 string of `AWS_SECRET_ACCESS_KEY`
-
-> Note: To get a Base64 string, run `echo -n $AWS_ACCESS_KEY_ID | base64`
-
-### Example Pipeline 
-
-If you write any files to S3 in your application, use `use_aws_secret` to attach an AWS secret to access S3.
+In the below example, the `namespace` passed as a parameter to the `kfp_client` is the profile namespace. Change the `namespace` variable to match the profile namespace in which the pipeline will be deployed and ran in.
 
 ```python
 from kfp.aws import use_aws_secret
@@ -108,9 +92,7 @@ s3_op = create_component_from_func(
     description="Tests S3 Access from KFP",
 )
 def s3_pipeline():
-    s3_op().set_display_name("S3 KFP Component").apply(
-        use_aws_secret("aws-secret", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY")
-    )
+    s3_op().set_display_name("S3 KFP Component")
 
 kfp_client = kfp.Client()
 namespace = "kubeflow-user-example-com"
@@ -126,5 +108,3 @@ Support for S3 Artifact Store is in active development. You can track the [open 
 ## Support TensorBoard in Kubeflow Pipelines
 
 Support for TensorBoard in Kubeflow Pipelines is in active development. You can track the [open issue](https://github.com/awslabs/kubeflow-manifests/issues/118) to stay up-to-date on progress.
-
-

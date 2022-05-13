@@ -96,6 +96,7 @@ def wait_for_kfp_run_succeeded_from_run_id(kfp_client, run_id):
 
         print(f"{run_id} {status} .... waiting")
         assert status == "Succeeded"
+        return resp
 
     return wait_for(callback, 600)
 
