@@ -48,7 +48,7 @@ eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
 More details about cluster creation via `eksctl` can be found in the [Creating and managing clusters](https://eksctl.io/usage/creating-and-managing-clusters/) guide.
 
 ## Clone the repository 
-Clone the [`awslabs/kubeflow-manifest`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
+Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
 
 Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](/kubeflow-manifests/docs/about/releases/) if you are unsure about what these values should be.
 ```bash
