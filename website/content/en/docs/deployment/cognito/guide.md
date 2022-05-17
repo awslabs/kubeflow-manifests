@@ -1,7 +1,7 @@
 +++
-title = "Cognito"
+title = "Full Deployment Guide"
 description = "Deploying Kubeflow with AWS Cognito as identity provider"
-weight = 30
+weight = 10
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:
@@ -20,47 +20,47 @@ Read the [background section](/kubeflow-manifests/docs/deployment/add-ons/load-b
 Read the [create domain and certificate section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
 
 ## (Optional) Automated setup
-The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md).
+The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](/kubeflow-manifests/docs/deployment/cognito/guide-automated/).
 
 ## 1.0 Custom domain and certificates
 
-1. Follow the [Create a subdomain](../add-ons/load-balancer/README.md#create-a-subdomain) section of the load balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
-1. Follow the [Create certificates for domain](../add-ons/load-balancer/README.md#create-certificates-for-domain) section of the load balancer guide to create certificates required for TLS.
+1. Follow the [Create a subdomain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain) section of the Load Balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
+1. Follow the [Create certificates for domain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain) section of the Load Balancer guide to create certificates required for TLS.
 
-From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of hosted zone in the following sections/steps of this guide are for the subdomain.
+From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.
 
 ## 2.0 Cognito User Pool
 
 1. Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose `Review defaults`.
 1. Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this [documentation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the `Required attributes` and select `email`.
-    1. ![cognito-email-required](./images/cognito-email-required.png)
+    1. ![cognito-email-required](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-email-required.png)
 1. On the Policies page, select `Only allow administrators to create users` under `Do you want to allow users to sign themselves up?` and save changes. This step is optional but is recommended to have strict control over the users.
 1. Click on `Create pool` to create the user pool.
 1. Add an `App client` with any name and the default options.
-    1. ![cognito-app-client-id](./images/cognito-app-client-id.png)
+    1. ![cognito-app-client-id](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-id.png)
 1. In the `App client settings`, select `Authorization code grant` flow under OAuth-2.0 and check box `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. Also check box `Enabled Identity Providers`. 
     1. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
     2. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
-    3. ![cognito-app-client-settings](./images/cognito-app-client-settings.png)
+    3. ![cognito-app-client-settings](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png)
 1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
     1. In order to use a custom domain, its root(i.e. `platform.example.com`) must have an valid A type record. Create a new record of type `A` in `platform.example.com` hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
         1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
-            1. ![subdomain-initial-A-record](./images/subdomain-initial-A-record.png)
-    1. If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the process similar to [section 2.0](../add-ons/load-balancer/README.md#create-certificates-for-domain). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
+            1. ![subdomain-initial-A-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png)
+    1. If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the process similar to [section 2.0](./kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
     1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
-        1. ![cognito-active-domain](./images/cognito-active-domain.png)
+        1. ![cognito-active-domain](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png)
         2. When it’s created, it will return the `Alias target` CloudFront address.
             1. Screenshot of the CloudFront URL for Cognito Domain name:
-                1. ![cognito-domain-cloudfront-url](./images/cognito-domain-cloudfront-url.png)
+                1. ![cognito-domain-cloudfront-url](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-url.png)
             2.  Create a new record of type `A` for `auth.platform.example.com` with the value of the CloudFront URL.
                 1. Select the `alias` toggle and select Alias to Cloudfront distribution for creating the record
-                2. ![cognito-domain-cloudfront-A-record-creating](./images/cognito-domain-cloudfront-A-record-creatin.png)
+                2. ![cognito-domain-cloudfront-A-record-creating](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-creatin.png)
                 3. Following is a screenshot of the A record for `auth.platform.example.com` in `platform.example.com` hosted zone:
-                    1. ![cognito-domain-cloudfront-A-record-created](./images/cognito-domain-cloudfront-A-record-created.png)
+                    1. ![cognito-domain-cloudfront-A-record-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-created.png)
 
 ## 3.0 Configure Ingress
 
-1. Take note of the following values from the previous step or `awsconfigs/infra_configs/scripts/config.yaml` if you used automated guide(https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md):
+1. Take note of the following values from the previous step or `awsconfigs/infra_configs/scripts/config.yaml` if you used the [automated guide](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md):
     1. The Pool ARN of the user pool found in Cognito general settings.
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
@@ -92,7 +92,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         LOGOUT_URL='$CognitoLogoutURL'
         ' > awsconfigs/common/aws-authservice/base/params.env
         ```
-1. Follow the [Configure Load Balancer Controller](../add-ons/load-balancer/README.md#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
+1. Follow the [Configure Load Balancer Controller](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
 
 ## 4.0 Building manifests and deploying Kubeflow
 
@@ -186,17 +186,17 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         ```
     2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
-    1. ![subdomain-*.platform-and-*.default-records](./images/subdomain-*.platform-and-*.default-records.png)
+    1. ![subdomain-*.platform-and-*.default-records](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-*.platform-and-*.default-records.png)
 1. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
-    1. ![subdomain-A-record-updated](./images/subdomain-A-record-updated.png)
+    1. ![subdomain-A-record-updated](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-A-record-updated.png)
 1. Screenshot of all the record sets in hosted zone for reference
-    1. ![subdomain-records-summary](./images/subdomain-records-summary.png)
+    1. ![subdomain-records-summary](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-records-summary.png)
 
 ## 6.0 Connecting to central dashboard
 
 1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard:
     1. Head over to the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
-        1. ![cognito-user-pool-created](./images/cognito-user-pool-created.png)
+        1. ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
     1. Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). The following is an example Profile for reference:
         1. ```bash
             apiVersion: kubeflow.org/v1beta1

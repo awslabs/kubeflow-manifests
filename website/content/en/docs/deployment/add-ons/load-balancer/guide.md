@@ -49,11 +49,11 @@ You need a registered domain and TLS certificate to use HTTPS with Load Balancer
 1. Goto Route53 and create a subdomain to host Kubeflow:
     1. Create a hosted zone for the desired subdomain e.g. `platform.example.com`.
     1. Copy the value of NS type record from the subdomain hosted zone (`platform.example.com`)
-        1. ![subdomain-NS](./files/subdomain-NS.png)
+        1. ![subdomain-NS](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-NS.png)
     1. Create an `NS` type of record in the root `example.com` hosted zone for the subdomain `platform.example.com`.
-        1. ![root-domain-NS-creating-NS](./files/root-domain-NS-creating-NS.png)
+        1. ![root-domain-NS-creating-NS](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-creating-NS.png)
         1.  The following image is a screenshot of the record after creation in `example.com` hosted zone.
-            1. ![root-domain-NS-created](./files/root-domain-NS-created.png)
+            1. ![root-domain-NS-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-created.png)
 
 From this point onwards, we will create and update the DNS records **only in the subdomain**. All of the images of the hosted zone in the following steps of this guide are for the subdomain.
 
@@ -65,10 +65,10 @@ To create the certificates for the domains in the region where your platform wil
     
 The following image is a screenshot showing that a certificate has been issued.
 > Note: Status turns to `Issued` after a few minutes of validation.
-![successfully-issued-certificate](./files/successfully-issued-certificate.png)
+![successfully-issued-certificate](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/successfully-issued-certificate.png)
 
 If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the `platform.example.com` hosted zone for DNS validation:
-![DNS-record-for-certificate-validation](./files/DNS-record-for-certificate-validation.png)    
+![DNS-record-for-certificate-validation](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/DNS-record-for-certificate-validation.png)    
 
 1. Create a certificate for `*.example.com` in the region where your platform will run.
 1. Create a certificate for `*.platform.example.com` in the region where your platform will run.
@@ -114,7 +114,7 @@ Set up resources required for the Load Balancer controller:
         ```
 
 ### Build Manifests and deploy components
-Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/add-ons/load-balancer/kustomization.yaml) file.
+Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/add-ons/load-balancer/kustomization.yaml) file.
 ```bash
 while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
@@ -129,7 +129,7 @@ while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f
         ```
     2. If `ADDRESS` is empty after a few minutes, check the logs of controller by following [this guide](https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision)
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
-    1. ![subdomain-*.platform-record](./files/subdomain-*.platform-record.png)
+    1. ![subdomain-*.platform-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png)
 
 1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
 
