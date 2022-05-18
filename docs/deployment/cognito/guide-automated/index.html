@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/"
       },
       "articleSection" : "docs",
-      "name" : "",
-      "headline" : "",
-      "description" : "Deploying Kubeflow with AWS Cognito as idP This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB\u0026rsquo;s public DNS names are not supported.",
+      "name" : "Automated Setup",
+      "headline" : "Automated Setup",
+      "description" : "Deploying Kubeflow with AWS Cognito as identity provider using setup scripts",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/readme-automated\/",
-      "wordCount" : "511",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/guide-automated\/",
+      "wordCount" : "507",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,23 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Kubeflow on AWS</title>
-<meta name="description" content="Deploying Kubeflow with AWS Cognito as idP
-This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses …">
-<meta property="og:title" content="" />
-<meta property="og:description" content="Deploying Kubeflow with AWS Cognito as idP This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB&rsquo;s public DNS names are not supported." />
+<title>Automated Setup | Kubeflow on AWS</title>
+<meta name="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
+<meta property="og:title" content="Automated Setup" />
+<meta property="og:description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/readme-automated/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-04-22T16:37:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-05-16T09:16:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="">
-<meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as idP This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB&rsquo;s public DNS names are not supported.">
-<meta itemprop="dateModified" content="2022-04-22T16:37:50-07:00" />
-<meta itemprop="wordCount" content="511">
+<meta itemprop="name" content="Automated Setup">
+<meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
+<meta itemprop="dateModified" content="2022-05-16T09:16:04-07:00" />
+<meta itemprop="wordCount" content="507">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as idP This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB&rsquo;s public DNS names are not supported."/>
+<meta name="twitter:title" content="Automated Setup"/>
+<meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts"/>
 
 
 
@@ -70,17 +69,6 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-135379910-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </head>
   <body class="td-page">
@@ -126,6 +114,8 @@ if (!doNotTrack) {
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
 	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	
 </div>
 
 			</li>
@@ -143,8 +133,7 @@ if (!doNotTrack) {
             
 <div id="td-sidebar-menu" class="td-sidebar__inner">
   <form class="td-sidebar__search d-flex align-items-center">
-    <input type="search" class="form-control td-search-input" placeholder="&#xf002; Search this site…" aria-label="Search this site…" autocomplete="off">
-
+    
     <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
     </button>
   </form>
@@ -189,10 +178,21 @@ if (!doNotTrack) {
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentprerequisites-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentprerequisites-check"><a href="/kubeflow-manifests/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="">Cognito</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check" checked/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognito-check"><a href="/kubeflow-manifests/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentcognito"><span class="">Cognito</span></a></label>
   
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="">Full Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check" checked/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="td-sidebar-nav-active-item">Automated Setup</span></a></label>
+  
+</li>
+  </ul>
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
@@ -231,10 +231,6 @@ if (!doNotTrack) {
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow-check"><a href="/kubeflow-manifests/docs/deployment/uninstall-kubeflow/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentuninstall-kubeflow"><span class="">Uninstall Kubeflow</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognitoreadme-automated-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoreadme-automated-check" checked/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoreadme-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/readme-automated/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoreadme-automated"><span class="td-sidebar-nav-active-item"></span></a></label>
   
 </li>
   </ul>
@@ -276,10 +272,10 @@ if (!doNotTrack) {
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests/docs/tree/main/content/en/docs/deployment/cognito/README-automated.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests/docs/edit/main/content/en/docs/deployment/cognito/README-automated.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests/docs/new/main/content/en/docs/deployment/cognito/README-automated.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests/docs/issues/new?title=" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito/guide-automated.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito/guide-automated.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito/guide-automated.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Automated%20Setup" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -329,15 +325,18 @@ if (!doNotTrack) {
   <li class="breadcrumb-item">
     <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/">Deployment</a>
   </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/">Cognito</a>
+  </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/readme-automated/"></a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/">Automated Setup</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1></h1>
-	
+	<h1>Automated Setup</h1>
+	<div class="lead">Deploying Kubeflow with AWS Cognito as identity provider using setup scripts</div>
 	<header class="article-meta">
 		
 
@@ -353,14 +352,13 @@ if (!doNotTrack) {
 
 		
 	</header>    
-	<h1 id="deploying-kubeflow-with-aws-cognito-as-idp">Deploying Kubeflow with AWS Cognito as idP</h1>
-<p>This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer(ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates(needed for TLS) for ALB&rsquo;s public DNS names are not supported.</p>
+	<p>This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&rsquo;s public DNS names are not supported.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This guide assumes you have python3.8 installed and completed the pre-requisites from this <a href="./README.md#prerequisites">README</a>.</p>
+<p>This guide assumes you have Python 3.8 installed and that you have completed the <a href="/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a>.</p>
 <h2 id="create-required-resources-and-deploy-kubeflow">Create required resources and deploy Kubeflow</h2>
 <ol>
 <li>
-<p>The following steps automate <a href="./README.md#10-custom-domain-and-certificates">section 1.0(Custom domain and certificates)</a> (creating a custom domain to host Kubeflow and TLS certificates for the domain), <a href="./README.md#20-cognito-user-pool">section 2.0(Cognito user pool)</a> (creating a Cognito Userpool used for user authentication) and<a href="./README.md#30-configure-ingress">section 3.0(Configure Ingress)</a> (configuring ingress and load balancer controller manifests) of the cognito guide.</p>
+<p>The following steps automate <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">section 1.0(Custom domain and certificates)</a> (creating a custom domain to host Kubeflow and TLS certificates for the domain), <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool">section 2.0(Cognito user pool)</a> (creating a Cognito Userpool used for user authentication) and<a href="/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">section 3.0(Configure Ingress)</a> (configuring ingress and load balancer controller manifests) of the cognito guide.</p>
 <ol>
 <li>Install dependencies for the scripts
 <div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>pip install -r tests/e2e/requirements.txt
@@ -372,7 +370,7 @@ if (!doNotTrack) {
 <li>If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in <code>route53.rootDomain.hostedZoneId</code>. Skip this step if your domain is managed by other domain provider.</li>
 </ol>
 </li>
-<li>Name of the sudomain you want to host Kubeflow (e.g. <code>platform.example.com</code>) in <code>route53.subDomain.name</code>. Please read <a href="../add-ons/load-balancer/README.md#create-domain-and-certificates">this section</a> to understand why we use a subdomain.</li>
+<li>Name of the sudomain you want to host Kubeflow (e.g. <code>platform.example.com</code>) in <code>route53.subDomain.name</code>. Please read <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">this section</a> to understand why we use a subdomain.</li>
 <li>Cluster name and region where kubeflow will be deployed in <code>cluster.name</code> and <code>cluster.region</code> (e.g. us-west-2) respectively.</li>
 <li>Name of cognito userpool in <code>cognitoUserpool.name</code> e.g. kubeflow-users.</li>
 <li>The config file will look something like:
@@ -437,7 +435,7 @@ if (!doNotTrack) {
 </ol>
 </li>
 <li>
-<p>Follow the <a href="./README.md#40-building-manifests-and-deploying-kubeflow">section 4.0(Building manifests and deploying Kubeflow)</a> to install Kubeflow</p>
+<p>Follow the <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow">section 4.0(Building manifests and deploying Kubeflow)</a> to install Kubeflow</p>
 </li>
 <li>
 <p>Updating the domain with ALB address</p>
@@ -450,7 +448,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span> NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
 </span></span><span style="display:flex;"><span> istio-ingress   &lt;none&gt;   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
 </span></span></code></pre></div></li>
-<li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="https://www.kubeflow.org/docs/distributions/aws/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
+<li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
 </ol>
 </li>
 <li>Substitute the ALB address under <code>kubeflow.alb.dns</code> in <code>tests/e2e/utils/cognito_bootstrap/config.yaml</code>. The kubeflow section of the config file will look like:
@@ -477,7 +475,7 @@ if (!doNotTrack) {
 </ol>
 </li>
 <li>
-<p>Follow the rest of the cognito guide from <a href="./README.md#60-connecting-to-central-dashboard">section 6.0(Connecting to central dashboard)</a> to:</p>
+<p>Follow the rest of the cognito guide from <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard">section 6.0(Connecting to central dashboard)</a> to:</p>
 <ol>
 <li>Create a user in Cognito user pool</li>
 <li>Create a profile for the user from the user pool</li>
@@ -487,73 +485,9 @@ if (!doNotTrack) {
 </ol>
 
 	
-		<style>
-  .feedback--answer {
-    display: inline-block;
-  }
-  .feedback--answer-no {
-    margin-left: 1em;
-  }
-  .feedback--response {
-    display: none;
-    margin-top: 1em;
-  }
-  .feedback--response__visible {
-    display: block;
-  }
-</style>
-<div class="card mt-4 col-12 col-sm-6">
-  <div class="card-body">
-    <h3 class="card-title">Feedback</h3>
-    <p class="card-text">Was this page helpful?</p>
-    <button class="btn btn-primary feedback--answer feedback--answer-yes" style="width: 5rem;">Yes</button>
-    <button class="btn btn-primary feedback--answer feedback--answer-no" style="width: 5rem;">No</button>
-    <p class="feedback--response feedback--response-yes">
-      Glad to hear it! Please <a href="https://github.com/awslabs/kubeflow-manifests/issues/new?assignees=&labels=documentation&template=documentation-request.md&title=">tell us how we can improve</a>.
-    </p>
-    <p class="feedback--response feedback--response-no">
-      Sorry to hear that. Please <a href="https://github.com/awslabs/kubeflow-manifests/issues/new?assignees=&labels=documentation&template=documentation-request.md&title=">tell us how we can improve</a>.
-    </p>
-  </div>
-</div>
-<script>
-  const yesButton = document.querySelector('.feedback--answer-yes');
-  const noButton = document.querySelector('.feedback--answer-no');
-  const yesResponse = document.querySelector('.feedback--response-yes');
-  const noResponse = document.querySelector('.feedback--response-no');
-  const disableButtons = () => {
-    yesButton.disabled = true;
-    noButton.disabled = true;
-  };
-  const sendFeedback = (value) => {
-    if (typeof ga !== 'function') return;
-    const args = {
-      command: 'send',
-      hitType: 'event',
-      category: 'Helpful',
-      action: 'click',
-      label: window.location.pathname,
-      value: value
-    };
-    ga(args.command, args.hitType, args.category, args.action, args.label, args.value);
-  };
-  yesButton.addEventListener('click', () => {
-    yesResponse.classList.add('feedback--response__visible');
-    disableButtons();
-    sendFeedback(1);
-  });
-  noButton.addEventListener('click', () => {
-    noResponse.classList.add('feedback--response__visible');
-    disableButtons();
-    sendFeedback(0);
-  });
-</script>
-
-		<br />
-	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests/docs/commit/7747ce6a29fa19f2266c7c5d05e3a0339da5608a">Kubeflow 1.4 documentation pages (7747ce6a)</a>
+  Last modified May 16, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/488ef55e7f136e31370bd02474ad4b61c3a6a284">Kubeflow on AWS Website changes (488ef55e)</a>
 </div>
 
 </div>

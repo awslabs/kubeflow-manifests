@@ -583,15 +583,15 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;li&gt;Create a hosted zone for the desired subdomain e.g. &lt;code&gt;platform.example.com&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Copy the value of NS type record from the subdomain hosted zone (&lt;code&gt;platform.example.com&lt;/code&gt;)
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-NS.png&#34; alt=&#34;subdomain-NS&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-NS.png&#34; alt=&#34;subdomain-NS&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;Create an &lt;code&gt;NS&lt;/code&gt; type of record in the root &lt;code&gt;example.com&lt;/code&gt; hosted zone for the subdomain &lt;code&gt;platform.example.com&lt;/code&gt;.
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-creating-NS.png&#34; alt=&#34;root-domain-NS-creating-NS&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-creating-NS.png&#34; alt=&#34;root-domain-NS-creating-NS&#34;&gt;&lt;/li&gt;
 &lt;li&gt;The following image is a screenshot of the record after creation in &lt;code&gt;example.com&lt;/code&gt; hosted zone.
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/root-domain-NS-created.png&#34; alt=&#34;root-domain-NS-created&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-created.png&#34; alt=&#34;root-domain-NS-created&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
@@ -608,10 +608,10 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;p&gt;The following image is a screenshot showing that a certificate has been issued.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: Status turns to &lt;code&gt;Issued&lt;/code&gt; after a few minutes of validation.
-&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/successfully-issued-certificate.png&#34; alt=&#34;successfully-issued-certificate&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/successfully-issued-certificate.png&#34; alt=&#34;successfully-issued-certificate&#34;&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone for DNS validation:
-&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/DNS-record-for-certificate-validation.png&#34; alt=&#34;DNS-record-for-certificate-validation&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/DNS-record-for-certificate-validation.png&#34; alt=&#34;DNS-record-for-certificate-validation&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a certificate for &lt;code&gt;*.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
 &lt;li&gt;Create a certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
@@ -678,7 +678,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;build-manifests-and-deploy-components&#34;&gt;Build Manifests and deploy components&lt;/h3&gt;
-&lt;p&gt;Run the following command to build and install the components specified in the Load Balancer &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/add-ons/load-balancer/kustomization.yaml&#34;&gt;kustomize&lt;/a&gt; file.&lt;/p&gt;
+&lt;p&gt;Run the following command to build and install the components specified in the Load Balancer &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/add-ons/load-balancer/kustomization.yaml&#34;&gt;kustomize&lt;/a&gt; file.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;while&lt;/span&gt; ! kustomize build docs/deployment/add-ons/load-balancer &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#204a87&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; sleep 10&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;done&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;update-the-domain-with-alb-address&#34;&gt;Update the domain with ALB address&lt;/h3&gt;
 &lt;ol&gt;
@@ -696,7 +696,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;li&gt;
 &lt;p&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/files/subdomain-*.platform-record.png&#34; alt=&#34;subdomain-*.platform-record&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png&#34; alt=&#34;subdomain-*.platform-record&#34;&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;
