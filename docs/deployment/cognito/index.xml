@@ -1,0 +1,441 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – Cognito</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/</link>
+    <description>Recent content in Cognito on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Full Deployment Guide</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;create an Ingress to manage external traffic to the Kubernetes services&lt;/li&gt;
+&lt;li&gt;create an Application Load Balancer (ALB) to provide public DNS&lt;/li&gt;
+&lt;li&gt;enable TLS authentication for the Load Balancer&lt;/li&gt;
+&lt;li&gt;create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB&amp;rsquo;s public DNS names)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;Check to make sure that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background section&lt;/a&gt; in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create domain and certificate section&lt;/a&gt; for information on why we use a subdomain for hosting Kubeflow.&lt;/p&gt;
+&lt;h2 id=&#34;optional-automated-setup&#34;&gt;(Optional) Automated setup&lt;/h2&gt;
+&lt;p&gt;The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide-automated/&#34;&gt;automated setup guide&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;10-custom-domain-and-certificates&#34;&gt;1.0 Custom domain and certificates&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;Create a subdomain&lt;/a&gt; section of the Load Balancer guide to create a subdomain(e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for hosting Kubeflow.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/a&gt; section of the Load Balancer guide to create certificates required for TLS.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;From this point onwards, we will be creating/updating the DNS records &lt;strong&gt;only in the subdomain&lt;/strong&gt;. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.&lt;/p&gt;
+&lt;h2 id=&#34;20-cognito-user-pool&#34;&gt;2.0 Cognito User Pool&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose &lt;code&gt;Review defaults&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation&#34;&gt;documentation&lt;/a&gt; for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the &lt;code&gt;Required attributes&lt;/code&gt; and select &lt;code&gt;email&lt;/code&gt;.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-email-required.png&#34; alt=&#34;cognito-email-required&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;On the Policies page, select &lt;code&gt;Only allow administrators to create users&lt;/code&gt; under &lt;code&gt;Do you want to allow users to sign themselves up?&lt;/code&gt; and save changes. This step is optional but is recommended to have strict control over the users.&lt;/li&gt;
+&lt;li&gt;Click on &lt;code&gt;Create pool&lt;/code&gt; to create the user pool.&lt;/li&gt;
+&lt;li&gt;Add an &lt;code&gt;App client&lt;/code&gt; with any name and the default options.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-id.png&#34; alt=&#34;cognito-app-client-id&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;In the &lt;code&gt;App client settings&lt;/code&gt;, select &lt;code&gt;Authorization code grant&lt;/code&gt; flow under OAuth-2.0 and check box &lt;code&gt;email&lt;/code&gt;, &lt;code&gt;openid&lt;/code&gt;, &lt;code&gt;aws.cognito.signin.user.admin&lt;/code&gt; and &lt;code&gt;profile&lt;/code&gt; scopes. Also check box &lt;code&gt;Enabled Identity Providers&lt;/code&gt;.
+&lt;ol&gt;
+&lt;li&gt;Substitute &lt;code&gt;example.com&lt;/code&gt; in this URL - &lt;code&gt;https://kubeflow.platform.example.com/oauth2/idpresponse&lt;/code&gt; with your domain and use it as the Callback URL(s).&lt;/li&gt;
+&lt;li&gt;Substitute &lt;code&gt;example.com&lt;/code&gt; in this URL - &lt;code&gt;https://kubeflow.platform.example.com&lt;/code&gt; with your domain and use it as the Sign out URL(s).&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png&#34; alt=&#34;cognito-app-client-settings&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+&lt;ol&gt;
+&lt;li&gt;In order to use a custom domain, its root(i.e. &lt;code&gt;platform.example.com&lt;/code&gt;) must have an valid A type record. Create a new record of type &lt;code&gt;A&lt;/code&gt; in &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
+&lt;ol&gt;
+&lt;li&gt;Following is a screenshot of &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone. A record is shown.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png&#34; alt=&#34;subdomain-initial-A-record&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for &lt;code&gt;*.platform.example.com&lt;/code&gt; by following the process similar to &lt;a href=&#34;./kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;section 2.0&lt;/a&gt;. That is because &lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html&#34;&gt;Cognito requires&lt;/a&gt; a certificate in N.Virginia in order to have a custom domain for a user pool.&lt;/li&gt;
+&lt;li&gt;In the &lt;code&gt;Domain name&lt;/code&gt; choose &lt;code&gt;Use your domain&lt;/code&gt;, type &lt;code&gt;auth.platform.example.com&lt;/code&gt; and select the &lt;code&gt;*.platform.example.com&lt;/code&gt; AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png&#34; alt=&#34;cognito-active-domain&#34;&gt;&lt;/li&gt;
+&lt;li&gt;When it’s created, it will return the &lt;code&gt;Alias target&lt;/code&gt; CloudFront address.
+&lt;ol&gt;
+&lt;li&gt;Screenshot of the CloudFront URL for Cognito Domain name:
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-url.png&#34; alt=&#34;cognito-domain-cloudfront-url&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Create a new record of type &lt;code&gt;A&lt;/code&gt; for &lt;code&gt;auth.platform.example.com&lt;/code&gt; with the value of the CloudFront URL.
+&lt;ol&gt;
+&lt;li&gt;Select the &lt;code&gt;alias&lt;/code&gt; toggle and select Alias to Cloudfront distribution for creating the record&lt;/li&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-creatin.png&#34; alt=&#34;cognito-domain-cloudfront-A-record-creating&#34;&gt;&lt;/li&gt;
+&lt;li&gt;Following is a screenshot of the A record for &lt;code&gt;auth.platform.example.com&lt;/code&gt; in &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone:
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-created.png&#34; alt=&#34;cognito-domain-cloudfront-A-record-created&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;30-configure-ingress&#34;&gt;3.0 Configure Ingress&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Take note of the following values from the previous step or &lt;code&gt;awsconfigs/infra_configs/scripts/config.yaml&lt;/code&gt; if you used the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md&#34;&gt;automated guide&lt;/a&gt;:
+&lt;ol&gt;
+&lt;li&gt;The Pool ARN of the user pool found in Cognito general settings.&lt;/li&gt;
+&lt;li&gt;The App client id, found in Cognito App clients.&lt;/li&gt;
+&lt;li&gt;The custom user pool domain (e.g. &lt;code&gt;auth.platform.example.com&lt;/code&gt;), found in the Cognito domain name.&lt;/li&gt;
+&lt;li&gt;The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) is running.&lt;/li&gt;
+&lt;li&gt;signOutURL is the domain that you provided as the Sign out URL(s).&lt;/li&gt;
+&lt;li&gt;CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain that you provided as the Sign out URL(s).&lt;/li&gt;
+&lt;li&gt;Export the values:
+1.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;CognitoUserPoolArn&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&amp;lt;YOUR_USER_POOL_ARN&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;CognitoAppClientId&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&amp;lt;YOUR_APP_CLIENT_ID&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;CognitoUserPoolDomain&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&amp;lt;YOUR_USER_POOL_DOMAIN&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;certArn&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&amp;lt;YOUR_ACM_CERTIFICATE_ARN&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;signOutURL&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&amp;lt;YOUR_SIGN_OUT_URL&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;CognitoLogoutURL&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;https://&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoUserPoolDomain&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;/logout?client_id=&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoAppClientId&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;amp;logout_uri=&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$signOutURL&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Substitute values for setting up Ingress.
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#204a87&#34;&gt;printf&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; CognitoUserPoolArn=&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoUserPoolArn&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; CognitoAppClientId=&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoAppClientId&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; CognitoUserPoolDomain=&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoUserPoolDomain&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; certArn=&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$certArn&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; &amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/istio-ingress/overlays/cognito/params.env
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Substitute values for setting up AWS authservice.
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#204a87&#34;&gt;printf&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; LOGOUT_URL=&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$CognitoLogoutURL&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt; &amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/aws-authservice/base/params.env
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/a&gt; section of the load balancer guide to setup the resources required the load balancer controller.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;40-building-manifests-and-deploying-kubeflow&#34;&gt;4.0 Building manifests and deploying Kubeflow&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Choose one of the two options to deploy kubeflow:
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;[Option 1]&lt;/strong&gt; Install with a single command:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;while&lt;/span&gt; ! kustomize build docs/deployment/cognito &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#204a87&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; sleep 10&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;[Option 2]&lt;/strong&gt; Install individual components:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Kubeflow namespace&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/kubeflow-namespace/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Kubeflow Roles&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/kubeflow-roles/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Istio&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/istio-1-9/istio-crds/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/istio-1-9/istio-namespace/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/istio-1-9/istio-install/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Cert-Manager&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/cert-manager/cert-manager/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/cert-manager/kubeflow-issuer/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# KNative&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/knative/knative-serving/overlays/gateways &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/knative/knative-eventing/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/istio-1-9/cluster-local-gateway/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Kubeflow Istio Resources&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build common/istio-1-9/kubeflow-istio-resources/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Kubeflow Pipelines&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# reapply manifest if you see an error&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# KFServing&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build apps/kfserving/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Katib&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build apps/katib/upstream/installs/katib-with-kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Central Dashboard&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/centraldashboard/upstream/overlays/istio &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Notebooks&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build awsconfigs/apps/jupyter-web-app &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Admission Webhook&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/admission-webhook/upstream/overlays/cert-manager &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Profiles + KFAM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/profiles/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Volumes Web App&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/volumes-web-app/upstream/overlays/istio &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Tensorboard&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# MPI Operator&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Training Operator&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# AWS Telemetry - This is an optional component. See usage tracking documentation for more information&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build awsconfigs/common/aws-telemetry &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Ingress&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build awsconfigs/common/istio-ingress/overlays/cognito &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# ALB controller&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build awsconfigs/common/aws-alb-ingress-controller/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# AWS Authservice&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kustomize build awsconfigs/common/aws-authservice/base &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;50-updating-the-domain-with-alb-address&#34;&gt;5.0 Updating the domain with ALB address&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Check if ALB is provisioned. This may take a few minutes.
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; kubectl get ingress -n istio-system
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;;&lt;/span&gt; use networking.k8s.io/v1 Ingress
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; istio-ingress   &amp;lt;none&amp;gt;   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;80&lt;/span&gt;      15d
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt; in the troubleshooting guide.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-*.platform-and-*.default-records.png&#34; alt=&#34;subdomain-.platform-and-.default-records&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Update the type &lt;code&gt;A&lt;/code&gt; record created in section for &lt;code&gt;platform.example.com&lt;/code&gt; using ALB DNS name. Change from &lt;code&gt;127.0.0.1&lt;/code&gt; → ALB DNS name. You have to use alias form under &lt;code&gt;Alias to application and classical load balancer&lt;/code&gt; and select region and your ALB address.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-A-record-updated.png&#34; alt=&#34;subdomain-A-record-updated&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Screenshot of all the record sets in hosted zone for reference
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-records-summary.png&#34; alt=&#34;subdomain-records-summary&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;60-connecting-to-central-dashboard&#34;&gt;6.0 Connecting to central dashboard&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;The central dashboard should now be available at &lt;a href=&#34;https://kubeflow.platform.example.com/&#34;&gt;https://kubeflow.platform.example.com&lt;/a&gt;. Before connecting to the dashboard:
+&lt;ol&gt;
+&lt;li&gt;Head over to the Cognito console and create some users in &lt;code&gt;Users and groups&lt;/code&gt;. These are the users who will log in to the central dashboard.
+&lt;ol&gt;
+&lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png&#34; alt=&#34;cognito-user-pool-created&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Create a Profile for a user by following the steps in the &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation&#34;&gt;Manual Profile Creation&lt;/a&gt;. The following is an example Profile for reference:
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; apiVersion: kubeflow.org/v1beta1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; kind: Profile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; metadata:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     &lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# replace with the name of profile you want, this will be user&amp;#39;s namespace name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     name: namespace-for-my-user
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     namespace: kubeflow
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; spec:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     owner:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         kind: User
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         &lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# replace with the email of the user&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         name: my_user_email@kubeflow.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Open the central dashboard at &lt;a href=&#34;https://kubeflow.platform.example.com/&#34;&gt;https://kubeflow.platform.example.com&lt;/a&gt;. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Automated Setup</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&amp;rsquo;s public DNS names are not supported.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;This guide assumes you have Python 3.8 installed and that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;create-required-resources-and-deploy-kubeflow&#34;&gt;Create required resources and deploy Kubeflow&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;The following steps automate &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;section 1.0(Custom domain and certificates)&lt;/a&gt; (creating a custom domain to host Kubeflow and TLS certificates for the domain), &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool&#34;&gt;section 2.0(Cognito user pool)&lt;/a&gt; (creating a Cognito Userpool used for user authentication) and&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;section 3.0(Configure Ingress)&lt;/a&gt; (configuring ingress and load balancer controller manifests) of the cognito guide.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install dependencies for the scripts
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pip install -r tests/e2e/requirements.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Substitute values in &lt;code&gt;tests/e2e/utils/cognito_bootstrap/config.yaml&lt;/code&gt;.
+&lt;ol&gt;
+&lt;li&gt;Registed root domain in &lt;code&gt;route53.rootDomain.name&lt;/code&gt;. Lets assume this domain is &lt;code&gt;example.com&lt;/code&gt;
+&lt;ol&gt;
+&lt;li&gt;If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in &lt;code&gt;route53.rootDomain.hostedZoneId&lt;/code&gt;. Skip this step if your domain is managed by other domain provider.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Name of the sudomain you want to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;. Please read &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;this section&lt;/a&gt; to understand why we use a subdomain.&lt;/li&gt;
+&lt;li&gt;Cluster name and region where kubeflow will be deployed in &lt;code&gt;cluster.name&lt;/code&gt; and &lt;code&gt;cluster.region&lt;/code&gt; (e.g. us-west-2) respectively.&lt;/li&gt;
+&lt;li&gt;Name of cognito userpool in &lt;code&gt;cognitoUserpool.name&lt;/code&gt; e.g. kubeflow-users.&lt;/li&gt;
+&lt;li&gt;The config file will look something like:
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cognitoUserpool:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     name: kubeflow-users
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cluster:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     name: kube-eks-cluster
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     region: us-west-2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; route53:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     rootDomain:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         hostedZoneId: XXXX
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         name: example.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     subDomain:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         name: platform.example.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Run the script to create the resources
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cd tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; PYTHONPATH=.. python utils/cognito_bootstrap/cognito_pre_deployment.py
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cd -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cognitoUserpool:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     ARN: arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_yasI9dbxF
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     appClientId: 5jmk7ljl2a74jk3n0a0fvj3l31
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     domainAliasTarget: xxxxxxxxxx.cloudfront.net
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     domain: auth.platform.example.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     name: kubeflow-users
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; kubeflow:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     alb:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         serviceAccount:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             name: alb-ingress-controller
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             namespace: kubeflow
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cluster:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     name: kube-eks-cluster
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     region: us-west-2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; route53:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     rootDomain:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         certARN: arn:aws:acm:us-east-1:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         hostedZoneId: XXXXX
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         name: example.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     subDomain:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         us-west-2-certARN: arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         hostedZoneId: XXXXX
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         name: platform.example.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow&#34;&gt;section 4.0(Building manifests and deploying Kubeflow)&lt;/a&gt; to install Kubeflow&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Updating the domain with ALB address&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Check if ALB is provisioned. It takes around 3-5 minutes
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; kubectl get ingress -n istio-system
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; istio-ingress   &amp;lt;none&amp;gt;   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of alb-ingress-controller by following &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;this guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Substitute the ALB address under &lt;code&gt;kubeflow.alb.dns&lt;/code&gt; in &lt;code&gt;tests/e2e/utils/cognito_bootstrap/config.yaml&lt;/code&gt;. The kubeflow section of the config file will look like:
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; kubeflow:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;     alb:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;         serviceAccount:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             name: alb-ingress-controller
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;             policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Run the following script to update the subdomain with ALB address
+&lt;ol&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cd tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; cd -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Follow the rest of the cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard&#34;&gt;section 6.0(Connecting to central dashboard)&lt;/a&gt; to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a user in Cognito user pool&lt;/li&gt;
+&lt;li&gt;Create a profile for the user from the user pool&lt;/li&gt;
+&lt;li&gt;Connect to the central dashboard&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

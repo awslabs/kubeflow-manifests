@@ -114,7 +114,7 @@
 &lt;ol&gt;
 &lt;li&gt;Create a Notebook server through the central dashboard.&lt;/li&gt;
 &lt;li&gt;Navigate to the top left drop down menu and select the profile name for the profile that you created.&lt;/li&gt;
-&lt;li&gt;Create a Notebook using the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/docs/component-guides/samples/notebooks/verify_profile_iam_notebook.ipynb&#34;&gt;Verify Profile IAM&lt;/a&gt; Notebook sample.&lt;/li&gt;
+&lt;li&gt;Create a Notebook using the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/samples/notebooks/verify_profile_iam_notebook.ipynb&#34;&gt;Verify Profile IAM&lt;/a&gt; Notebook sample.&lt;/li&gt;
 &lt;li&gt;Run the Notebook. You should see the S3 buckets present in your account.&lt;/li&gt;
 &lt;/ol&gt;
 
@@ -136,8 +136,8 @@
 &lt;h2 id=&#34;authenticate-kubeflow-pipelines-using-sdk-outside-cluster&#34;&gt;Authenticate Kubeflow Pipelines using SDK outside cluster&lt;/h2&gt;
 &lt;p&gt;Refer to the following guide to connect to Kubeflow Pipelines from &lt;a href=&#34;https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-outside-your-cluster&#34;&gt;outside your cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Refer to the following steps to use &lt;code&gt;kfp&lt;/code&gt; to pass a cookie from your browser after you log into Kubeflow. The following example uses a Chrome browser.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/d1c113ea2d6dc584ce3d0fcb301a92a90dac762a/docs/component-guides/images/kfp-sdk-browser-cookie.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/docs/component-guides/images/kfp-sdk-browser-cookie-detail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/pipelines/kfp-sdk-browser-cookie.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/pipelines/kfp-sdk-browser-cookie-detail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Once you get a cookie, authenticate &lt;code&gt;kfp&lt;/code&gt; by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.&lt;/p&gt;
 &lt;h3 id=&#34;dex&#34;&gt;&lt;strong&gt;Dex&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;If you want to use port forwarding to access Kubeflow, run the following command and use &lt;code&gt;http://localhost:8080/pipeline&lt;/code&gt; as the host.&lt;/p&gt;
