@@ -97,7 +97,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
    ```
 
-8. Make the `default` SA an IRSA using the create IAM role.
+8. Make the `default` SA an IRSA using the created IAM role from the previous step.
 
    ```bash
    eksctl create iamserviceaccount \
