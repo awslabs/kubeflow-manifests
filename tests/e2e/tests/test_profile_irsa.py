@@ -332,7 +332,7 @@ class TestProfileIRSA:
                 namespace=client_namespace,
                 cluster_name=cluster,
                 region=region,
-                iam_role_arns=[iam_role],
+                iam_role_arn=iam_role,
             )
 
         def on_delete():
