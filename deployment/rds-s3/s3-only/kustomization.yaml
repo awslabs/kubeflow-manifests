@@ -7,9 +7,9 @@ resources:
   # Configured for AWS S3
 
   # AWS Secret Manager
-  - ../../../../awsconfigs/common/aws-secrets-manager/s3
+  - ../../../awsconfigs/common/aws-secrets-manager/s3
   # Kubeflow Pipelines
-  - ../../../../awsconfigs/apps/pipeline/s3
+  - ../../../awsconfigs/apps/pipeline/s3
 
   # Katib
-  - ../../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
+  - ../../../upstream/apps/katib/upstream/installs/katib-with-kubeflow

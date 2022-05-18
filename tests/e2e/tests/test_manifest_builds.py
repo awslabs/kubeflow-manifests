@@ -12,7 +12,7 @@ def kustomize_build(manifest_path):
     return subprocess.call(f"kustomize build {manifest_path}".split())
 
 TO_ROOT = "../../"
-DEPLOYMENTS_FOLDER = TO_ROOT + "docs/deployment/"
+DEPLOYMENTS_FOLDER = TO_ROOT + "deployment/"
 
 class TestManifestBuilds:
     @pytest.fixture(scope="class")
