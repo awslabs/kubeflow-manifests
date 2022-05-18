@@ -52,12 +52,16 @@ from e2e.utils.cloudformation_resources import (
 from e2e.utils.custom_resources import (
     create_katib_experiment_from_yaml,
     get_katib_experiment,
+    wait_for_katib_experiment_succeeded,
     delete_katib_experiment,
 )
 
 from e2e.utils.aws.iam import IAMPolicy
 
 TO_ROOT_PATH = "../../"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+KATIB_EXPERIMENT_FILE = "katib-experiment-profile-irsa.yaml"
+
 
 @pytest.fixture(scope="class")
 def kustomize_path():
@@ -157,7 +161,10 @@ def profile_trust_policy(
                     "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
-                "Condition": {"StringEquals": {f"{oidc_url}:aud": "sts.amazonaws.com"}},
+                "Condition": {"StringEquals": {
+                    f"{oidc_url}:aud": "sts.amazonaws.com",
+                    f"{oidc_url}:sub": [f"system:serviceaccount:profile-aws-iam:default-editor"]
+                }},
             }
         ],
     }
@@ -307,6 +314,44 @@ class TestProfileIRSA:
             on_delete=on_delete,
         )
 
+    @pytest.fixture(scope="class")
+    def profile_default_service_account(
+        self, setup, metadata, cluster, region, profile_role, client_namespace, request
+    ):
+        metadata_key = "profile_default_service_account"
+
+        service_account_name = "default"
+
+        def on_create():
+            iam_client = get_iam_client(region=region)
+            resp = iam_client.get_role(RoleName=profile_role)
+            iam_role = resp["Role"]["Arn"]
+
+            create_iam_service_account(
+                service_account_name=service_account_name,
+                namespace=client_namespace,
+                cluster_name=cluster,
+                region=region,
+                iam_role_arn=iam_role,
+            )
+
+        def on_delete():
+            delete_iam_service_account(
+                service_account_name=service_account_name,
+                namespace=client_namespace,
+                cluster_name=cluster,
+                region=region,
+            )
+
+        return configure_resource_fixture(
+            metadata=metadata,
+            request=request,
+            resource_details="created",
+            metadata_key=metadata_key,
+            on_create=on_create,
+            on_delete=on_delete,
+        )
+
     """
     Runs a notebook that will create a S3 bucket as longs as IRSA permissions have been applied. The test will verify IRSA is workings by verifying the S3 bucket was able to be created.
     """
@@ -359,3 +404,25 @@ class TestProfileIRSA:
 
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, run.run_id)
 
+    
+    def test_katib_experiment(self, profile_default_service_account, cluster, region, client_namespace):
+
+        filepath = os.path.abspath(
+            os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
+        )
+
+        name = rand_name("katib-random-")
+        namespace = client_namespace
+        replacements = {"NAME": name, "NAMESPACE": namespace}
+
+        resp = create_katib_experiment_from_yaml(
+            cluster, region, filepath, namespace, replacements
+        )
+
+        assert resp["kind"] == "Experiment"
+        assert resp["metadata"]["name"] == name
+        assert resp["metadata"]["namespace"] == namespace
+
+        wait_for_katib_experiment_succeeded(cluster, region, namespace, name)
+
+        delete_katib_experiment(cluster, region, namespace, name)
