@@ -7,8 +7,8 @@ resources:
   # Configured for AWS RDS
 
   # AWS Secret Manager
-  - ../../../../awsconfigs/common/aws-secrets-manager/rds
+  - ../../../awsconfigs/common/aws-secrets-manager/rds
   # Kubeflow Pipelines
-  - ../../../../awsconfigs/apps/pipeline/rds
+  - ../../../awsconfigs/apps/pipeline/rds
   # Katib
-  - ../../../../awsconfigs/apps/katib-external-db-with-kubeflow
+  - ../../../awsconfigs/apps/katib-external-db-with-kubeflow
