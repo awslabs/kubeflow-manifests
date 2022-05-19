@@ -3,6 +3,6 @@ kind: Kustomization
 
 resources:
 # Ingress
-- ../../../../awsconfigs/common/istio-ingress/overlays/https
+- ../../../awsconfigs/common/istio-ingress/overlays/https
 # Load balancer controller
-- ../../../../awsconfigs/common/aws-alb-ingress-controller/base
+- ../../../awsconfigs/common/aws-alb-ingress-controller/base
