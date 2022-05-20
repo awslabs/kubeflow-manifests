@@ -266,13 +266,15 @@ class TestRDSS3:
         # Disable caching in KFP
         # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
         # This prevents artifacts from being uploaded to s3 for subsequent runs
-        patch_body = unmarshal_yaml(DISABLE_PIPELINE_CACHING_PATCH_FILE)
-        k8s_admission_registration_api_client = (
-            create_k8s_admission_registration_api_client(cluster, region)
-        )
-        k8s_admission_registration_api_client.patch_mutating_webhook_configuration(
-            "cache-webhook-kubeflow", patch_body
-        )
+
+        # todo: uncomment once certmanager fix is merged
+        # patch_body = unmarshal_yaml(DISABLE_PIPELINE_CACHING_PATCH_FILE)
+        # k8s_admission_registration_api_client = (
+        #     create_k8s_admission_registration_api_client(cluster, region)
+        # )
+        # k8s_admission_registration_api_client.patch_mutating_webhook_configuration(
+        #     "cache-webhook-kubeflow", patch_body
+        # )
 
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged

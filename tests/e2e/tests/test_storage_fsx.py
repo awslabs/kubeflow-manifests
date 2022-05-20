@@ -59,7 +59,9 @@ def kustomize_path():
 
 class TestFSx:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
+    # todo: revert once certmanager fix is merged
+    # def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
+    def setup(self, metadata, kustomize, port_forward, static_provisioning):
 
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
