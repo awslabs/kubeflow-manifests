@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    networking.knative.dev/ingress-provider: istio
+    role: istio-webhook
+    serving.knative.dev/release: v0.22.1
+  name: istio-webhook
+  namespace: knative-serving
+spec:
+  ports:
+  - name: http-metrics
+    port: 9090
+    targetPort: 9090
+  - name: http-profiling
+    port: 8008
+    targetPort: 8008
+  - name: https-webhook
+    port: 443
+    targetPort: 8443
+  selector:
+    app: istio-webhook
