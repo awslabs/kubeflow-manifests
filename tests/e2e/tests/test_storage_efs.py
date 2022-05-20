@@ -69,7 +69,7 @@ class TestEFS_Static:
         self,
         metadata,
         kustomize,
-        # patch_kfp_to_disable_cache, # uncomment once certmanager fix is merged
+        # patch_kfp_to_disable_cache, # uncomment once cache deployer fix is merged
         port_forward,
         static_provisioning,
     ):
@@ -155,7 +155,7 @@ class TestEFS_Dynamic:
         self,
         metadata,
         kustomize,
-        # patch_kfp_to_disable_cache, # uncomment once certmanager fix is merged
+        # patch_kfp_to_disable_cache, # uncomment once cache deployer fix is merged
         port_forward,
         dynamic_provisioning,
     ):

@@ -59,7 +59,7 @@ def kustomize_path():
 
 class TestFSx:
     @pytest.fixture(scope="class")
-    # todo: revert once certmanager fix is merged
+    # todo: revert once cache deployer fix is merged
     # def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
     def setup(self, metadata, kustomize, port_forward, static_provisioning):
 
