@@ -36,7 +36,7 @@ Option 2 targets customization and ability to pick and choose individual compone
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 ```sh
-while ! kustomize build docs/deployment/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployment/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging into your cluster](#connect-to-your-kubeflow-cluster).
