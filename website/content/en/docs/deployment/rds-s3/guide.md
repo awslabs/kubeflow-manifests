@@ -50,7 +50,7 @@ To install for both RDS and S3, complete all the steps below.
 Follow the steps in [Prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) to make sure that you have everything you need to get started. 
 
 1. Verify that you are in the root of your repository by running the `pwd` command. The path should be <PATH/kubeflow-manifests>:
-  ```
+  ```bash
   pwd 
   ```
 
@@ -81,7 +81,7 @@ pip install -r requirements.txt
 ```
 3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step.
 4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY`. Then, run the `auto-rds-s3-setup.py` script.
-```
+```bash
 export CLUSTER_REGION=
 export CLUSTER_NAME=
 export S3_BUCKET=
@@ -376,6 +376,6 @@ cd tests/e2e
 pip install -r requirements.txt
 ```
 3. Make sure that you have the configuration file created by the script in `tests/e2e/utils/rds-s3/metadata.yaml`.
-```
+```bash
 PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py
 ```  
