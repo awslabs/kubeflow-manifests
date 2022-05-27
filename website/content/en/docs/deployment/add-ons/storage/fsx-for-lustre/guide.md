@@ -16,7 +16,7 @@ For this guide, we assume that you already have an EKS Cluster with Kubeflow ins
 2. At this point, you have likely cloned the necessary repository and checked out the right branch. Save this path to help us navigate to different paths in the rest of this guide.
 ```bash
 export GITHUB_ROOT=$(pwd)
-export GITHUB_STORAGE_DIR="$GITHUB_ROOT/docs/deployment/add-ons/storage/"
+export GITHUB_STORAGE_DIR="$GITHUB_ROOT/deployment/add-ons/storage/"
 ```
 
 3. Make sure the following environment variables are set. 

@@ -22,9 +22,9 @@ kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
 You can deactivate usage tracking by skipping the telemetry component installation in one of two ways:
 
-1. For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/vanilla/kustomization.yaml#L57) in the `kustomization.yaml` file of your choosing:
+1. For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/vanilla/kustomization.yaml#L59) in the `kustomization.yaml` file of your choosing:
     ```bash
-    # ./../aws-telemetry
+    # ../../aws-telemetry
     ```
 2. For individual component installation, **do not** install the `aws-telemetry` component: 
     ```bash

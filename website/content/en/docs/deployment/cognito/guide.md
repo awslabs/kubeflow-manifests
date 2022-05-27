@@ -99,7 +99,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 1. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         ```bash
-        while ! kustomize build docs/deployment/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build deployment/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
         ```
     1. **[Option 2]** Install individual components:
         ```bash
@@ -128,7 +128,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         
         # Kubeflow Pipelines
         # reapply manifest if you see an error
-        kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
+        kustomize build awsconfigs/common/pipeline/multi-user | kubectl apply -f -
         
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
