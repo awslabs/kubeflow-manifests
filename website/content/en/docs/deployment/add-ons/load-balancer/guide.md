@@ -116,7 +116,7 @@ Set up resources required for the Load Balancer controller:
 ### Build Manifests and deploy components
 Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/add-ons/load-balancer/kustomization.yaml) file.
 ```bash
-while ! kustomize build docs/deployment/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployment/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 ### Update the domain with ALB address
