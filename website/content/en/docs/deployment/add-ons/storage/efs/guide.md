@@ -256,7 +256,7 @@ Note: The following steps are run from the terminal on your gateway node connect
 
 #### 1. Download the dataset to the EFS Volume 
 In the Kubeflow Notebook created above, use the following snippet to download the data into the `/home/jovyan/.keras` directory (which is mounted onto the EFS Volume). 
-```bash
+```python
 import pathlib
 import tensorflow as tf
 dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
