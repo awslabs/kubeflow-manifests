@@ -185,7 +185,7 @@ These steps continue from the configuration steps above but can be used as a sta
    kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
    ```
 
-2. Install the verification script dependencies. The script requires python 3.6 or greater.
+2. Install the verification script dependencies. The script requires python 3.6 or greater. (opitonal: You can run this code from notebook too, after login in central dashboard)
 
    ```
    pip install boto3 kfp requests
