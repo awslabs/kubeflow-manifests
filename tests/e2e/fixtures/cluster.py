@@ -88,6 +88,10 @@ def delete_iam_service_account(service_account_name, namespace, cluster_name, re
 
     subprocess.call(cmd)
 
+def update_kubeconfig(cluster_name, region):
+    cmd = f"aws eks update-kubeconfig --name {cluster_name}  --region {region}".split()
+
+    subprocess.call(cmd)
 
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):
@@ -104,6 +108,7 @@ def cluster(metadata, region, request):
 
     def on_create():
         create_cluster(cluster_name, region)
+        update_kubeconfig(cluster_name, region)
 
     def on_delete():
         name = metadata.get("cluster_name") or cluster_name

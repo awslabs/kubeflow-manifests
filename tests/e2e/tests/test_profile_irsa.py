@@ -163,7 +163,7 @@ def profile_trust_policy(
                 "Action": "sts:AssumeRoleWithWebIdentity",
                 "Condition": {"StringEquals": {
                     f"{oidc_url}:aud": "sts.amazonaws.com",
-                    f"{oidc_url}:sub": [f"system:serviceaccount:profile-aws-iam:default-editor"]
+                    f"{oidc_url}:sub": [f"system:serviceaccount:profile-aws-iam:default"]
                 }},
             }
         ],
