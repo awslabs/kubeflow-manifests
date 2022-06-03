@@ -16,7 +16,7 @@ from e2e.fixtures.cognito_dependencies import (
 
 @pytest.fixture(scope="class")
 def kustomize_path():
-    return "../../deployment/cognito"
+    return "../../deployments/cognito"
 
 
 @pytest.fixture(scope="class")

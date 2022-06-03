@@ -20,8 +20,8 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Prerequisites
 This guide assumes that you have: 
-1. A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the [Vanilla](/kubeflow-manifests/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
-1. Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) guide on the client machine.
+1. A Kubeflow deployment on EKS with Dex as auth provider (the default setup in the [Vanilla](/kubeflow-manifests/deployments/vanilla/guide/) deployment of Kubeflow on AWS).
+1. Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/deployments/prerequisites/) guide on the client machine.
 1. Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
     1. Verify that your cluster name and region are exported:
         ```bash
@@ -114,9 +114,9 @@ Set up resources required for the Load Balancer controller:
         ```
 
 ### Build Manifests and deploy components
-Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/add-ons/load-balancer/kustomization.yaml) file.
+Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml) file.
 ```bash
-while ! kustomize build deployment/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
 ```
 
 ### Update the domain with ALB address
