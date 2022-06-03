@@ -26,11 +26,11 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
     1. Configure Ingress
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
-        ```
+        ```sh
         while ! kustomize build deployment/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
         ```
     1. **[Option 2]** Install individual components:
-        ```
+        ```sh
         # Kubeflow namespace
         kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -
         

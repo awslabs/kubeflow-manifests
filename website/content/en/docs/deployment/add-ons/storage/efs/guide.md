@@ -76,19 +76,19 @@ The script applies some default values for the file system name, performance mod
 ### 2.2 [Option 2] Manual setup
 If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between **Static and Dynamic provisioing** later in step 4 of this section.  
 
-```
+```bash
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 ```
 
 #### 1. Install the EFS CSI driver
 We recommend installing the EFS CSI Driver v1.3.4 directly from the [the aws-efs-csi-driver github repo](https://github.com/kubernetes-sigs/aws-efs-csi-driver) as follows:
 
-```
+```bash
 kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.4"
 ```
 
 You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:
-```
+```bash
 kubectl get csidriver
 
 NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
@@ -100,12 +100,12 @@ The CSI driver's service account (created during installation) requires IAM perm
 
 1. Download the IAM policy document from GitHub as follows.
 
-```
+```bash
 curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json
 ```
 
 2. Create the policy.
-```
+```bash
 aws iam create-policy \
     --policy-name AmazonEKS_EFS_CSI_Driver_Policy \
     --policy-document file://iam-policy-example.json
@@ -113,7 +113,7 @@ aws iam create-policy \
 
 3. Create an IAM role and attach the IAM policy to it. Annotate the Kubernetes service account with the IAM role ARN and the IAM role with the Kubernetes service account name. You can create the role using eksctl as follows:
 
-```
+```bash
 eksctl create iamserviceaccount \
     --name efs-csi-controller-sa \
     --namespace kube-system \
@@ -125,7 +125,7 @@ eksctl create iamserviceaccount \
 ```
 
 4. You can verify by describing the specified service account to check if it has been correctly annotated:
-```
+```bash
 kubectl describe -n kube-system serviceaccount efs-csi-controller-sa
 ```
 
@@ -139,20 +139,20 @@ In the following section, you have to choose between setting up [dynamic provisi
 
 #### 4. [Option 1] Dynamic provisioning  
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the `dynamic-provisioning/sc.yaml` file by chaning `<YOUR_FILE_SYSTEM_ID>` with your `fs-xxxxxx` file system id. You can also change it using the following command :  
-```
+```bash
 file_system_id=$file_system_id yq e '.parameters.fileSystemId = env(file_system_id)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/sc.yaml
 ```  
   
 2. Create the storage class using the following command :  
-```
+```bash
 kubectl apply -f $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/sc.yaml
 ```  
 3. Verify your setup by checking which storage classes are created for your cluster. You can use the following command  
-```
+```bash
 kubectl get sc
 ```  
 4. The `StorageClass` is a cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Let's edit the pvc.yaml accordingly 
-```
+```bash
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/dynamic-provisioning/pvc.yaml
 
@@ -165,19 +165,19 @@ Note : The `StorageClass` is a cluster scoped resource which means we only need 
 Using [this sample](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods), we provided the required spec files in the sample subdirectory. However, you can create the PVC another way. 
 
 1. Use the `$file_system_id` you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the last line of the static-provisioning/pv.yaml file to specify the `volumeHandle` field to point to your EFS filesystem. Replace `$file_system_id` if it is not already set. 
-```
+```bash
 file_system_id=$file_system_id yq e '.spec.csi.volumeHandle = env(file_system_id)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
 ```
 
 2. The `PersistentVolume` and `StorageClass` are cluster scoped resources but the `PersistentVolumeClaim` needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `static-provisioning/pvc.yaml` file accordingly. 
-```
+```bash
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
 ```
 
 3. Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -
-```
+```bash
 kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/sc.yaml
 kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/pv.yaml
 kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
@@ -185,7 +185,7 @@ kubectl apply -f $GITHUB_STORAGE_DIR/efs/static-provisioning/pvc.yaml
 
 ### 2.3 Check your setup
 Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim
-```
+```bash
 # Only for Static Provisioning
 kubectl get pv
 
@@ -193,7 +193,7 @@ NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               
 efs-pv  5Gi        RWX            Retain           Bound    kubeflow-user-example-com/efs-claim   efs-sc                  5d16h
 ```
 
-```
+```bash
 # Both Static and Dynamic Provisioning
 kubectl get pvc -n $PVC_NAMESPACE
 
@@ -218,11 +218,11 @@ To learn more about how to change the default Storage Class, you can refer to th
   
 For instance, if you have a default class set to `gp2` and another class `efs-sc`, then you would need to do the following : 
 1. Remove `gp2` as your default storage class
-```
+```bash
 kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 ```
 2. Set `efs-sc` as your default storage class
-```
+```bash
 kubectl patch storageclass efs-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
@@ -231,7 +231,7 @@ Note: As mentioned, make sure to change your default storage class only after yo
 ### 3.3 Note about permissions
 This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
 
-```
+```bash
 yq e '.metadata.name = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
@@ -256,7 +256,7 @@ Note: The following steps are run from the terminal on your gateway node connect
 
 #### 1. Download the dataset to the EFS Volume 
 In the Kubeflow Notebook created above, use the following snippet to download the data into the `/home/jovyan/.keras` directory (which is mounted onto the EFS Volume). 
-```
+```python
 import pathlib
 import tensorflow as tf
 dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
@@ -268,7 +268,7 @@ data_dir = pathlib.Path(data_dir)
 
 #### 2. Build and push the Docker image
 In the `training-sample` directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image. Be sure to point the `$IMAGE_URI` to your registry and specify an appropriate tag.
-```
+```bash
 export IMAGE_URI=<dockerimage:tag>
 cd training-sample
 
@@ -280,26 +280,26 @@ cd -
 
 #### 3. Configure the TFjob spec file
 Once the docker image is built, replace the `<dockerimage:tag>` in the `tfjob.yaml` file, line #17. 
-```
+```bash
 yq e '.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_URI)' -i training-sample/tfjob.yaml
 ```
 Also, specify the name of the PVC you created.
-```
+```bash
 yq e '.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)' -i training-sample/tfjob.yaml
 ```
 Make sure to run it in the same namespace as the claim:
-```
+```bash
 yq e '.metadata.namespace = env(PVC_NAMESPACE)' -i training-sample/tfjob.yaml
 ```
 
 #### 4. Create the TFjob and use the provided commands to check the training logs 
 At this point, we are ready to train the model using the `training-sample/training.py` script and the data available on the shared volume with the Kubeflow TFJob operator as -
-```
+```bash
 kubectl apply -f training-sample/tfjob.yaml
 ```
 
 In order to check that the training job is running as expected, you can check the events in the TFJob describe response as well as the job logs.
-```
+```bash
 kubectl describe tfjob image-classification-pvc -n $PVC_NAMESPACE
 kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 ```
@@ -308,22 +308,22 @@ kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see [Uninstall Kubeflow](/kubeflow-manifests/docs/deployment/uninstall-kubeflow/).
 
 ### 4.1 Clean up the TFJob
-```
+```bash
 kubectl delete tfjob -n $PVC_NAMESPACE image-classification-pvc
 ```
 
 ### 4.2 Delete the Kubeflow Notebook
 Login to the dashboard to stop and/or terminate any kubeflow notebooks you created for this session or use the following command:
-```
+```bash
 kubectl delete notebook -n $PVC_NAMESPACE <notebook-name>
 ``` 
 Use the following command to delete the permissions job:
-```
+```bash
 kubectl delete pod -n $PVC_NAMESPACE $CLAIM_NAME
 ```
 
 ### 4.3 Delete PVC, PV, and SC in the following order
-```
+```bash
 kubectl delete pvc -n $PVC_NAMESPACE $CLAIM_NAME
 kubectl delete pv efs-pv
 kubectl delete sc efs-sc
