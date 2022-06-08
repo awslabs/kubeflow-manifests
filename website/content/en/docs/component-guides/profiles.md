@@ -52,6 +52,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export CLUSTER_REGION=<your region>
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
    export PROFILE_NAME=<the name of the profile to be created>
+   export PROFILE_CONTROLLER_POLICY_NAME=<the name of the profile controller policy to be created>
    ```
 
 2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
@@ -59,7 +60,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    ```bash
    aws iam create-policy \
    --region $CLUSTER_REGION \
-   --policy-name kf-profile-controller-policy \
+   --policy-name ${PROFILE_CONTROLLER_POLICY_NAME} \
    --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
    ```
 
@@ -80,7 +81,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    --cluster=$CLUSTER_NAME \
    --name="profiles-controller-service-account" \
    --namespace=kubeflow \
-   --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/kf-profile-controller-policy" \
+   --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/${PROFILE_CONTROLLER_POLICY_NAME}" \
    --region=$CLUSTER_REGION \
    --override-existing-serviceaccounts \
    --approve
