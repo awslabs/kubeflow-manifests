@@ -12,7 +12,7 @@ weight = 20
 - [jq](https://stedolan.github.io/jq/download/) - A command line tool for processing JSON.
 - [kustomize version 3.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0) - A command line tool to customize Kubernetes objects through a kustomization file.
 > Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
-- [python](https://www.python.org/downloads/) - A programming language used for automated installation scripts.
+- [python 3.8+](https://www.python.org/downloads/) - A programming language used for automated installation scripts.
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
    
 ## Create an EKS cluster
