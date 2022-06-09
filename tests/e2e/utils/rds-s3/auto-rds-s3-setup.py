@@ -392,7 +392,7 @@ def install_secrets_store_csi_driver():
         "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretprovidersyncing.yaml"
     )
     kubectl_apply(
-        "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml"
+        "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployments/aws-provider-installer.yaml"
     )
 
 
