@@ -10,7 +10,7 @@ This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and
 
 [Amazon Relational Database Service (RDS)](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.
 
-In the [default Kubeflow installation](/kubeflow-manifests/docs/deployments/vanilla/guide/), the [KFP](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) and [Katib](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/katib/upstream/components/mysql/mysql.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
+In the [default Kubeflow installation](/kubeflow-manifests/deployments/vanilla/guide/), the [KFP](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml) and [Katib](https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/katib/upstream/components/mysql/mysql.yaml) components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively. 
 
 Compared to the MySQL setup in the default installation, using RDS provides the following advantages:
 - Availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.
