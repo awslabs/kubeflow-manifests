@@ -60,7 +60,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 3.0 Configure Ingress
 
-1. Take note of the following values from the previous step or `awsconfigs/infra_configs/scripts/config.yaml` if you used the [automated guide](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/README-automated.md):
+1. Take note of the following values from the previous step
     1. The Pool ARN of the user pool found in Cognito general settings.
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
