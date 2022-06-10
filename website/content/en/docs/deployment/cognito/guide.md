@@ -128,7 +128,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         
         # Kubeflow Pipelines
         # reapply manifest if you see an error
-        kustomize build awsconfigs/common/pipeline/multi-user | kubectl apply -f -
+        kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
         
         # KFServing
         kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
