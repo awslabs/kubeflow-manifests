@@ -14,7 +14,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
 
 1. The following steps automate [section 1.0(Custom domain and certificates)](/kubeflow-manifests/deployments/cognito/guide/#10-custom-domain-and-certificates) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)](/kubeflow-manifests/deployments/cognito/guide/#20-cognito-user-pool) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)](/kubeflow-manifests/deployments/cognito/guide/#30-configure-ingress) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
-        ```
+        ```sh
         pip install -r tests/e2e/requirements.txt
         ```
     1. Substitute values in `tests/e2e/utils/cognito_bootstrap/config.yaml`.
@@ -24,7 +24,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
         1. The config file will look something like:
-            1. ```
+            1. ```yaml
                 cognitoUserpool:
                     name: kubeflow-users
                 cluster:
@@ -38,13 +38,13 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                         name: platform.example.com
                 ```
     1. Run the script to create the resources
-        1. ```
+        1. ```sh
             cd tests/e2e
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_pre_deployment.py
             cd -
             ```
     1. The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
-        1. ```
+        1. ```yaml
             cognitoUserpool:
                 ARN: arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_yasI9dbxF
                 appClientId: 5jmk7ljl2a74jk3n0a0fvj3l31
@@ -76,7 +76,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
-        1. ```
+        1. ```sh
             kubectl get ingress -n istio-system
             Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
             NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
@@ -84,7 +84,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             ```
         2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision)
     1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
-        1. ```
+        1. ```yaml
             kubeflow:
                 alb:
                     dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
@@ -93,7 +93,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                         policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
             ```
     1. Run the following script to update the subdomain with ALB address
-        1. ```
+        1. ```sh
             cd tests/e2e
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -

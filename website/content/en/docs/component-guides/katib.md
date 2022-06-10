@@ -183,9 +183,9 @@ After installing Kubeflow on AWS with one of the available [deployment options](
                      - "python3"
                      - "/opt/mxnet-mnist/mnist.py"
                      - "--batch-size=64"
-                     - "--lr=${trialParameters.learningRate}"
-                     - "--num-layers=${trialParameters.numberLayers}"
-                     - "--optimizer=${trialParameters.optimizer}"
+                     - "--lr=\${trialParameters.learningRate}"
+                     - "--num-layers=\${trialParameters.numberLayers}"
+                     - "--optimizer=\${trialParameters.optimizer}"
                restartPolicy: Never
    EOF
    ```

@@ -18,6 +18,7 @@ from e2e.utils.utils import (
     write_yaml_file,
     load_yaml_file,
     wait_for,
+    WaitForCircuitBreakerError
 )
 
 from shutil import which
@@ -295,7 +296,7 @@ def wait_for_rds_db_instance_to_become_available(rds_client):
             DBInstanceIdentifier=DB_INSTANCE_NAME
         )["DBInstances"][0]["DBInstanceStatus"]
         if status == "failed":
-            raise Exception(
+            raise WaitForCircuitBreakerError(
                 "An unexpected error occurred while waiting for the RDS DB instance to become available!"
             )
         assert status == "available"
@@ -400,11 +401,7 @@ def setup_kubeflow_pipeline():
     print("Setting up Kubeflow Pipeline...")
 
     print("Retrieving DB instance info...")
-    try:
-        db_instance_info = get_db_instance_info()
-    except get_rds_client(CLUSTER_REGION).exceptions.DBInstanceNotFoundFault:
-        print("Could not retrieve DB instance info, aborting Kubeflow pipeline setup!")
-        return
+    db_instance_info = get_db_instance_info()
 
     pipeline_rds_params_env_file = "../../awsconfigs/apps/pipeline/rds/params.env"
     pipeline_rds_secret_provider_class_file = (
