@@ -11,7 +11,7 @@ import yaml
 import kfp
 
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE
+from e2e.utils.constants import DEFAULT_USER_NAMESPACE, KUBEFLOW_NAMESPACE
 from e2e.utils.utils import (
     rand_name,
     load_json_file,
@@ -45,10 +45,6 @@ from e2e.fixtures.clients import (
     password
 )
 
-from e2e.utils.cloudformation_resources import (
-    create_cloudformation_fixture,
-    get_stack_outputs,
-)
 from e2e.utils.custom_resources import (
     create_katib_experiment_from_yaml,
     get_katib_experiment,
@@ -57,10 +53,13 @@ from e2e.utils.custom_resources import (
 )
 
 from e2e.utils.aws.iam import IAMPolicy
+from e2e.utils.k8s_core_api import patch_configmap, delete_configmap, upload_file_as_configmap
 
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 KATIB_EXPERIMENT_FILE = "katib-experiment-profile-irsa.yaml"
+KATIB_CONFIG_MAP_PATCH_FILE = TO_ROOT_PATH + "deployment/add-ons/profile-aws-iam-plugin/patch_katib_config_map_sa.yaml"
+KATIB_CONFIG_MAP_NAME = "katib-config"
 
 
 @pytest.fixture(scope="class")
@@ -162,8 +161,7 @@ def profile_trust_policy(
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
                 "Condition": {"StringEquals": {
-                    f"{oidc_url}:aud": "sts.amazonaws.com",
-                    f"{oidc_url}:sub": [f"system:serviceaccount:profile-aws-iam:default"]
+                    f"{oidc_url}:aud": "sts.amazonaws.com"
                 }},
             }
         ],
@@ -235,16 +233,6 @@ def configure_manifests(profile_role, region, kustomize_path):
         file.write(str(yaml.dump(profile_yaml_original)))
 
 
-def upload_file_as_configmap(namespace, configmap_name, file_path):
-    subprocess.call(
-        f"kubectl create configmap -n {namespace} {configmap_name} --from-file {file_path}".split()
-    )
-
-
-def delete_configmap(namespace, configmap_name):
-    subprocess.call(f"kubectl delete configmap -n {namespace} {configmap_name}".split())
-
-
 class TestProfileIRSA:
     @pytest.fixture(scope="class")
     def setup(self, metadata, configure_manifests, kustomize):
@@ -314,44 +302,6 @@ class TestProfileIRSA:
             on_delete=on_delete,
         )
 
-    @pytest.fixture(scope="class")
-    def profile_default_service_account(
-        self, setup, metadata, cluster, region, profile_role, client_namespace, request
-    ):
-        metadata_key = "profile_default_service_account"
-
-        service_account_name = "default"
-
-        def on_create():
-            iam_client = get_iam_client(region=region)
-            resp = iam_client.get_role(RoleName=profile_role)
-            iam_role = resp["Role"]["Arn"]
-
-            create_iam_service_account(
-                service_account_name=service_account_name,
-                namespace=client_namespace,
-                cluster_name=cluster,
-                region=region,
-                iam_role_arn=iam_role,
-            )
-
-        def on_delete():
-            delete_iam_service_account(
-                service_account_name=service_account_name,
-                namespace=client_namespace,
-                cluster_name=cluster,
-                region=region,
-            )
-
-        return configure_resource_fixture(
-            metadata=metadata,
-            request=request,
-            resource_details="created",
-            metadata_key=metadata_key,
-            on_create=on_create,
-            on_delete=on_delete,
-        )
-
     """
     Runs a notebook that will create a S3 bucket as longs as IRSA permissions have been applied. The test will verify IRSA is workings by verifying the S3 bucket was able to be created.
     """
@@ -373,7 +323,7 @@ class TestProfileIRSA:
 
         s3_client.delete_bucket(Bucket=bucket_name)
     
-    def test_pipeline_component_irsa(self, kfp_client, client_namespace):
+    def test_pipeline_component_irsa(self, setup, kfp_client, client_namespace):
 
         def s3_op():
             import boto3
@@ -405,7 +355,9 @@ class TestProfileIRSA:
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, run.run_id)
 
     
-    def test_katib_experiment(self, profile_default_service_account, cluster, region, client_namespace):
+    def test_katib_experiment(self, setup, cluster, region, client_namespace):
+
+        patch_configmap(KUBEFLOW_NAMESPACE, KATIB_CONFIG_MAP_NAME, KATIB_CONFIG_MAP_PATCH_FILE)
 
         filepath = os.path.abspath(
             os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)

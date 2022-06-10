@@ -6,197 +6,265 @@ weight = 20
 
 ## AWS Access from Katib
 
-User profiles can be granted permissions to access AWS resources. Katib experiments under the profile namespace will have access to AWS resources as specified in the user profile's `awsIamRole`.
+For Katib experiment pods to be granted access to AWS resources, the corresponding profile in which the experiment is created needs to be configured with the `AwsIamForServiceAccount` plugin.
 
-More background on user profiles with AWS IAM permissions can be found [here](./profiles.md#iam-roles-for-service-accounts).
+Below is an example of a profile using the `AwsIamForServiceAccount` plugin:
+```yaml
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: some_profile
+spec:
+  owner:
+    kind: User
+    name: some-user@kubeflow.org
+  plugins:
+  - kind: AwsIamForServiceAccount
+    spec:
+      awsIamRole: arn:aws:iam::123456789012:role/some-profile-role
+```
 
-As a summary of the linked background, the `AwsIamForServiceAccount` plugin in the `profiles-controller` is responsible for configuring the `default-editor` service account (SA) to be an IAM role service account (IRSA). The `default-editor` IRSA is annotated with the profile's role which defines the IAM permissions pods belonging to the `default-editor` will have.
+The AWS IAM permissions granted to the experiment pods are specified in the profile's `awsIamRole`. 
 
-Katib experiments belong to the `default` service account in the profile's namespace so the configuration steps below will not use the `AwsIamForServiceAccount` plugin in the `profiles-controller`. This is because the plugin is only able to configure the `default-editor` SA as an IRSA. The steps below will configure the `default` SA as an IRSA so that Katib experiment pods and job pods will have permissions to access AWS services as scoped by the IRSA policy.
+To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the [Configuration Steps](#configuration-steps) below.
 
-## Configuration steps
+### Configuration steps
 
-After installing Kubeflow on AWS with one of the available [deployment options](/kubeflow-manifests/deployments/), you can configure Kubeflow Profiles with the following steps:
+#### 1. Profile Controller configuration
 
-1. Define the following environment variables:
+Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
-   ```bash
-   export CLUSTER_NAME=<your cluster name>
-   export CLUSTER_REGION=<your region>
-   export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-   export PROFILE_NAME=<the name of the profile to be created>
-   ```
+#### 2. `katib-config` config map configuration
 
-2. Associate IAM OIDC with your cluster.
+The [`katib-config`](https://www.kubeflow.org/docs/components/katib/katib-config/) contains configurations involving metrics collection, tuning algorithms, and early stopping algorithms.
 
-   ```bash
-   aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
+By default, pods that will run the tuning (suggestion) algorithm are created under the `default` service account present in the profile namespace. However, the `AwsIamForServiceAccount` plugin annotates the `default-editor` service account with the profile's `awsIamRole`, which means that only pods created under the `default-editor` service account will be granted the desired AWS permissions.
 
-   eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
-   ```
+The below steps will modify the `katib-config` to create pods under the `default-editor` service account so that the pods will be granted the desired permissions.
 
-3. Create a user in your configured auth provider (e.g. Cognito or Dex) or use an existing user.
+1. Open the `katib-config` config map for editing.
+    ```bash
+    kubectl edit configMap katib-config -n kubeflow
+    ```
 
-   Export the user as an environment variable. For simplicity, we will use the `user@example.com` user that is created by default by most of our provided deployment options.
+2. Navigate to the `suggestion` volume settings. The settings will look as follows:
+    ```yaml
+    suggestion: |-
+    {
+      "random": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
+        ...
+      },
+      "tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
+        ...
+      }
+      ...
+    }
+    ```
 
-   ```bash
-   export PROFILE_USER="user@example.com"
-   ```
+3. For each algorithm (e.g `random`, `tpe`, etc.) add a key for `serviceAccountName` with a value of `default-editor`:
+    ```yaml
+    suggestion: |-
+    {
+      "random": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
+        "serviceAccountName": "default-editor"
+        ...
+      },
+      "tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
+        "serviceAccountName": "default-editor"
+        ...
+      }
+      ...
+    }
+    ```
 
-4. Create a Profile using the `PROFILE_NAME`.
+4. Close the edit window. This will apply the configuration.
 
-   ```bash
-   cat <<EOF > profile_iam.yaml
-   apiVersion: kubeflow.org/v1
-   kind: Profile
-   metadata:
-     name: ${PROFILE_NAME}
-   spec:
-     owner:
-       kind: User
-       name: ${PROFILE_USER}
-   EOF
+#### 3. Experiment Trial Spec configuration
 
-   kubectl apply -f profile_iam.yaml
-   ```
+This section is relevant when creating Katib experiments.
 
-5. Create an IAM trust policy to authorize federated requests from the OIDC provider and allow the SA to assume the role permissions.
+The `default-editor` service account needs to be added to the `trialSpec` section of an experiment spec.
 
-   ```bash
-   export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
+Specifically, the `serviceAccountName` field needs to be added under the [`Pod spec`](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#service-account) section with a value of `default-editor`.
 
-   cat <<EOF > trust.json
-   {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-       "Effect": "Allow",
-       "Principal": {
-           "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_URL}"
-       },
-       "Action": "sts:AssumeRoleWithWebIdentity",
-       "Condition": {
-           "StringEquals": {
-           "${OIDC_URL}:aud": "sts.amazonaws.com",
-           "${OIDC_URL}:sub": ["system:serviceaccount:${PROFILE_NAME}:default-editor"]
-           }
-       }
-       }
-   ]
-   }
-   EOF
-   ```
+For example, in the following experiment spec the `serviceAccountName` field is added under the `Pod spec` of the `Job spec`:
+  ```yaml
+  apiVersion: kubeflow.org/v1beta1
+  kind: Experiment
+  metadata:
+    namespace: some-profile
+    name: some-name
+  spec:
+    objective:
+    ...
+  trialTemplate:
+  ...
+  trialSpec:
+    apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          containers:
+            - name: training-container
+              image: public.ecr.aws/z1j2m4o4/kubeflow-katib-mxnet-mnist:latest
+              command:
+              ...  
+          restartPolicy: Never
+          serviceAccountName: default-editor    # This addition is necessary
+  ```
 
-6. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
+As another example, in the following experiment spec the `serviceAccountName` field is added under the `Pod spec` of the `TFJob spec`:
+  ```yaml
+  apiVersion: kubeflow.org/v1beta1
+  kind: Experiment
+  metadata:
+    namespace: some-profile
+    name: some-name
+  spec:
+    objective:
+    ...
+  trialTemplate:
+  ...
+  trialSpec:
+    apiVersion: kubeflow.org/v1
+    kind: TFJob
+    metadata:
+      generateName: tfjob
+      namespace: your-user-namespace
+    spec:
+      tfReplicaSpecs:
+        PS:
+          replicas: 1
+          ...
+          spec:
+            containers:
+              - name: tensorflow
+                image: gcr.io/your-project/your-image
+                command:
+                ...
+            serviceAccountName: default-editor    # This addition is necessary
+        Worker:
+          replicas: 3
+          ...
+          spec:
+            containers:
+              - name: tensorflow
+                image: gcr.io/your-project/your-image
+                command:
+                ...
+            serviceAccountName: default-editor    # This addition is necessary
+  ```
 
-7. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
+### Example: S3 Access from Katib experiment pods
 
-   ```bash
-   aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
+The below steps walk through creating an experiment with pods that have permissions to list buckets in S3.
 
-   aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
-   ```
+#### Prerequisites
+1. [Any kubeflow installation](/kubeflow-manifests/docs/deployment/)
+2. Completed [configuration steps](#configuration-steps)
 
-8. Make the `default` SA an IRSA using the created IAM role from the previous step.
+#### Steps
 
-   ```bash
-   eksctl create iamserviceaccount \
-   --cluster=$CLUSTER_NAME \
-   --name=default \
-   --namespace=${PROFILE_NAME} \
-   --attach-role-arn=$(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --query "Role.Arn" --output text) \
-   --region=$CLUSTER_REGION \
-   --override-existing-serviceaccounts \
-   --approve
-   ```
+1. Export the name of the profile created in the [configuration steps](#configuration-steps):
+  ```bash
+  export PROFILE_NAME=<the created profile name>
+  ```
 
-## Verification steps
+2. Create the following Katib experiment yaml:
 
-9. Create the following Katib experiment yaml:
+  ```bash
+  cat <<EOF > experiment.yaml
 
-   ```bash
-   cat <<EOF > experiment.yaml
+  apiVersion: kubeflow.org/v1beta1
+  kind: Experiment
+  metadata:
+    namespace: ${PROFILE_NAME}
+    name: test
+  spec:
+    objective:
+      type: maximize
+      goal: 0.90
+      objectiveMetricName: Validation-accuracy
+      additionalMetricNames:
+        - Train-accuracy
+    algorithm:
+      algorithmName: random
+    parallelTrialCount: 3
+    maxTrialCount: 12
+    maxFailedTrialCount: 1
+    parameters:
+      - name: lr
+        parameterType: double
+        feasibleSpace:
+          min: "0.01"
+          max: "0.03"
+      - name: num-layers
+        parameterType: int
+        feasibleSpace:
+          min: "2"
+          max: "5"
+      - name: optimizer
+        parameterType: categorical
+        feasibleSpace:
+          list:
+            - sgd
+            - adam
+            - ftrl
+    trialTemplate:
+      primaryContainerName: training-container
+      trialParameters:
+        - name: learningRate
+          description: Learning rate for the training model
+          reference: lr
+        - name: numberLayers
+          description: Number of training model layers
+          reference: num-layers
+        - name: optimizer
+          description: Training model optimizer (sdg, adam or ftrl)
+          reference: optimizer
+      trialSpec:
+        apiVersion: batch/v1
+        kind: Job
+        spec:
+          template:
+            metadata:
+              annotations:
+                sidecar.istio.io/inject: "false"
+            spec:
+              containers:
+                - name: training-container
+                  image: public.ecr.aws/z1j2m4o4/kubeflow-katib-mxnet-mnist:latest
+                  command:
+                    - "python3"
+                    - "/opt/mxnet-mnist/list_s3_buckets.py"
+                    - "&&"
+                    - "python3"
+                    - "/opt/mxnet-mnist/mnist.py"
+                    - "--batch-size=64"
+                    - "--lr=${trialParameters.learningRate}"
+                    - "--num-layers=${trialParameters.numberLayers}"
+                    - "--optimizer=${trialParameters.optimizer}"
+              restartPolicy: Never
+              serviceAccountName: default-editor
+  EOF
+  ```
 
-   apiVersion: kubeflow.org/v1beta1
-   kind: Experiment
-   metadata:
-     namespace: ${PROFILE_NAME}
-     name: test
-   spec:
-     objective:
-       type: maximize
-       goal: 0.90
-       objectiveMetricName: Validation-accuracy
-       additionalMetricNames:
-         - Train-accuracy
-     algorithm:
-       algorithmName: random
-     parallelTrialCount: 3
-     maxTrialCount: 12
-     maxFailedTrialCount: 1
-     parameters:
-       - name: lr
-         parameterType: double
-         feasibleSpace:
-           min: "0.01"
-           max: "0.03"
-       - name: num-layers
-         parameterType: int
-         feasibleSpace:
-           min: "2"
-           max: "5"
-       - name: optimizer
-         parameterType: categorical
-         feasibleSpace:
-           list:
-             - sgd
-             - adam
-             - ftrl
-     trialTemplate:
-       primaryContainerName: training-container
-       trialParameters:
-         - name: learningRate
-           description: Learning rate for the training model
-           reference: lr
-         - name: numberLayers
-           description: Number of training model layers
-           reference: num-layers
-         - name: optimizer
-           description: Training model optimizer (sdg, adam or ftrl)
-           reference: optimizer
-       trialSpec:
-         apiVersion: batch/v1
-         kind: Job
-         spec:
-           template:
-             metadata:
-               annotations:
-                 sidecar.istio.io/inject: "false"
-             spec:
-               containers:
-                 - name: training-container
-                   image: public.ecr.aws/z1j2m4o4/kubeflow-katib-mxnet-mnist:latest
-                   command:
-                     - "python3"
-                     - "/opt/mxnet-mnist/list_s3_buckets.py"
-                     - "&&"
-                     - "python3"
-                     - "/opt/mxnet-mnist/mnist.py"
-                     - "--batch-size=64"
-                     - "--lr=\${trialParameters.learningRate}"
-                     - "--num-layers=\${trialParameters.numberLayers}"
-                     - "--optimizer=\${trialParameters.optimizer}"
-               restartPolicy: Never
-   EOF
-   ```
-
-10. Create the experiment.
+3. Create the experiment.
 
     ```bash
     kubectl apply -f experiment.yaml
     ```
 
-11. Describe the experiment.
+4. Describe the experiment.
 
     ```bash
     kubectl describe experiments -n ${PROFILE_NAME} test

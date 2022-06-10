@@ -63,121 +63,43 @@ client = kfp.Client(host=f"https://{kubeflow_gateway_endpoint}/pipeline", cookie
 client.list_experiments(namespace=namespace)
 ```
 
-## AWS Access from Kubeflow Pipelines
+## AWS Access from Pipeline Components
 
-User profiles can be granted permissions to access AWS resources. Pipelines under the profile namespace will have access to AWS resources as specified in the user profile's `awsIamRole`.
+For pipelines component to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the `AwsIamForServiceAccount` plugin.
 
-## Configuration steps
+Below is an example of a profile using the `AwsIamForServiceAccount` plugin:
+```yaml
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: some_profile
+spec:
+  owner:
+    kind: User
+    name: some-user@kubeflow.org
+  plugins:
+  - kind: AwsIamForServiceAccount
+    spec:
+      awsIamRole: arn:aws:iam::123456789012:role/some-profile-role
+```
 
-Generic configuration steps to configure user profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+The AWS IAM permissions granted to the pipelines components are specified in the profile's `awsIamRole`. 
 
-The below configuration steps provide an end to end example of configuring user profiles with IAM permissions and using them with the KFP SDK.
+To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the [Configuration Steps](#configuration-steps) below.
 
-### Prerequisites
+### Configuration steps
 
-Deploy Kubeflow using the [vanilla](/kubeflow-manifests/deployments/vanilla) deployment option.
+Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
-### Create the profile
+### Example: S3 Access from a Pipeline Component
 
-1. Define the following environment variables:
+The below steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
+#### Prerequisites
+1. [Vanilla kubeflow installation](/kubeflow-manifests/docs/deployment/vanilla)
+2. Completed [configuration steps](#configuration-steps)
 
-   ```bash
-   export CLUSTER_NAME=<your cluster name>
-   export CLUSTER_REGION=<your region>
-   export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-   export PROFILE_NAME=<the name of the profile to be created>
-   ```
-
-2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
-
-   ```bash
-   aws iam create-policy \
-   --region $CLUSTER_REGION \
-   --policy-name kf-profile-controller-policy \
-   --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
-   ```
-
-3. Associate IAM OIDC with your cluster.
-
-   ```bash
-   aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
-
-   eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
-   ```
-
-4. Create an IRSA for the Profile controller using the policy.
-
-   ```bash
-   eksctl create iamserviceaccount \
-   --cluster=$CLUSTER_NAME \
-   --name="profiles-controller-service-account" \
-   --namespace=kubeflow \
-   --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/kf-profile-controller-policy" \
-   --region=$CLUSTER_REGION \
-   --override-existing-serviceaccounts \
-   --approve
-   ```
-
-5. Create an IAM trust policy to authorize federated requests from the OIDC provider.
-
-   ```bash
-   export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
-
-   cat <<EOF > trust.json
-   {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-       "Effect": "Allow",
-       "Principal": {
-           "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_URL}"
-       },
-       "Action": "sts:AssumeRoleWithWebIdentity",
-       "Condition": {
-           "StringEquals": {
-           "${OIDC_URL}:aud": "sts.amazonaws.com"
-           }
-       }
-       }
-   ]
-   }
-   EOF
-   ```
-
-6. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
-
-7. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
-
-   ```bash
-   aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
-
-   aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
-   ```
-
-8. Create a Profile using the `PROFILE_NAME`.
-
-   ```bash
-   cat <<EOF > profile_iam.yaml
-   apiVersion: kubeflow.org/v1
-   kind: Profile
-   metadata:
-     name: ${PROFILE_NAME}
-   spec:
-     owner:
-       kind: User
-       name: user@example.com
-     plugins:
-     - kind: AwsIamForServiceAccount
-       spec:
-         awsIamRole: $(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query 'Role.Arn')
-   EOF
-
-   kubectl apply -f profile_iam.yaml
-   ```
-
-## Verification steps
-
-These steps continue from the configuration steps above but can be used as a starting point for other configurations.
+#### Steps
 
 1. Port forward the central dashboard.
 
@@ -185,7 +107,7 @@ These steps continue from the configuration steps above but can be used as a sta
    kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
    ```
 
-2. Install the verification script dependencies. The script requires python 3.6 or greater. (opitonal: You can run this code from notebook too, after login in central dashboard)
+2. A script will created that will create the pipeline. Install the script dependencies. The script requires python 3.6 or greater. (opitonal: You can run this code from notebook too, after logging in to the central dashboard).
 
    ```bash
    pip install boto3 kfp requests
