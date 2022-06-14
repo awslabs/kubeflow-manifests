@@ -270,16 +270,16 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     fs_id = details_efs_volume["file_system_id"]
     claim_name = rand_name("efs-claim-")
     efs_sc_filepath = (
-        "../../deployment/add-ons/storage/efs/static-provisioning/sc.yaml"
+        "../../deployments/add-ons/storage/efs/static-provisioning/sc.yaml"
     )
     efs_pv_filepath = (
-        "../../deployment/add-ons/storage/efs/static-provisioning/pv.yaml"
+        "../../deployments/add-ons/storage/efs/static-provisioning/pv.yaml"
     )
     efs_pvc_filepath = (
-        "../../deployment/add-ons/storage/efs/static-provisioning/pvc.yaml"
+        "../../deployments/add-ons/storage/efs/static-provisioning/pvc.yaml"
     )
     efs_permissions_filepath = (
-        "../../deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+        "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
     )
     efs_claim = {}
 
@@ -330,13 +330,13 @@ def dynamic_provisioning(metadata, region, request, cluster):
     claim_name = rand_name("efs-claim-auto-dyn-")
     security_group_name = claim_name + "-sg"
     efs_pvc_filepath = (
-        "../../deployment/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"
+        "../../deployments/add-ons/storage/efs/dynamic-provisioning/pvc.yaml"
     )
     efs_sc_filepath = (
-        "../../deployment/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
+        "../../deployments/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
     )
     efs_permissions_filepath = (
-        "../../deployment/add-ons/storage/notebook-sample/set-permission-job.yaml"
+        "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
     )
     efs_auto_script_filepath = "utils/auto-efs-setup.py"
     efs_claim_dyn = {}

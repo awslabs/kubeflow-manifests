@@ -9,7 +9,7 @@ This repository contains configuration files and [overlays](https://kubernetes.i
 
 ## Getting Started
 
-There are a number of deployment options for installing Kubeflow with AWS service integrations. For detailed instructions regarding available AWS-integrated deployment options, see the [deployment guides](https://awslabs.github.io/kubeflow-manifests/docs/deployment/) on the [Kubeflow on AWS](https://awslabs.github.io/kubeflow-manifests/) website.
+There are a number of deployment options for installing Kubeflow with AWS service integrations. For detailed instructions regarding available AWS-integrated deployment options, see the Deployment section on the [Kubeflow on AWS](https://awslabs.github.io/kubeflow-manifests/) website.
 
 ## Help & Feedback
 

@@ -16,7 +16,7 @@ Katib experiments belong to the `default` service account in the profile's names
 
 ## Configuration steps
 
-After installing Kubeflow on AWS with one of the available [deployment options](/kubeflow-manifests/docs/deployment/), you can configure Kubeflow Profiles with the following steps:
+After installing Kubeflow on AWS with one of the available [deployment options](/kubeflow-manifests/deployments/), you can configure Kubeflow Profiles with the following steps:
 
 1. Define the following environment variables:
 
