@@ -63,9 +63,14 @@ client = kfp.Client(host=f"https://{kubeflow_gateway_endpoint}/pipeline", cookie
 client.list_experiments(namespace=namespace)
 ```
 
-## AWS Access from Pipeline Components
+## Access AWS Services from Pipeline Components
 
-For pipelines component to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the `AwsIamForServiceAccount` plugin.
+For pipelines components to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the `AwsIamForServiceAccount` plugin. To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the steps below.
+
+### Prerequisites
+
+Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
 Below is an example of a profile using the `AwsIamForServiceAccount` plugin:
 ```yaml
@@ -85,105 +90,36 @@ spec:
 
 The AWS IAM permissions granted to the pipelines components are specified in the profile's `awsIamRole`. 
 
-To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the [Configuration Steps](#configuration-steps) below.
+### Configuration
 
-### Configuration steps
-
-Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
-The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
+There are no additional configuration steps after the pre-requisites.
 
 ### Example: S3 Access from a Pipeline Component
 
 The below steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
 #### Prerequisites
-1. [Vanilla kubeflow installation](/kubeflow-manifests/docs/deployment/vanilla)
-2. Completed [configuration steps](#configuration-steps)
+Completed [configuration steps](#configuration-steps)
 
 #### Steps
 
-1. Port forward the central dashboard.
+1. Create and apply a `PodDefault` in the desired profile namespace that allows KFP access from Jupyter notebooks.
 
-   ```bash
-   kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-   ```
+   Instructions can be found [here](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#multi-user-mode).
 
-2. A script will created that will create the pipeline. Install the script dependencies. The script requires python 3.6 or greater. (opitonal: You can run this code from notebook too, after logging in to the central dashboard).
 
-   ```bash
-   pip install boto3 kfp requests
-   ```
+2. Login to your central dashboard and select the desired profile namespace from the top left corner.
 
-3. Copy the below script to a file.
+3. Create a notebook server using the `PodDefault`.
 
-   Replace `DEFAULT_USER_NAMESPACE` with the `PROFILE_NAME` for the profile created in step 9 of the [configuration steps](#configuration-steps).
+4. Open the notebook server and upload the [sample notebook](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_kfp.ipynb) into the server.
 
-   ```python
-   import kfp
-   import requests
+5. Run the notebook.
 
-   DEFAULT_HOST = "http://localhost:8080/"
-   DEFAULT_USER_NAMESPACE = <replace me>
-   DEFAULT_USERNAME = "user@example.com"
-   DEFAULT_PASSWORD = "12341234"
-   KUBEFLOW_NAMESPACE = "kubeflow"
+6. Click on the `Run details` link that appears.
 
-   def session_cookie(host, login, password):
-       session = requests.Session()
-       response = session.get(host)
-       headers = {
-           "Content-Type": "application/x-www-form-urlencoded",
-       }
-       data = {"login": login, "password": password}
-       session.post(response.url, headers=headers, data=data)
-       session_cookie = session.cookies.get_dict()["authservice_session"]
+7. Verify the run completes successfully and the `Logs` are populated with the s3 buckets in the account.
 
-       return session_cookie
 
-   def kfp_client(host, client_namespace, session_cookie):
-
-       client = kfp.Client(
-           host=f"{host}/pipeline",
-           cookies=f"authservice_session={session_cookie}",
-           namespace=client_namespace,
-       )
-       client._context_setting[
-           "namespace"
-       ] = client_namespace  # needs to be set for list_experiments
-
-       return client
-
-   def s3_op():
-       import boto3
-       s3 = boto3.client("s3", region_name="us-west-2")
-       resp = s3.list_buckets()
-       print(resp)
-
-   s3_op = kfp.components.create_component_from_func(
-       s3_op, base_image="python", packages_to_install=["boto3"]
-   )
-
-   def s3_pipeline():
-       s3_operation = s3_op()
-
-   sc = session_cookie(DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
-   client = kfp_client(DEFAULT_HOST, DEFAULT_USER_NAMESPACE, sc)
-   client.create_run_from_pipeline_func(
-       s3_pipeline, namespace=DEFAULT_USER_NAMESPACE, arguments={}
-   )
-   ```
-
-4. Run the created script file.
-
-   ```bash
-   python <script_file>.py
-   ```
-
-5. Login to the central dashboard.
-
-   1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
-   2. Login with the default user's credential. The default email address is `user@example.com` and the default password is `12341234`.
-
-6. Navigate to the runs dasbhoard and view the `s3_op` component in the graph. In the logs sections the buckets in the s3 account should be viewable.
 
 ## Support S3 as a source for Kubeflow Pipelines output viewers
 

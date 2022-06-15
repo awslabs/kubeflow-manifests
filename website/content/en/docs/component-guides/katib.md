@@ -6,7 +6,12 @@ weight = 20
 
 ## AWS Access from Katib
 
-For Katib experiment pods to be granted access to AWS resources, the corresponding profile in which the experiment is created needs to be configured with the `AwsIamForServiceAccount` plugin.
+For Katib experiment pods to be granted access to AWS resources, the corresponding profile in which the experiment is created needs to be configured with the `AwsIamForServiceAccount` plugin. To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the steps below.
+
+### Prequisites
+
+Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
+The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
 Below is an example of a profile using the `AwsIamForServiceAccount` plugin:
 ```yaml
@@ -26,65 +31,10 @@ spec:
 
 The AWS IAM permissions granted to the experiment pods are specified in the profile's `awsIamRole`. 
 
-To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the [Configuration Steps](#configuration-steps) below.
 
-### Configuration steps
+### Configuration 
 
-#### 1. Profile Controller configuration
-
-Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
-The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
-
-#### 2. `katib-config` config map configuration
-
-The [`katib-config`](https://www.kubeflow.org/docs/components/katib/katib-config/) contains configurations involving metrics collection, tuning algorithms, and early stopping algorithms.
-
-By default, pods that will run the tuning (suggestion) algorithm are created under the `default` service account present in the profile namespace. However, the `AwsIamForServiceAccount` plugin annotates the `default-editor` service account with the profile's `awsIamRole`, which means that only pods created under the `default-editor` service account will be granted the desired AWS permissions.
-
-The below steps will modify the `katib-config` to create pods under the `default-editor` service account so that the pods will be granted the desired permissions.
-
-1. Open the `katib-config` config map for editing.
-    ```bash
-    kubectl edit configMap katib-config -n kubeflow
-    ```
-
-2. Navigate to the `suggestion` volume settings. The settings will look as follows:
-    ```yaml
-    suggestion: |-
-    {
-      "random": {
-        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
-        ...
-      },
-      "tpe": {
-        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
-        ...
-      }
-      ...
-    }
-    ```
-
-3. For each algorithm (e.g `random`, `tpe`, etc.) add a key for `serviceAccountName` with a value of `default-editor`:
-    ```yaml
-    suggestion: |-
-    {
-      "random": {
-        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
-        "serviceAccountName": "default-editor"
-        ...
-      },
-      "tpe": {
-        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
-        "serviceAccountName": "default-editor"
-        ...
-      }
-      ...
-    }
-    ```
-
-4. Close the edit window. This will apply the configuration.
-
-#### 3. Experiment Trial Spec configuration
+#### Experiment Trial Spec configuration
 
 This section is relevant when creating Katib experiments.
 
@@ -163,14 +113,62 @@ As another example, in the following experiment spec the `serviceAccountName` fi
                 ...
             serviceAccountName: default-editor    # This addition is necessary
   ```
+#### `katib-config` config map configuration
+
+The [`katib-config`](https://www.kubeflow.org/docs/components/katib/katib-config/) contains configurations involving metrics collection, tuning algorithms, and early stopping algorithms.
+
+By default, pods that will run the tuning ([suggestion](https://www.kubeflow.org/docs/components/katib/katib-config/#suggestion-settings)) algorithm are created under the `default` service account present in the profile namespace. However, the `AwsIamForServiceAccount` plugin annotates the `default-editor` service account with the profile's `awsIamRole`, which means that only pods created under the `default-editor` service account will be granted the desired AWS permissions.
+
+The below steps will modify the `katib-config` to create pods under the `default-editor` service account so that the pods will be granted the desired permissions.
+
+1. Open the `katib-config` config map for editing.
+    ```bash
+    kubectl edit configMap katib-config -n kubeflow
+    ```
+
+2. Navigate to the `suggestion` volume settings. The settings will look as follows:
+    ```yaml
+    suggestion: |-
+    {
+      "random": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
+        ...
+      },
+      "tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
+        ...
+      }
+      ...
+    }
+    ```
+
+3. For each algorithm (e.g `random`, `tpe`, etc.) add a key for `serviceAccountName` with a value of `default-editor`:
+    ```yaml
+    suggestion: |-
+    {
+      "random": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt",
+        "serviceAccountName": "default-editor"
+        ...
+      },
+      "tpe": {
+        "image": "docker.io/kubeflowkatib/suggestion-hyperopt:v0.13.0",
+        "serviceAccountName": "default-editor"
+        ...
+      }
+      ...
+    }
+    ```
+
+4. Close the edit window. This will apply the configuration.
+
 
 ### Example: S3 Access from Katib experiment pods
 
 The below steps walk through creating an experiment with pods that have permissions to list buckets in S3.
 
 #### Prerequisites
-1. [Any kubeflow installation](/kubeflow-manifests/docs/deployment/)
-2. Completed [configuration steps](#configuration-steps)
+Completed [configuration steps](#configuration-steps)
 
 #### Steps
 

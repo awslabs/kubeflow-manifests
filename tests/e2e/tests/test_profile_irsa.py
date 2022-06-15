@@ -58,7 +58,7 @@ from e2e.utils.k8s_core_api import patch_configmap, delete_configmap, upload_fil
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 KATIB_EXPERIMENT_FILE = "katib-experiment-profile-irsa.yaml"
-KATIB_CONFIG_MAP_PATCH_FILE = TO_ROOT_PATH + "deployment/add-ons/profile-aws-iam-plugin/patch_katib_config_map_sa.yaml"
+KATIB_CONFIG_MAP_PATCH_FILE = TO_ROOT_PATH + "tests/e2e/resources/custom-resource-templates/patch_katib_config_map_sa.yaml"
 KATIB_CONFIG_MAP_NAME = "katib-config"
 
 
