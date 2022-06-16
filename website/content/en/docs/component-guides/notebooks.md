@@ -38,6 +38,20 @@ Along with specific machine learning frameworks, these container images have add
 
 For more information on gettings started with Kubeflow Notebooks, see the [Quickstart Guide](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
 
+## Access AWS Services from Notebooks
+
+Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) to securely access AWS resources through Kubeflow Notebooks.
+
+### Configuration
+
+Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
+
+### Try it out
+
+1. Create a Notebook server through the central dashboard.
+2. Navigate to the top left drop down menu and select the profile name for the profile that you created.
+3. Create a Notebook using the [Verify Profile IAM](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_notebook.ipynb) Notebook sample.
+4. Run the Notebook. You should see the S3 buckets present in your account.
 ## RDS and S3 credentials for Kubeflow Pipelines and Notebooks
 
 Set up RDS and S3 credential access to be able to:
@@ -121,17 +135,3 @@ import os
 print(os.environ['port'])
 ```  
 
-## AWS IAM for Kubeflow Profiles in Notebooks
-
-Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) to securely access AWS resources through Kubeflow Notebooks.
-
-### Configuration
-
-Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
-
-### Try it out
-
-1. Create a Notebook server through the central dashboard.
-2. Navigate to the top left drop down menu and select the profile name for the profile that you created.
-3. Create a Notebook using the [Verify Profile IAM](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_notebook.ipynb) Notebook sample.
-4. Run the Notebook. You should see the S3 buckets present in your account.

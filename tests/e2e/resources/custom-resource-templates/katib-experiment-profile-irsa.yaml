@@ -70,3 +70,4 @@ spec:
                   - "--num-layers=${trialParameters.numberLayers}"
                   - "--optimizer=${trialParameters.optimizer}"
             restartPolicy: Never
+            serviceAccountName: default-editor
