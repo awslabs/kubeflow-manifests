@@ -158,7 +158,7 @@ kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
 #### KFServing
