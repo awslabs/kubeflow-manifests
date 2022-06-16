@@ -4,11 +4,11 @@ description = "Get started with Katib on Amazon EKS"
 weight = 20
 +++
 
-## AWS Access from Katib
+## Access AWS Services from Katib
 
 For Katib experiment pods to be granted access to AWS resources, the corresponding profile in which the experiment is created needs to be configured with the `AwsIamForServiceAccount` plugin. To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the steps below.
 
-### Prequisites
+### Prerequisites
 
 Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
 The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
@@ -33,6 +33,20 @@ The AWS IAM permissions granted to the experiment pods are specified in the prof
 
 
 ### Configuration 
+
+#### Verify Prerequisites
+
+You can verify the profile was configured correctly by running
+```bash
+export PROFILE_NAME=<name of the created profile>
+
+kubectl get serviceaccount -n ${PROFILE_NAME} default-editor -oyaml | grep "eks.amazonaws.com/role-arn"
+```
+
+```bash
+# output should be your profile role, for example
+eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
+```
 
 #### Experiment Trial Spec configuration
 
@@ -114,6 +128,8 @@ As another example, in the following experiment spec the `serviceAccountName` fi
             serviceAccountName: default-editor    # This addition is necessary
   ```
 #### `katib-config` config map configuration
+
+**This configuration is only required if your Katib [algorithm](https://www.kubeflow.org/docs/components/katib/experiment/#search-algorithms-in-detail) pod needs access to AWS services.**
 
 The [`katib-config`](https://www.kubeflow.org/docs/components/katib/katib-config/) contains configurations involving metrics collection, tuning algorithms, and early stopping algorithms.
 

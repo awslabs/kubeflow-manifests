@@ -94,6 +94,18 @@ The AWS IAM permissions granted to the pipelines components are specified in the
 
 There are no additional configuration steps after the pre-requisites.
 
+You can verify the profile was configured correctly by running
+```bash
+export PROFILE_NAME=<name of the created profile>
+
+kubectl get serviceaccount -n ${PROFILE_NAME} default-editor -oyaml | grep "eks.amazonaws.com/role-arn"
+```
+
+```bash
+# output should be your profile role, for example
+eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
+```
+
 ### Example: S3 Access from a Pipeline Component
 
 The below steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
