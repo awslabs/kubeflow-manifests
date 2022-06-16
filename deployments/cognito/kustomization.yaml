@@ -21,7 +21,7 @@ resources:
   - ../../upstream/common/istio-1-11/kubeflow-istio-resources/base
 
   # Kubeflow Pipelines
-  - ../../awsconfigs/common/pipeline/multi-user
+  - ../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
   # KFServing
   - ../../upstream/apps/kfserving/upstream/overlays/kubeflow
   # Katib
