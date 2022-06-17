@@ -20,8 +20,8 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Prerequisites
 This guide assumes that you have: 
-- A Kubeflow deployment on EKS with Dex as your authorization provider (Dex is the default authorization provider in the [Vanilla](/kubeflow-manifests/deployments/vanilla/guide/) deployment of Kubeflow on AWS).
-- Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/deployments/prerequisites/) guide on the client machine.
+- A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the [Vanilla](/kubeflow-manifests/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
+- Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) guide on the client machine.
 - Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
     - Verify that your cluster name and region are exported:
         ```bash
@@ -37,7 +37,7 @@ This guide assumes that you have:
 
 ## Create Load Balancer
 
-If you prefer to create a load balancer using automated scripts, you only need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
+If you prefer to create a load balancer using automated scripts, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
 
 ### Create domain and certificates
 
@@ -133,11 +133,10 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
         istio-ingress   <none>   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
     ```
     If `ADDRESS` is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in [ALB fails to provision](https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision).
-1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (`platform.example.com`) for `*.platform.example.com`. Please note that it might make anywhere from five to ten minutes for DNS changes to propagate and for your URL to work.
-
+2. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (`platform.example.com`) for `*.platform.example.com`. Please note that it might make up to five to ten minutes for DNS changes to propagate and for your URL to work.
     ![subdomain-*.platform-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png)
-
-1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
+> Note: Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/).
+3. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
 
 ### Automated script
 

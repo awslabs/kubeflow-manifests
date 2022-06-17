@@ -261,9 +261,9 @@ Make sure that you have completed the [configuration steps](/kubeflow-manifests/
                       - "python3"
                       - "/opt/mxnet-mnist/mnist.py"
                       - "--batch-size=64"
-                      - "--lr=${trialParameters.learningRate}"
-                      - "--num-layers=${trialParameters.numberLayers}"
-                      - "--optimizer=${trialParameters.optimizer}"
+                      - "--lr=\${trialParameters.learningRate}"
+                      - "--num-layers=\${trialParameters.numberLayers}"
+                      - "--optimizer=\${trialParameters.optimizer}"
                 restartPolicy: Never
                 serviceAccountName: default-editor
     EOF
