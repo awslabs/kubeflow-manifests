@@ -30,7 +30,7 @@ Run the following command to create an EKS cluster:
 ```bash
 eksctl create cluster \
 --name ${CLUSTER_NAME} \
---version 1.20 \
+--version 1.21 \
 --region ${CLUSTER_REGION} \
 --nodegroup-name linux-nodes \
 --node-type m5.xlarge \
@@ -40,6 +40,9 @@ eksctl create cluster \
 --managed \
 --with-oidc
 ```
+
+> Note: Be sure to check [Amazon EKS and Kubeflow Compatibility](/kubeflow-manifests/docs/about/eks-compatibility/) when creating your cluster with specific EKS versions.
+
 If you are using an existing EKS cluster, create an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) and associate it with for your EKS cluster with the following command:
 ```bash
 eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
