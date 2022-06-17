@@ -1,7 +1,7 @@
 +++
-title = "Full Deployment Guide"
+title = "Manual Deployment Guide"
 description = "Deploying Kubeflow with AWS Cognito as identity provider"
-weight = 10
+weight = 20
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:
@@ -11,21 +11,21 @@ This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your 
 - create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB's public DNS names)
 
 ## Prerequisites
-Check to make sure that you have the necessary [prerequisites](/kubeflow-manifests/deployments/prerequisites/).
+Check to make sure that you have the necessary [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/).
 
 ## Background 
 
-Read the [background section](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#background) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
+Read the [background section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
 
-Read the [create domain and certificate section](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
+Read the [create domain and certificate section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
 
 ## (Optional) Automated setup
-The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](/kubeflow-manifests/deployments/cognito/guide-automated/).
+The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](/kubeflow-manifests/docs/deployment/cognito/guide-automated/).
 
 ## 1.0 Custom domain and certificates
 
-1. Follow the [Create a subdomain](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-a-subdomain) section of the Load Balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
-1. Follow the [Create certificates for domain](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-certificates-for-domain) section of the Load Balancer guide to create certificates required for TLS.
+1. Follow the [Create a subdomain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain) section of the Load Balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
+1. Follow the [Create certificates for domain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain) section of the Load Balancer guide to create certificates required for TLS.
 
 From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.
 
@@ -92,7 +92,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         LOGOUT_URL='$CognitoLogoutURL'
         ' > awsconfigs/common/aws-authservice/base/params.env
         ```
-1. Follow the [Configure Load Balancer Controller](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
+1. Follow the [Configure Load Balancer Controller](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
 
 ## 4.0 Building manifests and deploying Kubeflow
 

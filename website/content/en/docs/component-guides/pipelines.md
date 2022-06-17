@@ -44,7 +44,7 @@ client = kfp.Client(host=f"http://{kubeflow_gateway_endpoint}/pipeline", cookies
 client.list_experiments(namespace=namespace)
 ```
 
-If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/) and use the ALB address as the Kubeflow Endpoint.
+If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) guide and use the ALB address as the Kubeflow Endpoint.
 
 To do programmatic authentication with Dex, refer to the following comments under [issue #140](https://github.com/kubeflow/kfctl/issues/140) in the `kfctl` repository: [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304) and [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529).
 
@@ -69,10 +69,9 @@ For pipelines components to be granted access to AWS resources, the correspondin
 
 ### Prerequisites
 
-Configuration steps to configure profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
-The configuration steps will configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
+Configuration steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). Follow the configuration steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
-Below is an example of a profile using the `AwsIamForServiceAccount` plugin:
+The following is an example of a profile using the `AwsIamForServiceAccount` plugin:
 ```yaml
 apiVersion: kubeflow.org/v1
 kind: Profile
@@ -90,34 +89,31 @@ spec:
 
 The AWS IAM permissions granted to the pipelines components are specified in the profile's `awsIamRole`. 
 
-### Configuration
+### Verify configuration
 
-There are no additional configuration steps after the pre-requisites.
+There are no additional configuration steps after the prerequisites.
 
-You can verify the profile was configured correctly by running
+You can verify that the profile was configured correctly by running the following commands:
 ```bash
 export PROFILE_NAME=<name of the created profile>
 
 kubectl get serviceaccount -n ${PROFILE_NAME} default-editor -oyaml | grep "eks.amazonaws.com/role-arn"
 ```
-
+The output should look similar to the following:
 ```bash
-# output should be your profile role, for example
 eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
 ```
 
 ### Example: S3 Access from a Pipeline Component
 
-The below steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
+The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
 #### Prerequisites
-Completed [configuration steps](#configuration-steps)
+Make sure that you have completed the [prerequisites](/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites) and Profile configuration steps.
 
 #### Steps
 
 1. Create and apply a `PodDefault` in the desired profile namespace that allows KFP access from Jupyter notebooks.
-
-   Instructions can be found [here](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#multi-user-mode).
-
+    - Instructions can be found in the Kubeflow [Multi-User mode](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#multi-user-mode) instructions.
 
 2. Login to your central dashboard and select the desired profile namespace from the top left corner.
 
@@ -129,8 +125,7 @@ Completed [configuration steps](#configuration-steps)
 
 6. Click on the `Run details` link that appears.
 
-7. Verify the run completes successfully and the `Logs` are populated with the s3 buckets in the account.
-
+7. Verify that the run completes successfully and that the `Logs` are populated with the S3 buckets in the account.
 
 
 ## Support S3 as a source for Kubeflow Pipelines output viewers
