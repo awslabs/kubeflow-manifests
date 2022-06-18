@@ -8,16 +8,16 @@ This tutorial shows how to set up a load balancer endpoint for serving predictio
 
 > Note: Kubeflow on AWS v1.4 uses [KFServing](https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition). The KFServing project is now called KServe.
 
-Read the [background](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#background) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
+Read the [background](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
 
 ## Prerequisites
 
 This guide assumes that you have:
 
-1. The necessary [prerequisites](/kubeflow-manifests/deployments/prerequisites/), including a Kubeflow deployment.
+1. The necessary [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/), including a Kubeflow deployment.
 2. The [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) configured with one of the following deployment options:
-    - A Cognito-integrated deployment that is configured with the [AWS Load Balancer controller by default](/kubeflow-manifests/deployments/cognito/guide#30-configure-ingress).
-    - A deployment that is not integrated with Cognito (for example, the [Vanilla deployment](/kubeflow-manifests/deployments/vanilla/guide/), which uses Dex as an auth provider), but have followed the [Exposing Kubeflow over Load Balancer guide](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/).
+    - A Cognito-integrated deployment that is configured with the [AWS Load Balancer controller by default](/kubeflow-manifests/docs/deployment/cognito/guide#30-configure-ingress).
+    - A deployment that is not integrated with Cognito (for example, the [Vanilla deployment](/kubeflow-manifests/docs/deployment/vanilla/guide/), which uses Dex as an auth provider), but have followed the [Exposing Kubeflow over Load Balancer guide](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/).
 3. A subdomain for hosting Kubeflow. For this guide, we will use the domain `platform.example.com`.
 4. An existing [profile namespace](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for a user in Kubeflow. For this guide, we will use the example profile namespace `staging`.
 5. Verified that your current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>` directory.
@@ -59,7 +59,7 @@ DNS only supports wildcard placeholders in the [leftmost part of the domain name
 
 ### Create a certificate
 > Note: Both of these domains should be requested in the same certificate
-Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-domain-and-certificates) steps in the Load Balancer installation guide. 
+Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) steps in the Load Balancer installation guide. 
 
 Once the certificate status changes to `Issued`, export the ARN of the certificate created:
 ```bash

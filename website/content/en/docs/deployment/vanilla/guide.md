@@ -1,7 +1,7 @@
 +++
 title = "Vanilla Installation"
 description = "Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)"
-weight = 60
+weight = 30
 +++
 
 # Deploying Kubeflow on EKS
@@ -10,7 +10,7 @@ This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites](/kubeflow-manifests/deployments/prerequisites/) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) before working through this guide.
 
 ### Build Manifests and install Kubeflow
 
@@ -299,7 +299,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 #### Exposing Kubeflow over Load Balancer
 
-In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the [Load Balancer guide](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/) to set it up.
+In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the [Load Balancer guide](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) to set it up.
 
 ### Change default user password
 

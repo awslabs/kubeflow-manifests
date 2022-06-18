@@ -1,13 +1,13 @@
 +++
 title = "Cognito, RDS, and S3"
 description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
-weight = 50
+weight = 60
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
 
 ## 1. Prerequisites
-Refer to the [general prerequisites guide](/kubeflow-manifests/deployments/prerequisites/) and the [RDS and S3 setup guide](/kubeflow-manifests/deployments/rds-s3/guide/) in order to:
+Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/prerequisites/) and the [RDS and S3 setup guide](/kubeflow-manifests/docs/deployment/rds-s3/guide/) in order to:
 1. Install the CLI tools
 2. Clone the repositories
 3. Create an EKS cluster
@@ -19,7 +19,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/deployments/prere
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide](/kubeflow-manifests/deployments/cognito/guide/) from [Section 1.0 (Custom domain)](/kubeflow-manifests/deployments/cognito/guide/#10-custom-domain-and-certificates) up to [Section 3.0 (Configure ingress)](/kubeflow-manifests/deployments/cognito/guide/#30-configure-ingress) in order to:
+1. Follow the [Cognito setup guide](/kubeflow-manifests/docs/deployment/cognito/guide/) from [Section 1.0 (Custom domain)](/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates) up to [Section 3.0 (Configure ingress)](/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -106,7 +106,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/deployments/prere
         # Authservice
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -        
         ```
-1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)](/kubeflow-manifests/deployments/cognito/guide/#50-updating-the-domain-with-ALB-address) in order to:
+1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)](/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address) in order to:
     1. Add/Update the DNS records in a custom domain with the ALB address
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool

@@ -16,6 +16,8 @@ weight = 20
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
    
 ## Create an EKS cluster
+> Note: Be sure to check [Amazon EKS and Kubeflow Compatibility](/kubeflow-manifests/docs/about/eks-compatibility/) when creating your cluster with specific EKS versions.
+
 If you do not have an existing cluster, run the following command to create an EKS cluster.
 
 > Note: Various controllers use IAM roles for service accounts (IRSA). An [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) must exist for your cluster to use IRSA.
@@ -30,7 +32,7 @@ Run the following command to create an EKS cluster:
 ```bash
 eksctl create cluster \
 --name ${CLUSTER_NAME} \
---version 1.20 \
+--version 1.21 \
 --region ${CLUSTER_REGION} \
 --nodegroup-name linux-nodes \
 --node-type m5.xlarge \
@@ -40,6 +42,7 @@ eksctl create cluster \
 --managed \
 --with-oidc
 ```
+
 If you are using an existing EKS cluster, create an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) and associate it with for your EKS cluster with the following command:
 ```bash
 eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
