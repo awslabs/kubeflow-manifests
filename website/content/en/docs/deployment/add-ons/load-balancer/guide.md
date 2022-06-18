@@ -1,7 +1,7 @@
 +++
 title = "Load Balancer"
 description = "Expose Kubeflow over Load Balancer on AWS"
-weight = 40
+weight = 5
 +++
 
 This tutorial shows how to expose Kubeflow over a load balancer on AWS.
