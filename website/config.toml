@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0"
 title = "Kubeflow on AWS [STAGING]"
 description = "Kubeflow makes deployment of ML Workflows on Kubernetes straightforward and automated"
 
