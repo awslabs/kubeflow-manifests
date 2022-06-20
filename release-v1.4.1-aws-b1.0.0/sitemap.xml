@@ -1,0 +1,39 @@
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/about/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/troubleshooting-aws/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/search/</loc>
+    <lastmod>2022-06-20T10:58:36-07:00</lastmod>
+  </url>
+  
+</urlset>
