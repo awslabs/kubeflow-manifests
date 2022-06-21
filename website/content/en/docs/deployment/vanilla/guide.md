@@ -168,7 +168,7 @@ KFServing was rebranded to KServe.
 Install the KServe component:
 
 ```sh
-kustomize build upstream/contrib/kserve/kserve | kubectl apply -f -
+kustomize build awsconfigs/apps/kserve | kubectl apply -f -
 ```
 
 Install the Models web app:

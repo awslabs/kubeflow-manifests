@@ -131,7 +131,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
         
         # Kserve
-        kustomize build upstream/contrib/kserve/kserve | kubectl apply -f -
+        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 
         # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
@@ -182,8 +182,8 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. ```bash
         kubectl get ingress -n istio-system
         Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-        NAME            CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
-        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      15d
+        NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
         ```
     2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`

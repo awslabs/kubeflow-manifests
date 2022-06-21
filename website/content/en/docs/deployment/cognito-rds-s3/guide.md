@@ -55,7 +55,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
         # Kserve
-        kustomize build upstream/contrib/kserve/kserve | kubectl apply -f -
+        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 
         # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible

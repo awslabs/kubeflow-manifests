@@ -100,8 +100,8 @@ Use an ingress to set the [HTTP header conditions](https://docs.aws.amazon.com/e
 4. Check if the ingress-managed Load Balancer is provisioned. This may take a few minutes to complete.
     ```bash
     kubectl get ingress -n istio-system istio-ingress-api
-    NAME                CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
-    istio-ingress-api   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      14m
+    NAME                CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress-api   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      14m
     ```
 
 Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
@@ -121,8 +121,8 @@ Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-man
 3. Get the Load Balancer address
     ```bash
     kubectl get ingress -n istio-system istio-ingress
-    NAME            CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
-    istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      15d
+    NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
     ```
 Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
 
@@ -183,14 +183,15 @@ Run the sample python script to send an inference request based on your auth pro
 
 #### Cognito inference 
 
-Run the [inference_sample_cognito.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_cognito.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](/kubeflow-manifests/docs/component-guides/kserve/#create-ingress).
+Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](/kubeflow-manifests/docs/component-guides/kserve/#create-ingress).
 ```bash
+export AUTH_PROVIDER="cognito"
 export HTTP_HEADER_NAME="x-api-key"
 export HTTP_HEADER_VALUE="token1"
 ```
 
 ```bash
-PYTHONPATH=.. python utils/kserve/inference_sample_cognito.py
+PYTHONPATH=.. python utils/kserve/inference_sample.py
 ```
 
 The output should look similar to the following:
@@ -219,14 +220,15 @@ JSON Response  {
 ```
 
 #### Dex inference
-Run the [inference_sample_dex.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_dex.py) Python script by exporting the values for `USERNAME`(e.g. `user@example.com`), `PASSWORD` according to the user profile 
+Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `USERNAME`(e.g. `user@example.com`), `PASSWORD` according to the user profile 
 ```bash
+export AUTH_PROVIDER="dex"
 export USERNAME="user@example.com"
 export PASSWORD="12341234"
 ```
 
 ```bash
-PYTHONPATH=.. python utils/kserve/inference_sample_dex.py
+PYTHONPATH=.. python utils/kserve/inference_sample.py
 ```
 
 The output should look similar to the following:
