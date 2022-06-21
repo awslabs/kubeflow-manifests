@@ -289,7 +289,7 @@ kubectl get pods -n knative-eventing
 kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
-# Depending on your installation
+# Depending on your installation if you installed KServe
 kubectl get pods -n kserve
 ```
 

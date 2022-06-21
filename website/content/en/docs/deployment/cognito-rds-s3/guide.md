@@ -54,7 +54,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # Kubeflow Istio Resources
         kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
-        # Kserve
+        # KServe
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 

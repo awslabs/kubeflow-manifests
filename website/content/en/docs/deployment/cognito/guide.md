@@ -130,7 +130,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         # reapply manifest if you see an error
         kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
         
-        # Kserve
+        # KServe
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 
