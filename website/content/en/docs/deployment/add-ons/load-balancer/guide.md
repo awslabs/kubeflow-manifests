@@ -129,8 +129,8 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
 1. Check if ALB is provisioned. This may take a few minutes.
     ```
         kubectl get ingress -n istio-system istio-ingress
-        NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-        istio-ingress   <none>   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+        NAME            CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
+        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      15d
     ```
     If `ADDRESS` is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in [ALB fails to provision](https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision).
 2. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (`platform.example.com`) for `*.platform.example.com`. Please note that it might make up to five to ten minutes for DNS changes to propagate and for your URL to work.
@@ -189,6 +189,7 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
             name: platform.example.com
     ```
 1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
+> Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/)
 
 ## Clean up
 

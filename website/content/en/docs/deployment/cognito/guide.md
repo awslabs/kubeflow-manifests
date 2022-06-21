@@ -104,40 +104,44 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. **[Option 2]** Install individual components:
         ```bash
         # Kubeflow namespace
-        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -
         
         # Kubeflow Roles
-        kustomize build common/kubeflow-roles/base | kubectl apply -f -
+        kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build common/istio-1-9/istio-crds/base | kubectl apply -f -
-        kustomize build common/istio-1-9/istio-namespace/base | kubectl apply -f -
-        kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-9/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-9/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-9/istio-install/base | kubectl apply -f -
         
         # Cert-Manager
-        kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
-        kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+        kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
+        kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
         
         # KNative
-        kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-        kustomize build common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
         # Kubeflow Pipelines
         # reapply manifest if you see an error
-        kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+        kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
         
-        # KFServing
-        kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-        
+        # Kserve
+        kustomize build upstream/contrib/kserve/kserve | kubectl apply -f -
+        kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+
+        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
+        kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+
         # Katib
-        kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+        kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
         
         # Central Dashboard
-        kustomize build upstream/apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+        kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
         # Notebooks
         kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
@@ -156,9 +160,6 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
         kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
         
-        # MPI Operator
-        kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 
@@ -181,8 +182,8 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. ```bash
         kubectl get ingress -n istio-system
         Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-        NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-        istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+        NAME            CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
+        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      15d
         ```
     2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
@@ -194,7 +195,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 6.0 Connecting to central dashboard
 
-1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard:
+1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Before connecting to the dashboard:
     1. Head over to the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
         1. ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
     1. Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). The following is an example Profile for reference:
@@ -211,5 +212,5 @@ From this point onwards, we will be creating/updating the DNS records **only in 
                     # replace with the email of the user
                     name: my_user_email@kubeflow.com
             ```
-1. Open the central dashboard at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.
-
+1. Open the central dashboard at `https://kubeflow.platform.example.com`. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.
+> Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/)

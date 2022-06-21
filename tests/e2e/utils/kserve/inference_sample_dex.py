@@ -1,16 +1,20 @@
 import requests
 import os
+import json
+
+from e2e.utils.utils import load_json_file
 
 KUBEFLOW_DOMAIN = os.environ.get("KUBEFLOW_DOMAIN", "kubeflow.example.com")
 PROFILE_NAMESPACE = os.environ.get("PROFILE_NAMESPACE", "staging")
 USERNAME = os.environ.get("USERNAME", "user@example.com")
 PASSWORD = os.environ.get("PASSWORD", "12341234")
+MODEL_NAME = os.environ.get("MODEL_NAME", "sklearn-irisv2")
 
-URL = f"https://sklearn-iris.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}/v1/models/sklearn-iris:predict"
-HEADERS = {"Host": f"sklearn-iris.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}"}
+URL = f"https://{MODEL_NAME}.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}/v2/models/{MODEL_NAME}/infer"
+HEADERS = {"Host": f"{MODEL_NAME}.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}"}
 DASHBOARD_URL = f"https://kubeflow.{KUBEFLOW_DOMAIN}"
 
-data = {"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}
+data = load_json_file("./utils/kserve/iris-input.json")
 
 
 def session_cookie(host, login, password):
@@ -29,4 +33,4 @@ cookie = {"authservice_session": session_cookie(DASHBOARD_URL, USERNAME, PASSWOR
 
 response = requests.post(URL, headers=HEADERS, json=data, cookies=cookie)
 print("Status Code", response.status_code)
-print("JSON Response ", response.json())
+print("JSON Response ", json.dumps(response.json(), indent=2))

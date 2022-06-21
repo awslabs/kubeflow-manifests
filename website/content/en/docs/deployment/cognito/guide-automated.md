@@ -79,8 +79,8 @@ This guide assumes you have Python 3.8 installed and that you have completed the
         1. ```sh
             kubectl get ingress -n istio-system
             Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-            NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-            istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+            NAME            CLASS    HOSTS   ADDRESS                                                             PORTS   AGE
+            istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-wes-2.elb.amazonaws.com   80      15d
             ```
         2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision)
     1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:

@@ -61,8 +61,8 @@ admission webhooks.
 Install `cert-manager`:
 
 ```sh
-kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
-kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
+kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
 ```
 
 #### Istio
@@ -73,9 +73,9 @@ network authorization, and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build common/istio-1-9/istio-crds/base | kubectl apply -f -
-kustomize build common/istio-1-9/istio-namespace/base | kubectl apply -f -
-kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-9/istio-crds/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-9/istio-namespace/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-9/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
@@ -85,7 +85,7 @@ Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. 
 Install Dex:
 
 ```sh
-kustomize build common/dex/overlays/istio | kubectl apply -f -
+kustomize build upstream/common/dex/overlays/istio | kubectl apply -f -
 ```
 
 #### OIDC AuthService
@@ -95,18 +95,18 @@ The OIDC AuthService extends your Istio Ingress-Gateway capabilities to be able 
 Install OIDC AuthService:
 
 ```sh
-kustomize build common/oidc-authservice/base | kubectl apply -f -
+kustomize build upstream/common/oidc-authservice/base | kubectl apply -f -
 ```
 
 #### Knative
 
-Knative is used by the KFServing official Kubeflow component.
+Knative is used by the KServe/KFServing official Kubeflow component.
 
 Install Knative Serving:
 
 ```sh
-kustomize build common/knative/knative-serving/base | kubectl apply -f -
-kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+kustomize build upstream/common/knative/knative-serving/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing, which can be used for inference request logging.
@@ -114,7 +114,7 @@ Optionally, you can install Knative Eventing, which can be used for inference re
 Install Knative Eventing:
 
 ```sh
-kustomize build common/knative/knative-eventing/base | kubectl apply -f -
+kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
 #### Kubeflow namespace
@@ -125,7 +125,7 @@ is named `kubeflow`.
 Install the `kubeflow` namespace:
 
 ```sh
-kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -
 ```
 
 #### Kubeflow Roles
@@ -137,7 +137,7 @@ ClusterRoles.
 Install Kubeflow roles:
 
 ```sh
-kustomize build common/kubeflow-roles/base | kubectl apply -f -
+kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
 ```
 
 #### Kubeflow Istio Resources
@@ -150,7 +150,7 @@ well.
 Install Istio resources:
 
 ```sh
-kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -158,15 +158,30 @@ kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -
 Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/multi-user/) official Kubeflow component:
 
 ```sh
-kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
-#### KFServing
+#### KServe / KFServing
 
-Install the KFServing official Kubeflow component:
+KFServing was rebranded to KServe.
+
+Install the KServe component:
 
 ```sh
-kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build upstream/contrib/kserve/kserve | kubectl apply -f -
+```
+
+Install the Models web app:
+
+```sh
+kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+```
+
+For those not ready to migrate to KServe, you can still install KFServing v0.6.1 with
+the following command, but we recommend migrating to KServe as soon as possible:
+
+```sh
+kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Katib
@@ -174,7 +189,7 @@ kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 Install the Katib official Kubeflow component:
 
 ```sh
-kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
 ```
 
 #### Central Dashboard
@@ -182,7 +197,7 @@ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply
 Install the Central Dashboard official Kubeflow component:
 
 ```sh
-kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
 ```
 
 #### Admission Webhook
@@ -190,7 +205,7 @@ kustomize build apps/centraldashboard/upstream/overlays/istio | kubectl apply -f
 Install the Admission Webhook for PodDefaults:
 
 ```sh
-kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+kustomize build upstream/apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 ```
 
 #### Notebooks
@@ -198,13 +213,13 @@ kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl 
 Install the Notebook Controller official Kubeflow component:
 
 ```sh
-kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 Install the Jupyter Web App official Kubeflow component:
 
 ```sh
-kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build awsconfigs/apps/jupyter-web-app | kubectl apply -f -
 ```
 
 #### Profiles and Kubeflow Access-Management (KFAM)
@@ -213,7 +228,7 @@ Install the Profile controller and the Kubeflow Access-Management (KFAM) officia
 components:
 
 ```sh
-kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build upstream/apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Volumes Web App
@@ -221,7 +236,7 @@ kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
 Install the Volumes Web App official Kubeflow component:
 
 ```sh
-kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build upstream/apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 #### Tensorboard
@@ -229,13 +244,13 @@ kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f 
 Install the Tensorboards Web App official Kubeflow component:
 
 ```sh
-kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
+kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
 Install the Tensorboard controller official Kubeflow component:
 
 ```sh
-kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Training Operator
@@ -243,15 +258,7 @@ kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubefl
 Install the Training Operator official Kubeflow component:
 
 ```sh
-kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
-#### MPI Operator
-
-Install the MPI Operator official Kubeflow component:
-
-```sh
-kustomize build apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
+kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### AWS Telemetry
@@ -267,7 +274,7 @@ kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 Finally, create a new namespace for the the default user. In this example, the namespace is called `kubeflow-user-example-com`.
 
 ```sh
-kustomize build common/user-namespace/base | kubectl apply -f -
+kustomize build upstream/common/user-namespace/base | kubectl apply -f -
 ```
 
 ### Connect to your Kubeflow cluster
@@ -282,6 +289,8 @@ kubectl get pods -n knative-eventing
 kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
+# Depending on your installation
+kubectl get pods -n kserve
 ```
 
 #### Port-Forward
