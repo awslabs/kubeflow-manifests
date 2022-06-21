@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/tensorflow-training:2.6.0-gpu-py38-cu112-ubuntu20.04
+ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/tensorflow-training:2.6.3-gpu-py38-cu112-ubuntu20.04-v1.7
 
 FROM $BASE_IMAGE
 
