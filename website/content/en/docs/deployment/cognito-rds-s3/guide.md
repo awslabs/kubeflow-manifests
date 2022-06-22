@@ -54,11 +54,15 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # Kubeflow Istio Resources
         kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
         
-        # KFServing
+        # KServe
+        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
+        kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+
+        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
         kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
         
         # Central Dashboard
-        kustomize build upstream/apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+        kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
         # Notebooks
         kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
@@ -76,9 +80,6 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # Tensorboard
         kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
         kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
-        
-        # MPI Operator
-        kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -

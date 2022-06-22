@@ -59,14 +59,15 @@ DNS only supports wildcard placeholders in the [leftmost part of the domain name
 
 ### Create a certificate
 > Note: Both of these domains should be requested in the same certificate
-Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) steps in the Load Balancer installation guide. 
+
+Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-certificates-for-domain) steps in the Load Balancer installation guide. 
 
 Once the certificate status changes to `Issued`, export the ARN of the certificate created:
 ```bash
 export certArn=<>
 ```
 
-If you are using Cognito for user authentication, see [Cognito](/kubeflow-manifests/docs/component-guides/kserve/#cognito). If you use Dex as the auth provider in your Kubeflow deployment, see [Dex](/kubeflow-manifests/docs/component-guides/kserve/#dex). 
+If you are using Cognito for user authentication, see [Cognito](/kubeflow-manifests/docs/component-guides/kserve/#cognito-ingress). If you use Dex as the auth provider in your Kubeflow deployment, see [Dex](/kubeflow-manifests/docs/component-guides/kserve/#dex-ingress). 
 
 ## Cognito ingress
 
@@ -99,8 +100,8 @@ Use an ingress to set the [HTTP header conditions](https://docs.aws.amazon.com/e
 4. Check if the ingress-managed Load Balancer is provisioned. This may take a few minutes to complete.
     ```bash
     kubectl get ingress -n istio-system istio-ingress-api
-    NAME                CLASS    HOSTS   ADDRESS                                                                PORTS   AGE
-    istio-ingress-api   <none>   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      14m
+    NAME                CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress-api   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      14m
     ```
 
 Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
@@ -118,10 +119,10 @@ Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-man
     kustomize build awsconfigs/common/istio-ingress/overlays/https | kubectl apply -f -
     ``` 
 3. Get the Load Balancer address
-    ```
+    ```bash
     kubectl get ingress -n istio-system istio-ingress
-    NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-    istio-ingress   <none>   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+    NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
     ```
 Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
 
@@ -143,60 +144,114 @@ kubectl get authorizationpolicies -n istio-system
 ```
 
 ### Create an `InferenceService`
-Create a scikit-learn `InferenceService` using a [sample](https://github.com/kubeflow/kfserving-lts/blob/release-0.6/docs/samples/v1beta1/sklearn/v1/sklearn.yaml) from the KFserving repository and wait for `READY` to be `True`.
+
+Set the environment variable value for `PROFILE_NAMESPACE`(e.g. `staging`) according to your environment:
 ```bash
-kubectl apply -n staging -f https://raw.githubusercontent.com/kubeflow/kfserving-lts/release-0.6/docs/samples/v1beta1/sklearn/v1/sklearn.yaml
+export PROFILE_NAMESPACE="staging"
+```
+
+Create a scikit-learn `InferenceService` using a [sample](https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml) from the KFserving repository and wait for `READY` to be `True`.
+
+```bash
+kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml
 ```
 
 ### Check `InferenceService` status
 
 Check the `InferenceService` status. Once it is ready, copy the URL to use for sending a prediction request.
 ```bash
-kubectl get inferenceservices sklearn-iris -n staging
+kubectl get inferenceservices sklearn-irisv2 -n ${PROFILE_NAMESPACE}
 
-NAME           URL                                                READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
-sklearn-iris   http://sklearn-iris.staging.platform.example.com   True           100                              sklearn-iris-predictor-default-00001   3m31s
+NAME             URL                                                 READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                      AGE
+sklearn-irisv2   http://sklearn-iris2.staging.platform.example.com   True           100                              sklearn-irisv2-predictor-default-00001   3m31s
 ```
 
 ### Send an inference request
 
-Set the environment variable values for `KUBEFLOW_DOMAIN`(e.g. `platform.example.com`) and `PROFILE_NAMESPACE`(e.g. `staging`) according to your environment:
-```
+Set the environment variable values for `KUBEFLOW_DOMAIN`(e.g. `platform.example.com`) according to your environment:
+```bash
 export KUBEFLOW_DOMAIN="platform.example.com"
-export PROFILE_NAMESPACE="staging"
 ```
 
-Install dependencies for the script by running `pip install requests`
+Install dependencies for the script by running:
+```bash
+cd tests/e2e
+pip install requirements.txt
+```
 
 Run the sample python script to send an inference request based on your auth provider:
 
 #### Cognito inference 
 
-Run the [inference_sample_cognito.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_cognito.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](/kubeflow-manifests/docs/component-guides/kserve/#create-ingress).
+Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](/kubeflow-manifests/docs/component-guides/kserve/#create-ingress).
 ```bash
+export AUTH_PROVIDER="cognito"
 export HTTP_HEADER_NAME="x-api-key"
 export HTTP_HEADER_VALUE="token1"
+```
 
-python inference_sample_cognito.py
+```bash
+PYTHONPATH=.. python utils/kserve/inference_sample.py
 ```
 
 The output should look similar to the following:
 ```bash
 Status Code 200
-JSON Response  {'predictions': [1, 1]}
+JSON Response  {
+  "model_name": "sklearn-irisv2",
+  "model_version": null,
+  "id": "e5fc40ba-5f02-42f7-aff8-34042facbe11",
+  "parameters": null,
+  "outputs": [
+    {
+      "name": "predict",
+      "shape": [
+        2
+      ],
+      "datatype": "FP32",
+      "parameters": null,
+      "data": [
+        1,
+        2
+      ]
+    }
+  ]
+}
 ```
 
 #### Dex inference
-Run the [inference_sample_dex.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_dex.py) Python script by exporting the values for `USERNAME`(e.g. `user@example.com`), `PASSWORD` according to the user profile 
+Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `USERNAME`(e.g. `user@example.com`), `PASSWORD` according to the user profile 
 ```bash
+export AUTH_PROVIDER="dex"
 export USERNAME="user@example.com"
 export PASSWORD="12341234"
+```
 
-python inference_sample_dex.py
+```bash
+PYTHONPATH=.. python utils/kserve/inference_sample.py
 ```
 
 The output should look similar to the following:
 ```bash
 Status Code 200
-JSON Response  {'predictions': [1, 1]}
+JSON Response  {
+  "model_name": "sklearn-irisv2",
+  "model_version": null,
+  "id": "e5fc40ba-5f02-42f7-aff8-34042facbe11",
+  "parameters": null,
+  "outputs": [
+    {
+      "name": "predict",
+      "shape": [
+        2
+      ],
+      "datatype": "FP32",
+      "parameters": null,
+      "data": [
+        1,
+        2
+      ]
+    }
+  ]
+}
 ```
