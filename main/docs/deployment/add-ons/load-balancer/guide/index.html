@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/add-ons\/load-balancer\/guide\/",
-      "wordCount" : "1580",
+      "wordCount" : "1608",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-21T10:13:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-22T11:32:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Load Balancer">
 <meta itemprop="description" content="Expose Kubeflow over Load Balancer on AWS">
-<meta itemprop="dateModified" content="2022-06-21T10:13:04-07:00" />
-<meta itemprop="wordCount" content="1580">
+<meta itemprop="dateModified" content="2022-06-22T11:32:40-07:00" />
+<meta itemprop="wordCount" content="1608">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Load Balancer"/>
 <meta name="twitter:description" content="Expose Kubeflow over Load Balancer on AWS"/>
@@ -492,8 +492,8 @@
 <ol>
 <li>Check if ALB is provisioned. This may take a few minutes.
 <pre tabindex="0"><code>    kubectl get ingress -n istio-system istio-ingress
-    NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-    istio-ingress   &lt;none&gt;   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+    NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
 </code></pre>If <code>ADDRESS</code> is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in <a href="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">ALB fails to provision</a>.</li>
 <li>When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (<code>platform.example.com</code>) for <code>*.platform.example.com</code>. Please note that it might make up to five to ten minutes for DNS changes to propagate and for your URL to work.
 <img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png" alt="subdomain-*.platform-record"></li>
@@ -558,6 +558,9 @@
 </span></span></span></code></pre></div></li>
 <li>The central dashboard should now be available at <code>https://kubeflow.platform.example.com</code>. Open a browser and navigate to this URL.</li>
 </ol>
+<blockquote>
+<p>Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.com/apps/dig/#CNAME/">Google Admin Toolbox</a></p>
+</blockquote>
 <h2 id="clean-up">Clean up</h2>
 <p>To delete the resources created in this guide, run the following commands from the root of your repository:</p>
 <blockquote>
@@ -570,7 +573,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b05cc90ac0ee9f06ba939cee1bdc93d54d3be66d">Bump notebook in /components/notebook-dockerfiles/pytorch (#261) (b05cc90)</a>
+  Last modified June 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eebda1c74c5c48056b8a4781acff4728a6fb485d">Update KServe component, Kserve guide and fix incorrect paths (#266) (eebda1c)</a>
 </div>
 
 </div>

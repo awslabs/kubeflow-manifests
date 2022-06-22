@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/guide\/",
-      "wordCount" : "1488",
+      "wordCount" : "1550",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-21T10:13:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-22T11:32:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manual Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
-<meta itemprop="dateModified" content="2022-06-21T10:13:04-07:00" />
-<meta itemprop="wordCount" content="1488">
+<meta itemprop="dateModified" content="2022-06-22T11:32:40-07:00" />
+<meta itemprop="wordCount" content="1550">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manual Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider"/>
@@ -505,40 +505,44 @@
 </span></span></code></pre></div></li>
 <li><strong>[Option 2]</strong> Install individual components:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Kubeflow namespace</span>
-</span></span><span class="line"><span class="cl">kustomize build common/kubeflow-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-namespace/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Roles</span>
-</span></span><span class="line"><span class="cl">kustomize build common/kubeflow-roles/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-roles/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Istio</span>
-</span></span><span class="line"><span class="cl">kustomize build common/istio-1-9/istio-crds/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build common/istio-1-9/istio-namespace/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build common/istio-1-9/istio-install/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-crds/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-install/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Cert-Manager</span>
-</span></span><span class="line"><span class="cl">kustomize build common/cert-manager/cert-manager/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build common/cert-manager/kubeflow-issuer/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/cert-manager/cert-manager/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/cert-manager/kubeflow-issuer/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># KNative</span>
-</span></span><span class="line"><span class="cl">kustomize build common/knative/knative-serving/overlays/gateways <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build common/knative/knative-eventing/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build common/istio-1-9/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-serving/overlays/gateways <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-eventing/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Istio Resources</span>
-</span></span><span class="line"><span class="cl">kustomize build common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Pipelines</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># reapply manifest if you see an error</span>
-</span></span><span class="line"><span class="cl">kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># KFServing</span>
-</span></span><span class="line"><span class="cl">kustomize build apps/kfserving/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl"><span class="c1"># KServe</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/kserve <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Katib</span>
-</span></span><span class="line"><span class="cl">kustomize build apps/katib/upstream/installs/katib-with-kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Central Dashboard</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Notebooks</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
@@ -556,9 +560,6 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Tensorboard</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># MPI Operator</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Training Operator</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
@@ -585,8 +586,8 @@
 <li>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> kubectl get ingress -n istio-system
 </span></span><span class="line"><span class="cl"> Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+<span class="p">;</span> use networking.k8s.io/v1 Ingress
-</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
 </span></span></code></pre></div></li>
 <li>If <code>ADDRESS</code> is empty after a few minutes, see <a href="/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">ALB fails to provision</a> in the troubleshooting guide.</li>
 </ol>
@@ -609,7 +610,7 @@
 </ol>
 <h2 id="60-connecting-to-central-dashboard">6.0 Connecting to central dashboard</h2>
 <ol>
-<li>The central dashboard should now be available at <a href="https://kubeflow.platform.example.com/">https://kubeflow.platform.example.com</a>. Before connecting to the dashboard:
+<li>The central dashboard should now be available at <code>https://kubeflow.platform.example.com</code>. Before connecting to the dashboard:
 <ol>
 <li>Head over to the Cognito console and create some users in <code>Users and groups</code>. These are the users who will log in to the central dashboard.
 <ol>
@@ -635,13 +636,16 @@
 </li>
 </ol>
 </li>
-<li>Open the central dashboard at <a href="https://kubeflow.platform.example.com/">https://kubeflow.platform.example.com</a>. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.</li>
+<li>Open the central dashboard at <code>https://kubeflow.platform.example.com</code>. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.</li>
 </ol>
+<blockquote>
+<p>Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.com/apps/dig/#CNAME/">Google Admin Toolbox</a></p>
+</blockquote>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b05cc90ac0ee9f06ba939cee1bdc93d54d3be66d">Bump notebook in /components/notebook-dockerfiles/pytorch (#261) (b05cc90)</a>
+  Last modified June 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eebda1c74c5c48056b8a4781acff4728a6fb485d">Update KServe component, Kserve guide and fix incorrect paths (#266) (eebda1c)</a>
 </div>
 
 </div>

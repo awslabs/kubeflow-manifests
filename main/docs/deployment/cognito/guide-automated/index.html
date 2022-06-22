@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-21T10:13:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-22T11:32:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Automated Setup">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
-<meta itemprop="dateModified" content="2022-06-21T10:13:04-07:00" />
+<meta itemprop="dateModified" content="2022-06-22T11:32:40-07:00" />
 <meta itemprop="wordCount" content="442">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Automated Setup"/>
@@ -456,8 +456,8 @@
 <li>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> kubectl get ingress -n istio-system
 </span></span><span class="line"><span class="cl"> Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+<span class="p">;</span> use networking.k8s.io/v1 Ingress
-</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
 </span></span></code></pre></div></li>
 <li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
 </ol>
@@ -498,7 +498,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b05cc90ac0ee9f06ba939cee1bdc93d54d3be66d">Bump notebook in /components/notebook-dockerfiles/pytorch (#261) (b05cc90)</a>
+  Last modified June 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eebda1c74c5c48056b8a4781acff4728a6fb485d">Update KServe component, Kserve guide and fix incorrect paths (#266) (eebda1c)</a>
 </div>
 
 </div>

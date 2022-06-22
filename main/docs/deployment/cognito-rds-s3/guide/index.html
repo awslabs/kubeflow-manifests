@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito-rds-s3\/guide\/",
-      "wordCount" : "538",
+      "wordCount" : "572",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-21T10:13:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-22T11:32:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Cognito, RDS, and S3">
 <meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
-<meta itemprop="dateModified" content="2022-06-21T10:13:04-07:00" />
-<meta itemprop="wordCount" content="538">
+<meta itemprop="dateModified" content="2022-06-22T11:32:40-07:00" />
+<meta itemprop="wordCount" content="572">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Cognito, RDS, and S3"/>
 <meta name="twitter:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3"/>
@@ -412,11 +412,15 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Istio Resources</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># KFServing</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># KServe</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/kserve <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Central Dashboard</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Notebooks</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
@@ -434,9 +438,6 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Tensorboard</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># MPI Operator</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Training Operator</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
@@ -479,7 +480,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b05cc90ac0ee9f06ba939cee1bdc93d54d3be66d">Bump notebook in /components/notebook-dockerfiles/pytorch (#261) (b05cc90)</a>
+  Last modified June 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eebda1c74c5c48056b8a4781acff4728a6fb485d">Update KServe component, Kserve guide and fix incorrect paths (#266) (eebda1c)</a>
 </div>
 
 </div>

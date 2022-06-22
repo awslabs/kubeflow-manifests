@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/kserve\/",
-      "wordCount" : "1286",
+      "wordCount" : "1357",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-21T10:13:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-22T11:32:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="KServe">
 <meta itemprop="description" content="Model serving using KServe with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-21T10:13:04-07:00" />
-<meta itemprop="wordCount" content="1286">
+<meta itemprop="dateModified" content="2022-06-22T11:32:40-07:00" />
+<meta itemprop="wordCount" content="1357">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="KServe"/>
 <meta name="twitter:description" content="Model serving using KServe with Kubeflow on AWS"/>
@@ -432,12 +432,12 @@ data:
 </ul>
 <h3 id="create-a-certificate">Create a certificate</h3>
 <blockquote>
-<p>Note: Both of these domains should be requested in the same certificate
-Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.staging.platform.example.com</code> in your cluster&rsquo;s region by following the <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">create certificates for domain</a> steps in the Load Balancer installation guide.</p>
+<p>Note: Both of these domains should be requested in the same certificate</p>
 </blockquote>
+<p>Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.staging.platform.example.com</code> in your cluster&rsquo;s region by following the <a href="/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-certificates-for-domain">create certificates for domain</a> steps in the Load Balancer installation guide.</p>
 <p>Once the certificate status changes to <code>Issued</code>, export the ARN of the certificate created:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">certArn</span><span class="o">=</span>&lt;&gt;
-</span></span></code></pre></div><p>If you are using Cognito for user authentication, see <a href="/kubeflow-manifests/docs/component-guides/kserve/#cognito">Cognito</a>. If you use Dex as the auth provider in your Kubeflow deployment, see <a href="/kubeflow-manifests/docs/component-guides/kserve/#dex">Dex</a>.</p>
+</span></span></code></pre></div><p>If you are using Cognito for user authentication, see <a href="/kubeflow-manifests/docs/component-guides/kserve/#cognito-ingress">Cognito</a>. If you use Dex as the auth provider in your Kubeflow deployment, see <a href="/kubeflow-manifests/docs/component-guides/kserve/#dex-ingress">Dex</a>.</p>
 <h2 id="cognito-ingress">Cognito ingress</h2>
 <p>It is not currently possible to programatically authenticate a request that uses Amazon Cognito for user authentication through Load Balancer. You cannot generate <code>AWSELBAuthSessionCookie</code> cookies by using the access tokens from Cognito.</p>
 <p>To work around this, it is necessary to create a new Load Balancer endpoint for serving traffic that authorizes based on custom strings specified in a predefined HTTP header.</p>
@@ -468,8 +468,8 @@ Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.st
 </span></span></code></pre></div></li>
 <li>Check if the ingress-managed Load Balancer is provisioned. This may take a few minutes to complete.
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get ingress -n istio-system istio-ingress-api
-</span></span><span class="line"><span class="cl">NAME                CLASS    HOSTS   ADDRESS                                                                PORTS   AGE
-</span></span><span class="line"><span class="cl">istio-ingress-api   &lt;none&gt;   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   <span class="m">80</span>      14m
+</span></span><span class="line"><span class="cl">NAME                CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl">istio-ingress-api   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      14m
 </span></span></code></pre></div></li>
 </ol>
 <p>Once your Load Balancer is ready, move on to the <a href="/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records">Add DNS records</a> step to add a DNS record for the staging subdomain.</p>
@@ -483,10 +483,10 @@ Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.st
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/https <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div></li>
 <li>Get the Load Balancer address
-<pre tabindex="0"><code>kubectl get ingress -n istio-system istio-ingress
-NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-istio-ingress   &lt;none&gt;   *       xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get ingress -n istio-system istio-ingress
+</span></span><span class="line"><span class="cl">NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl">istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span></code></pre></div></li>
 </ol>
 <p>Once your Load Balancer is ready, move on to the <a href="/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records">Add DNS records</a> step to add a DNS record for the staging subdomain.</p>
 <h2 id="add-dns-records">Add DNS records</h2>
@@ -500,43 +500,84 @@ istio-ingress   &lt;none&gt;   *       xxxxxx-istiosystem-istio-2af2-1100502020.
 <p>Create the <code>AuthorizationPolicy</code> as mentioned in <a href="https://github.com/awslabs/kubeflow-manifests/issues/82#issuecomment-1068641378">issue #82</a> as a workaround until this is resolved. Verify that the policies have been created by listing the <code>authorizationpolicies</code> in the <code>istio-system</code> namespace:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get authorizationpolicies -n istio-system
 </span></span></code></pre></div><h3 id="create-an-inferenceservice">Create an <code>InferenceService</code></h3>
-<p>Create a scikit-learn <code>InferenceService</code> using a <a href="https://github.com/kubeflow/kfserving-lts/blob/release-0.6/docs/samples/v1beta1/sklearn/v1/sklearn.yaml">sample</a> from the KFserving repository and wait for <code>READY</code> to be <code>True</code>.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -n staging -f https://raw.githubusercontent.com/kubeflow/kfserving-lts/release-0.6/docs/samples/v1beta1/sklearn/v1/sklearn.yaml
+<p>Set the environment variable value for <code>PROFILE_NAMESPACE</code>(e.g. <code>staging</code>) according to your environment:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span><span class="s2">&#34;staging&#34;</span>
+</span></span></code></pre></div><p>Create a scikit-learn <code>InferenceService</code> using a <a href="https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml">sample</a> from the KFserving repository and wait for <code>READY</code> to be <code>True</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span> -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml
 </span></span></code></pre></div><h3 id="check-inferenceservice-status">Check <code>InferenceService</code> status</h3>
 <p>Check the <code>InferenceService</code> status. Once it is ready, copy the URL to use for sending a prediction request.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get inferenceservices sklearn-iris -n staging
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get inferenceservices sklearn-irisv2 -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">NAME           URL                                                READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
-</span></span><span class="line"><span class="cl">sklearn-iris   http://sklearn-iris.staging.platform.example.com   True           <span class="m">100</span>                              sklearn-iris-predictor-default-00001   3m31s
+</span></span><span class="line"><span class="cl">NAME             URL                                                 READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                      AGE
+</span></span><span class="line"><span class="cl">sklearn-irisv2   http://sklearn-iris2.staging.platform.example.com   True           <span class="m">100</span>                              sklearn-irisv2-predictor-default-00001   3m31s
 </span></span></code></pre></div><h3 id="send-an-inference-request">Send an inference request</h3>
-<p>Set the environment variable values for <code>KUBEFLOW_DOMAIN</code>(e.g. <code>platform.example.com</code>) and <code>PROFILE_NAMESPACE</code>(e.g. <code>staging</code>) according to your environment:</p>
-<pre tabindex="0"><code>export KUBEFLOW_DOMAIN=&#34;platform.example.com&#34;
-export PROFILE_NAMESPACE=&#34;staging&#34;
-</code></pre><p>Install dependencies for the script by running <code>pip install requests</code></p>
-<p>Run the sample python script to send an inference request based on your auth provider:</p>
+<p>Set the environment variable values for <code>KUBEFLOW_DOMAIN</code>(e.g. <code>platform.example.com</code>) according to your environment:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_DOMAIN</span><span class="o">=</span><span class="s2">&#34;platform.example.com&#34;</span>
+</span></span></code></pre></div><p>Install dependencies for the script by running:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
+</span></span><span class="line"><span class="cl">pip install requirements.txt
+</span></span></code></pre></div><p>Run the sample python script to send an inference request based on your auth provider:</p>
 <h4 id="cognito-inference">Cognito inference</h4>
-<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_cognito.py">inference_sample_cognito.py</a> Python script by exporting the values for <code>HTTP_HEADER_NAME</code>(e.g. <code>x-api-key</code>) and <code>HTTP_HEADER_VALUE</code>(e.g. <code>token1</code>) according to the values configured in <a href="/kubeflow-manifests/docs/component-guides/kserve/#create-ingress">ingress section</a>.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HTTP_HEADER_NAME</span><span class="o">=</span><span class="s2">&#34;x-api-key&#34;</span>
+<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py">inference_sample.py</a> Python script by exporting the values for <code>HTTP_HEADER_NAME</code>(e.g. <code>x-api-key</code>) and <code>HTTP_HEADER_VALUE</code>(e.g. <code>token1</code>) according to the values configured in <a href="/kubeflow-manifests/docs/component-guides/kserve/#create-ingress">ingress section</a>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AUTH_PROVIDER</span><span class="o">=</span><span class="s2">&#34;cognito&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HTTP_HEADER_NAME</span><span class="o">=</span><span class="s2">&#34;x-api-key&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HTTP_HEADER_VALUE</span><span class="o">=</span><span class="s2">&#34;token1&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">python inference_sample_cognito.py
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/kserve/inference_sample.py
 </span></span></code></pre></div><p>The output should look similar to the following:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Status Code <span class="m">200</span>
-</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span><span class="s1">&#39;predictions&#39;</span>: <span class="o">[</span>1, 1<span class="o">]}</span>
+</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_name&#34;</span>: <span class="s2">&#34;sklearn-irisv2&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_version&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;e5fc40ba-5f02-42f7-aff8-34042facbe11&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;outputs&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">    <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;predict&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;shape&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;datatype&#34;</span>: <span class="s2">&#34;FP32&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;data&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        1,
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
 </span></span></code></pre></div><h4 id="dex-inference">Dex inference</h4>
-<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample_dex.py">inference_sample_dex.py</a> Python script by exporting the values for <code>USERNAME</code>(e.g. <code>user@example.com</code>), <code>PASSWORD</code> according to the user profile</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">USERNAME</span><span class="o">=</span><span class="s2">&#34;user@example.com&#34;</span>
+<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py">inference_sample.py</a> Python script by exporting the values for <code>USERNAME</code>(e.g. <code>user@example.com</code>), <code>PASSWORD</code> according to the user profile</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AUTH_PROVIDER</span><span class="o">=</span><span class="s2">&#34;dex&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">USERNAME</span><span class="o">=</span><span class="s2">&#34;user@example.com&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PASSWORD</span><span class="o">=</span><span class="s2">&#34;12341234&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">python inference_sample_dex.py
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/kserve/inference_sample.py
 </span></span></code></pre></div><p>The output should look similar to the following:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Status Code <span class="m">200</span>
-</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span><span class="s1">&#39;predictions&#39;</span>: <span class="o">[</span>1, 1<span class="o">]}</span>
+</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_name&#34;</span>: <span class="s2">&#34;sklearn-irisv2&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_version&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;e5fc40ba-5f02-42f7-aff8-34042facbe11&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;outputs&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">    <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;predict&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;shape&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;datatype&#34;</span>: <span class="s2">&#34;FP32&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;data&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        1,
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
 </span></span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b05cc90ac0ee9f06ba939cee1bdc93d54d3be66d">Bump notebook in /components/notebook-dockerfiles/pytorch (#261) (b05cc90)</a>
+  Last modified June 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eebda1c74c5c48056b8a4781acff4728a6fb485d">Update KServe component, Kserve guide and fix incorrect paths (#266) (eebda1c)</a>
 </div>
 
 </div>
