@@ -17,7 +17,7 @@ def apply_kustomize(path):
     """
     Equivalent to:
 
-    while ! kustomize build <PATH> | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+    while ! kustomize build <PATH> | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 
     but creates a temporary file instead of piping.
     """
