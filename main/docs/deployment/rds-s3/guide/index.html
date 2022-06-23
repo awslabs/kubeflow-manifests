@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-23T10:00:36-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-23T13:50:13-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="RDS and S3">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3">
-<meta itemprop="dateModified" content="2022-06-23T10:00:36-07:00" />
+<meta itemprop="dateModified" content="2022-06-23T13:50:13-07:00" />
 <meta itemprop="wordCount" content="2225">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RDS and S3"/>
@@ -200,7 +200,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -619,15 +619,15 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 <h4 id="rds-and-s3-deploy-both-rds-and-s3">[RDS and S3] Deploy both RDS and S3</h4>
 <p>Use the following command to deploy the Kubeflow manifests for both RDS and S3:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>  <span class="c1"># exported in 1.1 Prerequisites</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3 <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3 <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div><h4 id="rds-deploy-rds-only">[RDS] Deploy RDS only</h4>
 <p>Use the following command to deploy the Kubeflow manifests for RDS only:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>  <span class="c1"># exported in 1.1 Prerequisites</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3/rds-only <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3/rds-only <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div><h4 id="s3-deploy-s3-only">[S3] Deploy S3 only</h4>
 <p>Use the following command to deploy the Kubeflow manifests for S3 only:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>  <span class="c1"># exported in 1.1 Prerequisites</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3/s3-only <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/rds-s3/s3-only <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div><p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a>.</p>
 <p>You can now start experimenting and running your end-to-end ML workflows with Kubeflow!</p>
 <h2 id="40-verify-the-installation">4.0 Verify the installation</h2>
@@ -738,7 +738,7 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 23, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/264d14907808d0f6dea47c511c774b0838d54cd1">RDS auto script DB instance and secret creation bugfix (#270) (264d149)</a>
+  Last modified June 23, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bf8d6a57f39321f327bd5b38bb6862c82de2b35">Minor improvements: Path fixes, increase time in while loop, cognito guide cleanup (#272) (3bf8d6a)</a>
 </div>
 
 </div>
