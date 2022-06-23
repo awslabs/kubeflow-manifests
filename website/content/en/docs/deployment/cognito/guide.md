@@ -217,4 +217,4 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 7.0 Uninstall Kubeflow
 
-To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide](/kubeflow-manifests/docs/deployment/cognito/guide-automated/#uninstall-kubeflow)
+To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/guide-automated.md#uninstall-kubeflow" >}})
