@@ -10,7 +10,7 @@ In order to grant Katib experiment pods access to AWS resources, the correspondi
 
 ### Prerequisites
 
-Steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). Follow those steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
+Steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md#configuration-steps" >}}). Follow those steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
 The following is an example of a profile using the `AwsIamForServiceAccount` plugin:
 ```yaml
@@ -181,11 +181,11 @@ The below steps will modify the `katib-config` to create pods under the `default
 The following steps walk through creating an experiment with pods that have permissions to list buckets in S3.
 
 #### Prerequisites
-Make sure that you have completed the [configuration steps](/kubeflow-manifests/docs/component-guides/katib/#configuration).
+Make sure that you have completed the [configuration steps]({{< ref "/docs/component-guides/katib.md#configuration" >}}).
 
 #### Steps
 
-1. Export the name of the profile created in the [configuration steps](/kubeflow-manifests/docs/component-guides/katib/#configuration):
+1. Export the name of the profile created in the [configuration steps]({{< ref "/docs/component-guides/katib.md#configuration" >}}):
    ```bash
     export PROFILE_NAME=<the created profile name>
     ```

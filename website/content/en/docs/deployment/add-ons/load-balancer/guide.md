@@ -20,8 +20,8 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Prerequisites
 This guide assumes that you have: 
-- A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the [Vanilla](/kubeflow-manifests/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
-- Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) guide on the client machine.
+- A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the [Vanilla]({{< ref "/docs/deployment/vanilla/guide.md" >}}) deployment of Kubeflow on AWS).
+- Installed the tools mentioned in the [general prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}) guide on the client machine.
 - Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
     - Verify that your cluster name and region are exported:
         ```bash
@@ -31,7 +31,7 @@ This guide assumes that you have:
     - Display the current cluster that kubeconfig points to:
         ```bash
         kubectl config current-context
-        aws eks describe-cluster --name $CLUSTER_NAME
+        aws eks describe-cluster --name $CLUSTER_NAME --region $CLUSTER_REGION
         ```
 - Verify that the current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>`.
 
@@ -132,7 +132,7 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
         NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
         istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
     ```
-    If `ADDRESS` is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in [ALB fails to provision](https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision).
+    If `ADDRESS` is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in [ALB fails to provision]({{< ref "/docs/troubleshooting-aws.md#alb-fails-to-provision" >}}).
 2. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (`platform.example.com`) for `*.platform.example.com`. Please note that it might make up to five to ten minutes for DNS changes to propagate and for your URL to work.
     ![subdomain-*.platform-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png)
 > Note: Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/).
