@@ -1,5 +1,5 @@
 +++
-title = "Automated Setup"
+title = "Automated Deployment Guide"
 description = "Deploying Kubeflow with AWS Cognito as identity provider using setup scripts"
 weight = 10
 +++
@@ -72,7 +72,10 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
-1. Follow the [section 4.0(Building manifests and deploying Kubeflow)](/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow) to install Kubeflow
+1. Install Kubeflow using the following command:
+   ```bash
+    while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+    ```
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
@@ -102,3 +105,53 @@ This guide assumes you have Python 3.8 installed and that you have completed the
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
+
+## Uninstall Kubeflow
+> Note: Delete all the resources you might have created in your profile namespaces before running these steps.
+1. Run the following commands to delete the profiles, ingress and corresponding ingress managed load balancer
+   ```bash
+    kubectl delete profiles --all
+    kubectl delete ingress -n istio-system istio-ingress
+    ```
+1. Delete the kubeflow deployment
+   ```bash
+    kustomize build deployments/cognito | kubectl delete -f -
+    ```
+1. To delete the rest of resources(subdomain, certificates etc.), run the following commands from the root of your repository:
+> Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/cognito_bootstrap/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in a yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
+    - Sample config file:
+    ```yaml
+    cognitoUserpool:
+        ARN: arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_yasI9dbxF
+        appClientId: 5jmk7ljl2a74jk3n0a0fvj3l31
+        domainAliasTarget: xxxxxxxxxx.cloudfront.net
+        domain: auth.platform.example.com
+        name: kubeflow-users
+    kubeflow:
+        alb:
+            serviceAccount:
+                name: alb-ingress-controller
+                namespace: kubeflow
+                policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+    cluster:  
+        name: kube-eks-cluster
+        region: us-west-2
+    route53:
+        rootDomain:
+            certARN: arn:aws:acm:us-east-1:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af
+            hostedZoneId: XXXXX
+            name: example.com
+        subDomain:
+            us-west-2-certARN: arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726
+            hostedZoneId: XXXXX
+            name: platform.example.com
+            us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
+    ```
+    - Run the following command to install the script dependencies and delete the resources:
+    > Note: You can rerun the script incase some resources fail to delete
+    ```bash
+    cd tests/e2e
+    pip install -r requirements.txt
+    PYTHONPATH=.. python utils/cognito_bootstrap/cognito_resources_cleanup.py
+    cd -
+    ```

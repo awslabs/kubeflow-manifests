@@ -27,7 +27,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         ```sh
-        while ! kustomize build deployments/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build deployments/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
         ```
     1. **[Option 2]** Install individual components:
         ```sh
@@ -38,9 +38,9 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build upstream/common/istio-1-9/istio-crds/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/istio-namespace/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
 
         # Cert-Manager
         kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
@@ -49,10 +49,10 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # KNative
         kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
         
         # KServe
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
