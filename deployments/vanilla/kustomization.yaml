@@ -52,7 +52,7 @@ resources:
   - ../../upstream/common/user-namespace/base
 
   # KServe
-  - ../../upstream/contrib/kserve/kserve
+  - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
   # AWS Telemetry - This is an optional component. See usage tracking documentation for more information

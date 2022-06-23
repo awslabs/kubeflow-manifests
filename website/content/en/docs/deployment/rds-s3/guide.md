@@ -243,21 +243,21 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 ```sh
 cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployments/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 ```
 
 #### [RDS] Deploy RDS only
 Use the following command to deploy the Kubeflow manifests for RDS only:
 ```sh
 cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 ```
 
 #### [S3] Deploy S3 only
 Use the following command to deploy the Kubeflow manifests for S3 only:
 ```sh
 cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+while ! kustomize build deployments/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 ```
 
 Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster](/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster).

@@ -46,7 +46,7 @@ resources:
   - ../../awsconfigs/common/aws-telemetry
 
   # KServe
-  - ../../upstream/contrib/kserve/kserve
+  - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
   # Configured for AWS Cognito
