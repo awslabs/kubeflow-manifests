@@ -60,7 +60,7 @@ DNS only supports wildcard placeholders in the [leftmost part of the domain name
 ### Create a certificate
 > Note: Both of these domains should be requested in the same certificate
 
-Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-certificates-for-domain) steps in the Load Balancer installation guide. 
+Create an ACM certificate for `*.platform.example.com` and `*.staging.platform.example.com` in your cluster's region by following the [create certificates for domain](/kubeflow-manifests/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain) steps in the Load Balancer installation guide. 
 
 Once the certificate status changes to `Issued`, export the ARN of the certificate created:
 ```bash
