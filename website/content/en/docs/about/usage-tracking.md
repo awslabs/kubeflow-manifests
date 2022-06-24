@@ -12,8 +12,8 @@ Usage tracking for Kubeflow on AWS collects the instance ID used by one of the w
 
 Usage tracking is activated by default. If you deactivated usage tracking for your Kubeflow deployment and would like to activate it after the fact, you can do so at any time with the following command:
 
-```
-kustomize build distributions/aws/aws-telemetry | kubectl apply -f -
+```bash
+kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 ```
 
 ### Deactivate usage tracking
@@ -22,12 +22,12 @@ kustomize build distributions/aws/aws-telemetry | kubectl apply -f -
 
 You can deactivate usage tracking by skipping the telemetry component installation in one of two ways:
 
-1. For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/vanilla/kustomization.yaml#L57) in the `kustomization.yaml` file of your choosing:
-    ```
-    # ./../aws-telemetry
+1. For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/kustomization.yaml#L59) in the `kustomization.yaml` file of your choosing:
+    ```bash
+    # ../../aws-telemetry
     ```
 2. For individual component installation, **do not** install the `aws-telemetry` component: 
-    ```
+    ```bash
     # AWS Telemetry - This is an optional component. 
     kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
     ```
