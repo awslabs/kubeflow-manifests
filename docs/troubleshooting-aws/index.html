@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.97.3" />
+<meta name="generator" content="Hugo 0.93.0" />
 <meta name="robots" content="index, follow">
 
 <script type="application/ld+json">
@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-05-16T09:16:04-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Troubleshooting">
 <meta itemprop="description" content="Diagnose and fix issues you may encounter in your Kubeflow deployment">
-<meta itemprop="dateModified" content="2022-05-16T09:16:04-07:00" />
+<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
 <meta itemprop="wordCount" content="318">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Troubleshooting"/>
@@ -62,13 +62,20 @@
 
 
 
-<link rel="preload" href="/kubeflow-manifests/scss/main.min.b275c0f5fd67c46ede305b867783e2f2c77df1c8e5b6fa9630975c6588ebfe2b.css" as="style">
-<link href="/kubeflow-manifests/scss/main.min.b275c0f5fd67c46ede305b867783e2f2c77df1c8e5b6fa9630975c6588ebfe2b.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kubeflow-manifests/scss/main.min.aaceb816a36445103bbac4366a50b9ace964e875d4fad1f72a147d79306e7865.css" as="style">
+<link href="/kubeflow-manifests/scss/main.min.aaceb816a36445103bbac4366a50b9ace964e875d4fad1f72a147d79306e7865.css" rel="stylesheet" integrity="">
 
 <script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
+
+    
+    <link href="/kubeflow-manifests/css/syntax.min.css" rel="stylesheet">
+
+    
+    <link href="/kubeflow-manifests/css/copy-code-button.min.css" rel="stylesheet">
+
 
   </head>
   <body class="td-page">
@@ -178,39 +185,43 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentprerequisites-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentprerequisites-check"><a href="/kubeflow-manifests/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentvanillaguide"><span class="">Vanilla Installation</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognito-check"><a href="/kubeflow-manifests/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentcognito"><span class="">Cognito</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="">Full Deployment Guide</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="">Manual Deployment Guide</span></a></label>
+  
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
-  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide"><span class="">Cognito, RDS, and S3</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentvanillaguide"><span class="">Vanilla Installation</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentadd-ons-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-ons-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentadd-ons-check"><a href="/kubeflow-manifests/docs/deployment/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentadd-ons"><span class="">Add-ons</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentadd-onsstorageefsguide-li">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentadd-onsstorageefsguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-onsstorageefsguide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentadd-onsstorageefsguide-check"><a href="/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentadd-onsstorageefsguide"><span class="">EFS</span></a></label>
   
@@ -221,10 +232,6 @@
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentadd-onscloudwatchguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-onscloudwatchguide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/docs/deployment/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
   
 </li>
   </ul>
@@ -357,24 +364,24 @@
 <p>You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct <a href="/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a> installed.</p>
 <h3 id="alb-fails-to-provision">ALB fails to provision</h3>
 <p>If you see that your istio-ingress <code>ADDRESS</code> is empty after more than a few minutes, it is possible that something is misconfigured in your ALB ingress controller.</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ingress -n istio-system
-</span></span><span style="display:flex;"><span>NAME            HOSTS   ADDRESS   PORTS   AGE
-</span></span><span style="display:flex;"><span>istio-ingress   *                 <span style="color:#0000cf;font-weight:bold">80</span>      3min
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get ingress -n istio-system
+</span></span><span class="line"><span class="cl">NAME            HOSTS   ADDRESS   PORTS   AGE
+</span></span><span class="line"><span class="cl">istio-ingress   *                 <span class="m">80</span>      3min
 </span></span></code></pre></div><p>Check the AWS ALB Ingress Controller logs for errors.</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl -n kube-system logs <span style="color:#204a87;font-weight:bold">$(</span>kubectl get pods -n kube-system --selector<span style="color:#ce5c00;font-weight:bold">=</span>app.kubernetes.io/name<span style="color:#ce5c00;font-weight:bold">=</span>aws-load-balancer-controller --output<span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">jsonpath</span><span style="color:#ce5c00;font-weight:bold">={</span>.items..metadata.name<span style="color:#ce5c00;font-weight:bold">}</span><span style="color:#204a87;font-weight:bold">)</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl -n kube-system logs <span class="k">$(</span>kubectl get pods -n kube-system --selector<span class="o">=</span>app.kubernetes.io/name<span class="o">=</span>aws-load-balancer-controller --output<span class="o">=</span><span class="nv">jsonpath</span><span class="o">={</span>.items..metadata.name<span class="o">}</span><span class="k">)</span>
 </span></span></code></pre></div><p>If the logs indicate issues with a missing clustername, check the following ConfigMap:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get configmaps -n kube-system aws-load-balancer-controller-config -o yaml
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get configmaps -n kube-system aws-load-balancer-controller-config -o yaml
 </span></span></code></pre></div><p>Make sure that the ConfigMap has the correct EKS cluster name assigned to the <code>clusterName</code> variable.</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
-</span></span><span style="display:flex;"><span>kind: ConfigMap
-</span></span><span style="display:flex;"><span>data:
-</span></span><span style="display:flex;"><span>  clusterName: your-eks-cluster-name
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">apiVersion: v1
+</span></span><span class="line"><span class="cl">kind: ConfigMap
+</span></span><span class="line"><span class="cl">data:
+</span></span><span class="line"><span class="cl">  clusterName: your-eks-cluster-name
 </span></span></code></pre></div><p>If this does not resolve the error, it is possible that your subnets are not tagged so that Kubernetes knows which subnets to use for external load balancers. To fix this, ensure that your cluster&rsquo;s public subnets are tagged with the <strong>Key</strong>: <code>kubernetes.io/role/elb</code> and <strong>Value</strong>: <code>1</code>. See the Prerequisites section for application load balancing in the <a href="https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html">Amazon EKS User Guide</a> for further details.</p>
 <h3 id="fsx-issues">FSx issues</h3>
 <p>Verify that the FSx drivers are installed by running the following command:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get csidriver -A
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get csidriver -A
 </span></span></code></pre></div><p>Check that <code>PersistentVolumes</code>, <code>PersistentVolumeClaims</code>, and <code>StorageClasses</code> are all deployed as expected:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pv,pvc,sc -A
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get pv,pvc,sc -A
 </span></span></code></pre></div><p>Use the <code>kubectl logs</code> command to get more information on Pods that use these resources.</p>
 <p>For more information, see the <a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">Amazon FSx for Lustre CSI Driver</a> GitHub repository. Troubleshooting information for specific FSx filesystems can be found in the <a href="https://docs.aws.amazon.com/fsx/index.html">Amazon FSx documentation</a>.</p>
 <h3 id="rds-issues">RDS issues</h3>
@@ -383,7 +390,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 16, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/488ef55e7f136e31370bd02474ad4b61c3a6a284">Kubeflow on AWS Website changes (488ef55e)</a>
+  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
 </div>
 
 </div>
@@ -443,7 +450,12 @@
 
 
 
-<script src="/kubeflow-manifests/js/main.min.e0906bdf87f84cd4d1cf6f72a81190c7ac621197fe03351fa28fb474fde2be3e.js" integrity="sha256-4JBr34f4TNTRz29yqBGQx6xiEZf&#43;AzUfoo&#43;0dP3ivj4=" crossorigin="anonymous"></script>
+<script src="/kubeflow-manifests/js/main.min.d33ba880dcae2a9badacbf2fb5e36200904b2b546035ace68e637312fcf7d133.js" integrity="sha256-0zuogNyuKputrL8vteNiAJBLK1RgNazmjmNzEvz30TM=" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/kubeflow-manifests/js/copy-code-button.min.js"></script>
 
 
 
