@@ -99,6 +99,10 @@
     &lt;/thead&gt;
     &lt;tbody&gt;
       &lt;tr&gt;
+        &lt;td&gt;1.22&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
         &lt;td&gt;1.21&lt;/td&gt;
         &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
       &lt;/tr&gt;

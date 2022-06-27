@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Cognito, RDS, and S3">
 <meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="572">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Cognito, RDS, and S3"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -358,7 +360,7 @@
 	</header>    
 	<p>This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.</p>
 <h2 id="1-prerequisites">1. Prerequisites</h2>
-<p>Refer to the <a href="/kubeflow-manifests/docs/deployment/prerequisites/">general prerequisites guide</a> and the <a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/">RDS and S3 setup guide</a> in order to:</p>
+<p>Refer to the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">general prerequisites guide</a> and the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/">RDS and S3 setup guide</a> in order to:</p>
 <ol>
 <li>Install the CLI tools</li>
 <li>Clone the repositories</li>
@@ -371,7 +373,7 @@
 </ol>
 <h2 id="configure-custom-domain-and-cognito">Configure Custom Domain and Cognito</h2>
 <ol>
-<li>Follow the <a href="/kubeflow-manifests/docs/deployment/cognito/guide/">Cognito setup guide</a> from <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">Section 1.0 (Custom domain)</a> up to <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">Section 3.0 (Configure ingress)</a> in order to:
+<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/">Cognito setup guide</a> from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">Section 1.0 (Custom domain)</a> up to <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">Section 3.0 (Configure ingress)</a> in order to:
 <ol>
 <li>Create a custom domain</li>
 <li>Create TLS certificates for the domain</li>
@@ -463,7 +465,7 @@
 </span></span></code></pre></div></li>
 </ol>
 </li>
-<li>Follow the rest of the Cognito guide from <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address">section 5.0 (Updating the domain with ALB address)</a> in order to:
+<li>Follow the rest of the Cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address">section 5.0 (Updating the domain with ALB address)</a> in order to:
 <ol>
 <li>Add/Update the DNS records in a custom domain with the ALB address</li>
 <li>Create a user in a Cognito user pool</li>
@@ -476,7 +478,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

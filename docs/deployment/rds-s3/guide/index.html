@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="RDS and S3">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="2225">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RDS and S3"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -388,7 +390,7 @@
 	<p>This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.</p>
 <h3 id="rds">RDS</h3>
 <p><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html">Amazon Relational Database Service (RDS)</a> is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.</p>
-<p>In the <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml">KFP</a> and <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml">Katib</a> components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.</p>
+<p>In the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml">KFP</a> and <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml">Katib</a> components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.</p>
 <p>Compared to the MySQL setup in the default installation, using RDS provides the following advantages:</p>
 <ul>
 <li>Availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.</li>
@@ -398,7 +400,7 @@
 </ul>
 <h3 id="s3">S3</h3>
 <p><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (S3)</a> is an object storage service that is highly scalable, available, secure, and performant.</p>
-<p>In the <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml">KFP</a> component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.</p>
+<p>In the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml">KFP</a> component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.</p>
 <p>Configuring MinIO to read and write to S3 provides the following advantages:</p>
 <ul>
 <li>Scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.</li>
@@ -415,7 +417,7 @@
 <p>To install for only RDS or only S3, complete the steps relevant to your installation choice.</p>
 <p>To install for both RDS and S3, complete all the steps below.</p>
 <h2 id="10-prerequisites">1.0 Prerequisites</h2>
-<p>Follow the steps in <a href="/kubeflow-manifests/docs/deployment/prerequisites/">Prerequisites</a> to make sure that you have everything you need to get started.</p>
+<p>Follow the steps in <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">Prerequisites</a> to make sure that you have everything you need to get started.</p>
 <p>Make sure you are starting from the repository root directory.
 Export the below variable:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">REPO_ROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
@@ -624,7 +626,7 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 <p>Use the following command to deploy the Kubeflow manifests for S3 only:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>  <span class="c1"># exported in 1.1 Prerequisites</span>
 </span></span><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/rds-s3/s3-only <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
-</span></span></code></pre></div><p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a>.</p>
+</span></span></code></pre></div><p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a>.</p>
 <p>You can now start experimenting and running your end-to-end ML workflows with Kubeflow!</p>
 <h2 id="40-verify-the-installation">4.0 Verify the installation</h2>
 <h3 id="41-verify-rds">4.1 Verify RDS</h3>
@@ -673,7 +675,7 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 </span></span><span class="line"><span class="cl">+----------------------+
 </span></span></code></pre></div><ol start="4">
 <li>
-<p>Access the Kubeflow Central Dashboard <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Katib (under Experiments (AutoML)).</p>
+<p>Access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Katib (under Experiments (AutoML)).</p>
 </li>
 <li>
 <p>Create an experiment using the following <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/custom-resource-templates/katib-experiment-random.yaml">yaml file</a>.</p>
@@ -696,7 +698,7 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 </span></span></code></pre></div><h3 id="42-verify-s3">4.2 Verify S3</h3>
 <ol>
 <li>
-<p>Access the Kubeflow Central Dashboard <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Kubeflow Pipelines (under Pipelines).</p>
+<p>Access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Kubeflow Pipelines (under Pipelines).</p>
 </li>
 <li>
 <p>Create an experiment named <code>test</code> and create a run using the sample pipeline <code>[Demo] XGBoost - Iterative model training</code>.</p>
@@ -734,7 +736,7 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

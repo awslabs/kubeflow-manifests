@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Automated Setup">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="442">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Automated Setup"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -361,11 +363,11 @@
 	</header>    
 	<p>This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&rsquo;s public DNS names are not supported.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This guide assumes you have Python 3.8 installed and that you have completed the <a href="/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a>.</p>
+<p>This guide assumes you have Python 3.8 installed and that you have completed the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a>.</p>
 <h2 id="create-required-resources-and-deploy-kubeflow">Create required resources and deploy Kubeflow</h2>
 <ol>
 <li>
-<p>The following steps automate <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">section 1.0(Custom domain and certificates)</a> (creating a custom domain to host Kubeflow and TLS certificates for the domain), <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool">section 2.0(Cognito user pool)</a> (creating a Cognito Userpool used for user authentication) and<a href="/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">section 3.0(Configure Ingress)</a> (configuring ingress and load balancer controller manifests) of the cognito guide.</p>
+<p>The following steps automate <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">section 1.0(Custom domain and certificates)</a> (creating a custom domain to host Kubeflow and TLS certificates for the domain), <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool">section 2.0(Cognito user pool)</a> (creating a Cognito Userpool used for user authentication) and<a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">section 3.0(Configure Ingress)</a> (configuring ingress and load balancer controller manifests) of the cognito guide.</p>
 <ol>
 <li>Install dependencies for the scripts
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">pip install -r tests/e2e/requirements.txt
@@ -377,7 +379,7 @@
 <li>If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in <code>route53.rootDomain.hostedZoneId</code>. Skip this step if your domain is managed by other domain provider.</li>
 </ol>
 </li>
-<li>Name of the sudomain you want to host Kubeflow (e.g. <code>platform.example.com</code>) in <code>route53.subDomain.name</code>. Please read <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">this section</a> to understand why we use a subdomain.</li>
+<li>Name of the sudomain you want to host Kubeflow (e.g. <code>platform.example.com</code>) in <code>route53.subDomain.name</code>. Please read <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">this section</a> to understand why we use a subdomain.</li>
 <li>Cluster name and region where kubeflow will be deployed in <code>cluster.name</code> and <code>cluster.region</code> (e.g. us-west-2) respectively.</li>
 <li>Name of cognito userpool in <code>cognitoUserpool.name</code> e.g. kubeflow-users.</li>
 <li>The config file will look something like:
@@ -442,7 +444,7 @@
 </ol>
 </li>
 <li>
-<p>Follow the <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow">section 4.0(Building manifests and deploying Kubeflow)</a> to install Kubeflow</p>
+<p>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow">section 4.0(Building manifests and deploying Kubeflow)</a> to install Kubeflow</p>
 </li>
 <li>
 <p>Updating the domain with ALB address</p>
@@ -455,7 +457,7 @@
 </span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
 </span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
 </span></span></code></pre></div></li>
-<li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
+<li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
 </ol>
 </li>
 <li>Substitute the ALB address under <code>kubeflow.alb.dns</code> in <code>tests/e2e/utils/cognito_bootstrap/config.yaml</code>. The kubeflow section of the config file will look like:
@@ -482,7 +484,7 @@
 </ol>
 </li>
 <li>
-<p>Follow the rest of the cognito guide from <a href="/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard">section 6.0(Connecting to central dashboard)</a> to:</p>
+<p>Follow the rest of the cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard">section 6.0(Connecting to central dashboard)</a> to:</p>
 <ol>
 <li>Create a user in Cognito user pool</li>
 <li>Create a profile for the user from the user pool</li>
@@ -494,7 +496,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

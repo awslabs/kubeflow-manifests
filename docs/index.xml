@@ -32,8 +32,8 @@
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;This guide assumes that you have:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla&lt;/a&gt; deployment of Kubeflow on AWS).&lt;/li&gt;
-&lt;li&gt;Installed the tools mentioned in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites&lt;/a&gt; guide on the client machine.&lt;/li&gt;
+&lt;li&gt;A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla&lt;/a&gt; deployment of Kubeflow on AWS).&lt;/li&gt;
+&lt;li&gt;Installed the tools mentioned in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites&lt;/a&gt; guide on the client machine.&lt;/li&gt;
 &lt;li&gt;Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
 &lt;ul&gt;
 &lt;li&gt;Verify that your cluster name and region are exported:
@@ -42,7 +42,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;Display the current cluster that kubeconfig points to:
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl config current-context
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws eks describe-cluster --name &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws eks describe-cluster --name &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
@@ -231,11 +231,11 @@
         
         &lt;p&gt;This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&amp;rsquo;s public DNS names are not supported.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;This guide assumes you have Python 3.8 installed and that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This guide assumes you have Python 3.8 installed and that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;create-required-resources-and-deploy-kubeflow&#34;&gt;Create required resources and deploy Kubeflow&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;The following steps automate &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;section 1.0(Custom domain and certificates)&lt;/a&gt; (creating a custom domain to host Kubeflow and TLS certificates for the domain), &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool&#34;&gt;section 2.0(Cognito user pool)&lt;/a&gt; (creating a Cognito Userpool used for user authentication) and&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;section 3.0(Configure Ingress)&lt;/a&gt; (configuring ingress and load balancer controller manifests) of the cognito guide.&lt;/p&gt;
+&lt;p&gt;The following steps automate &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;section 1.0(Custom domain and certificates)&lt;/a&gt; (creating a custom domain to host Kubeflow and TLS certificates for the domain), &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool&#34;&gt;section 2.0(Cognito user pool)&lt;/a&gt; (creating a Cognito Userpool used for user authentication) and&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;section 3.0(Configure Ingress)&lt;/a&gt; (configuring ingress and load balancer controller manifests) of the cognito guide.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Install dependencies for the scripts
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r tests/e2e/requirements.txt
@@ -247,7 +247,7 @@
 &lt;li&gt;If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in &lt;code&gt;route53.rootDomain.hostedZoneId&lt;/code&gt;. Skip this step if your domain is managed by other domain provider.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Name of the sudomain you want to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;. Please read &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;this section&lt;/a&gt; to understand why we use a subdomain.&lt;/li&gt;
+&lt;li&gt;Name of the sudomain you want to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;. Please read &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;this section&lt;/a&gt; to understand why we use a subdomain.&lt;/li&gt;
 &lt;li&gt;Cluster name and region where kubeflow will be deployed in &lt;code&gt;cluster.name&lt;/code&gt; and &lt;code&gt;cluster.region&lt;/code&gt; (e.g. us-west-2) respectively.&lt;/li&gt;
 &lt;li&gt;Name of cognito userpool in &lt;code&gt;cognitoUserpool.name&lt;/code&gt; e.g. kubeflow-users.&lt;/li&gt;
 &lt;li&gt;The config file will look something like:
@@ -312,7 +312,7 @@
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow&#34;&gt;section 4.0(Building manifests and deploying Kubeflow)&lt;/a&gt; to install Kubeflow&lt;/p&gt;
+&lt;p&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow&#34;&gt;section 4.0(Building manifests and deploying Kubeflow)&lt;/a&gt; to install Kubeflow&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Updating the domain with ALB address&lt;/p&gt;
@@ -325,7 +325,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      15d
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of alb-ingress-controller by following &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;this guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of alb-ingress-controller by following &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;this guide&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;Substitute the ALB address under &lt;code&gt;kubeflow.alb.dns&lt;/code&gt; in &lt;code&gt;tests/e2e/utils/cognito_bootstrap/config.yaml&lt;/code&gt;. The kubeflow section of the config file will look like:
@@ -352,7 +352,7 @@
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Follow the rest of the cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard&#34;&gt;section 6.0(Connecting to central dashboard)&lt;/a&gt; to:&lt;/p&gt;
+&lt;p&gt;Follow the rest of the cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard&#34;&gt;section 6.0(Connecting to central dashboard)&lt;/a&gt; to:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a user in Cognito user pool&lt;/li&gt;
 &lt;li&gt;Create a profile for the user from the user pool&lt;/li&gt;
@@ -414,9 +414,9 @@
         
         &lt;p&gt;This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
-&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
@@ -571,7 +571,7 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
 &lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
 &lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.&lt;/p&gt;
-&lt;p&gt;For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;32-changing-the-default-storage-class&#34;&gt;3.2 Changing the default Storage Class&lt;/h3&gt;
 &lt;p&gt;After installing Kubeflow, you can change the default Storage Class from &lt;code&gt;gp2&lt;/code&gt; to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named &lt;code&gt;efs-sc&lt;/code&gt;. You can check your storage classes by running &lt;code&gt;kubectl get sc&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the &lt;code&gt;efs-sc&lt;/code&gt; class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using &lt;code&gt;gp2&lt;/code&gt; for workspace volumes and keep the EFS storage class for datasets/data volumes only.&lt;/p&gt;
@@ -636,7 +636,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe tfjob image-classification-pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl logs -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc-worker-0 -f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
-&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete tfjob -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
@@ -699,7 +699,7 @@ public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
 &lt;h2 id=&#34;access-aws-services-from-notebooks&#34;&gt;Access AWS Services from Notebooks&lt;/h2&gt;
 &lt;p&gt;Use &lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html&#34;&gt;AWS IAM&lt;/a&gt; to securely access AWS resources through Kubeflow Notebooks.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
-&lt;p&gt;Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps&#34;&gt;Profiles component guide&lt;/a&gt;. These steps go through creating a profile that uses the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin. No additional configuration steps are required.&lt;/p&gt;
+&lt;p&gt;Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps&#34;&gt;Profiles component guide&lt;/a&gt;. These steps go through creating a profile that uses the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin. No additional configuration steps are required.&lt;/p&gt;
 &lt;h3 id=&#34;try-it-out&#34;&gt;Try it out&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a Notebook server through the central dashboard.&lt;/li&gt;
@@ -779,9 +779,9 @@ public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
         
         &lt;p&gt;This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
-&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
@@ -914,7 +914,7 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
 &lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
 &lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.
-For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;32-note-about-permissions&#34;&gt;3.2 Note about permissions&lt;/h3&gt;
 &lt;p&gt;This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
@@ -966,7 +966,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe tfjob image-classification-pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl logs -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc-worker-0 -f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
-&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete tfjob -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
@@ -1005,16 +1005,16 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;li&gt;create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB&amp;rsquo;s public DNS names)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;Check to make sure that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Check to make sure that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background section&lt;/a&gt; in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.&lt;/p&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create domain and certificate section&lt;/a&gt; for information on why we use a subdomain for hosting Kubeflow.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background section&lt;/a&gt; in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create domain and certificate section&lt;/a&gt; for information on why we use a subdomain for hosting Kubeflow.&lt;/p&gt;
 &lt;h2 id=&#34;optional-automated-setup&#34;&gt;(Optional) Automated setup&lt;/h2&gt;
-&lt;p&gt;The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide-automated/&#34;&gt;automated setup guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/&#34;&gt;automated setup guide&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;10-custom-domain-and-certificates&#34;&gt;1.0 Custom domain and certificates&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;Create a subdomain&lt;/a&gt; section of the Load Balancer guide to create a subdomain(e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for hosting Kubeflow.&lt;/li&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/a&gt; section of the Load Balancer guide to create certificates required for TLS.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;Create a subdomain&lt;/a&gt; section of the Load Balancer guide to create a subdomain(e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for hosting Kubeflow.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/a&gt; section of the Load Balancer guide to create certificates required for TLS.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;From this point onwards, we will be creating/updating the DNS records &lt;strong&gt;only in the subdomain&lt;/strong&gt;. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.&lt;/p&gt;
 &lt;h2 id=&#34;20-cognito-user-pool&#34;&gt;2.0 Cognito User Pool&lt;/h2&gt;
@@ -1121,7 +1121,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/a&gt; section of the load balancer guide to setup the resources required the load balancer controller.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/a&gt; section of the load balancer guide to setup the resources required the load balancer controller.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;40-building-manifests-and-deploying-kubeflow&#34;&gt;4.0 Building manifests and deploying Kubeflow&lt;/h2&gt;
 &lt;ol&gt;
@@ -1216,7 +1216,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      15d
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt; in the troubleshooting guide.&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt; in the troubleshooting guide.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;
@@ -1303,7 +1303,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;client&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; kfp.Client&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;host&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;f&lt;span class=&#34;s2&#34;&gt;&amp;#34;http://{kubeflow_gateway_endpoint}/pipeline&amp;#34;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;cookies&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;f&lt;span class=&#34;s2&#34;&gt;&amp;#34;authservice_session={authservice_session_cookie}&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;client.list_experiments&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;namespace&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;namespace&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you want to set up application load balancing (ALB) with Dex, see the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Load Balancer&lt;/a&gt; guide and use the ALB address as the Kubeflow Endpoint.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you want to set up application load balancing (ALB) with Dex, see the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Load Balancer&lt;/a&gt; guide and use the ALB address as the Kubeflow Endpoint.&lt;/p&gt;
 &lt;p&gt;To do programmatic authentication with Dex, refer to the following comments under &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140&#34;&gt;issue #140&lt;/a&gt; in the &lt;code&gt;kfctl&lt;/code&gt; repository: &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304&#34;&gt;#140 (comment)&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529&#34;&gt;#140 (comment)&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;cognito&#34;&gt;&lt;strong&gt;Cognito&lt;/strong&gt;&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# This is the &amp;#34;Domain&amp;#34; in your cookies. eg: kubeflow.&amp;lt;platform.example.com&amp;gt;&lt;/span&gt;
@@ -1319,7 +1319,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;access-aws-services-from-pipeline-components&#34;&gt;Access AWS Services from Pipeline Components&lt;/h2&gt;
 &lt;p&gt;For pipelines components to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin. To configure the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin to work with profiles, follow the steps below.&lt;/p&gt;
 &lt;h3 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h3&gt;
-&lt;p&gt;Configuration steps to configure Profiles with AWS IAM permissions can be found in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps&#34;&gt;Profiles component guide&lt;/a&gt;. Follow the configuration steps to configure the profile controller to work with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin.&lt;/p&gt;
+&lt;p&gt;Configuration steps to configure Profiles with AWS IAM permissions can be found in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps&#34;&gt;Profiles component guide&lt;/a&gt;. Follow the configuration steps to configure the profile controller to work with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin.&lt;/p&gt;
 &lt;p&gt;The following is an example of a profile using the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;apiVersion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;kubeflow.org/v1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;kind&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Profile&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
@@ -1345,7 +1345,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;example-s3-access-from-a-pipeline-component&#34;&gt;Example: S3 Access from a Pipeline Component&lt;/h3&gt;
 &lt;p&gt;The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.&lt;/p&gt;
 &lt;h4 id=&#34;prerequisites-1&#34;&gt;Prerequisites&lt;/h4&gt;
-&lt;p&gt;Make sure that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites&#34;&gt;prerequisites&lt;/a&gt; and Profile configuration steps.&lt;/p&gt;
+&lt;p&gt;Make sure that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites&#34;&gt;prerequisites&lt;/a&gt; and Profile configuration steps.&lt;/p&gt;
 &lt;h4 id=&#34;steps&#34;&gt;Steps&lt;/h4&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -1408,7 +1408,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/ul&gt;
 &lt;h2 id=&#34;create-an-eks-cluster&#34;&gt;Create an EKS cluster&lt;/h2&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Note: Be sure to check &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/about/eks-compatibility/&#34;&gt;Amazon EKS and Kubeflow Compatibility&lt;/a&gt; when creating your cluster with specific EKS versions.&lt;/p&gt;
+&lt;p&gt;Note: Be sure to check &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/&#34;&gt;Amazon EKS and Kubeflow Compatibility&lt;/a&gt; when creating your cluster with specific EKS versions.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;If you do not have an existing cluster, run the following command to create an EKS cluster.&lt;/p&gt;
 &lt;blockquote&gt;
@@ -1435,7 +1435,7 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;More details about cluster creation via &lt;code&gt;eksctl&lt;/code&gt; can be found in the &lt;a href=&#34;https://eksctl.io/usage/creating-and-managing-clusters/&#34;&gt;Creating and managing clusters&lt;/a&gt; guide.&lt;/p&gt;
 &lt;h2 id=&#34;clone-the-repository&#34;&gt;Clone the repository&lt;/h2&gt;
 &lt;p&gt;Clone the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests&#34;&gt;&lt;code&gt;awslabs/kubeflow-manifests&lt;/code&gt;&lt;/a&gt; and the &lt;a href=&#34;https://github.com/kubeflow/manifests&#34;&gt;&lt;code&gt;kubeflow/manifests&lt;/code&gt;&lt;/a&gt; repositories and check out the release branches of your choosing.&lt;/p&gt;
-&lt;p&gt;Substitute the value for &lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt;(e.g. v1.4.1) and &lt;code&gt;AWS_RELEASE_VERSION&lt;/code&gt;(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/about/releases/&#34;&gt;releases and versioning&lt;/a&gt; if you are unsure about what these values should be.&lt;/p&gt;
+&lt;p&gt;Substitute the value for &lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt;(e.g. v1.4.1) and &lt;code&gt;AWS_RELEASE_VERSION&lt;/code&gt;(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/releases/&#34;&gt;releases and versioning&lt;/a&gt; if you are unsure about what these values should be.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone https://github.com/awslabs/kubeflow-manifests.git &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; kubeflow-manifests
@@ -1491,6 +1491,10 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
       &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.22&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
       &lt;tr&gt;
         &lt;td&gt;1.21&lt;/td&gt;
         &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
@@ -1578,15 +1582,15 @@ Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#3
 &lt;blockquote&gt;
 &lt;p&gt;Note: Kubeflow on AWS v1.4 uses &lt;a href=&#34;https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition&#34;&gt;KFServing&lt;/a&gt;. The KFServing project is now called KServe.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background&lt;/a&gt; section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background&lt;/a&gt; section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
 &lt;p&gt;This guide assumes that you have:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;The necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;, including a Kubeflow deployment.&lt;/li&gt;
+&lt;li&gt;The necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;, including a Kubeflow deployment.&lt;/li&gt;
 &lt;li&gt;The &lt;a href=&#34;https://kubernetes-sigs.github.io/aws-load-balancer-controller/&#34;&gt;AWS Load Balancer controller&lt;/a&gt; configured with one of the following deployment options:
 &lt;ul&gt;
-&lt;li&gt;A Cognito-integrated deployment that is configured with the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide#30-configure-ingress&#34;&gt;AWS Load Balancer controller by default&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;A deployment that is not integrated with Cognito (for example, the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla deployment&lt;/a&gt;, which uses Dex as an auth provider), but have followed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Exposing Kubeflow over Load Balancer guide&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A Cognito-integrated deployment that is configured with the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;AWS Load Balancer controller by default&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A deployment that is not integrated with Cognito (for example, the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla deployment&lt;/a&gt;, which uses Dex as an auth provider), but have followed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Exposing Kubeflow over Load Balancer guide&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;A subdomain for hosting Kubeflow. For this guide, we will use the domain &lt;code&gt;platform.example.com&lt;/code&gt;.&lt;/li&gt;
@@ -1626,7 +1630,7 @@ data:
 &lt;p&gt;Create an ACM certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; and &lt;code&gt;*.staging.platform.example.com&lt;/code&gt; in your cluster&amp;rsquo;s region by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;create certificates for domain&lt;/a&gt; steps in the Load Balancer installation guide.&lt;/p&gt;
 &lt;p&gt;Once the certificate status changes to &lt;code&gt;Issued&lt;/code&gt;, export the ARN of the certificate created:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;certArn&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you are using Cognito for user authentication, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#cognito-ingress&#34;&gt;Cognito&lt;/a&gt;. If you use Dex as the auth provider in your Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#dex-ingress&#34;&gt;Dex&lt;/a&gt;.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you are using Cognito for user authentication, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#cognito-ingress&#34;&gt;Cognito&lt;/a&gt;. If you use Dex as the auth provider in your Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#dex-ingress&#34;&gt;Dex&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;cognito-ingress&#34;&gt;Cognito ingress&lt;/h2&gt;
 &lt;p&gt;It is not currently possible to programatically authenticate a request that uses Amazon Cognito for user authentication through Load Balancer. You cannot generate &lt;code&gt;AWSELBAuthSessionCookie&lt;/code&gt; cookies by using the access tokens from Cognito.&lt;/p&gt;
 &lt;p&gt;To work around this, it is necessary to create a new Load Balancer endpoint for serving traffic that authorizes based on custom strings specified in a predefined HTTP header.&lt;/p&gt;
@@ -1635,7 +1639,7 @@ data:
 &lt;ol&gt;
 &lt;li&gt;Configure the following parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env&#34;&gt;ingress&lt;/a&gt;:
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;certArn&lt;/code&gt;: ARN of certificate created during &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate&#34;&gt;Request a certificate&lt;/a&gt; step.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;certArn&lt;/code&gt;: ARN of certificate created during &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate&#34;&gt;Request a certificate&lt;/a&gt; step.&lt;/li&gt;
 &lt;li&gt;(optional) &lt;code&gt;httpHeaderName&lt;/code&gt;: Custom HTTP header name that you want to configure for the rule evaluation. Defaults to &lt;code&gt;x-api-key&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;httpHeaderValues&lt;/code&gt;: One or more match strings that need to be compared against the header value if the request received. You only need to pass one of the tokens in the request. Pick strong values.&lt;/li&gt;
 &lt;/ul&gt;
@@ -1661,11 +1665,11 @@ data:
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;istio-ingress-api   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      14m
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Once your Load Balancer is ready, move on to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records&#34;&gt;Add DNS records&lt;/a&gt; step to add a DNS record for the staging subdomain.&lt;/p&gt;
+&lt;p&gt;Once your Load Balancer is ready, move on to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records&#34;&gt;Add DNS records&lt;/a&gt; step to add a DNS record for the staging subdomain.&lt;/p&gt;
 &lt;h2 id=&#34;dex-ingress&#34;&gt;Dex ingress&lt;/h2&gt;
 &lt;h3 id=&#34;update-the-certificate-for-your-load-balancer&#34;&gt;Update the certificate for your Load Balancer&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env&#34;&gt;ingress&lt;/a&gt; with the ARN of the certificate created during the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate&#34;&gt;Request a certificate&lt;/a&gt; step.
+&lt;li&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env&#34;&gt;ingress&lt;/a&gt; with the ARN of the certificate created during the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate&#34;&gt;Request a certificate&lt;/a&gt; step.
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;certArn=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$certArn&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/istio-ingress/overlays/https/params.env
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;Update the Load Balancer with the following command:
@@ -1677,7 +1681,7 @@ data:
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      15d
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Once your Load Balancer is ready, move on to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records&#34;&gt;Add DNS records&lt;/a&gt; step to add a DNS record for the staging subdomain.&lt;/p&gt;
+&lt;p&gt;Once your Load Balancer is ready, move on to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records&#34;&gt;Add DNS records&lt;/a&gt; step to add a DNS record for the staging subdomain.&lt;/p&gt;
 &lt;h2 id=&#34;add-dns-records&#34;&gt;Add DNS records&lt;/h2&gt;
 &lt;p&gt;Once your ingress-managed Load Balancer is ready, copy the &lt;code&gt;ADDRESS&lt;/code&gt; of that Load Balancer and create a &lt;code&gt;CNAME&lt;/code&gt; entry to it in &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Amazon Route 53&lt;/a&gt; under your subdomain (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.staging.platform.example.com&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;run-a-sample-inferenceservice&#34;&gt;Run a sample InferenceService&lt;/h2&gt;
@@ -1707,7 +1711,7 @@ data:
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install requirements.txt
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the sample python script to send an inference request based on your auth provider:&lt;/p&gt;
 &lt;h4 id=&#34;cognito-inference&#34;&gt;Cognito inference&lt;/h4&gt;
-&lt;p&gt;Run the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py&#34;&gt;inference_sample.py&lt;/a&gt; Python script by exporting the values for &lt;code&gt;HTTP_HEADER_NAME&lt;/code&gt;(e.g. &lt;code&gt;x-api-key&lt;/code&gt;) and &lt;code&gt;HTTP_HEADER_VALUE&lt;/code&gt;(e.g. &lt;code&gt;token1&lt;/code&gt;) according to the values configured in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/kserve/#create-ingress&#34;&gt;ingress section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Run the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py&#34;&gt;inference_sample.py&lt;/a&gt; Python script by exporting the values for &lt;code&gt;HTTP_HEADER_NAME&lt;/code&gt;(e.g. &lt;code&gt;x-api-key&lt;/code&gt;) and &lt;code&gt;HTTP_HEADER_VALUE&lt;/code&gt;(e.g. &lt;code&gt;token1&lt;/code&gt;) according to the values configured in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#create-ingress&#34;&gt;ingress section&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AUTH_PROVIDER&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;cognito&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HTTP_HEADER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;x-api-key&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HTTP_HEADER_VALUE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;token1&amp;#34;&lt;/span&gt;
@@ -1777,7 +1781,7 @@ data:
         
         &lt;p&gt;For general errors related to Kubernetes and Amazon EKS, please refer to the &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting.html&#34;&gt;Amazon EKS User Guide&lt;/a&gt; troubleshooting section. For issues with cluster creation or modification with &lt;code&gt;eksctl&lt;/code&gt;, see the &lt;a href=&#34;https://eksctl.io/usage/troubleshooting/&#34;&gt;&lt;code&gt;eksctl&lt;/code&gt; troubleshooting&lt;/a&gt; page.&lt;/p&gt;
 &lt;h3 id=&#34;validate-prerequisites&#34;&gt;Validate prerequisites&lt;/h3&gt;
-&lt;p&gt;You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt; installed.&lt;/p&gt;
+&lt;p&gt;You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt; installed.&lt;/p&gt;
 &lt;h3 id=&#34;alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/h3&gt;
 &lt;p&gt;If you see that your istio-ingress &lt;code&gt;ADDRESS&lt;/code&gt; is empty after more than a few minutes, it is possible that something is misconfigured in your ALB ingress controller.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get ingress -n istio-system
@@ -1801,7 +1805,7 @@ data:
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Use the &lt;code&gt;kubectl logs&lt;/code&gt; command to get more information on Pods that use these resources.&lt;/p&gt;
 &lt;p&gt;For more information, see the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;Amazon FSx for Lustre CSI Driver&lt;/a&gt; GitHub repository. Troubleshooting information for specific FSx filesystems can be found in the &lt;a href=&#34;https://docs.aws.amazon.com/fsx/index.html&#34;&gt;Amazon FSx documentation&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;rds-issues&#34;&gt;RDS issues&lt;/h3&gt;
-&lt;p&gt;To troubleshoot RDS issues, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/rds-s3/guide/#40-verify-the-installation&#34;&gt;installation verification steps&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To troubleshoot RDS issues, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/#40-verify-the-installation&#34;&gt;installation verification steps&lt;/a&gt;.&lt;/p&gt;
 
       </description>
     </item>
@@ -1818,7 +1822,7 @@ data:
         &lt;h1 id=&#34;deploying-kubeflow-on-eks&#34;&gt;Deploying Kubeflow on EKS&lt;/h1&gt;
 &lt;p&gt;This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;Be sure that you have satisfied the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;installation prerequisites&lt;/a&gt; before working through this guide.&lt;/p&gt;
+&lt;p&gt;Be sure that you have satisfied the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;installation prerequisites&lt;/a&gt; before working through this guide.&lt;/p&gt;
 &lt;h3 id=&#34;build-manifests-and-install-kubeflow&#34;&gt;Build Manifests and install Kubeflow&lt;/h3&gt;
 &lt;p&gt;There two options for installing Kubeflow official components and common services with kustomize.&lt;/p&gt;
 &lt;ol&gt;
@@ -1936,7 +1940,7 @@ components:&lt;/p&gt;
 &lt;p&gt;Install the Training Operator official Kubeflow component:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;aws-telemetry&#34;&gt;AWS Telemetry&lt;/h4&gt;
-&lt;p&gt;Install the AWS Kubeflow telemetry component. This is an optional component. See &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/about/usage-tracking/&#34;&gt;Usage Tracking&lt;/a&gt; for more information&lt;/p&gt;
+&lt;p&gt;Install the AWS Kubeflow telemetry component. This is an optional component. See &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/usage-tracking/&#34;&gt;Usage Tracking&lt;/a&gt; for more information&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build awsconfigs/common/aws-telemetry &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;user-namespace&#34;&gt;User namespace&lt;/h4&gt;
 &lt;p&gt;Finally, create a new namespace for the the default user. In this example, the namespace is called &lt;code&gt;kubeflow-user-example-com&lt;/code&gt;.&lt;/p&gt;
@@ -1961,7 +1965,7 @@ components:&lt;/p&gt;
 &lt;li&gt;Login with the default user&amp;rsquo;s credential. The default email address is &lt;code&gt;user@example.com&lt;/code&gt; and the default password is &lt;code&gt;12341234&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h4 id=&#34;exposing-kubeflow-over-load-balancer&#34;&gt;Exposing Kubeflow over Load Balancer&lt;/h4&gt;
-&lt;p&gt;In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Load Balancer guide&lt;/a&gt; to set it up.&lt;/p&gt;
+&lt;p&gt;In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/&#34;&gt;Load Balancer guide&lt;/a&gt; to set it up.&lt;/p&gt;
 &lt;h3 id=&#34;change-default-user-password&#34;&gt;Change default user password&lt;/h3&gt;
 &lt;p&gt;For security reasons, we do not recommend using the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:&lt;/p&gt;
 &lt;ol&gt;
@@ -2016,7 +2020,7 @@ components:&lt;/p&gt;
 &lt;p&gt;Integration with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin is actively being worked on for all components with &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration&#34;&gt;Profile-level support&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;You can find documentation about the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin for specific components in the individual &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/&#34;&gt;component guides&lt;/a&gt;. Read on for general configuration instructions.&lt;/p&gt;
 &lt;h2 id=&#34;configuration-steps&#34;&gt;Configuration steps&lt;/h2&gt;
-&lt;p&gt;After installing Kubeflow on AWS with one of the available &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt;, you can configure Kubeflow Profiles with the following steps:&lt;/p&gt;
+&lt;p&gt;After installing Kubeflow on AWS with one of the available &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt;, you can configure Kubeflow Profiles with the following steps:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Define the following environment variables:&lt;/p&gt;
@@ -2110,7 +2114,7 @@ components:&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;use-kubeflow-profiles-with-notebooks&#34;&gt;Use Kubeflow Profiles with Notebooks&lt;/h2&gt;
-&lt;p&gt;Verify your configuration by &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/component-guides/notebooks/#try-it-out&#34;&gt;creating and running&lt;/a&gt; a &lt;a href=&#34;https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/&#34;&gt;Kubeflow Notebook&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Verify your configuration by &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/component-guides/notebooks/#try-it-out&#34;&gt;creating and running&lt;/a&gt; a &lt;a href=&#34;https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/&#34;&gt;Kubeflow Notebook&lt;/a&gt;.&lt;/p&gt;
 
       </description>
     </item>
@@ -2127,7 +2131,7 @@ components:&lt;/p&gt;
         &lt;p&gt;This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.&lt;/p&gt;
 &lt;h3 id=&#34;rds&#34;&gt;RDS&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html&#34;&gt;Amazon Relational Database Service (RDS)&lt;/a&gt; is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.&lt;/p&gt;
-&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml&#34;&gt;KFP&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml&#34;&gt;Katib&lt;/a&gt; components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.&lt;/p&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml&#34;&gt;KFP&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml&#34;&gt;Katib&lt;/a&gt; components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.&lt;/p&gt;
 &lt;p&gt;Compared to the MySQL setup in the default installation, using RDS provides the following advantages:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.&lt;/li&gt;
@@ -2137,7 +2141,7 @@ components:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;s3&#34;&gt;S3&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html&#34;&gt;Amazon Simple Storage Service (S3)&lt;/a&gt; is an object storage service that is highly scalable, available, secure, and performant.&lt;/p&gt;
-&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml&#34;&gt;KFP&lt;/a&gt; component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.&lt;/p&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml&#34;&gt;KFP&lt;/a&gt; component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.&lt;/p&gt;
 &lt;p&gt;Configuring MinIO to read and write to S3 provides the following advantages:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.&lt;/li&gt;
@@ -2154,7 +2158,7 @@ components:&lt;/p&gt;
 &lt;p&gt;To install for only RDS or only S3, complete the steps relevant to your installation choice.&lt;/p&gt;
 &lt;p&gt;To install for both RDS and S3, complete all the steps below.&lt;/p&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
-&lt;p&gt;Follow the steps in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;Prerequisites&lt;/a&gt; to make sure that you have everything you need to get started.&lt;/p&gt;
+&lt;p&gt;Follow the steps in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;Prerequisites&lt;/a&gt; to make sure that you have everything you need to get started.&lt;/p&gt;
 &lt;p&gt;Make sure you are starting from the repository root directory.
 Export the below variable:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;REPO_ROOT&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
@@ -2363,7 +2367,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;p&gt;Use the following command to deploy the Kubeflow manifests for S3 only:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$REPO_ROOT&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# exported in 1.1 Prerequisites&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; ! kustomize build docs/deployment/rds-s3/s3-only &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; sleep 10&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once everything is installed successfully, you can access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once everything is installed successfully, you can access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;You can now start experimenting and running your end-to-end ML workflows with Kubeflow!&lt;/p&gt;
 &lt;h2 id=&#34;40-verify-the-installation&#34;&gt;4.0 Verify the installation&lt;/h2&gt;
 &lt;h3 id=&#34;41-verify-rds&#34;&gt;4.1 Verify RDS&lt;/h3&gt;
@@ -2412,7 +2416,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
 &lt;li&gt;
-&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Katib (under Experiments (AutoML)).&lt;/p&gt;
+&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Katib (under Experiments (AutoML)).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Create an experiment using the following &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/custom-resource-templates/katib-experiment-random.yaml&#34;&gt;yaml file&lt;/a&gt;.&lt;/p&gt;
@@ -2435,7 +2439,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-verify-s3&#34;&gt;4.2 Verify S3&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Kubeflow Pipelines (under Pipelines).&lt;/p&gt;
+&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Kubeflow Pipelines (under Pipelines).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Create an experiment named &lt;code&gt;test&lt;/code&gt; and create a run using the sample pipeline &lt;code&gt;[Demo] XGBoost - Iterative model training&lt;/code&gt;.&lt;/p&gt;
@@ -2553,7 +2557,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
         
         &lt;p&gt;This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.&lt;/p&gt;
 &lt;h2 id=&#34;1-prerequisites&#34;&gt;1. Prerequisites&lt;/h2&gt;
-&lt;p&gt;Refer to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites guide&lt;/a&gt; and the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/rds-s3/guide/&#34;&gt;RDS and S3 setup guide&lt;/a&gt; in order to:&lt;/p&gt;
+&lt;p&gt;Refer to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites guide&lt;/a&gt; and the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/&#34;&gt;RDS and S3 setup guide&lt;/a&gt; in order to:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Install the CLI tools&lt;/li&gt;
 &lt;li&gt;Clone the repositories&lt;/li&gt;
@@ -2566,7 +2570,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/ol&gt;
 &lt;h2 id=&#34;configure-custom-domain-and-cognito&#34;&gt;Configure Custom Domain and Cognito&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/&#34;&gt;Cognito setup guide&lt;/a&gt; from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;Section 1.0 (Custom domain)&lt;/a&gt; up to &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;Section 3.0 (Configure ingress)&lt;/a&gt; in order to:
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/&#34;&gt;Cognito setup guide&lt;/a&gt; from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;Section 1.0 (Custom domain)&lt;/a&gt; up to &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;Section 3.0 (Configure ingress)&lt;/a&gt; in order to:
 &lt;ol&gt;
 &lt;li&gt;Create a custom domain&lt;/li&gt;
 &lt;li&gt;Create TLS certificates for the domain&lt;/li&gt;
@@ -2658,7 +2662,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Follow the rest of the Cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address&#34;&gt;section 5.0 (Updating the domain with ALB address)&lt;/a&gt; in order to:
+&lt;li&gt;Follow the rest of the Cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address&#34;&gt;section 5.0 (Updating the domain with ALB address)&lt;/a&gt; in order to:
 &lt;ol&gt;
 &lt;li&gt;Add/Update the DNS records in a custom domain with the ALB address&lt;/li&gt;
 &lt;li&gt;Create a user in a Cognito user pool&lt;/li&gt;
@@ -2687,7 +2691,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can delete a Kubeflow deployment by running the &lt;code&gt;kubectl delete&lt;/code&gt; command on the manifest according to the deployment option you chose. For example, to delete a vanilla installation, run the following command:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build docs/deployment/vanilla/ &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl delete -f -
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This command assumes that you have the repository in the same state as when you installed Kubeflow.&lt;/p&gt;
-&lt;p&gt;Cleanup steps for specific deployment options can be found in their respective &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/&#34;&gt;installation guides&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Cleanup steps for specific deployment options can be found in their respective &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;installation guides&lt;/a&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: This will not delete your Amazon EKS cluster.&lt;/p&gt;
 &lt;/blockquote&gt;

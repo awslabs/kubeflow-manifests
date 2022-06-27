@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Prerequisites">
 <meta itemprop="description" content="Everything you need to get started with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="397">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Prerequisites"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -375,7 +377,7 @@
 </ul>
 <h2 id="create-an-eks-cluster">Create an EKS cluster</h2>
 <blockquote>
-<p>Note: Be sure to check <a href="/kubeflow-manifests/docs/about/eks-compatibility/">Amazon EKS and Kubeflow Compatibility</a> when creating your cluster with specific EKS versions.</p>
+<p>Note: Be sure to check <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/">Amazon EKS and Kubeflow Compatibility</a> when creating your cluster with specific EKS versions.</p>
 </blockquote>
 <p>If you do not have an existing cluster, run the following command to create an EKS cluster.</p>
 <blockquote>
@@ -402,7 +404,7 @@
 </span></span></code></pre></div><p>More details about cluster creation via <code>eksctl</code> can be found in the <a href="https://eksctl.io/usage/creating-and-managing-clusters/">Creating and managing clusters</a> guide.</p>
 <h2 id="clone-the-repository">Clone the repository</h2>
 <p>Clone the <a href="https://github.com/awslabs/kubeflow-manifests"><code>awslabs/kubeflow-manifests</code></a> and the <a href="https://github.com/kubeflow/manifests"><code>kubeflow/manifests</code></a> repositories and check out the release branches of your choosing.</p>
-<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.4.1) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
+<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.4.1) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl">git clone https://github.com/awslabs/kubeflow-manifests.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kubeflow-manifests
@@ -412,7 +414,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>
