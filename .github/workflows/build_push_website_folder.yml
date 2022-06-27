@@ -30,6 +30,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/website
           npm install postcss-cli@8.3.0
+          base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/$(git branch --show-current)\""
+          sed -i "1s#.*#$base_url#" config.toml
           hugo
 
       - name: Deploy

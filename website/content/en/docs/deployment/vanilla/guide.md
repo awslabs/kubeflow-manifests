@@ -10,7 +10,7 @@ This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
 
 ### Build Manifests and install Kubeflow
 
@@ -263,7 +263,7 @@ kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kub
 
 #### AWS Telemetry
 
-Install the AWS Kubeflow telemetry component. This is an optional component. See [Usage Tracking](/kubeflow-manifests/docs/about/usage-tracking/) for more information
+Install the AWS Kubeflow telemetry component. This is an optional component. See [Usage Tracking]({{< ref "/docs/about/usage-tracking.md" >}}) for more information
 
 ```sh
 kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
@@ -308,7 +308,7 @@ After running the command, you can access the Kubeflow Central Dashboard by doin
 
 #### Exposing Kubeflow over Load Balancer
 
-In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the [Load Balancer guide](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) to set it up.
+In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the [Load Balancer guide]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md" >}}) to set it up.
 
 ### Change default user password
 

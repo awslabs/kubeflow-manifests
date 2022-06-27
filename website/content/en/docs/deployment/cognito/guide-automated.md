@@ -8,11 +8,11 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
 
 ## Prerequisites
 
-This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/).
+This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}).
 
 ## Create required resources and deploy Kubeflow
 
-1. The following steps automate [section 1.0(Custom domain and certificates)](/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)](/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)](/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress) (configuring ingress and load balancer controller manifests) of the cognito guide.
+1. The following steps automate [section 1.0(Custom domain and certificates)]({{< ref "/docs/deployment/cognito/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)]({{< ref "/docs/deployment/cognito/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
         ```sh
         pip install -r tests/e2e/requirements.txt
@@ -20,7 +20,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
     1. Substitute values in `tests/e2e/utils/cognito_bootstrap/config.yaml`.
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
             1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
-        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) to understand why we use a subdomain.
+        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) to understand why we use a subdomain.
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
         1. The config file will look something like:
@@ -72,6 +72,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
+<<<<<<< HEAD
 1. Install Kubeflow using the following command:
    ```bash
     while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
@@ -85,7 +86,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
             istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
             ```
-        2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision)
+        2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide]({{< ref "/docs/troubleshooting-aws.md#alb-fails-to-provision" >}})
     1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
         1. ```yaml
             kubeflow:
@@ -101,7 +102,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
-1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)](/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard) to:
+1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/guide.md#60-connecting-to-central-dashboard" >}}) to:
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
