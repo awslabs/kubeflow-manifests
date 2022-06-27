@@ -16,5 +16,5 @@ Refer to the following documents for more information:
 * [Security best practices for Amazon Simple Storage Service (S3)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)  
 * [Security in Amazon Route53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security.html)  
 * [Security in Amazon Certificate Manager (ACM)](https://docs.aws.amazon.com/acm/latest/userguide/security.html)  
-* [Security best practices for Amazon Cognito user pools](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)  
+* [Security best practices for Amazon Cognito user pools](https://docs.aws.amazon.com/cognito/latest/developerguide/managing-security.html)  
 * [Security in Amazon Elastic Load Balancing (ELB)](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/security.html)
