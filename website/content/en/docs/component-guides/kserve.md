@@ -8,16 +8,16 @@ This tutorial shows how to set up a load balancer endpoint for serving predictio
 
 > Note: Kubeflow on AWS v1.4 uses [KFServing](https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition). The KFServing project is now called KServe.
 
-Read the [background](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
+Read the [background]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#background" >}}) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
 
 ## Prerequisites
 
 This guide assumes that you have:
 
-1. The necessary [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/), including a Kubeflow deployment.
+1. The necessary [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}), including a Kubeflow deployment.
 2. The [AWS Load Balancer controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) configured with one of the following deployment options:
-    - A Cognito-integrated deployment that is configured with the [AWS Load Balancer controller by default](/kubeflow-manifests/docs/deployment/cognito/guide#30-configure-ingress).
-    - A deployment that is not integrated with Cognito (for example, the [Vanilla deployment](/kubeflow-manifests/docs/deployment/vanilla/guide/), which uses Dex as an auth provider), but have followed the [Exposing Kubeflow over Load Balancer guide](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/).
+    - A Cognito-integrated deployment that is configured with the [AWS Load Balancer controller by default]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}).
+    - A deployment that is not integrated with Cognito (for example, the [Vanilla deployment]({{< ref "/docs/deployment/vanilla/guide.md" >}}), which uses Dex as an auth provider), but have followed the [Exposing Kubeflow over Load Balancer guide]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md" >}}).
 3. A subdomain for hosting Kubeflow. For this guide, we will use the domain `platform.example.com`.
 4. An existing [profile namespace](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation) for a user in Kubeflow. For this guide, we will use the example profile namespace `staging`.
 5. Verified that your current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>` directory.
@@ -67,7 +67,7 @@ Once the certificate status changes to `Issued`, export the ARN of the certifica
 export certArn=<>
 ```
 
-If you are using Cognito for user authentication, see [Cognito](/kubeflow-manifests/docs/component-guides/kserve/#cognito-ingress). If you use Dex as the auth provider in your Kubeflow deployment, see [Dex](/kubeflow-manifests/docs/component-guides/kserve/#dex-ingress). 
+If you are using Cognito for user authentication, see [Cognito]({{< ref "/docs/component-guides/kserve.md#cognito-ingress" >}}). If you use Dex as the auth provider in your Kubeflow deployment, see [Dex]({{< ref "/docs/component-guides/kserve.md#dex-ingress" >}}). 
 
 ## Cognito ingress
 
@@ -80,7 +80,7 @@ Use an ingress to set the [HTTP header conditions](https://docs.aws.amazon.com/e
 ### Create ingress
 
 1. Configure the following parameters for [ingress](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env):
-    - `certArn`: ARN of certificate created during [Request a certificate](/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate) step.
+    - `certArn`: ARN of certificate created during [Request a certificate]({{< ref "/docs/component-guides/kserve.md#request-a-certificate" >}}) step.
     - (optional) `httpHeaderName`: Custom HTTP header name that you want to configure for the rule evaluation. Defaults to `x-api-key`.
     - `httpHeaderValues`: One or more match strings that need to be compared against the header value if the request received. You only need to pass one of the tokens in the request. Pick strong values.
 > Note: The `httpHeaderName` and `httpHeaderValues` values correspond to the [HttpHeaderConfig](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#http-header-conditions) values
@@ -104,13 +104,13 @@ Use an ingress to set the [HTTP header conditions](https://docs.aws.amazon.com/e
     istio-ingress-api   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      14m
     ```
 
-Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
+Once your Load Balancer is ready, move on to the [Add DNS records]({{< ref "/docs/component-guides/kserve.md#add-dns-records" >}}) step to add a DNS record for the staging subdomain.
 
 ## Dex ingress
 
 ### Update the certificate for your Load Balancer
 
-1. Configure the parameters for [ingress](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env) with the ARN of the certificate created during the [Request a certificate](/kubeflow-manifests/docs/component-guides/kserve/#request-a-certificate) step.
+1. Configure the parameters for [ingress](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env) with the ARN of the certificate created during the [Request a certificate]({{< ref "/docs/component-guides/kserve.md#request-a-certificate" >}}) step.
     ```bash
     printf 'certArn='$certArn'' > awsconfigs/common/istio-ingress/overlays/https/params.env
     ```
@@ -124,7 +124,7 @@ Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-man
     NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
     istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
     ```
-Once your Load Balancer is ready, move on to the [Add DNS records](/kubeflow-manifests/docs/component-guides/kserve/#add-dns-records) step to add a DNS record for the staging subdomain.
+Once your Load Balancer is ready, move on to the [Add DNS records]({{< ref "/docs/component-guides/kserve.md#add-dns-records" >}}) step to add a DNS record for the staging subdomain.
 
 ## Add DNS records
 
@@ -183,7 +183,7 @@ Run the sample python script to send an inference request based on your auth pro
 
 #### Cognito inference 
 
-Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section](/kubeflow-manifests/docs/component-guides/kserve/#create-ingress).
+Run the [inference_sample.py](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py) Python script by exporting the values for `HTTP_HEADER_NAME`(e.g. `x-api-key`) and `HTTP_HEADER_VALUE`(e.g. `token1`) according to the values configured in [ingress section]({{< ref "/docs/component-guides/kserve.md#create-ingress" >}}).
 ```bash
 export AUTH_PROVIDER="cognito"
 export HTTP_HEADER_NAME="x-api-key"

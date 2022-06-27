@@ -25,7 +25,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/website
           npm install postcss-cli@8.3.0
-          base_url="baseURL = \"https://awslabs.github.io/kubeflow-manifests/\""
+          base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/\""
           sed -i "1s#.*#$base_url#" config.toml
           hugo
 
@@ -34,4 +34,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./website/public
+          destination_dir: ./
           keep_files: true          
