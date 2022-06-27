@@ -121,11 +121,6 @@
 &lt;li&gt;&lt;strong&gt;Incompatible&lt;/strong&gt;: the combination is not known to work together&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Compatible&lt;/strong&gt;: all Kubeflow features have been tested and verified for the EKS Kubernetes version&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;kubeflow-v15-support&#34;&gt;Kubeflow v1.5 Support&lt;/h2&gt;
-&lt;p&gt;Support for Kubeflow-v1.5 is in active development. You can track the following issue to stay up to date on progress:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/issues/91&#34;&gt;v1.5 tracking issue&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 
       </description>
     </item>
@@ -149,7 +144,7 @@
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html&#34;&gt;Security best practices for Amazon Simple Storage Service (S3)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security.html&#34;&gt;Security in Amazon Route53&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/acm/latest/userguide/security.html&#34;&gt;Security in Amazon Certificate Manager (ACM)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html&#34;&gt;Security best practices for Amazon Cognito user pools&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/managing-security.html&#34;&gt;Security best practices for Amazon Cognito user pools&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/security.html&#34;&gt;Security in Amazon Elastic Load Balancing (ELB)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
