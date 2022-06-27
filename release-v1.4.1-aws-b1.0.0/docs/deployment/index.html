@@ -109,9 +109,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -337,21 +339,21 @@
 		
 	</header>
 	<p>Kubeflow on AWS provides its own Kubeflow manifests that support integrations with various AWS services that are highly available and scalable. This reduces the operational overhead of maintaining the Kubeflow platform.</p>
-<p>If you want to deploy Kubeflow with minimal changes, but optimized for <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service</a> (Amazon EKS), then consider the <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">vanilla</a> deployment option. The Kubeflow control plane is installed on top of Amazon EKS, which is a managed container service used to run and scale Kubernetes applications in the cloud.</p>
+<p>If you want to deploy Kubeflow with minimal changes, but optimized for <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service</a> (Amazon EKS), then consider the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/vanilla/guide/">vanilla</a> deployment option. The Kubeflow control plane is installed on top of Amazon EKS, which is a managed container service used to run and scale Kubernetes applications in the cloud.</p>
 <p>To take greater advantage of the distribution and make use of the AWS managed services, choose one of the following deployment options according to your organization&rsquo;s requirements:</p>
 <ul>
-<li>Kubeflow on AWS provides integration with the <a href="https://aws.amazon.com/rds/">Amazon Relational Database Service</a> (RDS) for highly scalable and available pipelines and metadata store. RDS removes the need to manage a local MYSQL database service and storage. For more information, see the <a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">RDS deployment guide</a>.</li>
-<li>Integrate your deployment with <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a> (S3) for an easy-to-use pipeline artifacts store. S3 removes the need to host the local object storage MinIO. For more information, see the <a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">S3 deployment guide</a>.</li>
-<li>You can also deploy Kubeflow on AWS with both RDS and S3 integrations using the <a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/">RDS and S3 deployment guide</a>.</li>
-<li>Use <a href="https://aws.amazon.com/cognito/">AWS Cognito</a> for Kubeflow user authentication, which removes the complexity of managing users or <a href="https://dexidp.io/docs/connectors/">Dex connectors</a> in Kubeflow’s native Dex authentication service. For more information, see the <a href="/kubeflow-manifests/docs/deployment/cognito/">Cognito deployment guides</a>.</li>
-<li>You can also deploy Kubeflow on AWS with all three service integrations by following the <a href="/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/">Cognito, RDS, and S3 deployment guide</a>.</li>
+<li>Kubeflow on AWS provides integration with the <a href="https://aws.amazon.com/rds/">Amazon Relational Database Service</a> (RDS) for highly scalable and available pipelines and metadata store. RDS removes the need to manage a local MYSQL database service and storage. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">RDS deployment guide</a>.</li>
+<li>Integrate your deployment with <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a> (S3) for an easy-to-use pipeline artifacts store. S3 removes the need to host the local object storage MinIO. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">S3 deployment guide</a>.</li>
+<li>You can also deploy Kubeflow on AWS with both RDS and S3 integrations using the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/rds-s3/guide/">RDS and S3 deployment guide</a>.</li>
+<li>Use <a href="https://aws.amazon.com/cognito/">AWS Cognito</a> for Kubeflow user authentication, which removes the complexity of managing users or <a href="https://dexidp.io/docs/connectors/">Dex connectors</a> in Kubeflow’s native Dex authentication service. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/cognito/">Cognito deployment guides</a>.</li>
+<li>You can also deploy Kubeflow on AWS with all three service integrations by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/cognito-rds-s3/guide/">Cognito, RDS, and S3 deployment guide</a>.</li>
 </ul>
 <p>Kubeflow on AWS offers add-ons for additional service integrations, which can be used with any of the available deployment options.</p>
 <ul>
-<li>If you want to expose your Kubeflow dashboard to external traffic, then use <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">AWS Application Load Balancer</a> (ALB) for secure traffic management by following the <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/">Load Balancer add-on guide</a>.</li>
-<li>Use <a href="https://aws.amazon.com/efs/">Amazon Elastic File System</a> (EFS) backed persistent volumes with Kubeflow Notebooks or your training and inference workloads (Jupyter, model training, model tuning) to create a persistent, scalable, and shareable workspace that automatically grows and shrinks as you add and remove files with no need for management. See the <a href="/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/">EFS add-on guide</a> for more information.</li>
-<li>Use <a href="https://aws.amazon.com/fsx/lustre/">Amazon FSx for Lustre</a> (Amazon FSx) volumes to cache training data with direct connectivity to Amazon S3 as the backing store. These volumes can support Jupyter notebook servers or distributed training. FSx for Lustre provides consistent submillisecond latencies and high concurrency, and can scale to TB/s of throughput and millions of IOPS. Refer to the <a href="/kubeflow-manifests/docs/deployment/add-ons/storage/fsx-for-lustre/guide/">FSx add-on guide</a> for more information.</li>
-<li>Integrate with <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> for persistent log management, which addresses the default K8s log limits and improves your log availability and monitoring capabilities. For more information, see the <a href="/kubeflow-manifests/docs/deployment/add-ons/cloudwatch/guide/">CloudWatch add-on guide</a>.</li>
+<li>If you want to expose your Kubeflow dashboard to external traffic, then use <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">AWS Application Load Balancer</a> (ALB) for secure traffic management by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/load-balancer/guide/">Load Balancer add-on guide</a>.</li>
+<li>Use <a href="https://aws.amazon.com/efs/">Amazon Elastic File System</a> (EFS) backed persistent volumes with Kubeflow Notebooks or your training and inference workloads (Jupyter, model training, model tuning) to create a persistent, scalable, and shareable workspace that automatically grows and shrinks as you add and remove files with no need for management. See the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/storage/efs/guide/">EFS add-on guide</a> for more information.</li>
+<li>Use <a href="https://aws.amazon.com/fsx/lustre/">Amazon FSx for Lustre</a> (Amazon FSx) volumes to cache training data with direct connectivity to Amazon S3 as the backing store. These volumes can support Jupyter notebook servers or distributed training. FSx for Lustre provides consistent submillisecond latencies and high concurrency, and can scale to TB/s of throughput and millions of IOPS. Refer to the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/storage/fsx-for-lustre/guide/">FSx add-on guide</a> for more information.</li>
+<li>Integrate with <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> for persistent log management, which addresses the default K8s log limits and improves your log availability and monitoring capabilities. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/cloudwatch/guide/">CloudWatch add-on guide</a>.</li>
 </ul>
 
         <div class="section-index">
@@ -427,7 +429,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/storage/fsx-for-lustre/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="FSx for Lustre">
 <meta itemprop="description" content="Use Amazon FSx as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="2072">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="FSx for Lustre"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -388,9 +390,9 @@
 	</header>    
 	<p>This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.</p>
 <h2 id="10-prerequisites">1.0 Prerequisites</h2>
-<p>For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the <a href="/kubeflow-manifests/docs/deployment/">deployment options</a> and <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">general prerequisites</a> for more information.</p>
+<p>For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/">deployment options</a> and <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/vanilla/guide/">general prerequisites</a> for more information.</p>
 <ol>
-<li>Check that you have the necessary <a href="/kubeflow-manifests/docs/deployment/vanilla/guide/">prerequisites</a>.</li>
+<li>Check that you have the necessary <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/vanilla/guide/">prerequisites</a>.</li>
 </ol>
 <blockquote>
 <p>Important: You must make sure you have an <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">OIDC provider</a> for your cluster and that it was added from <code>eksctl</code> &gt;= <code>0.56</code> or if you already have an OIDC provider in place, then you must make sure you have the tag <code>alpha.eksctl.io/cluster-name</code> with the cluster name as its value. If you don&rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&gt;Identity providers-&gt;Your OIDC-&gt;Tags.</p>
@@ -523,7 +525,7 @@ It performs the required cluster configuration, creates an FSx file system and i
 <p>In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.</p>
 <h3 id="31-connect-to-the-kubeflow-dashboard">3.1 Connect to the Kubeflow dashboard</h3>
 <p>Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the <code>Volumes</code> tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.
-For more details on how to access your Kubeflow dashboard, refer to one of the <a href="/kubeflow-manifests/docs/deployment/">deployment option guides</a> based on your setup. If you used the vanilla deployment, see <a href="/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster">Connect to your Kubeflow cluster</a>.</p>
+For more details on how to access your Kubeflow dashboard, refer to one of the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/">deployment option guides</a> based on your setup. If you used the vanilla deployment, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">Connect to your Kubeflow cluster</a>.</p>
 <h3 id="32-note-about-permissions">3.2 Note about permissions</h3>
 <p>This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">yq e <span class="s1">&#39;.metadata.name = env(CLAIM_NAME)&#39;</span> -i <span class="nv">$GITHUB_STORAGE_DIR</span>/notebook-sample/set-permission-job.yaml
@@ -575,7 +577,7 @@ Source: <a href="https://www.tensorflow.org/tutorials/load_data/images">https://
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl describe tfjob image-classification-pvc -n <span class="nv">$PVC_NAMESPACE</span>
 </span></span><span class="line"><span class="cl">kubectl logs -n <span class="nv">$PVC_NAMESPACE</span> image-classification-pvc-worker-0 -f
 </span></span></code></pre></div><h2 id="40-cleanup">4.0 Cleanup</h2>
-<p>This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see <a href="/kubeflow-manifests/docs/deployment/uninstall-kubeflow/">Uninstall Kubeflow</a>.</p>
+<p>This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/uninstall-kubeflow/">Uninstall Kubeflow</a>.</p>
 <h3 id="41-clean-up-the-tfjob">4.1 Clean up the TFJob</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl delete tfjob -n <span class="nv">$PVC_NAMESPACE</span> image-classification-pvc
 </span></span></code></pre></div><h3 id="42-delete-the-kubeflow-notebook">4.2 Delete the Kubeflow Notebook</h3>
@@ -597,7 +599,7 @@ Source: <a href="https://www.tensorflow.org/tutorials/load_data/images">https://
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

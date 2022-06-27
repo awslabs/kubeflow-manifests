@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/pipelines/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Pipelines">
 <meta itemprop="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="585">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pipelines"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -392,7 +394,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nv">client</span> <span class="o">=</span> kfp.Client<span class="o">(</span><span class="nv">host</span><span class="o">=</span>f<span class="s2">&#34;http://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span class="nv">cookies</span><span class="o">=</span>f<span class="s2">&#34;authservice_session={authservice_session_cookie}&#34;</span><span class="o">)</span>
 </span></span><span class="line"><span class="cl">client.list_experiments<span class="o">(</span><span class="nv">namespace</span><span class="o">=</span>namespace<span class="o">)</span>
-</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see the <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/">Load Balancer</a> guide and use the ALB address as the Kubeflow Endpoint.</p>
+</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/load-balancer/guide/">Load Balancer</a> guide and use the ALB address as the Kubeflow Endpoint.</p>
 <p>To do programmatic authentication with Dex, refer to the following comments under <a href="https://github.com/kubeflow/kfctl/issues/140">issue #140</a> in the <code>kfctl</code> repository: <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304">#140 (comment)</a> and <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529">#140 (comment)</a>.</p>
 <h3 id="cognito"><strong>Cognito</strong></h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># This is the &#34;Domain&#34; in your cookies. eg: kubeflow.&lt;platform.example.com&gt;</span>
@@ -408,7 +410,7 @@
 </span></span></code></pre></div><h2 id="access-aws-services-from-pipeline-components">Access AWS Services from Pipeline Components</h2>
 <p>For pipelines components to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the <code>AwsIamForServiceAccount</code> plugin. To configure the <code>AwsIamForServiceAccount</code> plugin to work with profiles, follow the steps below.</p>
 <h3 id="prerequisites">Prerequisites</h3>
-<p>Configuration steps to configure Profiles with AWS IAM permissions can be found in the <a href="/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps">Profiles component guide</a>. Follow the configuration steps to configure the profile controller to work with the <code>AwsIamForServiceAccount</code> plugin.</p>
+<p>Configuration steps to configure Profiles with AWS IAM permissions can be found in the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/profiles/#configuration-steps">Profiles component guide</a>. Follow the configuration steps to configure the profile controller to work with the <code>AwsIamForServiceAccount</code> plugin.</p>
 <p>The following is an example of a profile using the <code>AwsIamForServiceAccount</code> plugin:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kubeflow.org/v1</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Profile</span><span class="w">
@@ -434,7 +436,7 @@
 </span></span></code></pre></div><h3 id="example-s3-access-from-a-pipeline-component">Example: S3 Access from a Pipeline Component</h3>
 <p>The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.</p>
 <h4 id="prerequisites-1">Prerequisites</h4>
-<p>Make sure that you have completed the <a href="/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites">prerequisites</a> and Profile configuration steps.</p>
+<p>Make sure that you have completed the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/pipelines/#prerequisites">prerequisites</a> and Profile configuration steps.</p>
 <h4 id="steps">Steps</h4>
 <ol>
 <li>
@@ -470,7 +472,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>

@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/vanilla/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-24T10:05:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Vanilla Installation">
 <meta itemprop="description" content="Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)">
-<meta itemprop="dateModified" content="2022-06-24T10:05:54-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
 <meta itemprop="wordCount" content="1272">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Vanilla Installation"/>
@@ -119,9 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.4</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">1.5</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
 	
 </div>
 
@@ -366,7 +368,7 @@
 	<h1 id="deploying-kubeflow-on-eks">Deploying Kubeflow on EKS</h1>
 <p>This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>Be sure that you have satisfied the <a href="/kubeflow-manifests/docs/deployment/prerequisites/">installation prerequisites</a> before working through this guide.</p>
+<p>Be sure that you have satisfied the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/prerequisites/">installation prerequisites</a> before working through this guide.</p>
 <h3 id="build-manifests-and-install-kubeflow">Build Manifests and install Kubeflow</h3>
 <p>There two options for installing Kubeflow official components and common services with kustomize.</p>
 <ol>
@@ -484,7 +486,7 @@ components:</p>
 <p>Install the Training Operator official Kubeflow component:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><h4 id="aws-telemetry">AWS Telemetry</h4>
-<p>Install the AWS Kubeflow telemetry component. This is an optional component. See <a href="/kubeflow-manifests/docs/about/usage-tracking/">Usage Tracking</a> for more information</p>
+<p>Install the AWS Kubeflow telemetry component. This is an optional component. See <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/about/usage-tracking/">Usage Tracking</a> for more information</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-telemetry <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><h4 id="user-namespace">User namespace</h4>
 <p>Finally, create a new namespace for the the default user. In this example, the namespace is called <code>kubeflow-user-example-com</code>.</p>
@@ -509,7 +511,7 @@ components:</p>
 <li>Login with the default user&rsquo;s credential. The default email address is <code>user@example.com</code> and the default password is <code>12341234</code>.</li>
 </ol>
 <h4 id="exposing-kubeflow-over-load-balancer">Exposing Kubeflow over Load Balancer</h4>
-<p>In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the <a href="/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/">Load Balancer guide</a> to set it up.</p>
+<p>In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/load-balancer/guide/">Load Balancer guide</a> to set it up.</p>
 <h3 id="change-default-user-password">Change default user password</h3>
 <p>For security reasons, we do not recommend using the default password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password before deploying. To define a password for the default user:</p>
 <ol>
@@ -529,7 +531,7 @@ components:</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3bec380e1188025e13bce7c76ec1a8d9454cd267">Kubeflow on AWS v1.4 documentation (#273) (3bec380)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043)</a>
 </div>
 
 </div>
