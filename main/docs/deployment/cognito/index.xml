@@ -1,11 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kubeflow on AWS – Cognito</title>
-    <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/</link>
+    <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/</link>
     <description>Recent content in Cognito on Kubeflow on AWS</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -15,20 +15,19 @@
     
     <item>
       <title>Docs: Automated Deployment Guide</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-automated/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-automated/</guid>
       <description>
         
         
         &lt;p&gt;This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&amp;rsquo;s public DNS names are not supported.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;This guide assumes you have Python 3.8 installed and that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This guide assumes you have Python 3.8 installed and that you have completed the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;create-required-resources-and-deploy-kubeflow&#34;&gt;Create required resources and deploy Kubeflow&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;The following steps automate &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;section 1.0(Custom domain and certificates)&lt;/a&gt; (creating a custom domain to host Kubeflow and TLS certificates for the domain), &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool&#34;&gt;section 2.0(Cognito user pool)&lt;/a&gt; (creating a Cognito Userpool used for user authentication) and&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;section 3.0(Configure Ingress)&lt;/a&gt; (configuring ingress and load balancer controller manifests) of the cognito guide.&lt;/p&gt;
+&lt;li&gt;The following steps automate &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#10-custom-domain-and-certificates&#34;&gt;section 1.0(Custom domain and certificates)&lt;/a&gt; (creating a custom domain to host Kubeflow and TLS certificates for the domain), &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#20-cognito-user-pool&#34;&gt;section 2.0(Cognito user pool)&lt;/a&gt; (creating a Cognito Userpool used for user authentication) and&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#30-configure-ingress&#34;&gt;section 3.0(Configure Ingress)&lt;/a&gt; (configuring ingress and load balancer controller manifests) of the cognito guide.
 &lt;ol&gt;
 &lt;li&gt;Install dependencies for the scripts
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r tests/e2e/requirements.txt
@@ -40,7 +39,7 @@
 &lt;li&gt;If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in &lt;code&gt;route53.rootDomain.hostedZoneId&lt;/code&gt;. Skip this step if your domain is managed by other domain provider.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Name of the sudomain you want to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;. Please read &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;this section&lt;/a&gt; to understand why we use a subdomain.&lt;/li&gt;
+&lt;li&gt;Name of the sudomain you want to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;. Please read &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;this section&lt;/a&gt; to understand why we use a subdomain.&lt;/li&gt;
 &lt;li&gt;Cluster name and region where kubeflow will be deployed in &lt;code&gt;cluster.name&lt;/code&gt; and &lt;code&gt;cluster.region&lt;/code&gt; (e.g. us-west-2) respectively.&lt;/li&gt;
 &lt;li&gt;Name of cognito userpool in &lt;code&gt;cognitoUserpool.name&lt;/code&gt; e.g. kubeflow-users.&lt;/li&gt;
 &lt;li&gt;The config file will look something like:
@@ -104,6 +103,9 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&amp;laquo;&amp;laquo;&amp;laquo;&amp;lt; HEAD&lt;/p&gt;
+&lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Install Kubeflow using the following command:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; &lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; ! kustomize build deployments/cognito &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; sleep 30&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
@@ -119,7 +121,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      15d
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of alb-ingress-controller by following &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;this guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of alb-ingress-controller by following &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;this guide&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;Substitute the ALB address under &lt;code&gt;kubeflow.alb.dns&lt;/code&gt; in &lt;code&gt;tests/e2e/utils/cognito_bootstrap/config.yaml&lt;/code&gt;. The kubeflow section of the config file will look like:
@@ -146,7 +148,7 @@
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Follow the rest of the cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard&#34;&gt;section 6.0(Connecting to central dashboard)&lt;/a&gt; to:&lt;/p&gt;
+&lt;p&gt;Follow the rest of the cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard&#34;&gt;section 6.0(Connecting to central dashboard)&lt;/a&gt; to:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a user in Cognito user pool&lt;/li&gt;
 &lt;li&gt;Create a profile for the user from the user pool&lt;/li&gt;
@@ -182,10 +184,10 @@
     
     <item>
       <title>Docs: Manual Deployment Guide</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/</guid>
       <description>
         
         
@@ -197,16 +199,16 @@
 &lt;li&gt;create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB&amp;rsquo;s public DNS names)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;Check to make sure that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Check to make sure that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background section&lt;/a&gt; in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.&lt;/p&gt;
-&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create domain and certificate section&lt;/a&gt; for information on why we use a subdomain for hosting Kubeflow.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#background&#34;&gt;background section&lt;/a&gt; in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.&lt;/p&gt;
+&lt;p&gt;Read the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates&#34;&gt;create domain and certificate section&lt;/a&gt; for information on why we use a subdomain for hosting Kubeflow.&lt;/p&gt;
 &lt;h2 id=&#34;optional-automated-setup&#34;&gt;(Optional) Automated setup&lt;/h2&gt;
-&lt;p&gt;The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/cognito/guide-automated/&#34;&gt;automated setup guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-automated/&#34;&gt;automated setup guide&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;10-custom-domain-and-certificates&#34;&gt;1.0 Custom domain and certificates&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;Create a subdomain&lt;/a&gt; section of the Load Balancer guide to create a subdomain(e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for hosting Kubeflow.&lt;/li&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/a&gt; section of the Load Balancer guide to create certificates required for TLS.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;Create a subdomain&lt;/a&gt; section of the Load Balancer guide to create a subdomain(e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) for hosting Kubeflow.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/a&gt; section of the Load Balancer guide to create certificates required for TLS.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;From this point onwards, we will be creating/updating the DNS records &lt;strong&gt;only in the subdomain&lt;/strong&gt;. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.&lt;/p&gt;
 &lt;h2 id=&#34;20-cognito-user-pool&#34;&gt;2.0 Cognito User Pool&lt;/h2&gt;
@@ -242,7 +244,7 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for &lt;code&gt;*.platform.example.com&lt;/code&gt; by following the process similar to &lt;a href=&#34;./kubeflow-manifests/deployments/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;section 2.0&lt;/a&gt;. That is because &lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html&#34;&gt;Cognito requires&lt;/a&gt; a certificate in N.Virginia in order to have a custom domain for a user pool.&lt;/li&gt;
+&lt;li&gt;If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for &lt;code&gt;*.platform.example.com&lt;/code&gt; by following the process similar to &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;section 2.0&lt;/a&gt;. That is because &lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html&#34;&gt;Cognito requires&lt;/a&gt; a certificate in N.Virginia in order to have a custom domain for a user pool.&lt;/li&gt;
 &lt;li&gt;In the &lt;code&gt;Domain name&lt;/code&gt; choose &lt;code&gt;Use your domain&lt;/code&gt;, type &lt;code&gt;auth.platform.example.com&lt;/code&gt; and select the &lt;code&gt;*.platform.example.com&lt;/code&gt; AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
 &lt;ol&gt;
 &lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png&#34; alt=&#34;cognito-active-domain&#34;&gt;&lt;/li&gt;
@@ -313,7 +315,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/a&gt; section of the load balancer guide to setup the resources required the load balancer controller.&lt;/li&gt;
+&lt;li&gt;Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/a&gt; section of the load balancer guide to setup the resources required the load balancer controller.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;40-building-manifests-and-deploying-kubeflow&#34;&gt;4.0 Building manifests and deploying Kubeflow&lt;/h2&gt;
 &lt;ol&gt;
@@ -408,7 +410,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   &lt;span class=&#34;m&#34;&gt;80&lt;/span&gt;      15d
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt; in the troubleshooting guide.&lt;/li&gt;
+&lt;li&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt; in the troubleshooting guide.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;li&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;
@@ -461,7 +463,7 @@
 &lt;p&gt;Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the &lt;a href=&#34;https://toolbox.googleapps.com/apps/dig/#CNAME/&#34;&gt;Google Admin Toolbox&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;70-uninstall-kubeflow&#34;&gt;7.0 Uninstall Kubeflow&lt;/h2&gt;
-&lt;p&gt;To delete the resources created in this guide, refer to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/#uninstall-kubeflow&#34;&gt;Uninstall section in Automated Cognito deployment guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;To delete the resources created in this guide, refer to the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-automated/#uninstall-kubeflow&#34;&gt;Uninstall section in Automated Cognito deployment guide&lt;/a&gt;&lt;/p&gt;
 
       </description>
     </item>

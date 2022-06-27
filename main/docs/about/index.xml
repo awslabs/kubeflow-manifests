@@ -1,11 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kubeflow on AWS – About</title>
-    <link>https://awslabs.github.io/kubeflow-manifests/docs/about/</link>
+    <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/</link>
     <description>Recent content in About on Kubeflow on AWS</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/about/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/main/docs/about/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -15,10 +15,10 @@
     
     <item>
       <title>Docs: AWS Features for Kubeflow</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/about/features/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/features/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/about/features/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/about/features/</guid>
       <description>
         
         
@@ -54,10 +54,10 @@
     
     <item>
       <title>Docs: Releases and Versioning</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/about/releases/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/releases/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/about/releases/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/about/releases/</guid>
       <description>
         
         
@@ -80,10 +80,10 @@
     
     <item>
       <title>Docs: Amazon EKS and Kubeflow Compatibility</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/eks-compatibility/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/about/eks-compatibility/</guid>
       <description>
         
         
@@ -98,6 +98,10 @@
       &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.22&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
       &lt;tr&gt;
         &lt;td&gt;1.21&lt;/td&gt;
         &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
@@ -128,10 +132,10 @@
     
     <item>
       <title>Docs: Security</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/about/security/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/security/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/about/security/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/about/security/</guid>
       <description>
         
         
@@ -154,10 +158,10 @@
     
     <item>
       <title>Docs: Usage Tracking</title>
-      <link>https://awslabs.github.io/kubeflow-manifests/docs/about/usage-tracking/</link>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/about/usage-tracking/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awslabs.github.io/kubeflow-manifests/docs/about/usage-tracking/</guid>
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/about/usage-tracking/</guid>
       <description>
         
         
