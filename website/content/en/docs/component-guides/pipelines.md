@@ -44,7 +44,7 @@ client = kfp.Client(host=f"http://{kubeflow_gateway_endpoint}/pipeline", cookies
 client.list_experiments(namespace=namespace)
 ```
 
-If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) guide and use the ALB address as the Kubeflow Endpoint.
+If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md" >}}) guide and use the ALB address as the Kubeflow Endpoint.
 
 To do programmatic authentication with Dex, refer to the following comments under [issue #140](https://github.com/kubeflow/kfctl/issues/140) in the `kfctl` repository: [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304) and [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529).
 
@@ -69,7 +69,7 @@ For pipelines components to be granted access to AWS resources, the correspondin
 
 ### Prerequisites
 
-Configuration steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). Follow the configuration steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
+Configuration steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md#configuration-steps" >}}). Follow the configuration steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
 The following is an example of a profile using the `AwsIamForServiceAccount` plugin:
 ```yaml
@@ -108,7 +108,7 @@ eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
 
 The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
 #### Prerequisites
-Make sure that you have completed the [prerequisites](/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites) and Profile configuration steps.
+Make sure that you have completed the [prerequisites]({{< ref "/docs/component-guides/pipelines.md#prerequisites" >}}) and Profile configuration steps.
 
 #### Steps
 

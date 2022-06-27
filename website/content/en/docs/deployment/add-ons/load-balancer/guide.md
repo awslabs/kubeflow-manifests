@@ -20,8 +20,8 @@ To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Tr
 
 ## Prerequisites
 This guide assumes that you have: 
-- A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the [Vanilla](/kubeflow-manifests/docs/deployment/vanilla/guide/) deployment of Kubeflow on AWS).
-- Installed the tools mentioned in the [general prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/) guide on the client machine.
+- A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the [Vanilla]({{< ref "/docs/deployment/vanilla/guide.md" >}}) deployment of Kubeflow on AWS).
+- Installed the tools mentioned in the [general prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}) guide on the client machine.
 - Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
     - Verify that your cluster name and region are exported:
         ```bash
@@ -31,7 +31,7 @@ This guide assumes that you have:
     - Display the current cluster that kubeconfig points to:
         ```bash
         kubectl config current-context
-        aws eks describe-cluster --name $CLUSTER_NAME
+        aws eks describe-cluster --name $CLUSTER_NAME --region $CLUSTER_REGION
         ```
 - Verify that the current directory is the root of the repository by running the `pwd` command. The output should be `<path/to/kubeflow-manifests>`.
 

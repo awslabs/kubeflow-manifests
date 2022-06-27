@@ -21,7 +21,7 @@ kustomize build docs/deployment/vanilla/ | kubectl delete -f -
 
 This command assumes that you have the repository in the same state as when you installed Kubeflow.
 
-Cleanup steps for specific deployment options can be found in their respective [installation guides](/kubeflow-manifests/docs/deployment/). 
+Cleanup steps for specific deployment options can be found in their respective [installation guides]({{< ref "/docs/deployment" >}}). 
 
 > Note: This will not delete your Amazon EKS cluster.
 

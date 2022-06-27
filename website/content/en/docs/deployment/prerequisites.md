@@ -16,7 +16,7 @@ weight = 20
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
    
 ## Create an EKS cluster
-> Note: Be sure to check [Amazon EKS and Kubeflow Compatibility](/kubeflow-manifests/docs/about/eks-compatibility/) when creating your cluster with specific EKS versions.
+> Note: Be sure to check [Amazon EKS and Kubeflow Compatibility]({{< ref "/docs/about/eks-compatibility.md" >}}) when creating your cluster with specific EKS versions.
 
 If you do not have an existing cluster, run the following command to create an EKS cluster.
 
@@ -53,7 +53,7 @@ More details about cluster creation via `eksctl` can be found in the [Creating a
 ## Clone the repository 
 Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
 
-Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning](/kubeflow-manifests/docs/about/releases/) if you are unsure about what these values should be.
+Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.4.1) and `AWS_RELEASE_VERSION`(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
 ```bash
 export KUBEFLOW_RELEASE_VERSION=<>
 export AWS_RELEASE_VERSION=<>
