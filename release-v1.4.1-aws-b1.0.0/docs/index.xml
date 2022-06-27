@@ -2496,7 +2496,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html&#34;&gt;Security best practices for Amazon Simple Storage Service (S3)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security.html&#34;&gt;Security in Amazon Route53&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/acm/latest/userguide/security.html&#34;&gt;Security in Amazon Certificate Manager (ACM)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html&#34;&gt;Security best practices for Amazon Cognito user pools&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/managing-security.html&#34;&gt;Security best practices for Amazon Cognito user pools&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/security.html&#34;&gt;Security in Amazon Elastic Load Balancing (ELB)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
