@@ -72,7 +72,6 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
-<<<<<<< HEAD
 1. Install Kubeflow using the following command:
    ```bash
     while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
@@ -119,7 +118,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
     kustomize build deployments/cognito | kubectl delete -f -
     ```
 1. To delete the rest of resources(subdomain, certificates etc.), run the following commands from the root of your repository:
-> Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/cognito_bootstrap/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in a yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
+    > Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/cognito_bootstrap/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in a yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
     - Sample config file:
     ```yaml
     cognitoUserpool:
