@@ -15,15 +15,15 @@ You can use Notebooks with Kubeflow on AWS to:
 
 ## AWS-optimized Kubeflow Notebook servers
 
-Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html). 
+Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are built on top of the [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html) along with other Kubeflow specific packages. 
 
-The following container images are available from the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/).
+These container images are available on the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/). The following images are available as part of this release, however you can always find the latest updated images in the linked ECR repository. 
 
 ```
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-gpu-py38-cu112
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-cpu-py38
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-gpu-py38-cu111
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-gpu-py38-cu112-ubuntu20.04-v1.8
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-cpu-py38-ubuntu20.04-e3-v1.1
 ```
 
 AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Available Deep Learning Containers Images](https://github.com/aws/deep-learning-containers/blob/master/available_images.md).

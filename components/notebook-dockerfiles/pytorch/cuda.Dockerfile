@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.9.0-gpu-py38-cu111-ubuntu20.04
+ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1
 
 FROM $BASE_IMAGE
 
