@@ -39,7 +39,7 @@ The following components have been tested to work with the `AwsIamForServiceAcco
 
 Integration with the `AwsIamForServiceAccount` plugin is actively being worked on for all components with [Profile-level support](https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration).
 
-You can find documentation about the `AwsIamForServiceAccount` plugin for specific components in the individual [component guides](/docs/component-guides/). Read on for general configuration instructions.
+You can find documentation about the `AwsIamForServiceAccount` plugin for specific components in the individual [component guides]({{< ref "/docs/component-guides" >}}). Read on for general configuration instructions.
 
 ## Configuration steps
 
