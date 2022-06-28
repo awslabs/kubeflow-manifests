@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.93.0" />
+<meta name="robots" content="index, follow">
+
+<script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/surajkota-patch-3"
+      },
+      "articleSection" : "docs",
+      "name" : "Cognito, RDS, and S3",
+      "headline" : "Cognito, RDS, and S3",
+      "description" : "Deploying Kubeflow with Amazon Cognito, RDS and S3",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "0001",
+      "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
+      "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/surajkota-patch-3\/docs\/deployment\/cognito-rds-s3\/guide\/",
+      "wordCount" : "572",
+      "keywords" : [ "Kubeflow" ]
+  }
+  </script>
+
+<link rel="shortcut icon" href="/kubeflow-manifests/surajkota-patch-3/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kubeflow-manifests/surajkota-patch-3/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/surajkota-patch-3/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/surajkota-patch-3/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="manifest" href="/kubeflow-manifests/surajkota-patch-3/favicons/manifest.json">
+<meta name="msapplication-config" content="/kubeflow-manifests/surajkota-patch-3/favicons/browserconfig.xml" />
+<meta name="msapplication-TileColor" content="#4279f4">
+<meta name="theme-color" content="#4279f4">
+
+<title>Cognito, RDS, and S3 | Kubeflow on AWS</title>
+<meta name="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
+<meta property="og:title" content="Cognito, RDS, and S3" />
+<meta property="og:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-06-27T18:28:55-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="Cognito, RDS, and S3">
+<meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
+<meta itemprop="dateModified" content="2022-06-27T18:28:55-07:00" />
+<meta itemprop="wordCount" content="572">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cognito, RDS, and S3"/>
+<meta name="twitter:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3"/>
+
+
+
+
+<link rel="preload" href="/kubeflow-manifests/surajkota-patch-3/scss/main.min.aaceb816a36445103bbac4366a50b9ace964e875d4fad1f72a147d79306e7865.css" as="style">
+<link href="/kubeflow-manifests/surajkota-patch-3/scss/main.min.aaceb816a36445103bbac4366a50b9ace964e875d4fad1f72a147d79306e7865.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+    
+    <link href="/kubeflow-manifests/surajkota-patch-3/css/syntax.min.css" rel="stylesheet">
+
+    
+    <link href="/kubeflow-manifests/surajkota-patch-3/css/copy-code-button.min.css" rel="stylesheet">
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
+        <a class="navbar-brand" href="/kubeflow-manifests/surajkota-patch-3/">
+		<span class="navbar-logo"></span><span class="text-uppercase font-weight-bold">Kubeflow on AWS</span>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/surajkota-patch-3/docs/" ><i class='fas fa-book pr-2'></i><span>Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/awslabs/kubeflow-manifests" target="_blank" ><i class='fab fa-github pr-2'></i><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown mt-1 mt-lg-0 mr-2">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestssurajkota-patch-3docs-li">
+  <a href="/kubeflow-manifests/surajkota-patch-3/docs/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-kubeflow-manifestssurajkota-patch-3docs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestssurajkota-patch-3docsabout-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsabout-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsabout-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestssurajkota-patch-3docsabout"><span class="">About</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsaboutfeatures-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsaboutfeatures-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsaboutfeatures-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/features/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsaboutfeatures"><span class="">AWS Features for Kubeflow</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsaboutreleases-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsaboutreleases-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsaboutreleases-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/releases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsaboutreleases"><span class="">Releases and Versioning</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsabouteks-compatibility-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsabouteks-compatibility-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsabouteks-compatibility-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/eks-compatibility/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsabouteks-compatibility"><span class="">Amazon EKS and Kubeflow Compatibility</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsaboutsecurity-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsaboutsecurity-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsaboutsecurity-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/security/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsaboutsecurity"><span class="">Security</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsaboutusage-tracking-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsaboutusage-tracking-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsaboutusage-tracking-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/about/usage-tracking/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsaboutusage-tracking"><span class="">Usage Tracking</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestssurajkota-patch-3docsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeployment-check" checked/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeployment-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestssurajkota-patch-3docsdeployment"><span class="">Deployment</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentprerequisites-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentprerequisites-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentvanillaguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentvanillaguide"><span class="">Vanilla Installation</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentrds-s3guide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito"><span class="">Cognito</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-automated-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognitoguide"><span class="">Manual Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-rds-s3guide-check" checked/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentcognito-rds-s3guide"><span class="td-sidebar-nav-active-item">Cognito, RDS, and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-ons-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-ons-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-ons"><span class="">Add-ons</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstorageefsguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstorageefsguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstorageefsguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstorageefsguide"><span class="">EFS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstoragefsx-for-lustreguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstoragefsx-for-lustreguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentuninstall-kubeflow-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentuninstall-kubeflow-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docsdeploymentuninstall-kubeflow-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/deployment/uninstall-kubeflow/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docsdeploymentuninstall-kubeflow"><span class="">Uninstall Kubeflow</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guides-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docscomponent-guides-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guides"><span class="">Component Guides</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesnotebooks-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesnotebooks-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidespipelines-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidespipelines-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/component-guides/pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidespipelines"><span class="">Pipelines</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guideskserve-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docscomponent-guideskserve-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guideskserve"><span class="">KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesprofiles-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesprofiles-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesprofiles-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/component-guides/profiles/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docscomponent-guidesprofiles"><span class="">Profiles</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestssurajkota-patch-3docstroubleshooting-aws-li">
+  <input type="checkbox" id="m-kubeflow-manifestssurajkota-patch-3docstroubleshooting-aws-check"/>
+  <label for="m-kubeflow-manifestssurajkota-patch-3docstroubleshooting-aws-check"><a href="/kubeflow-manifests/surajkota-patch-3/docs/troubleshooting-aws/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestssurajkota-patch-3docstroubleshooting-aws"><span class="">Troubleshooting</span></a></label>
+  
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Cognito,%20RDS,%20and%20S3" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+  
+</div>
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-prerequisites">1. Prerequisites</a></li>
+    <li><a href="#configure-custom-domain-and-cognito">Configure Custom Domain and Cognito</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/">Documentation</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/">Deployment</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito-rds-s3/guide/">Cognito, RDS, and S3</a>
+  </li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>Cognito, RDS, and S3</h1>
+	<div class="lead">Deploying Kubeflow with Amazon Cognito, RDS and S3</div>
+	<header class="article-meta">
+		
+
+  
+    
+
+
+  
+    
+
+
+  
+
+		
+	</header>    
+	<p>This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.</p>
+<h2 id="1-prerequisites">1. Prerequisites</h2>
+<p>Refer to the <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/prerequisites/">general prerequisites guide</a> and the <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/rds-s3/guide/">RDS and S3 setup guide</a> in order to:</p>
+<ol>
+<li>Install the CLI tools</li>
+<li>Clone the repositories</li>
+<li>Create an EKS cluster</li>
+<li>Create an S3 Bucket</li>
+<li>Create an RDS Instance</li>
+<li>Configure AWS Secrets for RDS and S3</li>
+<li>Install AWS Secrets and Kubernetes Secrets Store CSI driver</li>
+<li>Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines</li>
+</ol>
+<h2 id="configure-custom-domain-and-cognito">Configure Custom Domain and Cognito</h2>
+<ol>
+<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide/">Cognito setup guide</a> from <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">Section 1.0 (Custom domain)</a> up to <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide/#30-configure-ingress">Section 3.0 (Configure ingress)</a> in order to:
+<ol>
+<li>Create a custom domain</li>
+<li>Create TLS certificates for the domain</li>
+<li>Create a Cognito Userpool</li>
+<li>Configure Ingress</li>
+</ol>
+</li>
+<li>Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
+<ol>
+<li><strong>[Option 1]</strong> Install with a single command:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/cognito-rds-s3 <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+</span></span></code></pre></div></li>
+<li><strong>[Option 2]</strong> Install individual components:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Kubeflow namespace</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Roles</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-roles/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Istio</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-crds/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-install/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Cert-Manager</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/cert-manager/cert-manager/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/cert-manager/kubeflow-issuer/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># KNative</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-serving/overlays/gateways <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-eventing/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Istio Resources</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># KServe</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/kserve <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Central Dashboard</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Notebooks</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/jupyter-web-app <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Admission Webhook</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/admission-webhook/upstream/overlays/cert-manager <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Profiles + KFAM</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/profiles/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Volumes Web App</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/volumes-web-app/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Tensorboard</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Training Operator</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Telemetry - This is an optional component. See usage tracking documentation for more information.</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-telemetry <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Secret Manager</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-secrets-manager <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Pipelines</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/pipeline <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Katib</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/katib-external-db-with-kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Configured for AWS Cognito</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Ingress</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/cognito <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ALB controller</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-alb-ingress-controller/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Authservice</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-authservice/base <span class="p">|</span> kubectl apply -f -        
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>Follow the rest of the Cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/surajkota-patch-3/docs/deployment/cognito/guide/#50-updating-the-domain-with-alb-address">section 5.0 (Updating the domain with ALB address)</a> in order to:
+<ol>
+<li>Add/Update the DNS records in a custom domain with the ALB address</li>
+<li>Create a user in a Cognito user pool</li>
+<li>Create a profile for the user from the user pool</li>
+<li>Connect to the central dashboard</li>
+</ol>
+</li>
+</ol>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/eca016917f0a9bb5531e724b563fb27d2ee53b6f">Remove root website build from 1.4 branch (eca0169)</a>
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark pt-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/kubeflow-manifests/surajkota-patch-3/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/kubeflow-manifests/surajkota-patch-3/js/main.min.d8f62412a5b1d7bcd772091cb1577d185b9a125aced86e4938c63874de24edb4.js" integrity="sha256-2PYkEqWx17zXcgkcsVd9GFuaElrO2G5JOMY4dN4k7bQ=" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/kubeflow-manifests/surajkota-patch-3/js/copy-code-button.min.js"></script>
+
+
+
+
+  </body>
+</html>
