@@ -114,8 +114,12 @@ disableKinds = ["taxonomy", "taxonomyTerm"]
   # These entries appear in the drop-down menu at the top of the website.
   [[params.versions]]
     version = "latest"
-    githubbranch = "release-v1.4.1-aws-b1.0.0"
+    githubbranch = "release-v1.5.1-aws-b1.0.0"
     url = "https://awslabs.github.io/kubeflow-manifests/docs"
+   [[params.versions]]
+    version = "v1.5"
+    githubbranch = "release-v1.5.1-aws-b1.0.0"
+    url = "https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs"
   [[params.versions]]
     version = "v1.4"
     githubbranch = "release-v1.4.1-aws-b1.0.0"
