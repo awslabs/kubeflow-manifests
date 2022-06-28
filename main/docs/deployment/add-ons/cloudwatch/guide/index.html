@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/add-ons/cloudwatch/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T17:14:21-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T17:57:52-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="CloudWatch">
 <meta itemprop="description" content="Set up CloudWatch ContainerInsights on Amazon EKS">
-<meta itemprop="dateModified" content="2022-06-27T17:14:21-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T17:57:52-07:00" />
 <meta itemprop="wordCount" content="343">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="CloudWatch"/>
@@ -119,11 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
 	
 </div>
 
@@ -385,14 +385,14 @@
 </span></span></code></pre></div><p>To verify the installation, you can run the <code>list-metrics</code> command and check that metrics have been created. It may take up to 15 minutes for the metrics to populate.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws cloudwatch list-metrics --namespace ContainerInsights --region <span class="nv">$CLUSTER_REGION</span>
 </span></span></code></pre></div><p>An example of the logs that will be available after installation are the logs of the Pods on your cluster. This way, the Pod logs can still be accessed past their default storage time. This also allows for an easy way to view logs for all Pods on your cluster without having to directly connect to your EKS cluster.</p>
-<p>The logs can be accessed by through CloudWatch log groups <img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/deployments/add-ons/cloudwatch/images/cloudwatch-logs.png" alt="cloudwatch"></p>
-<p>To view individual Pod logs, select <code>/aws/containerinsights/YOUR_CLUSTER_NAME/application</code>. <img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/deployments/add-ons/cloudwatch/images/cloudwatch-application-logs.png" alt="application"></p>
-<p>The following image is an example of the <code>jupyter-web-app</code> Pod logs available through CloudWatch. <img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/deployments/add-ons/cloudwatch/images/cloudwatch-pod-logs.png" alt="jupyter-logs"></p>
+<p>The logs can be accessed by through CloudWatch log groups <img src="../../../../images/cloudwatch/cloudwatch-logs.png" alt="cloudwatch"></p>
+<p>To view individual Pod logs, select <code>/aws/containerinsights/YOUR_CLUSTER_NAME/application</code>. <img src="../../../../images/cloudwatch/cloudwatch-application-logs.png" alt="application"></p>
+<p>The following image is an example of the <code>jupyter-web-app</code> Pod logs available through CloudWatch. <img src="../../../../images/cloudwatch/cloudwatch-pod-logs.png" alt="jupyter-logs"></p>
 <p>For a full list of metrics that are provided by default, see <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-EKS.html">Amazon EKS and Kubernetes Container Insights metrics</a>.</p>
 <p>The metrics are grouped by varying parameters such as Cluster, Namespace, or PodName.
-<img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/deployments/add-ons/cloudwatch/images/cloudwatch-metrics.png" alt="cloudwatch-metrics"></p>
+<img src="../../../../images/cloudwatch/cloudwatch-metrics.png" alt="cloudwatch-metrics"></p>
 <p>The following image is an example of the graphed metrics for the <code>istio-system</code> namespace that deals with internet traffic.
-<img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/deployments/add-ons/cloudwatch/images/cloudwatch-namespace-metrics.png" alt="cloudwatch-namespace-metrics"></p>
+<img src="../../../../images/cloudwatch/cloudwatch-namespace-metrics.png" alt="cloudwatch-namespace-metrics"></p>
 <p>See <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html">Viewing available metrics</a> for more information on CloudWatch metrics. Select the ContainerInsights metric namespace.</p>
 <p>You can see the full list of logs and metrics through the <a href="https://console.aws.amazon.com/cloudwatch/">Amazon CloudWatch AWS Console</a>.</p>
 <h2 id="uninstall">Uninstall</h2>
@@ -404,7 +404,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/ed3bbbc60ab2f8ba3dfaef1e68d1b309d9fd2b95">update repository overview (#282) (ed3bbbc)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/53948dce2a30fc97d5e63567c99fed987e0295a2">[Website] Minor doc fixes (#283) (53948dc)</a>
 </div>
 
 </div>

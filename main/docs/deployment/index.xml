@@ -739,7 +739,7 @@ Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the followin
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;Follow the rest of the Cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address&#34;&gt;section 5.0 (Updating the domain with ALB address)&lt;/a&gt; in order to:
+&lt;li&gt;Follow the rest of the Cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide/#50-updating-the-domain-with-alb-address&#34;&gt;section 5.0 (Updating the domain with ALB address)&lt;/a&gt; in order to:
 &lt;ol&gt;
 &lt;li&gt;Add/Update the DNS records in a custom domain with the ALB address&lt;/li&gt;
 &lt;li&gt;Create a user in a Cognito user pool&lt;/li&gt;
