@@ -7,6 +7,8 @@ mountOptions:
   - tls
 parameters:
   directoryPerms: '700'
+  gid: <YOUR_GID>
+  uid: <YOUR_UID>
   fileSystemId: <YOUR_FILE_SYSTEM_ID>
   provisioningMode: efs-ap
 provisioner: efs.csi.aws.com
