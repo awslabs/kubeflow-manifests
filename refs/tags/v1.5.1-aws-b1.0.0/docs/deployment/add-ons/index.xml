@@ -1,0 +1,747 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – Add-ons</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/</link>
+    <description>Recent content in Add-ons on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Load Balancer</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This tutorial shows how to expose Kubeflow over a load balancer on AWS.&lt;/p&gt;
+&lt;h2 id=&#34;before-you-begin&#34;&gt;Before you begin&lt;/h2&gt;
+&lt;p&gt;Follow this guide only if you are &lt;strong&gt;not&lt;/strong&gt; using &lt;code&gt;Cognito&lt;/code&gt; as the authentication provider in your deployment. Cognito-integrated deployment is configured with the AWS Load Balancer controller by default to create an ingress-managed Application Load Balancer and exposes Kubeflow via a hosted domain.&lt;/p&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the &lt;a href=&#34;https://kubernetes-sigs.github.io/aws-load-balancer-controller/&#34;&gt;AWS Load Balancer (ALB) controller&lt;/a&gt;, which satisfies the Kubernetes &lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/ingress/&#34;&gt;Ingress resource&lt;/a&gt; to create an &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html&#34;&gt;Application Load Balancer&lt;/a&gt; (ALB). When you create a Kubernetes &lt;code&gt;Ingress&lt;/code&gt;, an ALB is provisioned that load balances application traffic.&lt;/p&gt;
+&lt;p&gt;In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies&#34;&gt;Secure Cookies&lt;/a&gt;, so accessing Kubeflow with HTTP over a non-localhost domain does not work.&lt;/p&gt;
+&lt;p&gt;To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. &lt;a href=&#34;https://aws.amazon.com/certificate-manager/&#34;&gt;AWS Certificate Manager&lt;/a&gt; is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates&#34;&gt;you must specify a domain name&lt;/a&gt; (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Route53&lt;/a&gt;, or GoDoddy.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;This guide assumes that you have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A Kubeflow deployment on EKS with Dex as your authentication provider (Dex is the default authentication provider in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;Vanilla&lt;/a&gt; deployment of Kubeflow on AWS).&lt;/li&gt;
+&lt;li&gt;Installed the tools mentioned in the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/&#34;&gt;general prerequisites&lt;/a&gt; guide on the client machine.&lt;/li&gt;
+&lt;li&gt;Verified that you are connected to the right cluster, that the cluster has compute, and that the AWS region is set to the region of your cluster.
+&lt;ul&gt;
+&lt;li&gt;Verify that your cluster name and region are exported:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Display the current cluster that kubeconfig points to:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl config current-context
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws eks describe-cluster --name &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Verify that the current directory is the root of the repository by running the &lt;code&gt;pwd&lt;/code&gt; command. The output should be &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;create-load-balancer&#34;&gt;Create Load Balancer&lt;/h2&gt;
+&lt;p&gt;If you prefer to create a load balancer using automated scripts, you &lt;strong&gt;only&lt;/strong&gt; need to follow the steps in the &lt;a href=&#34;#automated-script&#34;&gt;automated script section&lt;/a&gt;. You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.&lt;/p&gt;
+&lt;h3 id=&#34;create-domain-and-certificates&#34;&gt;Create domain and certificates&lt;/h3&gt;
+&lt;p&gt;You need a registered domain and TLS certificate to use HTTPS with Load Balancer. Since your top level domain (e.g. &lt;code&gt;example.com&lt;/code&gt;) can be registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM, and Application Load Balancer, you will create a separate &lt;a href=&#34;https://en.wikipedia.org/wiki/Subdomain&#34;&gt;sudomain&lt;/a&gt; (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain (&lt;code&gt;*.example.com&lt;/code&gt;) and subdomain (&lt;code&gt;*.platform.example.com&lt;/code&gt;) in the region where your platform will run (your EKS cluster region).&lt;/p&gt;
+&lt;h4 id=&#34;create-a-subdomain&#34;&gt;Create a subdomain&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Register a domain in any domain provider like &lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html&#34;&gt;Route 53&lt;/a&gt; or GoDaddy. For this guide, we assume that this domain is &lt;code&gt;example.com&lt;/code&gt;. It is handy to have a domain managed by Route53 to deal with all the DNS records that you will have to add (wildcard for ALB DNS, validation for the certificate manager, etc).&lt;/li&gt;
+&lt;li&gt;Go to Route53 and create a subdomain to host Kubeflow:
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Create a hosted zone for the desired subdomain (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Copy the value of the NS type record from the subdomain hosted zone (&lt;code&gt;platform.example.com&lt;/code&gt;)
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-NS.png&#34; alt=&#34;subdomain-NS&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create an &lt;code&gt;NS&lt;/code&gt; type record in the root &lt;code&gt;example.com&lt;/code&gt; hosted zone for the subdomain &lt;code&gt;platform.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-creating-NS.png&#34; alt=&#34;root-domain-NS-creating-NS&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Verify the creation of your NS record in the Route53 console.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/root-domain-NS-created.png&#34; alt=&#34;root-domain-NS-created&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;From this point on, you create and update the DNS records &lt;strong&gt;only in the subdomain&lt;/strong&gt;. All of the images of the hosted zone in the following steps of this guide are for the subdomain.&lt;/p&gt;
+&lt;h4 id=&#34;create-certificates-for-domain&#34;&gt;Create certificates for domain&lt;/h4&gt;
+&lt;p&gt;To create the certificates for the domains in the region where your platform will run (i.e. EKS cluster region), follow the steps in the &lt;a href=&#34;https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console&#34;&gt;Request a public certificate using the console&lt;/a&gt; guide.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: The certificates are valid only after successful &lt;a href=&#34;https://docs.aws.amazon.com/acm/latest/userguide/domain-ownership-validation.html&#34;&gt;validation of domain ownership&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The following image is a screenshot showing that a certificate has been issued.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Status turns to &lt;code&gt;Issued&lt;/code&gt; after a few minutes of validation.
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/successfully-issued-certificate.png&#34; alt=&#34;successfully-issued-certificate&#34;&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;If you choose DNS validation for the validation of the certificates, you will be asked to create a CNAME type record in the hosted zone. The following image is a screenshot of the CNAME record of the certificate in the &lt;code&gt;platform.example.com&lt;/code&gt; hosted zone for DNS validation:
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/DNS-record-for-certificate-validation.png&#34; alt=&#34;DNS-record-for-certificate-validation&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a certificate for &lt;code&gt;*.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
+&lt;li&gt;Create a certificate for &lt;code&gt;*.platform.example.com&lt;/code&gt; in the region where your platform will run.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;configure-ingress&#34;&gt;Configure Ingress&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Export the ARN of the certificate created for &lt;code&gt;*.platform.example.com&lt;/code&gt;:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;certArn&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/https/params.env&#34;&gt;ingress&lt;/a&gt; with the certificate ARN of the subdomain.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;certArn=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$certArn&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/istio-ingress/overlays/https/params.env
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;configure-load-balancer-controller&#34;&gt;Configure Load Balancer controller&lt;/h3&gt;
+&lt;p&gt;Set up resources required for the Load Balancer controller:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the &lt;strong&gt;Prerequisites&lt;/strong&gt; section in the &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html&#34;&gt;Application load balancing on Amazon EKS&lt;/a&gt; guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
+&lt;ul&gt;
+&lt;li&gt;Check if the following tags exist on the subnets:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;kubernetes.io/cluster/cluster-name&lt;/code&gt; (replace &lt;code&gt;cluster-name&lt;/code&gt; with your cluster name e.g. &lt;code&gt;kubernetes.io/cluster/my-k8s-cluster&lt;/code&gt;). Add this tag in both private and public subnets. If you created the cluster using &lt;code&gt;eksctl&lt;/code&gt;, you might be missing only this tag. Use the following command to tag all subnets by substituting the value of &lt;code&gt;TAG_VALUE&lt;/code&gt; variable(&lt;code&gt;owned&lt;/code&gt; or &lt;code&gt;shared&lt;/code&gt;). Use &lt;code&gt;shared&lt;/code&gt; as the tag value if you have more than one cluster using the subnets:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TAG_VALUE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_SUBNET_IDS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws ec2 describe-subnets --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --filters &lt;span class=&#34;nv&#34;&gt;Name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;tag:alpha.eksctl.io/cluster-name,Values&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --output json &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; jq -r &lt;span class=&#34;s1&#34;&gt;&amp;#39;.Subnets[].SubnetId&amp;#39;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; i in &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_SUBNET_IDS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[@]&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    aws ec2 create-tags --resources &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --tags &lt;span class=&#34;nv&#34;&gt;Key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubernetes.io/cluster/&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;,Value&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;TAG_VALUE&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kubernetes.io/role/internal-elb&lt;/code&gt;. Add this tag only to private subnets.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kubernetes.io/role/elb&lt;/code&gt;. Add this tag only to public subnets.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The Load balancer controller uses &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html&#34;&gt;IAM roles for service accounts&lt;/a&gt;(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl utils associate-iam-oidc-provider --cluster &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --approve
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Create an IAM role with &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json&#34;&gt;the necessary permissions&lt;/a&gt; for the Load Balancer controller to use via a service account to access AWS services.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;LBC_POLICY_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;alb_ingress_controller_&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;_&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;LBC_POLICY_ARN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws iam create-policy --policy-name &lt;span class=&#34;nv&#34;&gt;$LBC_POLICY_NAME&lt;/span&gt; --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query &lt;span class=&#34;s1&#34;&gt;&amp;#39;Policy.Arn&amp;#39;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --attach-policy-arn &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;LBC_POLICY_ARN&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --override-existing-serviceaccounts --approve
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env&#34;&gt;load balancer controller&lt;/a&gt; with the cluster name.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;clusterName=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/aws-alb-ingress-controller/base/params.env
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;build-manifests-and-deploy-components&#34;&gt;Build Manifests and deploy components&lt;/h3&gt;
+&lt;p&gt;Run the following command to build and install the components specified in the Load Balancer &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml&#34;&gt;kustomize&lt;/a&gt; file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; ! kustomize build deployments/add-ons/load-balancer &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; sleep 30&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;update-the-domain-with-alb-address&#34;&gt;Update the domain with ALB address&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Check if ALB is provisioned. This may take a few minutes.
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;    kubectl get ingress -n istio-system istio-ingress
+    NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+    istio-ingress   &amp;lt;none&amp;gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
+&lt;/code&gt;&lt;/pre&gt;If &lt;code&gt;ADDRESS&lt;/code&gt; is empty after a few minutes, check the logs of the controller by following the troubleshooting steps in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision&#34;&gt;ALB fails to provision&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under the subdomain (&lt;code&gt;platform.example.com&lt;/code&gt;) for &lt;code&gt;*.platform.example.com&lt;/code&gt;. Please note that it might make up to five to ten minutes for DNS changes to propagate and for your URL to work.
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/load-balancer/subdomain-*.platform-record.png&#34; alt=&#34;subdomain-*.platform-record&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Check if the DNS entry propogated with the &lt;a href=&#34;https://toolbox.googleapps.com/apps/dig/#CNAME/&#34;&gt;Google Admin Toolbox&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;The central dashboard should now be available at &lt;code&gt;https://kubeflow.platform.example.com&lt;/code&gt;. Open a browser and navigate to this URL.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;automated-script&#34;&gt;Automated script&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Install dependencies for the script
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r requirements.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Substitute values in &lt;code&gt;tests/e2e/utils/load_balancer/config.yaml&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;Register root domain in &lt;code&gt;route53.rootDomain.name&lt;/code&gt;. For this example, assume that this domain is &lt;code&gt;example.com&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;If your domain is managed in Route53, enter the Hosted zone ID found under Hosted zone details in &lt;code&gt;route53.rootDomain.hostedZoneId&lt;/code&gt;. Skip this step if your domain is managed by other domain provider.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Name of the sudomain that you want to use to host Kubeflow (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) in &lt;code&gt;route53.subDomain.name&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Cluster name and region where Kubeflow is deployed in &lt;code&gt;cluster.name&lt;/code&gt; and &lt;code&gt;cluster.region&lt;/code&gt; (e.g. &lt;code&gt;us-west-2&lt;/code&gt;), respectively.&lt;/li&gt;
+&lt;li&gt;The Config file will look something like:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;cluster&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;kube-eks-cluster&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;region&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;us-west-2&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;route53&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;rootDomain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;hostedZoneId&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;XXXX&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;subDomain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;platform.example.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Run the script to create the resources.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;.. python utils/load_balancer/setup_load_balancer.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;The script will update the Config file with the resource names, IDs, and ARNs that it created. Refer to the following example for more information:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;kubeflow&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;alb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;dns&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;xxxxxx-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;serviceAccount&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;alb-ingress-controller&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;namespace&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;kubeflow&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;policyArn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;cluster&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;kube-eks-cluster&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;region&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;us-west-2&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;route53&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;rootDomain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;certARN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;arn:aws:acm:us-west-2:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;hostedZoneId&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;XXXXX&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;subDomain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;certARN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;hostedZoneId&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;XXXXX&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;platform.example.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;The central dashboard should now be available at &lt;code&gt;https://kubeflow.platform.example.com&lt;/code&gt;. Open a browser and navigate to this URL.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the &lt;a href=&#34;https://toolbox.googleapps.com/apps/dig/#CNAME/&#34;&gt;Google Admin Toolbox&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;clean-up&#34;&gt;Clean up&lt;/h2&gt;
+&lt;p&gt;To delete the resources created in this guide, run the following commands from the root of your repository:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure that you have the configuration file created by the script in &lt;code&gt;tests/e2e/utils/load_balancer/config.yaml&lt;/code&gt;. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the &lt;a href=&#34;#automated-script&#34;&gt;previous section&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;.. python utils/load_balancer/lb_resources_cleanup.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: EFS</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
+&lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;At this point, you have likely cloned the necessary repository and checked out the right branch. Save this path to help naviagte to different paths in the rest of this guide.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;GITHUB_ROOT&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;GITHUB_STORAGE_DIR&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$GITHUB_ROOT&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/deployments/add-ons/storage/&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Make sure that the following environment variables are set.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;clustername&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;clusterregion&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;Based on your setup, export the name of the user namespace you are planning to use.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PVC_NAMESPACE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow-user-example-com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;Choose a name for the EFS claim that we will create. In this guide we will use this variable as the name for the PV as well the PVC.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;efs-claim&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-set-up-efs&#34;&gt;2.0 Set up EFS&lt;/h2&gt;
+&lt;p&gt;You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between &lt;strong&gt;static and dynamic provisioning&lt;/strong&gt;, so pick whichever suits you. On the other hand, for the automated script we currently only support &lt;strong&gt;dynamic provisioning&lt;/strong&gt;. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide.&lt;/p&gt;
+&lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 [Option 1] Automated setup&lt;/h3&gt;
+&lt;p&gt;The script automates all the manual resource creation steps but is currently only available for &lt;strong&gt;Dynamic Provisioning&lt;/strong&gt; option.&lt;br&gt;
+It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Run the following commands from the &lt;code&gt;tests/e2e&lt;/code&gt; directory:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$GITHUB_ROOT&lt;/span&gt;/tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Install the script dependencies.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r requirements.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Run the automated script.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: If you want the script to create a new security group for EFS, specify a name here. On the other hand, if you want to use an existing Security group, you can specify that name too. We have used the same name as the claim we are going to create.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python utils/auto-efs-setup.py --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --efs_file_system_name &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt; --efs_security_group_name &lt;span class=&#34;nv&#34;&gt;$SECURITY_GROUP_TO_CREATE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;The script above takes care of creating the &lt;code&gt;StorageClass (SC)&lt;/code&gt; which is a cluster scoped resource. In order to create the &lt;code&gt;PersistentVolumeClaim (PVC)&lt;/code&gt; you can either use the yaml file provided in this directory or use the Kubeflow UI directly.
+The PVC needs to be in the namespace you will be accessing it from. Replace the &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; namespace specified the below with the namespace for your kubeflow user and edit the &lt;code&gt;efs/dynamic-provisioning/pvc.yaml&lt;/code&gt; file accordingly.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;advanced-customization&#34;&gt;&lt;strong&gt;Advanced customization&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing &lt;code&gt;python utils/auto-efs-setup.py --help&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 [Option 2] Manual setup&lt;/h3&gt;
+&lt;p&gt;If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between &lt;strong&gt;Static and Dynamic provisioing&lt;/strong&gt; later in step 4 of this section.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_ACCOUNT_ID&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws sts get-caller-identity --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;Account&amp;#34;&lt;/span&gt; --output text&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;1-install-the-efs-csi-driver&#34;&gt;1. Install the EFS CSI driver&lt;/h4&gt;
+&lt;p&gt;We recommend installing the EFS CSI Driver v1.3.4 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-efs-csi-driver&#34;&gt;the aws-efs-csi-driver github repo&lt;/a&gt; as follows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.4&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get csidriver
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;efs.csi.aws.com   &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            Persistent   5d17h
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-create-the-iam-policy-for-the-csi-driver&#34;&gt;2. Create the IAM Policy for the CSI driver&lt;/h4&gt;
+&lt;p&gt;The CSI driver&amp;rsquo;s service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; with an IAM Role which has the required permissions.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the IAM policy document from GitHub as follows.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Create the policy.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws iam create-policy &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --policy-name AmazonEKS_EFS_CSI_Driver_Policy &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --policy-document file://iam-policy-example.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Create an IAM role and attach the IAM policy to it. Annotate the Kubernetes service account with the IAM role ARN and the IAM role with the Kubernetes service account name. You can create the role using eksctl as follows:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --name efs-csi-controller-sa &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --namespace kube-system &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --attach-policy-arn arn:aws:iam::&lt;span class=&#34;nv&#34;&gt;$AWS_ACCOUNT_ID&lt;/span&gt;:policy/AmazonEKS_EFS_CSI_Driver_Policy &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --approve &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --override-existing-serviceaccounts &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;You can verify by describing the specified service account to check if it has been correctly annotated:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe -n kube-system serviceaccount efs-csi-controller-sa
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-manually-create-an-instance-of-the-efs-filesystem&#34;&gt;3. Manually create an instance of the EFS filesystem&lt;/h4&gt;
+&lt;p&gt;Please refer to the official &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html#efs-create-filesystem&#34;&gt;AWS EFS CSI Document&lt;/a&gt; for detailed instructions on creating an EFS filesystem.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: For this guide, we assume that you are creating your EFS Filesystem in the same VPC as your EKS Cluster.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;choose-between-dynamic-and-static-provisioning&#34;&gt;Choose between dynamic and static provisioning&lt;/h4&gt;
+&lt;p&gt;In the following section, you have to choose between setting up &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/&#34;&gt;dynamic provisioning&lt;/a&gt; or setting up static provisioning.&lt;/p&gt;
+&lt;h4 id=&#34;4-option-1-dynamic-provisioning&#34;&gt;4. [Option 1] Dynamic provisioning&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Use the &lt;code&gt;$file_system_id&lt;/code&gt; you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the &lt;code&gt;dynamic-provisioning/sc.yaml&lt;/code&gt; file by chaning &lt;code&gt;&amp;lt;YOUR_FILE_SYSTEM_ID&amp;gt;&lt;/code&gt; with your &lt;code&gt;fs-xxxxxx&lt;/code&gt; file system id. You can also change it using the following command :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;file_system_id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$file_system_id&lt;/span&gt; yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.parameters.fileSystemId = env(file_system_id)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/sc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Create the storage class using the following command :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/sc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Verify your setup by checking which storage classes are created for your cluster. You can use the following command&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get sc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;The &lt;code&gt;StorageClass&lt;/code&gt; is a cluster scoped resources but the &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; needs to be in the namespace you will be accessing it from. Let&amp;rsquo;s edit the pvc.yaml accordingly&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note : The &lt;code&gt;StorageClass&lt;/code&gt; is a cluster scoped resource which means we only need to do this step once per cluster.&lt;/p&gt;
+&lt;h4 id=&#34;4-option-2-static-provisioning&#34;&gt;4. [Option 2] Static Provisioning&lt;/h4&gt;
+&lt;p&gt;Using &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods&#34;&gt;this sample&lt;/a&gt;, we provided the required spec files in the sample subdirectory. However, you can create the PVC another way.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Use the &lt;code&gt;$file_system_id&lt;/code&gt; you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the last line of the static-provisioning/pv.yaml file to specify the &lt;code&gt;volumeHandle&lt;/code&gt; field to point to your EFS filesystem. Replace &lt;code&gt;$file_system_id&lt;/code&gt; if it is not already set.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;file_system_id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$file_system_id&lt;/span&gt; yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.csi.volumeHandle = env(file_system_id)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;The &lt;code&gt;PersistentVolume&lt;/code&gt; and &lt;code&gt;StorageClass&lt;/code&gt; are cluster scoped resources but the &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; needs to be in the namespace you will be accessing it from. Replace the &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; namespace specified the below with the namespace for your kubeflow user and edit the &lt;code&gt;static-provisioning/pvc.yaml&lt;/code&gt; file accordingly.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Now create the required persistentvolume, persistentvolumeclaim and storageclass resources as -&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/sc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;23-check-your-setup&#34;&gt;2.3 Check your setup&lt;/h3&gt;
+&lt;p&gt;Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Only for Static Provisioning&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get pv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                 STORAGECLASS   REASON   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;efs-pv  5Gi        RWX            Retain           Bound    kubeflow-user-example-com/efs-claim   efs-sc                  5d16h
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Both Static and Dynamic Provisioning&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;efs-claim   Bound    efs-pv   5Gi        RWX            efs-sc         5d16h
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;30-using-efs-storage-in-kubeflow&#34;&gt;3.0 Using EFS storage in Kubeflow&lt;/h2&gt;
+&lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon EFS mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
+&lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
+&lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.&lt;/p&gt;
+&lt;p&gt;For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;32-changing-the-default-storage-class&#34;&gt;3.2 Changing the default Storage Class&lt;/h3&gt;
+&lt;p&gt;After installing Kubeflow, you can change the default Storage Class from &lt;code&gt;gp2&lt;/code&gt; to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named &lt;code&gt;efs-sc&lt;/code&gt;. You can check your storage classes by running &lt;code&gt;kubectl get sc&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the &lt;code&gt;efs-sc&lt;/code&gt; class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using &lt;code&gt;gp2&lt;/code&gt; for workspace volumes and keep the EFS storage class for datasets/data volumes only.&lt;/p&gt;
+&lt;p&gt;To learn more about how to change the default Storage Class, you can refer to the &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass&#34;&gt;official Kubernetes documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For instance, if you have a default class set to &lt;code&gt;gp2&lt;/code&gt; and another class &lt;code&gt;efs-sc&lt;/code&gt;, then you would need to do the following :&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Remove &lt;code&gt;gp2&lt;/code&gt; as your default storage class&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl patch storageclass gp2 -p &lt;span class=&#34;s1&#34;&gt;&amp;#39;{&amp;#34;metadata&amp;#34;: {&amp;#34;annotations&amp;#34;:{&amp;#34;storageclass.kubernetes.io/is-default-class&amp;#34;:&amp;#34;false&amp;#34;}}}&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Set &lt;code&gt;efs-sc&lt;/code&gt; as your default storage class&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl patch storageclass efs-sc -p &lt;span class=&#34;s1&#34;&gt;&amp;#39;{&amp;#34;metadata&amp;#34;: {&amp;#34;annotations&amp;#34;:{&amp;#34;storageclass.kubernetes.io/is-default-class&amp;#34;:&amp;#34;true&amp;#34;}}}&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note: As mentioned, make sure to change your default storage class only after you have completed your Kubeflow deployment. The default Kubeflow components may not work well with a different storage class.&lt;/p&gt;
+&lt;h3 id=&#34;33-note-about-permissions&#34;&gt;3.3 Note about permissions&lt;/h3&gt;
+&lt;p&gt;This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon EFS file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon EFS file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the efs as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;34-use-existing-efs-volume-as-workspace-or-data-volume-for-a-notebook&#34;&gt;3.4 Use existing EFS volume as workspace or data volume for a Notebook&lt;/h3&gt;
+&lt;p&gt;Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We&amp;rsquo;ll assume you created a PVC with the name &lt;code&gt;efs-claim&lt;/code&gt; via Kubeflow Volumes UI or via the manual setup step &lt;a href=&#34;#4-option-2-static-provisioning&#34;&gt;Static Provisioning&lt;/a&gt;. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (&lt;code&gt;public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow&lt;/code&gt;). Additionally, use the existing &lt;code&gt;efs-claim&lt;/code&gt; volume as the workspace volume at the default mount point &lt;code&gt;/home/jovyan&lt;/code&gt;. The server might take a few minutes to come up.&lt;/p&gt;
+&lt;p&gt;In case the server does not start up in the expected time, do make sure to check:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The Notebook Controller Logs&lt;/li&gt;
+&lt;li&gt;The specific notebook server instance pod&amp;rsquo;s logs&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;36-use-efs-volume-for-a-trainingjob-using-tfjob-operator&#34;&gt;3.6 Use EFS volume for a TrainingJob using TFJob Operator&lt;/h3&gt;
+&lt;p&gt;The following section re-uses the PVC and the Tensorflow Kubeflow Notebook created in the previous steps to download a dataset to the EFS Volume. Then we spin up a TFjob which runs a image classification job using the data from the shared volume.
+Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#34;&gt;https://www.tensorflow.org/tutorials/load_data/images&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Note: The following steps are run from the terminal on your gateway node connected to your EKS cluster and not from the Kubeflow Notebook to test the PVC allowed sharing of data as expected.&lt;/p&gt;
+&lt;h4 id=&#34;1-download-the-dataset-to-the-efs-volume&#34;&gt;1. Download the dataset to the EFS Volume&lt;/h4&gt;
+&lt;p&gt;In the Kubeflow Notebook created above, use the following snippet to download the data into the &lt;code&gt;/home/jovyan/.keras&lt;/code&gt; directory (which is mounted onto the EFS Volume).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pathlib&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;tensorflow&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;tf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;dataset_url&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tf&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;keras&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;get_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;origin&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dataset_url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                                   &lt;span class=&#34;n&#34;&gt;fname&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;flower_photos&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                                   &lt;span class=&#34;n&#34;&gt;untar&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pathlib&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Path&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-build-and-push-the-docker-image&#34;&gt;2. Build and push the Docker image&lt;/h4&gt;
+&lt;p&gt;In the &lt;code&gt;training-sample&lt;/code&gt; directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image. Be sure to point the &lt;code&gt;$IMAGE_URI&lt;/code&gt; to your registry and specify an appropriate tag.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;IMAGE_URI&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;dockerimage:tag&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; training-sample
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# You will need to login to ECR for the following steps&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker build -t &lt;span class=&#34;nv&#34;&gt;$IMAGE_URI&lt;/span&gt; .
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker push &lt;span class=&#34;nv&#34;&gt;$IMAGE_URI&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-configure-the-tfjob-spec-file&#34;&gt;3. Configure the TFjob spec file&lt;/h4&gt;
+&lt;p&gt;Once the docker image is built, replace the &lt;code&gt;&amp;lt;dockerimage:tag&amp;gt;&lt;/code&gt; in the &lt;code&gt;tfjob.yaml&lt;/code&gt; file, line #17.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_URI)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Also, specify the name of the PVC you created.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Make sure to run it in the same namespace as the claim:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;4-create-the-tfjob-and-use-the-provided-commands-to-check-the-training-logs&#34;&gt;4. Create the TFjob and use the provided commands to check the training logs&lt;/h4&gt;
+&lt;p&gt;At this point, we are ready to train the model using the &lt;code&gt;training-sample/training.py&lt;/code&gt; script and the data available on the shared volume with the Kubeflow TFJob operator as -&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to check that the training job is running as expected, you can check the events in the TFJob describe response as well as the job logs.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe tfjob image-classification-pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl logs -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc-worker-0 -f
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete tfjob -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
+&lt;p&gt;Login to the dashboard to stop and/or terminate any kubeflow notebooks you created for this session or use the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete notebook -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &amp;lt;notebook-name&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Use the following command to delete the permissions job:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pod -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;43-delete-pvc-pv-and-sc-in-the-following-order&#34;&gt;4.3 Delete PVC, PV, and SC in the following order&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pv efs-pv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete sc efs-sc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;44-delete-the-efs-mount-targets-filesystem-and-security-group&#34;&gt;4.4 Delete the EFS mount targets, filesystem, and security group&lt;/h3&gt;
+&lt;p&gt;Use the steps in this &lt;a href=&#34;https://docs.aws.amazon.com/efs/latest/ug/delete-efs-fs.html&#34;&gt;AWS Guide&lt;/a&gt; to delete the EFS filesystem that you created.&lt;/p&gt;
+&lt;h2 id=&#34;50-known-issues&#34;&gt;5.0 Known issues&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;When you re-run the &lt;code&gt;eksctl create iamserviceaccount&lt;/code&gt; to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In this case, you may need to do one or both of the following:
+a. Delete the CloudFormation stack associated with this add-on role.
+b. Delete the &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; service account and then re-run the required steps. If you used the auto-script, you can re-run it by specifying the same &lt;code&gt;filesystem-name&lt;/code&gt; such that a new one is not created.&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: FSx for Lustre</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/fsx-for-lustre/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/fsx-for-lustre/guide/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
+&lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
+&lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Check that you have the necessary &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/&#34;&gt;prerequisites&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: You must make sure you have an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; for your cluster and that it was added from &lt;code&gt;eksctl&lt;/code&gt; &amp;gt;= &lt;code&gt;0.56&lt;/code&gt; or if you already have an OIDC provider in place, then you must make sure you have the tag &lt;code&gt;alpha.eksctl.io/cluster-name&lt;/code&gt; with the cluster name as its value. If you don&amp;rsquo;t have the tag, you can add it via the AWS Console by navigating to IAM-&amp;gt;Identity providers-&amp;gt;Your OIDC-&amp;gt;Tags.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;At this point, you have likely cloned the necessary repository and checked out the right branch. Save this path to help us navigate to different paths in the rest of this guide.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;GITHUB_ROOT&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;GITHUB_STORAGE_DIR&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$GITHUB_ROOT&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/deployments/add-ons/storage/&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Make sure the following environment variables are set.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;clustername&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;clusterregion&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;Based on your setup, export the name of the user namespace you are planning to use.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PVC_NAMESPACE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow-user-example-com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;Choose a name for the FSx claim that we will create. In this guide, we will use this variable as the name for the PV as well the PVC.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;fsx-claim&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-setup-fsx-for-lustre&#34;&gt;2.0 Setup FSx for Lustre&lt;/h2&gt;
+&lt;p&gt;You can either use Automated or Manual setup. We currently only support &lt;strong&gt;Static provisioning&lt;/strong&gt; for FSx.&lt;/p&gt;
+&lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 [Option 1] Automated setup&lt;/h3&gt;
+&lt;p&gt;The script automates all the manual resource creation steps but is currently only available for &lt;strong&gt;Static Provisioning&lt;/strong&gt; option.&lt;br&gt;
+It performs the required cluster configuration, creates an FSx file system and it also takes care of creating a storage class for static provisioning. Once done, move to section 3.0.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Run the following commands from the &lt;code&gt;tests/e2e&lt;/code&gt; directory:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$GITHUB_ROOT&lt;/span&gt;/tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Install the script dependencies&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r requirements.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Run the automated script as follows.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Note: If you want the script to create a new security group for FSx, specify a name for &lt;code&gt;SECURITY_GROUP_TO_CREATE&lt;/code&gt;. On the other hand, if you want to use an existing Security group, you can specify that name too.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python utils/auto-fsx-setup.py --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --fsx_file_system_name &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt; --fsx_security_group_name &lt;span class=&#34;nv&#34;&gt;$SECURITY_GROUP_TO_CREATE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;The script above takes care of creating the &lt;code&gt;PersistentVolume (PV)&lt;/code&gt; which is a cluster scoped resource. In order to create the &lt;code&gt;PersistentVolumeClaim (PVC)&lt;/code&gt; you can either use the yaml file provided in this directory or use the Kubeflow UI directly but the PVC needs to be in the user namespace you will be accessing it from.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.volumeName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;advanced-customization&#34;&gt;&lt;strong&gt;Advanced customization&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing &lt;code&gt;python utils/auto-fsx-setup.py --help&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 [Option 2] Manual setup&lt;/h3&gt;
+&lt;p&gt;If you prefer to manually setup each component then you can follow this manual guide.&lt;/p&gt;
+&lt;h4 id=&#34;1-install-the-fsx-csi-driver&#34;&gt;1. Install the FSx CSI Driver&lt;/h4&gt;
+&lt;p&gt;We recommend installing the FSx CSI Driver v0.7.1 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;the aws-fsx-csi-driver GitHub repository&lt;/a&gt; as follows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.7.1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can confirm that FSx CSI Driver was installed using the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get csidriver -A
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fsx.csi.aws.com   &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            Persistent   14s
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-create-the-iam-policy-for-the-csi-driver&#34;&gt;2. Create the IAM Policy for the CSI Driver&lt;/h4&gt;
+&lt;p&gt;The CSI driver&amp;rsquo;s service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account &lt;code&gt;fsx-csi-controller-sa&lt;/code&gt; with an IAM Role which has the required permissions.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create the policy using the json file provided as follows:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws iam create-policy &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --policy-name Amazon_FSx_Lustre_CSI_Driver &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --policy-document file://fsx-for-lustre/fsx-csi-driver-policy.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Create an IAM role and attach the IAM policy to it. Annotate the Kubernetes service account with the IAM role ARN and the IAM role with the Kubernetes service account name. You can create the role using eksctl as follows:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --name fsx-csi-controller-sa &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --namespace kube-system &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --attach-policy-arn arn:aws:iam::&lt;span class=&#34;nv&#34;&gt;$AWS_ACCOUNT_ID&lt;/span&gt;:policy/Amazon_FSx_Lustre_CSI_Driver &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --approve &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --override-existing-serviceaccounts 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;You can verify by describing the specified service account to check if it has been correctly annotated:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-create-an-instance-of-the-fsx-filesystem&#34;&gt;3. Create an instance of the FSx Filesystem&lt;/h4&gt;
+&lt;p&gt;Please refer to the official &lt;a href=&#34;https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html&#34;&gt;AWS FSx CSI documentation&lt;/a&gt; for detailed instructions on creating an FSx filesystem.&lt;/p&gt;
+&lt;p&gt;Note: For this guide, we assume that you are creating your FSx Filesystem in the same VPC as your EKS Cluster.&lt;/p&gt;
+&lt;h4 id=&#34;4-static-provisioning&#34;&gt;4. Static provisioning&lt;/h4&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre&#34;&gt;Using this sample from official Kubeflow Docs&lt;/a&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that &lt;code&gt;file_system_id&lt;/code&gt; is set.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws fsx describe-file-systems --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;FileSystems[*].FileSystemId&amp;#34;&lt;/span&gt; --output text --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;file_system_id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;fsx-id-to-use&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Once you have the filesystem id, Use the following command to retrieve DNSName, and MountName values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;dns_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws fsx describe-file-systems --file-system-ids &lt;span class=&#34;nv&#34;&gt;$file_system_id&lt;/span&gt; --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;FileSystems[0].DNSName&amp;#34;&lt;/span&gt; --output text --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;mount_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws fsx describe-file-systems --file-system-ids &lt;span class=&#34;nv&#34;&gt;$file_system_id&lt;/span&gt; --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;FileSystems[0].LustreConfiguration.MountName&amp;#34;&lt;/span&gt; --output text --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Now edit the &lt;code&gt;fsx-for-lustre/static-provisioning/pv.yaml&lt;/code&gt; to replace &amp;lt;file_system_id&amp;gt;, &amp;lt;dns_name&amp;gt;, and &amp;lt;mount_name&amp;gt; with your values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.csi.volumeHandle = env(file_system_id)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.csi.volumeAttributes.dnsname = env(dns_name)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.csi.volumeAttributes.mountname = env(mount_name)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;The &lt;code&gt;PersistentVolume&lt;/code&gt; is a cluster scoped resource but the &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; needs to be in the namespace you will be accessing it from. Replace the &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; namespace specified the below with the namespace for your kubeflow user and edit the &lt;code&gt;fsx-for-lustre/static-provisioning/pvc.yaml&lt;/code&gt; file accordingly.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.volumeName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;Now create the required &lt;code&gt;PersistentVolume&lt;/code&gt; and &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; resources as -&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pv.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/fsx-for-lustre/static-provisioning/pvc.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;23-check-your-setup&#34;&gt;2.3 Check your setup&lt;/h3&gt;
+&lt;p&gt;Use the following commands to ensure all resources have been deployed as expected and the PersistentVolume is correctly bound to the PersistentVolumeClaim&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get pv
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                 STORAGECLASS   REASON   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fsx-pv  1200Gi     RWX            Recycle          Bound    kubeflow-user-example-com/fsx-claim                           11s
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fsx-claim   Bound    fsx-pv   1200Gi     RWX                           83s
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;30-using-fsx-storage-in-kubeflow&#34;&gt;3.0 Using FSx storage in Kubeflow&lt;/h2&gt;
+&lt;p&gt;In the following two sections we will be using this PVC to create a notebook server with Amazon FSx mounted as the workspace volume, download training data into this filesystem and then deploy a TFJob to train a model using this data.&lt;/p&gt;
+&lt;h3 id=&#34;31-connect-to-the-kubeflow-dashboard&#34;&gt;3.1 Connect to the Kubeflow dashboard&lt;/h3&gt;
+&lt;p&gt;Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the &lt;code&gt;Volumes&lt;/code&gt; tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow.
+For more details on how to access your Kubeflow dashboard, refer to one of the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/&#34;&gt;deployment option guides&lt;/a&gt; based on your setup. If you used the vanilla deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;Connect to your Kubeflow cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;32-note-about-permissions&#34;&gt;3.2 Note about permissions&lt;/h3&gt;
+&lt;p&gt;This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.name = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/notebook-sample/set-permission-job.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;32-using-fsx-volume-as-workspace-or-data-volume-for-a-notebook-server&#34;&gt;3.2 Using FSx volume as workspace or data volume for a notebook server&lt;/h3&gt;
+&lt;p&gt;Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. For our example here, we are using the AWS-optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (&lt;code&gt;public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow&lt;/code&gt;). Additionally, use the existing PVC as the workspace volume at the default mount point &lt;code&gt;/home/jovyan&lt;/code&gt;. The server might take a few minutes to come up.&lt;/p&gt;
+&lt;p&gt;In case the server does not start up in the expected time, do make sure to check:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The Notebook Controller Logs&lt;/li&gt;
+&lt;li&gt;The specific notebook server instance pod&amp;rsquo;s logs&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;33-using-fsx-volume-for-a-trainingjob-using-tfjob-operator&#34;&gt;3.3 Using FSx volume for a TrainingJob using TFJob Operator&lt;/h3&gt;
+&lt;p&gt;The following section re-uses the PVC and the Tensorflow Kubeflow Notebook created in the previous steps to download a dataset to the FSx Volume. Then we spin up a TFjob which runs a image classification job using the data from the shared volume.
+Source: &lt;a href=&#34;https://www.tensorflow.org/tutorials/load_data/images&#34;&gt;https://www.tensorflow.org/tutorials/load_data/images&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Note: The following steps are run from the terminal on your gateway node connected to your EKS cluster and not from the Kubeflow Notebook to test the PVC allowed sharing of data as expected.&lt;/p&gt;
+&lt;h3 id=&#34;1-download-the-dataset-to-the-fsx-volume&#34;&gt;1. Download the dataset to the FSx Volume&lt;/h3&gt;
+&lt;p&gt;In the Kubeflow Notebook created above, use the following snippet to download the data into the &lt;code&gt;/home/jovyan/.keras&lt;/code&gt; directory (which is mounted onto the FSx Volume).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pathlib&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;tensorflow&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;tf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;dataset_url&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tf&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;keras&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;get_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;origin&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dataset_url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                                   &lt;span class=&#34;n&#34;&gt;fname&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;flower_photos&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                                   &lt;span class=&#34;n&#34;&gt;untar&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pathlib&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Path&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;data_dir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;2-build-and-push-the-docker-image&#34;&gt;2. Build and push the Docker image&lt;/h3&gt;
+&lt;p&gt;In the &lt;code&gt;training-sample&lt;/code&gt; directory, we have provided a sample training script and Dockerfile which you can use as follows to build a docker image. Be sure to point the &lt;code&gt;$IMAGE_URI&lt;/code&gt; to your registry and specify an appropriate tag:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;IMAGE_URI&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;dockerimage:tag&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; training-sample
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# You will need to login to ECR for the following steps&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker build -t &lt;span class=&#34;nv&#34;&gt;$IMAGE_URI&lt;/span&gt; .
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker push &lt;span class=&#34;nv&#34;&gt;$IMAGE_URI&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;3-configure-the-tfjob-spec-file&#34;&gt;3. Configure the TFjob spec file&lt;/h3&gt;
+&lt;p&gt;Once the docker image is built, replace the &lt;code&gt;&amp;lt;dockerimage:tag&amp;gt;&lt;/code&gt; in the &lt;code&gt;tfjob.yaml&lt;/code&gt; file, line #17.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.tfReplicaSpecs.Worker.template.spec.containers[0].image = env(IMAGE_URI)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Also, specify the name of the PVC you created:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;fsx-claim
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.tfReplicaSpecs.Worker.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Make sure to run it in the same namespace as the claim:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;yq e &lt;span class=&#34;s1&#34;&gt;&amp;#39;.metadata.namespace = env(PVC_NAMESPACE)&amp;#39;&lt;/span&gt; -i training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;4-create-the-tfjob-and-use-the-provided-commands-to-check-the-training-logs&#34;&gt;4. Create the TFjob and use the provided commands to check the training logs&lt;/h3&gt;
+&lt;p&gt;At this point, we are ready to train the model using the &lt;code&gt;training-sample/training.py&lt;/code&gt; script and the data available on the shared volume with the Kubeflow TFJob operator.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f training-sample/tfjob.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to check that the training job is running as expected, you can check the events in the TFJob describe response as well as the job logs.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe tfjob image-classification-pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl logs -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc-worker-0 -f
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;40-cleanup&#34;&gt;4.0 Cleanup&lt;/h2&gt;
+&lt;p&gt;This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/uninstall-kubeflow/&#34;&gt;Uninstall Kubeflow&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;41-clean-up-the-tfjob&#34;&gt;4.1 Clean up the TFJob&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete tfjob -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; image-classification-pvc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-delete-the-kubeflow-notebook&#34;&gt;4.2 Delete the Kubeflow Notebook&lt;/h3&gt;
+&lt;p&gt;Log in to the dashboard to stop and/or terminate any Kubeflow Notebooks that you created for this session or use the following commands:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete notebook -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &amp;lt;notebook-name&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pod -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;43-delete-pvc-pv-and-sc-in-the-following-order&#34;&gt;4.3 Delete PVC, PV, and SC in the following order&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pvc -n &lt;span class=&#34;nv&#34;&gt;$PVC_NAMESPACE&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl delete pv fsx-pv
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;44-delete-the-fsx-filesystem&#34;&gt;4.4 Delete the FSx filesystem&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws fsx delete-file-system --file-system-id &lt;span class=&#34;nv&#34;&gt;$file_system_id&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Make sure to delete any other resources that you have created such as security groups via the AWS Console or using the AWS CLI.&lt;/p&gt;
+&lt;h2 id=&#34;50-known-issues&#34;&gt;5.0 Known issues&lt;/h2&gt;
+&lt;p&gt;When you re-run the &lt;code&gt;eksctl create iamserviceaccount&lt;/code&gt; to create and annotate the same service account multiple times, sometimes the role does not get overwritten. In this case, you may need to do one or both of the following:
+1. Delete the CloudFormation stack associated with this add-on role.
+2. Delete the &lt;code&gt;fsx-csi-controller-sa&lt;/code&gt; service account and then re-run the required steps. If you used the auto-script, you can re-run it by specifying the same &lt;code&gt;filesystem-name&lt;/code&gt; so that a new one is not created.&lt;/p&gt;
+&lt;p&gt;When using an FSx volume in a Kubeflow Notebook, the same PVC claim can be mounted to the same Notebook only once as either the workspace volume or the data volume. Create two seperate PVCs on your FSx volume if you need to attach it twice to the Notebook.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: CloudWatch</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/cloudwatch/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/cloudwatch/guide/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;verify-prerequisites&#34;&gt;Verify Prerequisites&lt;/h2&gt;
+&lt;p&gt;The EKS cluster will need IAM service account roles associated with CloudWatchAgentServerPolicy attached.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl utils associate-iam-oidc-provider --region&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --cluster&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --approve
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount --name cloudwatch-agent --namespace amazon-cloudwatch --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; cloudwatch-agent --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount --name fluent-bit --namespace amazon-cloudwatch --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;install&#34;&gt;Install&lt;/h2&gt;
+&lt;p&gt;To install an optimized QuickStart configuration, enter the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpPort&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;2020&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromHead&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Off&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[[&lt;/span&gt; &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromHead&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;On&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;FluentBitReadFromTail&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Off&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;||&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;FluentBitReadFromTail&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;On&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[[&lt;/span&gt; -z &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpPort&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;FluentBitHttpServer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Off&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;||&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;FluentBitHttpServer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;On&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sed &lt;span class=&#34;s1&#34;&gt;&amp;#39;s/{{cluster_name}}/&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/;s/{{region_name}}/&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/;s/{{http_server_toggle}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpServer&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{http_server_port}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpPort&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{read_from_head}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromHead&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{read_from_tail}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromTail&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f - 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To verify the installation, you can run the &lt;code&gt;list-metrics&lt;/code&gt; command and check that metrics have been created. It may take up to 15 minutes for the metrics to populate.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws cloudwatch list-metrics --namespace ContainerInsights --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;An example of the logs that will be available after installation are the logs of the Pods on your cluster. This way, the Pod logs can still be accessed past their default storage time. This also allows for an easy way to view logs for all Pods on your cluster without having to directly connect to your EKS cluster.&lt;/p&gt;
+&lt;p&gt;The logs can be accessed by through CloudWatch log groups &lt;img src=&#34;../../../../images/cloudwatch/cloudwatch-logs.png&#34; alt=&#34;cloudwatch&#34;&gt;&lt;/p&gt;
+&lt;p&gt;To view individual Pod logs, select &lt;code&gt;/aws/containerinsights/YOUR_CLUSTER_NAME/application&lt;/code&gt;. &lt;img src=&#34;../../../../images/cloudwatch/cloudwatch-application-logs.png&#34; alt=&#34;application&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The following image is an example of the &lt;code&gt;jupyter-web-app&lt;/code&gt; Pod logs available through CloudWatch. &lt;img src=&#34;../../../../images/cloudwatch/cloudwatch-pod-logs.png&#34; alt=&#34;jupyter-logs&#34;&gt;&lt;/p&gt;
+&lt;p&gt;For a full list of metrics that are provided by default, see &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-EKS.html&#34;&gt;Amazon EKS and Kubernetes Container Insights metrics&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The metrics are grouped by varying parameters such as Cluster, Namespace, or PodName.
+&lt;img src=&#34;../../../../images/cloudwatch/cloudwatch-metrics.png&#34; alt=&#34;cloudwatch-metrics&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The following image is an example of the graphed metrics for the &lt;code&gt;istio-system&lt;/code&gt; namespace that deals with internet traffic.
+&lt;img src=&#34;../../../../images/cloudwatch/cloudwatch-namespace-metrics.png&#34; alt=&#34;cloudwatch-namespace-metrics&#34;&gt;&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html&#34;&gt;Viewing available metrics&lt;/a&gt; for more information on CloudWatch metrics. Select the ContainerInsights metric namespace.&lt;/p&gt;
+&lt;p&gt;You can see the full list of logs and metrics through the &lt;a href=&#34;https://console.aws.amazon.com/cloudwatch/&#34;&gt;Amazon CloudWatch AWS Console&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;uninstall&#34;&gt;Uninstall&lt;/h2&gt;
+&lt;p&gt;To uninstall CloudWatch ContainerInsights, enter the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sed &lt;span class=&#34;s1&#34;&gt;&amp;#39;s/{{cluster_name}}/&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;ClusterName&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/;s/{{region_name}}/&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;LogRegion&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/;s/{{http_server_toggle}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpServer&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{http_server_port}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitHttpPort&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{read_from_head}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromHead&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/;s/{{read_from_tail}}/&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;FluentBitReadFromTail&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;/&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl delete -f -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;additional-information&#34;&gt;Additional information&lt;/h2&gt;
+&lt;p&gt;For full documentation and additional configuration options, see &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html&#34;&gt;Quick Start setup for Container Insights on Amazon EKS and Kubernetes&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>
