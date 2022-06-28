@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/cognito/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T16:20:07-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T17:57:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manual Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
-<meta itemprop="dateModified" content="2022-06-27T16:20:07-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T17:57:59-07:00" />
 <meta itemprop="wordCount" content="1550">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manual Deployment Guide"/>
@@ -119,11 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
 	
 </div>
 
@@ -421,7 +421,7 @@
 </li>
 </ol>
 </li>
-<li>If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for <code>*.platform.example.com</code> by following the process similar to <a href="./kubeflow-manifests/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">section 2.0</a>. That is because <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html">Cognito requires</a> a certificate in N.Virginia in order to have a custom domain for a user pool.</li>
+<li>If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for <code>*.platform.example.com</code> by following the process similar to <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">section 2.0</a>. That is because <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html">Cognito requires</a> a certificate in N.Virginia in order to have a custom domain for a user pool.</li>
 <li>In the <code>Domain name</code> choose <code>Use your domain</code>, type <code>auth.platform.example.com</code> and select the <code>*.platform.example.com</code> AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
 <ol>
 <li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png" alt="cognito-active-domain"></li>
@@ -643,7 +643,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b925bd935f284b80631f336a2acfbfa6c0810c91">fix cognito security link on 1.4 (#281) (b925bd9)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/dd7090c0331f662723cc8fcccf652f1e2619d348">Minor website changes (#284) (dd7090c)</a>
 </div>
 
 </div>

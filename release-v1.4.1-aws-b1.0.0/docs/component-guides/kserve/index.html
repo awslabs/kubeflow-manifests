@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T16:20:07-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T17:57:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="KServe">
 <meta itemprop="description" content="Model serving using KServe with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-27T16:20:07-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T17:57:59-07:00" />
 <meta itemprop="wordCount" content="1357">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="KServe"/>
@@ -119,11 +119,11 @@
 </a>
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">Latest Release</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">1.4 [release-v1.4.1-aws-b1.0.0]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">main [dev-branch]</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
 	
 </div>
 
@@ -432,7 +432,7 @@ data:
 <blockquote>
 <p>Note: Both of these domains should be requested in the same certificate</p>
 </blockquote>
-<p>Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.staging.platform.example.com</code> in your cluster&rsquo;s region by following the <a href="/kubeflow-manifests/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">create certificates for domain</a> steps in the Load Balancer installation guide.</p>
+<p>Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.staging.platform.example.com</code> in your cluster&rsquo;s region by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">create certificates for domain</a> steps in the Load Balancer installation guide.</p>
 <p>Once the certificate status changes to <code>Issued</code>, export the ARN of the certificate created:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">certArn</span><span class="o">=</span>&lt;&gt;
 </span></span></code></pre></div><p>If you are using Cognito for user authentication, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/kserve/#cognito-ingress">Cognito</a>. If you use Dex as the auth provider in your Kubeflow deployment, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs/component-guides/kserve/#dex-ingress">Dex</a>.</p>
@@ -575,7 +575,7 @@ data:
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/b925bd935f284b80631f336a2acfbfa6c0810c91">fix cognito security link on 1.4 (#281) (b925bd9)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/dd7090c0331f662723cc8fcccf652f1e2619d348">Minor website changes (#284) (dd7090c)</a>
 </div>
 
 </div>
