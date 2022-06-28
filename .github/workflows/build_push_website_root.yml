@@ -1,0 +1,38 @@
+name: hugo-build-push-root
+
+on:
+  # Trigger the workflow on git push to a branch where this workflow file exists 
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive 
+      
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.93.0'
+          extended: true
+
+      - name: Run a multi-line script
+        run: |
+          cd $GITHUB_WORKSPACE/website
+          npm install postcss-cli@8.3.0
+          base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/\""
+          sed -i "1s#.*#$base_url#" config.toml
+          hugo
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./website/public
+          destination_dir: ./
+          keep_files: true          
