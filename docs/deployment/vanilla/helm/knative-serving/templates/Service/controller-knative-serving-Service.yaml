@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: controller
+    serving.knative.dev/release: v0.22.1
+  name: controller
+  namespace: knative-serving
+spec:
+  ports:
+  - name: http-metrics
+    port: 9090
+    targetPort: 9090
+  - name: http-profiling
+    port: 8008
+    targetPort: 8008
+  selector:
+    app: controller
