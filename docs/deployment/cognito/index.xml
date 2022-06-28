@@ -219,7 +219,7 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for &lt;code&gt;*.platform.example.com&lt;/code&gt; by following the process similar to &lt;a href=&#34;./kubeflow-manifests/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;section 2.0&lt;/a&gt;. That is because &lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html&#34;&gt;Cognito requires&lt;/a&gt; a certificate in N.Virginia in order to have a custom domain for a user pool.&lt;/li&gt;
+&lt;li&gt;If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for &lt;code&gt;*.platform.example.com&lt;/code&gt; by following the process similar to &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain&#34;&gt;section 2.0&lt;/a&gt;. That is because &lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html&#34;&gt;Cognito requires&lt;/a&gt; a certificate in N.Virginia in order to have a custom domain for a user pool.&lt;/li&gt;
 &lt;li&gt;In the &lt;code&gt;Domain name&lt;/code&gt; choose &lt;code&gt;Use your domain&lt;/code&gt;, type &lt;code&gt;auth.platform.example.com&lt;/code&gt; and select the &lt;code&gt;*.platform.example.com&lt;/code&gt; AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
 &lt;ol&gt;
 &lt;li&gt;&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png&#34; alt=&#34;cognito-active-domain&#34;&gt;&lt;/li&gt;
