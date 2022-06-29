@@ -13,6 +13,7 @@ spec:
   template:
     metadata:
       annotations:
+        prometheus.io/port: '8080'
         prometheus.io/scrape: 'true'
         sidecar.istio.io/inject: 'false'
       labels:
@@ -26,6 +27,7 @@ spec:
         - --trial-resources=PyTorchJob.v1.kubeflow.org
         - --trial-resources=MPIJob.v1.kubeflow.org
         - --trial-resources=XGBoostJob.v1.kubeflow.org
+        - --trial-resources=MXJob.v1.kubeflow.org
         command:
         - ./katib-controller
         env:
@@ -33,7 +35,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: docker.io/kubeflowkatib/katib-controller:v0.12.0
+        image: docker.io/kubeflowkatib/katib-controller:v0.13.0
         name: katib-controller
         ports:
         - containerPort: 8443

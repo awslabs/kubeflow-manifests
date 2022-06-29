@@ -13,8 +13,6 @@ spec:
       kustomize.component: notebook-controller
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: 'false'
       labels:
         app: notebook-controller
         kustomize.component: notebook-controller
@@ -33,7 +31,7 @@ spec:
             configMapKeyRef:
               key: ISTIO_GATEWAY
               name: notebook-controller-config-kkt88f2bhb
-        image: public.ecr.aws/j1r0q0g6/notebooks/notebook-controller:v1.4
+        image: public.ecr.aws/j1r0q0g6/notebooks/notebook-controller:v1.5.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

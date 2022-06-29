@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: serving-cert
+  namespace: kserve
+spec:
+  commonName: kserve-webhook-server-service.kserve.svc
+  dnsNames:
+  - kserve-webhook-server-service.kserve.svc
+  issuerRef:
+    kind: Issuer
+    name: selfsigned-issuer
+  secretName: kserve-webhook-server-cert

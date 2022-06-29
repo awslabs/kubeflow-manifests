@@ -6,11 +6,11 @@ data:
     \      \"text\": \"Tensorboards\",\n      \"icon\": \"assessment\"\n    },\n \
     \   {\n      \"type\": \"item\",\n      \"link\": \"/volumes/\",\n      \"text\"\
     : \"Volumes\",\n      \"icon\": \"device:storage\"\n    },\n    {\n      \"type\"\
-    : \"item\",\n      \"link\": \"/models/\",\n      \"text\": \"Models\",\n    \
-    \  \"icon\": \"kubeflow:models\"\n    },\n    {\n      \"type\": \"item\",\n \
-    \     \"link\": \"/katib/\",\n      \"text\": \"Experiments (AutoML)\",\n    \
-    \  \"icon\": \"kubeflow:katib\"\n    },\n    {\n      \"type\": \"item\",\n  \
-    \    \"text\": \"Experiments (KFP)\",\n      \"link\": \"/pipeline/#/experiments\"\
+    : \"item\",\n      \"link\": \"/kserve-endpoints/\",\n      \"text\": \"Models\"\
+    ,\n      \"icon\": \"kubeflow:models\"\n    },\n    {\n      \"type\": \"item\"\
+    ,\n      \"link\": \"/katib/\",\n      \"text\": \"Experiments (AutoML)\",\n \
+    \     \"icon\": \"kubeflow:katib\"\n    },\n    {\n      \"type\": \"item\",\n\
+    \      \"text\": \"Experiments (KFP)\",\n      \"link\": \"/pipeline/#/experiments\"\
     ,\n      \"icon\": \"done-all\"\n    },\n    {\n      \"type\": \"item\",\n  \
     \    \"link\": \"/pipeline/#/pipelines\",\n      \"text\": \"Pipelines\",\n  \
     \    \"icon\": \"kubeflow:pipeline-centered\"\n    },\n    {\n      \"type\":\
@@ -34,12 +34,10 @@ data:
     desc\": \"Get your machine-learning workflow up and running on Kubeflow\",\n \
     \       \"link\": \"https://www.kubeflow.org/docs/started/getting-started/\"\n\
     \      },\n      {\n        \"text\": \"MiniKF\",\n        \"desc\": \"A fast\
-    \ and easy way to deploy Kubeflow locally\",\n        \"link\": \"https://www.kubeflow.org/docs/started/getting-started-minikf/\"\
+    \ and easy way to deploy Kubeflow locally\",\n        \"link\": \"https://www.kubeflow.org/docs/distributions/minikf/\"\
     \n      },\n      {\n        \"text\": \"Microk8s for Kubeflow\",\n        \"\
     desc\": \"Quickly get Kubeflow running locally on native hypervisors\",\n    \
-    \    \"link\": \"https://www.kubeflow.org/docs/started/getting-started-multipass/\"\
-    \n      },\n      {\n        \"text\": \"Minikube for Kubeflow\",\n        \"\
-    desc\": \"Quickly get Kubeflow running locally\",\n        \"link\": \"https://www.kubeflow.org/docs/started/getting-started-minikube/\"\
+    \    \"link\": \"https://www.kubeflow.org/docs/distributions/microk8s/kubeflow-on-microk8s/\"\
     \n      },\n      {\n        \"text\": \"Kubeflow on GCP\",\n        \"desc\"\
     : \"Running Kubeflow on Kubernetes Engine and Google Cloud Platform\",\n     \
     \   \"link\": \"https://www.kubeflow.org/docs/gke/\"\n      },\n      {\n    \

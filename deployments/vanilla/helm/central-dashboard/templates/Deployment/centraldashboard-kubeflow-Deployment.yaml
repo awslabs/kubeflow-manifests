@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'false'
+        sidecar.istio.io/inject: 'true'
       labels:
         app: centraldashboard
         app.kubernetes.io/component: centraldashboard
@@ -38,7 +38,7 @@ spec:
           value: 'false'
         - name: DASHBOARD_LINKS_CONFIGMAP
           value: centraldashboard-config
-        image: public.ecr.aws/j1r0q0g6/notebooks/central-dashboard:v1.4
+        image: public.ecr.aws/j1r0q0g6/notebooks/central-dashboard:v1.5.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

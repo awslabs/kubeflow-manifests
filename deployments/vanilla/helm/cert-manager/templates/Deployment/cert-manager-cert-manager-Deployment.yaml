@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v1.5.0
   name: cert-manager
   namespace: cert-manager
 spec:
@@ -26,6 +27,7 @@ spec:
         app.kubernetes.io/component: controller
         app.kubernetes.io/instance: cert-manager
         app.kubernetes.io/name: cert-manager
+        app.kubernetes.io/version: v1.5.0
     spec:
       containers:
       - args:
@@ -37,11 +39,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: quay.io/jetstack/cert-manager-controller:v1.3.1
+        image: quay.io/jetstack/cert-manager-controller:v1.5.0
         imagePullPolicy: IfNotPresent
         name: cert-manager
         ports:
         - containerPort: 9402
           protocol: TCP
         resources: {}
+      securityContext:
+        runAsNonRoot: true
       serviceAccountName: cert-manager

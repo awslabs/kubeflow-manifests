@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v1.5.0
   name: cert-manager-controller-ingress-shim
 rules:
 - apiGroups:
@@ -40,6 +41,22 @@ rules:
   - networking.k8s.io
   resources:
   - ingresses/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - networking.x-k8s.io
+  resources:
+  - gateways
+  - httproutes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.x-k8s.io
+  resources:
+  - gateways/finalizers
+  - httproutes/finalisers
   verbs:
   - update
 - apiGroups:

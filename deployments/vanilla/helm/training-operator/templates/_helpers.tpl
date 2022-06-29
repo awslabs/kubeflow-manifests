@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "traning-operator.name" -}}
+{{- define "training-operator.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "traning-operator.fullname" -}}
+{{- define "training-operator.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "traning-operator.chart" -}}
+{{- define "training-operator.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "traning-operator.labels" -}}
-helm.sh/chart: {{ include "traning-operator.chart" . }}
-{{ include "traning-operator.selectorLabels" . }}
+{{- define "training-operator.labels" -}}
+helm.sh/chart: {{ include "training-operator.chart" . }}
+{{ include "training-operator.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "traning-operator.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "traning-operator.name" . }}
+{{- define "training-operator.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "training-operator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "traning-operator.serviceAccountName" -}}
+{{- define "training-operator.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "traning-operator.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "training-operator.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

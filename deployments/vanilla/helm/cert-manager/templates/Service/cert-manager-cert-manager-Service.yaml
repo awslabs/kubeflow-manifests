@@ -6,11 +6,13 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/version: v1.5.0
   name: cert-manager
   namespace: cert-manager
 spec:
   ports:
-  - port: 9402
+  - name: tcp-prometheus-servicemonitor
+    port: 9402
     protocol: TCP
     targetPort: 9402
   selector:

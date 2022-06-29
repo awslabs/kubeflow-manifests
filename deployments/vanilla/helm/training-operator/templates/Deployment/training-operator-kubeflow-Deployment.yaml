@@ -29,7 +29,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: public.ecr.aws/j1r0q0g6/training/training-operator:760ac1171dd30039a7363ffa03c77454bd714da5
+        image: public.ecr.aws/j1r0q0g6/training/training-operator:174e8813666951ded505daf334a37f60fd50c18d
         livenessProbe:
           httpGet:
             path: /healthz

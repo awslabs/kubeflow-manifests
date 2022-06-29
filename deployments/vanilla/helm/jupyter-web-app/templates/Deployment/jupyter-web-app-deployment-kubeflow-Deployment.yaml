@@ -30,7 +30,7 @@ spec:
           value: kubeflow-userid
         - name: USERID_PREFIX
           value: ''
-        image: public.ecr.aws/j1r0q0g6/notebooks/jupyter-web-app:v1.4
+        image: public.ecr.aws/j1r0q0g6/notebooks/jupyter-web-app:v1.5.0
         name: jupyter-web-app
         ports:
         - containerPort: 5000
@@ -42,7 +42,7 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-config-c6mgtkmgh4
+          name: jupyter-web-app-config-f7t92mb8kf
         name: config-volume
       - configMap:
           name: jupyter-web-app-logos

@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/name: webhook
+    app.kubernetes.io/version: v1.5.0
   name: cert-manager-webhook
   namespace: cert-manager
 spec:
@@ -22,6 +23,7 @@ spec:
         app.kubernetes.io/component: webhook
         app.kubernetes.io/instance: cert-manager
         app.kubernetes.io/name: webhook
+        app.kubernetes.io/version: v1.5.0
     spec:
       containers:
       - args:
@@ -35,7 +37,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: quay.io/jetstack/cert-manager-webhook:v1.3.1
+        image: quay.io/jetstack/cert-manager-webhook:v1.5.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -51,6 +53,7 @@ spec:
         ports:
         - containerPort: 10250
           name: https
+          protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
@@ -62,4 +65,6 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources: {}
+      securityContext:
+        runAsNonRoot: true
       serviceAccountName: cert-manager-webhook

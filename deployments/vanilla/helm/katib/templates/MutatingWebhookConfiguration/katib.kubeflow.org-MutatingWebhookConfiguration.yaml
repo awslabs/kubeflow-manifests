@@ -6,7 +6,7 @@ metadata:
   name: katib.kubeflow.org
 webhooks:
 - admissionReviewVersions:
-  - v1beta1
+  - v1
   clientConfig:
     caBundle: Cg==
     service:
@@ -27,7 +27,7 @@ webhooks:
     - experiments
   sideEffects: None
 - admissionReviewVersions:
-  - v1beta1
+  - v1
   clientConfig:
     caBundle: Cg==
     service:
@@ -38,7 +38,7 @@ webhooks:
   name: mutator.pod.katib.kubeflow.org
   namespaceSelector:
     matchLabels:
-      katib-metricscollector-injection: enabled
+      katib.kubeflow.org/metrics-collector-injection: enabled
   rules:
   - apiGroups:
     - ''

@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/component: cainjector
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/name: cainjector
+    app.kubernetes.io/version: v1.5.0
   name: cert-manager-cainjector
 rules:
 - apiGroups:

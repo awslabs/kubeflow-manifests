@@ -1,0 +1,67 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  labels:
+    app: istiod
+    istio: istiod
+    istio.io/rev: default
+    release: istio
+  name: istio-validator-istio-system
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  - v1
+  clientConfig:
+    caBundle: ''
+    service:
+      name: istiod
+      namespace: istio-system
+      path: /validate
+  failurePolicy: Ignore
+  name: rev.validation.istio.io
+  objectSelector:
+    matchExpressions:
+    - key: istio.io/rev
+      operator: In
+      values:
+      - default
+  rules:
+  - apiGroups:
+    - security.istio.io
+    - networking.istio.io
+    apiVersions:
+    - '*'
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - '*'
+  sideEffects: None
+- admissionReviewVersions:
+  - v1beta1
+  - v1
+  clientConfig:
+    caBundle: ''
+    service:
+      name: istiod
+      namespace: istio-system
+      path: /validate
+  failurePolicy: Ignore
+  name: validation.istio.io
+  objectSelector:
+    matchExpressions:
+    - key: istio.io/rev
+      operator: DoesNotExist
+  rules:
+  - apiGroups:
+    - security.istio.io
+    - networking.istio.io
+    - telemetry.istio.io
+    apiVersions:
+    - '*'
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - '*'
+  sideEffects: None

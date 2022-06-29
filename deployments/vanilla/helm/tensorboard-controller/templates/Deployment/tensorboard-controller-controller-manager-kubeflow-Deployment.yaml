@@ -40,14 +40,14 @@ spec:
         envFrom:
         - configMapRef:
             name: tensorboard-controller-config-mcd64bhg84
-        image: public.ecr.aws/j1r0q0g6/notebooks/tensorboard-controller:v1.4
+        image: public.ecr.aws/j1r0q0g6/notebooks/tensorboard-controller:v1.5.0
         name: manager
         resources:
           limits:
             cpu: 100m
-            memory: 30Mi
+            memory: 50Mi
           requests:
             cpu: 100m
-            memory: 20Mi
+            memory: 30Mi
       serviceAccountName: tensorboard-controller
       terminationGracePeriodSeconds: 10

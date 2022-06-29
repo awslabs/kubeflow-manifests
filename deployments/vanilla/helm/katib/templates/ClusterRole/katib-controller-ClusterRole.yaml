@@ -16,6 +16,7 @@ rules:
   - pods
   - pods/log
   - pods/status
+  - secrets
   verbs:
   - '*'
 - apiGroups:
@@ -54,5 +55,6 @@ rules:
   - pytorchjobs
   - mpijobs
   - xgboostjobs
+  - mxjobs
   verbs:
   - '*'
