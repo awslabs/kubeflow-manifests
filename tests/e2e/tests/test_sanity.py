@@ -39,7 +39,7 @@ from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../docs/deployment/vanilla"
+GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 

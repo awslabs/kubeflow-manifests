@@ -54,7 +54,7 @@ from e2e.utils.utils import (
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../docs/deployment/vanilla"
+GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 MOUNT_PATH = "/home/jovyan/"
 
 

@@ -4,7 +4,7 @@ import subprocess
 import json
 import yaml
 
-from importlib_metadata import metadata
+from importlib.metadata import metadata
 from e2e.fixtures.cluster import create_iam_service_account
 from e2e.utils.config import configure_env_file
 from e2e.utils.utils import (
@@ -18,6 +18,7 @@ from e2e.utils.utils import (
     write_yaml_file,
     load_yaml_file,
     wait_for,
+    WaitForCircuitBreakerError
 )
 
 from shutil import which
@@ -154,16 +155,25 @@ def create_s3_secret(secrets_manager_client, s3_secret_name):
 def setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client):
     print_banner("RDS Setup")
 
+    rds_secret_exists = does_secret_already_exist(secrets_manager_client, RDS_SECRET_NAME)
+
     if not does_database_exist(rds_client):
-        if not does_secret_already_exist(secrets_manager_client, RDS_SECRET_NAME):
-            db_root_password = setup_db_instance(
-                rds_client, secrets_manager_client, eks_client, ec2_client
-            )
-            create_rds_secret(secrets_manager_client, RDS_SECRET_NAME, db_root_password)
-        else:
-            print(f"Skipping RDS setup, secret '{RDS_SECRET_NAME}' already exists!")
+        if rds_secret_exists:
+            # Avoiding overwriting an existing secret with a new DB endpoint in case that secret is being used with an existing installation
+            raise Exception(f"A RDS DB instance was not created because a secret with the name {RDS_SECRET_NAME} already exists. To create the instance, delete the existing secret or provide a unique name for a new secret to be created.")
+
+        db_root_password = setup_db_instance(
+            rds_client, secrets_manager_client, eks_client, ec2_client
+        )
+
+        create_rds_secret(secrets_manager_client, RDS_SECRET_NAME, db_root_password)
     else:
         print(f"Skipping RDS setup, DB instance '{DB_INSTANCE_NAME}' already exists!")
+
+        # The username and password for the existing DB instance are unknown at this point (since they are only known during DB instance creation.)
+        # So a new secret with the username and password values can't be created.
+        if not rds_secret_exists:
+            raise Exception(f"Secret {RDS_SECRET_NAME} was not created because the username and password of the instance {DB_INSTANCE_NAME} are hidden (in another secret) after creation. To create the secret, specify a new DB instance to be created or delete the existing DB instance.")
 
 
 def does_database_exist(rds_client):
@@ -295,7 +305,7 @@ def wait_for_rds_db_instance_to_become_available(rds_client):
             DBInstanceIdentifier=DB_INSTANCE_NAME
         )["DBInstances"][0]["DBInstanceStatus"]
         if status == "failed":
-            raise Exception(
+            raise WaitForCircuitBreakerError(
                 "An unexpected error occurred while waiting for the RDS DB instance to become available!"
             )
         assert status == "available"
@@ -400,11 +410,7 @@ def setup_kubeflow_pipeline():
     print("Setting up Kubeflow Pipeline...")
 
     print("Retrieving DB instance info...")
-    try:
-        db_instance_info = get_db_instance_info()
-    except get_rds_client(CLUSTER_REGION).exceptions.DBInstanceNotFoundFault:
-        print("Could not retrieve DB instance info, aborting Kubeflow pipeline setup!")
-        return
+    db_instance_info = get_db_instance_info()
 
     pipeline_rds_params_env_file = "../../awsconfigs/apps/pipeline/rds/params.env"
     pipeline_rds_secret_provider_class_file = (

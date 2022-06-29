@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving-models-web-app
+    app.kubernetes.io/name: kfserving
+    kustomize.component: kfserving-models-web-app
+  name: kfserving-models-web-app
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow/kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /models/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: kfserving-models-web-app.kubeflow.svc.cluster.local
+        port:
+          number: 80

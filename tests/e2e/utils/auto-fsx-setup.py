@@ -152,7 +152,7 @@ def create_fsx_iam_policy():
 
 
 def get_fsx_iam_policy_document():
-    FSx_POLICY_DOCUMENT = "../../docs/deployment/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    FSx_POLICY_DOCUMENT = "../../deployments/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
     with open(FSx_POLICY_DOCUMENT, "r") as myfile:
         policy = myfile.read()
 
@@ -324,6 +324,9 @@ def create_fsx_file_system():
         SecurityGroupIds=[security_group_id],
         StorageCapacity=1200,
         LustreConfiguration={"DeploymentType": "SCRATCH_2"},
+        Tags=[
+            {"Key": "Name", "Value": FSX_FILE_SYSTEM_NAME},
+        ],
     )
     global FSX_FILE_SYSTEM_ID
     FSX_FILE_SYSTEM_ID = response["FileSystem"]["FileSystemId"]
@@ -485,7 +488,7 @@ if __name__ == "__main__":
     FSX_IAM_POLICY_NAME = "fsx-csi-driver-policy" + FSX_FILE_SYSTEM_NAME
     FSX_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{FSX_IAM_POLICY_NAME}"
     FSX_STATIC_PROVISIONING_FILE_PATH = (
-        "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning"
+        "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning"
     )
     FSX_SECURITY_GROUP_ID = ""
 

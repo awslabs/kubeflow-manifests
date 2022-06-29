@@ -96,6 +96,7 @@ def wait_for_kfp_run_succeeded_from_run_id(kfp_client, run_id):
 
         print(f"{run_id} {status} .... waiting")
         assert status == "Succeeded"
+        return resp
 
     return wait_for(callback, 600)
 
@@ -219,3 +220,28 @@ def print_banner(step_name: str):
     print("=" * width)
     print(step_name.center(width))
     print("=" * width)
+
+
+def get_security_group_id_from_name(
+    ec2_client, eks_client, security_group_name, cluster_name
+):
+    cluster_info = eks_client.describe_cluster(name=cluster_name)["cluster"]
+    vpc_id = cluster_info["resourcesVpcConfig"]["vpcId"]
+
+    response = ec2_client.describe_security_groups(
+        Filters=[
+            {
+                "Name": "vpc-id",
+                "Values": [
+                    vpc_id,
+                ],
+            },
+            {
+                "Name": "group-name",
+                "Values": [
+                    security_group_name,
+                ],
+            },
+        ]
+    )
+    return response["SecurityGroups"][0]["GroupId"]

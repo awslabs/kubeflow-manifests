@@ -20,6 +20,7 @@ from e2e.utils.utils import (
     load_json_file,
     load_yaml_file,
     write_yaml_file,
+    wait_for,
 )
 
 from e2e.utils.constants import (
@@ -35,13 +36,27 @@ def get_fsx_mount_name(fsx_client, file_system_id):
     response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["LustreConfiguration"]["MountName"]
 
+def wait_on_fsx_deletion(fsx_client, file_system_id):
+    def callback():
+        try:
+            response = fsx_client.describe_file_systems(
+                FileSystemIds=[file_system_id],
+            )
+            number_of_file_systems_with_id = len(response["FileSystems"])
+            print(f"{file_system_id} has {number_of_file_systems_with_id} results .... waiting")
+            assert number_of_file_systems_with_id == 0 
+        except fsx_client.exceptions.FileSystemNotFound:
+            return True
+
+    wait_for(callback)
+
 
 @pytest.fixture(scope="class")
 def static_provisioning(metadata, region, request, cluster):
     associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("fsx-claim-")
-    fsx_pv_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
-    fsx_pvc_filepath = "../../docs/deployment/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    fsx_pv_filepath = "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
+    fsx_pvc_filepath = "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
     fsx_auto_script_filepath = "utils/auto-fsx-setup.py"
     fsx_client = get_fsx_client(region)
     ec2_client = get_ec2_client(region)
@@ -111,14 +126,17 @@ def static_provisioning(metadata, region, request, cluster):
         file_system_id = details_fsx_volume["file_system_id"]
         sg_id = details_fsx_volume["security_group_id"]
 
+        print(f"deleting filesystem {file_system_id}")
         # delete the filesystem
         fsx_client.delete_file_system(
             FileSystemId=file_system_id,
         )
 
+        wait_on_fsx_deletion(fsx_client, file_system_id)
+        print(f"deleted filesystem {file_system_id}")
+
         # delete the security group
-        # TODO: This needs to be fixed. we need to wait for fsx volume to be deleted but fsx does not provided a deleted status, needs a workaround. 
-        # ec2_client.delete_security_group(GroupId=sg_id)
+        ec2_client.delete_security_group(GroupId=sg_id)
 
         # Delete the config file
         os.remove(config_filename)

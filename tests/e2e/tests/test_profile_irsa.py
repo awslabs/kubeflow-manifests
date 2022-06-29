@@ -8,9 +8,10 @@ import time
 import pytest
 import boto3
 import yaml
+import kfp
 
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE
+from e2e.utils.constants import DEFAULT_USER_NAMESPACE, KUBEFLOW_NAMESPACE
 from e2e.utils.utils import (
     rand_name,
     load_json_file,
@@ -18,6 +19,7 @@ from e2e.utils.utils import (
     get_iam_client,
     get_s3_client,
     get_eks_client,
+    wait_for_kfp_run_succeeded_from_run_id
 )
 from e2e.utils.config import metadata, configure_resource_fixture
 
@@ -35,23 +37,30 @@ from e2e.fixtures.cluster import (
 from e2e.fixtures.kustomize import kustomize, clone_upstream
 from e2e.fixtures.clients import (
     account_id,
+    kfp_client,
+    port_forward,
+    session_cookie,
+    host,
+    login,
+    password
 )
 
-from e2e.utils import mysql
-
-from e2e.utils.cloudformation_resources import (
-    create_cloudformation_fixture,
-    get_stack_outputs,
-)
 from e2e.utils.custom_resources import (
     create_katib_experiment_from_yaml,
     get_katib_experiment,
+    wait_for_katib_experiment_succeeded,
     delete_katib_experiment,
 )
 
-from e2e.utils.cognito_bootstrap.aws.iam import IAMPolicy
+from e2e.utils.aws.iam import IAMPolicy
+from e2e.utils.k8s_core_api import patch_configmap, delete_configmap, upload_file_as_configmap
 
 TO_ROOT_PATH = "../../"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+KATIB_EXPERIMENT_FILE = "katib-experiment-profile-irsa.yaml"
+KATIB_CONFIG_MAP_PATCH_FILE = TO_ROOT_PATH + "tests/e2e/resources/custom-resource-templates/patch_katib_config_map_sa.yaml"
+KATIB_CONFIG_MAP_NAME = "katib-config"
+
 
 @pytest.fixture(scope="class")
 def kustomize_path():
@@ -151,7 +160,9 @@ def profile_trust_policy(
                     "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
-                "Condition": {"StringEquals": {f"{oidc_url}:aud": "sts.amazonaws.com"}},
+                "Condition": {"StringEquals": {
+                    f"{oidc_url}:aud": "sts.amazonaws.com"
+                }},
             }
         ],
     }
@@ -191,6 +202,13 @@ def profile_role(region, metadata, request, profile_trust_policy):
         on_delete=on_delete,
     )
 
+@pytest.fixture(scope="class")
+def client_namespace(profile_role):
+    return "profile-aws-iam"
+
+@pytest.fixture(scope="class")
+def login():
+    return "test-user@kubeflow.org"
 
 @pytest.fixture(scope="class")
 def configure_manifests(profile_role, region, kustomize_path):
@@ -215,16 +233,6 @@ def configure_manifests(profile_role, region, kustomize_path):
         file.write(str(yaml.dump(profile_yaml_original)))
 
 
-def upload_file_as_configmap(namespace, configmap_name, file_path):
-    subprocess.call(
-        f"kubectl create configmap -n {namespace} {configmap_name} --from-file {file_path}".split()
-    )
-
-
-def delete_configmap(namespace, configmap_name):
-    subprocess.call(f"kubectl delete configmap -n {namespace} {configmap_name}".split())
-
-
 class TestProfileIRSA:
     @pytest.fixture(scope="class")
     def setup(self, metadata, configure_manifests, kustomize):
@@ -239,7 +247,7 @@ class TestProfileIRSA:
         s3_bucket_name = rand_name("test-profile-irsa-bucket")
         notebook_file_path = (
             TO_ROOT_PATH
-            + "docs/component-guides/samples/notebooks/verify_profile_iam_notebook.ipynb"
+            + "deployments/samples/notebooks/verify_profile_iam_notebook.ipynb"
         )
 
         notebook_server_pvc_spec_file = (
@@ -302,7 +310,7 @@ class TestProfileIRSA:
         bucket_name = notebook_server["S3_BUCKET_NAME"]
         s3_client = get_s3_client(region=region)
 
-        sub_cmd = "jupyter nbconvert --to notebook --execute ../uploaded/verify_notebook.ipynb --stdout"
+        sub_cmd = "jupyter nbconvert --to notebook --execute ../uploaded/verify_profile_iam_notebook.ipynb --stdout"
         cmd = "kubectl -n profile-aws-iam exec -it test-notebook-irsa-0 -- /bin/bash -c".split()
         cmd.append(sub_cmd)
 
@@ -314,3 +322,59 @@ class TestProfileIRSA:
         assert bucket_name in buckets
 
         s3_client.delete_bucket(Bucket=bucket_name)
+    
+    def test_pipeline_component_irsa(self, setup, kfp_client, client_namespace):
+
+        def s3_op():
+            import boto3
+            import random
+            import string
+
+            suffix = "".join(
+                random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+            )
+            s3_bucket_name = "test-pipeline-profile-irsa-" + suffix
+
+            s3 = boto3.client("s3", region_name="us-west-2")
+            s3.create_bucket(
+                Bucket=s3_bucket_name, CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
+            )
+            s3.delete_bucket(Bucket=s3_bucket_name)
+
+        s3_op = kfp.components.create_component_from_func(
+            s3_op, base_image="python", packages_to_install=["boto3"]
+        )
+
+        def s3_pipeline():
+            s3_operation = s3_op()
+        
+        run = kfp_client.create_run_from_pipeline_func(
+            s3_pipeline, namespace=client_namespace, arguments={}
+        )
+
+        wait_for_kfp_run_succeeded_from_run_id(kfp_client, run.run_id)
+
+    
+    def test_katib_experiment(self, setup, cluster, region, client_namespace):
+
+        patch_configmap(KUBEFLOW_NAMESPACE, KATIB_CONFIG_MAP_NAME, KATIB_CONFIG_MAP_PATCH_FILE)
+
+        filepath = os.path.abspath(
+            os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
+        )
+
+        name = rand_name("katib-random-")
+        namespace = client_namespace
+        replacements = {"NAME": name, "NAMESPACE": namespace}
+
+        resp = create_katib_experiment_from_yaml(
+            cluster, region, filepath, namespace, replacements
+        )
+
+        assert resp["kind"] == "Experiment"
+        assert resp["metadata"]["name"] == name
+        assert resp["metadata"]["namespace"] == namespace
+
+        wait_for_katib_experiment_succeeded(cluster, region, namespace, name)
+
+        delete_katib_experiment(cluster, region, namespace, name)
