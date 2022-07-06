@@ -113,7 +113,7 @@ def check_prometheus_is_running():
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
-def check_AMP_connects_to_prometheus(region, workspace_id):
+def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
     time.sleep(30) # Wait for promehtue sto scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     print("ACCESS_KEY:", access_key)
@@ -131,6 +131,7 @@ def check_AMP_connects_to_prometheus(region, workspace_id):
     prometheus_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
     print("prometheus_experiment_count:", prometheus_experiment_count)
     assert AMP_experiment_count == prometheus_experiment_count
+    assert str(expected_value) == prometheus_experiment_count
     return AMP_experiment_count
 
 def delete_AMP_resources(region, workspace_id):

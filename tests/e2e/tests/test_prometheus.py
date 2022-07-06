@@ -49,7 +49,7 @@ class TestPrometheus:
         check_prometheus_is_running()
 
     def test_pre_kfp_experiment_count(self, region):
-        check_AMP_connects_to_prometheus(region, workspace_id)
+        check_AMP_connects_to_prometheus(region, workspace_id, 0)
         
     def test_kfp_experiment(self, kfp_client):
         name = rand_name("experiment-")
@@ -79,24 +79,9 @@ class TestPrometheus:
         assert description == resp.description
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
-#
-#        print("PROMETHEUS_PRINT: Deleting the experiment.")
-#        kfp_client.delete_experiment(experiment.id)
-#
-#        print("PROMETHEUS_PRINT: About to enter try clause.")
-#        try:
-#            print("PROMETHEUS_PRINT: Second getting the experiment.")
-#            kfp_client.get_experiment(
-#                experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
-#            )
-#            print("PROMETHEUS_PRINT: Raising error that delete was not successful.")
-#            raise AssertionError("Expected KFPApiException Not Found")
-#        except KFPApiException as e:
-#            print("PROMETHEUS_PRINT: Deletion was a success.")
-#            assert "Not Found" == e.reason
 
     def test_post_kfp_experiment_count(self, region):
-        check_AMP_connects_to_prometheus(region, workspace_id)
+        check_AMP_connects_to_prometheus(region, workspace_id, 1)
             
     def test_clean_up_AMP(self, region):
         # Delete role, policy, and AMP workspace.
