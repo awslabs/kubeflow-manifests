@@ -3,10 +3,10 @@ from e2e.utils.prometheus.IAMRolesUtils import *
 # Global Variables
 SERVICE_ACCOUNT_NAMESPACE = "monitoring"
 SERVICE_ACCOUNT_AMP_INGEST_NAME = "amp-iamproxy-ingest-service-account"
-SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE = "demo-amp-iamproxy-ingest-role1"
-SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY = "DemoAMPIngestPolicy1"
-TRUST_POLICY_FILE_NAME = "AMPTrustPolicy1"
-PERMISSION_POLICY_FILE_NAME = "AMPIngestPermissionPolicy1"
+SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE = "amp-iamproxy-ingest-role"
+SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY = "AMPIngestPolicy"
+TRUST_POLICY_FILE_NAME = "AMPTrustPolicy"
+PERMISSION_POLICY_FILE_NAME = "AMPIngestPermissionPolicy"
 
 # Create a trust policy json file
 def create_AMP_trust_policy_file():
@@ -64,3 +64,9 @@ def setup_ingest_role(cluster_name, cluster_region):
         create_AMP_trust_policy_file, create_AMP_permission_policy_file)
     
     associate_OIDC_with_IAM(CLUSTER_NAME, CLUSTER_REGION)
+
+def delete_ingest_role():
+    print("Deleting policy function called.")
+    delete_IAM_policy(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY)
+    print("Deleting role function called.")
+    delete_IAM_role(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE)

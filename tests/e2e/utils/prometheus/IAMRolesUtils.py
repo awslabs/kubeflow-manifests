@@ -89,3 +89,53 @@ def associate_OIDC_with_IAM(cluster_name, cluster_region):
     associate_iam_with_oidc_provider_command = f'eksctl utils associate-iam-oidc-provider --cluster {cluster_name} --region {cluster_region} --approve'.split()
     output_associate_iam_with_oidc_provider = subprocess.check_output(associate_iam_with_oidc_provider_command, encoding="utf-8")
     print("output_associate_iam_with_oidc_provider:", output_associate_iam_with_oidc_provider)
+
+def delete_IAM_policy(role_name, policy_name):
+    policy_arn = f'arn:aws:iam::{get_AWS_account_ID()}:policy/{policy_name}'
+    try:
+        IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
+    except:
+        print("The policy named", policy_name, "does not exist, so deletion is not possible.")
+        return
+    print("About to detach policy.")
+    try:
+        IAM_CLIENT.detach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+    except Exception as e:
+        print(e)
+        return
+    print("About to delete policy.")
+    try:
+        IAM_CLIENT.delete_policy(PolicyArn=policy_arn)
+    except Exception as e:
+        print(e)
+        return
+    print("Role deleted.")
+    try:
+        IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
+    except:
+        print("The policy named", policy_name, "was sucessfully deleted.")
+        return
+    raise AssertionError("The policy", policy_name, "was not successfully deleted.")
+    
+def delete_IAM_role(role_name):
+    print("Getting pre-delete role_arn.")
+    try:
+        role_arn = IAM_CLIENT.get_role(RoleName=role_name).get('Role').get('Arn')
+    except:
+        print("The role named", role_name, "does not exist, so deletion is not possible.")
+        return
+    print("About to delete role.")
+    try:
+        IAM_CLIENT.delete_role(RoleName=role_name)
+    except Exception as e:
+        print(e)
+        return
+    print("Role deleted.")
+    print("Getting post-delete role_arn.")
+    try:
+        role_arn = IAM_CLIENT.get_role(RoleName=role_name).get('Role').get('Arn')
+    except:
+        print("The role named", role_name, "was sucessfully deleted.")
+        return
+    print("Role was not deleted properly")
+    raise AssertionError(f"The role {role_name} was not successfully deleted.")

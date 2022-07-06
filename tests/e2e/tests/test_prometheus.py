@@ -9,7 +9,6 @@ from e2e.utils.utils import (
 from e2e.utils.config import metadata
 
 from e2e.conftest import region
-print(region)
 
 from e2e.fixtures.cluster import cluster # Needed for kustomize.
 from e2e.fixtures.kustomize import (
@@ -99,7 +98,8 @@ class TestPrometheus:
     def test_post_kfp_experiment_count(self, region):
         check_AMP_connects_to_prometheus(region, workspace_id)
             
-#    def test_clean_up_AMP:
-        # Delete policy
-        # Delete IAM role
-        # Delete AMP workspace.
+    def test_clean_up_AMP(self, region):
+        # Delete role, policy, and AMP workspace.
+        print("PROMETHEUS_PRINT: About to start cleanup")
+        delete_AMP_resources(region, workspace_id)
+        print("PROMETHEUS_PRINT: Finished cleanup")

@@ -2,16 +2,19 @@ import subprocess
 import time
 import os
 import boto3
-from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role
+from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_ingest_role
+from e2e.utils.prometheus.IAMRolesUtils import get_AWS_account_ID
 from e2e.utils.utils import wait_for
 
-def update_config_map_AMP_workspace(workspace_id, region, config_map_file_path):
+def make_new_file_with_replacement(file_path, original_to_replacement_dict):
     new_file_contents = ""
-    with open(config_map_file_path, 'r') as original_file:
+    with open(file_path, 'r') as original_file:
         for original_line in original_file:
-            new_line = original_line.replace('<my-workspace-id>', workspace_id).replace('<my-workspace-region>', region)
+            new_line = original_line
+            for key in original_to_replacement_dict:
+                new_line = new_line.replace(key, original_to_replacement_dict.get(key))
             new_file_contents += new_line
-    old_path_array = config_map_file_path.split('/')
+    old_path_array = file_path.split('/')
     print("old_path_array:", old_path_array)
     old_path_array[-1] = 'new-' + old_path_array[-1]
     print("new path array:", old_path_array)
@@ -19,6 +22,18 @@ def update_config_map_AMP_workspace(workspace_id, region, config_map_file_path):
     with open(new_file_path, 'w') as new_file:
         new_file.write(new_file_contents)
     return new_file_path
+
+def update_AMP_service_account_id(AMP_service_account_file_path):
+    aws_account_id = get_AWS_account_ID()
+    original_to_replacement_dict = {}
+    original_to_replacement_dict['<my-account-id>'] = aws_account_id
+    return make_new_file_with_replacement(AMP_service_account_file_path, original_to_replacement_dict)
+    
+def update_config_map_AMP_workspace(workspace_id, region, config_map_file_path):
+    original_to_replacement_dict = {}
+    original_to_replacement_dict['<my-workspace-id>'] = workspace_id
+    original_to_replacement_dict['<my-workspace-region>'] = region
+    return make_new_file_with_replacement(config_map_file_path, original_to_replacement_dict)
 
 def set_up_prometheus_for_AMP(cluster_name, region):
     amp_client = boto3.client('amp', region_name=region)
@@ -29,14 +44,17 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     workspace_id = amp_client.create_workspace(alias = 'test_AMP_workspace')['workspaceId']
     
     setup_ingest_role(cluster_name, region)
+
+    # Edit AMP service account to use account-id
+    new_AMP_service_account = update_AMP_service_account_id('utils/prometheus/AMP-service-account.yaml')
     
-    create_AMP_service_account_command = 'kubectl create -f utils/prometheus/AMP-service-account.yaml'.split()
+    create_AMP_service_account_command = f'kubectl create -f {new_AMP_service_account}'.split()
     subprocess.call(create_AMP_service_account_command, encoding="utf-8")
 
     create_cluster_role_command = 'kubectl create -f utils/prometheus/clusterRole.yaml'.split()
     subprocess.call(create_cluster_role_command, encoding="utf-8")
 
-    # Edit config map to use workspace-id
+    # Edit config map to use workspace-id and region
     new_config_map = update_config_map_AMP_workspace(workspace_id, region, 'utils/prometheus/config-map.yaml')
     
     create_config_map_command = f'kubectl create -f {new_config_map}'.split()
@@ -96,8 +114,7 @@ def check_prometheus_is_running():
     assert True==bool(up_results)
 
 def check_AMP_connects_to_prometheus(region, workspace_id):
-    #time.sleep(60) #Works!
-    time.sleep(30)
+    time.sleep(30) # Wait for promehtue sto scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     print("ACCESS_KEY:", access_key)
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
@@ -116,6 +133,19 @@ def check_AMP_connects_to_prometheus(region, workspace_id):
     assert AMP_experiment_count == prometheus_experiment_count
     return AMP_experiment_count
 
-#check_AMP_connects_to_prometheus('us-east-1', 'ws-68b24640-7313-485e-b678-93048c83404a')
-#set_up_prometheus_for_AMP('us-east-1')
-#update_config_map_AMP_workspace('ws-68b24640-7313-485e-b678-93048c83404a', 'us-east-1', 'real-config-map.yaml')
+def delete_AMP_resources(region, workspace_id):
+    print("About to delete ingest role.")
+    delete_ingest_role()
+    print("Finished deleting ingest role.")
+
+    print("About to make boto3 amp client.")
+    amp_client = boto3.client('amp', region_name=region)
+
+    print("About to delete workspace.")
+    amp_client.delete_workspace(workspaceId=workspace_id)
+    
+    print("About to describe workspace.")
+    try:
+        amp_client.describe_workspace(workspaceId=workspace_id)
+    except Exception as e:
+        print(e)
