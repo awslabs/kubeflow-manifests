@@ -13,8 +13,9 @@ from e2e.utils.load_balancer.setup_load_balancer import (
     create_subdomain_hosted_zone,
     create_certificates,
     configure_load_balancer_controller,
+    find_existed_issued_certificate
 )
-from e2e.utils.utils import print_banner, load_yaml_file, write_yaml_file
+from e2e.utils.utils import print_banner, load_yaml_file, write_yaml_file, get_acm_client
 
 from typing import Tuple
 
@@ -35,18 +36,35 @@ def create_certificates_cognito(
     )
 
     subdomain_cert_n_virginia = subdomain_cert_deployment_region
+
+
     if deployment_region != "us-east-1":
-        subdomain_cert_n_virginia = AcmCertificate(
-            domain="*." + subdomain_hosted_zone.domain,
-            hosted_zone=subdomain_hosted_zone,
-            region="us-east-1",
-        )
-        subdomain_cert_n_virginia.request_validation()
-        validation_record = (
-            subdomain_cert_n_virginia.generate_domain_validation_record()
-        )
-        subdomain_cert_n_virginia.create_domain_validation_records(validation_record)
-        subdomain_cert_n_virginia.wait_for_certificate_validation()
+        acm_client = get_acm_client("us-east-1")
+
+        #store issued certificates for us-east-1 region to check for duplicate
+        Issued_Certificates = acm_client.list_certificates(CertificateStatuses=['ISSUED'])
+        existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
+                                                                     "*." + subdomain_hosted_zone.domain,
+                                                                    subdomain_hosted_zone,
+                                                                    "us-east-1")
+        if (existed_issued_certificate):
+            logger.info(
+                f"an existed 'Issued' certificate has been found for domain '*.{subdomain_hosted_zone.domain}' in region 'us-east-1'.\
+                certificate ARN is '{existed_issued_certificate.arn}'. Certification validation step will be skipped."
+            )
+            subdomain_cert_n_virginia = existed_issued_certificate
+        else:
+            subdomain_cert_n_virginia = AcmCertificate(
+                domain="*." + subdomain_hosted_zone.domain,
+                hosted_zone=subdomain_hosted_zone,
+                region="us-east-1",
+            )
+            subdomain_cert_n_virginia.request_validation()
+            validation_record = (
+                subdomain_cert_n_virginia.generate_domain_validation_record()
+            )
+            subdomain_cert_n_virginia.create_domain_validation_records(validation_record)
+            subdomain_cert_n_virginia.wait_for_certificate_validation()
 
     return root_certificate, subdomain_cert_n_virginia, subdomain_cert_deployment_region
 

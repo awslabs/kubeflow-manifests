@@ -140,6 +140,8 @@ def get_ec2_client(region):
 def get_cfn_client(region):
     return boto3.client("cloudformation", region_name=region)
 
+def get_acm_client(region):
+    return boto3.client("acm", region_name=region)
 
 def get_s3_client(region):
     return boto3.client("s3", region_name=region)
