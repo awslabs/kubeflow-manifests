@@ -15,15 +15,15 @@ You can use Notebooks with Kubeflow on AWS to:
 
 ## AWS-optimized Kubeflow Notebook servers
 
-Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are based on [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html). 
+Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are built on top of the [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html) along with other Kubeflow specific packages. 
 
-The following container images are available from the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/).
+These container images are available on the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/c9e4w0g3/). The following images are available as part of this release, however you can always find the latest updated images in the linked ECR repository. 
 
 ```
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-gpu-py38-cu112
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.0-cpu-py38
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-gpu-py38-cu111
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.9.0-cpu-py38
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-gpu-py38-cu112-ubuntu20.04-v1.8
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1
+public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-cpu-py38-ubuntu20.04-e3-v1.1
 ```
 
 AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Available Deep Learning Containers Images](https://github.com/aws/deep-learning-containers/blob/master/available_images.md).
@@ -38,6 +38,20 @@ Along with specific machine learning frameworks, these container images have add
 
 For more information on gettings started with Kubeflow Notebooks, see the [Quickstart Guide](https://www.kubeflow.org/docs/components/notebooks/quickstart-guide/).
 
+## Access AWS Services from Notebooks
+
+Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) to securely access AWS resources through Kubeflow Notebooks.
+
+### Configuration
+
+Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md#configuration-steps" >}}). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
+
+### Try it out
+
+1. Create a Notebook server through the central dashboard.
+2. Navigate to the top left drop down menu and select the profile name for the profile that you created.
+3. Create a Notebook using the [Verify Profile IAM](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_notebook.ipynb) Notebook sample.
+4. Run the Notebook. You should see the S3 buckets present in your account.
 ## RDS and S3 credentials for Kubeflow Pipelines and Notebooks
 
 Set up RDS and S3 credential access to be able to:
@@ -121,17 +135,3 @@ import os
 print(os.environ['port'])
 ```  
 
-## AWS IAM for Kubeflow Profiles in Notebooks
-
-Use [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) to securely access AWS resources through Kubeflow Notebooks.
-
-### Configuration
-
-Prerequisites for setting up AWS IAM for Kubeflow Profiles can be found in the [Profiles component guide](/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps). These steps go through creating a profile that uses the `AwsIamForServiceAccount` plugin. No additional configuration steps are required.
-
-### Try it out
-
-1. Create a Notebook server through the central dashboard.
-2. Navigate to the top left drop down menu and select the profile name for the profile that you created.
-3. Create a Notebook using the [Verify Profile IAM](https://github.com/awslabs/kubeflow-manifests/blob/main/deployment/samples/notebooks/verify_profile_iam_notebook.ipynb) Notebook sample.
-4. Run the Notebook. You should see the S3 buckets present in your account.

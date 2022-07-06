@@ -28,7 +28,7 @@ from e2e.fixtures.clients import (
 
 from kfp_server_api.exceptions import ApiException as KFPApiException
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployment/vanilla"
+GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 
 @pytest.fixture(scope="class")
 def kustomize_path():

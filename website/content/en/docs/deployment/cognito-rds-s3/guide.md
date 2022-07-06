@@ -1,13 +1,13 @@
 +++
 title = "Cognito, RDS, and S3"
 description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
-weight = 50
+weight = 60
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
 
 ## 1. Prerequisites
-Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/prerequisites/) and the [RDS and S3 setup guide](/kubeflow-manifests/docs/deployment/rds-s3/guide/) in order to:
+Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisites.md" >}}) and the [RDS and S3 setup guide]({{< ref "/docs/deployment/rds-s3/guide.md" >}}) in order to:
 1. Install the CLI tools
 2. Clone the repositories
 3. Create an EKS cluster
@@ -19,7 +19,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide](/kubeflow-manifests/docs/deployment/cognito/guide/) from [Section 1.0 (Custom domain)](/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates) up to [Section 3.0 (Configure ingress)](/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress) in order to:
+1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -27,7 +27,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         ```sh
-        while ! kustomize build deployment/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build deployments/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
         ```
     1. **[Option 2]** Install individual components:
         ```sh
@@ -38,9 +38,9 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build upstream/common/istio-1-9/istio-crds/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/istio-namespace/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
 
         # Cert-Manager
         kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
@@ -49,16 +49,20 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # KNative
         kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
         
-        # KFServing
+        # KServe
+        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
+        kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+
+        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
         kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
         
         # Central Dashboard
-        kustomize build upstream/apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+        kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
         # Notebooks
         kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
@@ -76,9 +80,6 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # Tensorboard
         kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
         kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
-        
-        # MPI Operator
-        kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
 
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
@@ -106,7 +107,7 @@ Refer to the [general prerequisites guide](/kubeflow-manifests/docs/deployment/p
         # Authservice
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -        
         ```
-1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)](/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-ALB-address) in order to:
+1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
     1. Add/Update the DNS records in a custom domain with the ALB address
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool

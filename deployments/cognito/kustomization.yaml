@@ -20,8 +20,12 @@ resources:
   # Kubeflow Istio Resources
   - ../../upstream/common/istio-1-11/kubeflow-istio-resources/base
 
+  # Kubeflow Pipelines
+  - ../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
   # KFServing
   - ../../upstream/apps/kfserving/upstream/overlays/kubeflow
+  # Katib
+  - ../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
   # Central Dashboard
   - ../../upstream/apps/centraldashboard/upstream/overlays/kserve
   # Notebooks
@@ -42,7 +46,7 @@ resources:
   - ../../awsconfigs/common/aws-telemetry
 
   # KServe
-  - ../../upstream/contrib/kserve/kserve
+  - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
   # Configured for AWS Cognito
@@ -53,12 +57,3 @@ resources:
   - ../../awsconfigs/common/aws-alb-ingress-controller/base
   # Authservice
   - ../../awsconfigs/common/aws-authservice/base
-
-  # Configured for AWS RDS and AWS S3
-
-  # AWS Secret Manager
-  - ../../awsconfigs/common/aws-secrets-manager
-  # Kubeflow Pipelines
-  - ../../awsconfigs/apps/pipeline
-  # Katib
-  - ../../awsconfigs/apps/katib-external-db-with-kubeflow

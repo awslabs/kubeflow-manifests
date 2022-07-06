@@ -599,7 +599,7 @@ if __name__ == "__main__":
 
     EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH = (
         DIRECTORY_PATH
-        + "../../deployment/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
+        + "../../deployments/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
     )
 
     main()

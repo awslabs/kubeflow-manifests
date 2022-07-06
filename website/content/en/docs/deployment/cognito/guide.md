@@ -1,7 +1,7 @@
 +++
-title = "Full Deployment Guide"
+title = "Manual Deployment Guide"
 description = "Deploying Kubeflow with AWS Cognito as identity provider"
-weight = 10
+weight = 20
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:
@@ -11,21 +11,21 @@ This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your 
 - create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB's public DNS names)
 
 ## Prerequisites
-Check to make sure that you have the necessary [prerequisites](/kubeflow-manifests/docs/deployment/prerequisites/).
+Check to make sure that you have the necessary [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}).
 
 ## Background 
 
-Read the [background section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
+Read the [background section]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#background" >}}) in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.
 
-Read the [create domain and certificate section](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates) for information on why we use a subdomain for hosting Kubeflow.
+Read the [create domain and certificate section]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) for information on why we use a subdomain for hosting Kubeflow.
 
 ## (Optional) Automated setup
-The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide](/kubeflow-manifests/docs/deployment/cognito/guide-automated/).
+The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide]({{< ref "/docs/deployment/cognito/guide-automated.md" >}}).
 
 ## 1.0 Custom domain and certificates
 
-1. Follow the [Create a subdomain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain) section of the Load Balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
-1. Follow the [Create certificates for domain](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain) section of the Load Balancer guide to create certificates required for TLS.
+1. Follow the [Create a subdomain]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-a-subdomain" >}}) section of the Load Balancer guide to create a subdomain(e.g. `platform.example.com`) for hosting Kubeflow.
+1. Follow the [Create certificates for domain]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-certificates-for-domain" >}}) section of the Load Balancer guide to create certificates required for TLS.
 
 From this point onwards, we will be creating/updating the DNS records **only in the subdomain**. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.
 
@@ -46,7 +46,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. In order to use a custom domain, its root(i.e. `platform.example.com`) must have an valid A type record. Create a new record of type `A` in `platform.example.com` hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
         1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
             1. ![subdomain-initial-A-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png)
-    1. If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the process similar to [section 2.0](./kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
+    1. If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the process similar to [section 2.0]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-certificates-for-domain" >}}). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
     1. In the `Domain name` choose `Use your domain`, type `auth.platform.example.com` and select the `*.platform.example.com` AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
         1. ![cognito-active-domain](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png)
         2. When it’s created, it will return the `Alias target` CloudFront address.
@@ -60,7 +60,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 3.0 Configure Ingress
 
-1. Take note of the following values from the previous step or `awsconfigs/infra_configs/scripts/config.yaml` if you used the [automated guide](https://github.com/awslabs/kubeflow-manifests/blob/main/docs/deployment/cognito/README-automated.md):
+1. Take note of the following values from the previous step
     1. The Pool ARN of the user pool found in Cognito general settings.
     1. The App client id, found in Cognito App clients.
     1. The custom user pool domain (e.g. `auth.platform.example.com`), found in the Cognito domain name.
@@ -92,52 +92,56 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         LOGOUT_URL='$CognitoLogoutURL'
         ' > awsconfigs/common/aws-authservice/base/params.env
         ```
-1. Follow the [Configure Load Balancer Controller](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller) section of the load balancer guide to setup the resources required the load balancer controller.
+1. Follow the [Configure Load Balancer Controller]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#configure-load-balancer-controller" >}}) section of the load balancer guide to setup the resources required the load balancer controller.
 
 ## 4.0 Building manifests and deploying Kubeflow
 
 1. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         ```bash
-        while ! kustomize build deployment/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+        while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
         ```
     1. **[Option 2]** Install individual components:
         ```bash
         # Kubeflow namespace
-        kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -
         
         # Kubeflow Roles
-        kustomize build common/kubeflow-roles/base | kubectl apply -f -
+        kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build common/istio-1-9/istio-crds/base | kubectl apply -f -
-        kustomize build common/istio-1-9/istio-namespace/base | kubectl apply -f -
-        kustomize build common/istio-1-9/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
         
         # Cert-Manager
-        kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
-        kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+        kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
+        kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
         
         # KNative
-        kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-        kustomize build common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build common/istio-1-9/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
+        kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build common/istio-1-9/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
         
         # Kubeflow Pipelines
         # reapply manifest if you see an error
-        kustomize build awsconfigs/common/pipeline/multi-user | kubectl apply -f -
+        kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
         
-        # KFServing
-        kustomize build apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-        
+        # KServe
+        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
+        kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+
+        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
+        kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
+
         # Katib
-        kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+        kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
         
         # Central Dashboard
-        kustomize build upstream/apps/centraldashboard/upstream/overlays/istio | kubectl apply -f -
+        kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
         # Notebooks
         kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
@@ -156,9 +160,6 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
         kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
         
-        # MPI Operator
-        kustomize build upstream/apps/mpi-job/upstream/overlays/kubeflow | kubectl apply -f -
-
         # Training Operator
         kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
 
@@ -181,10 +182,10 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. ```bash
         kubectl get ingress -n istio-system
         Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-        NAME            CLASS    HOSTS   ADDRESS                                                                  PORTS   AGE
-        istio-ingress   <none>   *       ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com   80      15d
+        NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
         ```
-    2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision](/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision) in the troubleshooting guide.
+    2. If `ADDRESS` is empty after a few minutes, see [ALB fails to provision]({{< ref "/docs/troubleshooting-aws.md#alb-fails-to-provision" >}}) in the troubleshooting guide.
 1. When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (`platform.example.com`) for `*.platform.example.com`
     1. ![subdomain-*.platform-and-*.default-records](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-*.platform-and-*.default-records.png)
 1. Update the type `A` record created in section for `platform.example.com` using ALB DNS name. Change from `127.0.0.1` → ALB DNS name. You have to use alias form under `Alias to application and classical load balancer` and select region and your ALB address.
@@ -194,7 +195,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 6.0 Connecting to central dashboard
 
-1. The central dashboard should now be available at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). Before connecting to the dashboard:
+1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Before connecting to the dashboard:
     1. Head over to the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
         1. ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
     1. Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). The following is an example Profile for reference:
@@ -211,5 +212,9 @@ From this point onwards, we will be creating/updating the DNS records **only in 
                     # replace with the email of the user
                     name: my_user_email@kubeflow.com
             ```
-1. Open the central dashboard at [https://kubeflow.platform.example.com](https://kubeflow.platform.example.com/). It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.
+1. Open the central dashboard at `https://kubeflow.platform.example.com`. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.
+> Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/)
 
+## 7.0 Uninstall Kubeflow
+
+To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/guide-automated.md#uninstall-kubeflow" >}})

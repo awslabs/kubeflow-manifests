@@ -1,15 +1,15 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/awslabs/kubeflow-manifests/issues)
-![current development version](https://img.shields.io/badge/Kubeflow-v1.4.1-green.svg?style=flat)
+![current development version](https://img.shields.io/badge/Kubeflow-v1.5.1-green.svg?style=flat)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 # Kubeflow on AWS
 
 ## Overview
 
-This repository contains configuration files and [overlays](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#bases-and-overlays) to deploy Kubeflow on [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks/).
+Kubeflow on AWS is an open source distribution of [Kubeflow](https://www.kubeflow.org/) that provides its own Kubeflow manifests to support integrations with various AWS managed services. Use Kubeflow on AWS to streamline data science tasks and build highly reliable, secure, and scalable machine learning systems with reduced operational overheads.
 
 ## Getting Started
 
-There are a number of deployment options for installing Kubeflow with AWS service integrations. For detailed instructions regarding available AWS-integrated deployment options, see the [deployment guides](https://awslabs.github.io/kubeflow-manifests/docs/deployment/) on the [Kubeflow on AWS](https://awslabs.github.io/kubeflow-manifests/) website.
+There are a number of deployment options for installing Kubeflow with AWS service integrations. To get started with deploying Kubeflow on [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks/), see the [deployment section](https://awslabs.github.io/kubeflow-manifests/docs/deployment/) on the [Kubeflow on AWS](https://awslabs.github.io/kubeflow-manifests/) website.
 
 ## Help & Feedback
 

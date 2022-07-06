@@ -8,4 +8,4 @@ logger = logging.getLogger(__name__)
 
 CONFIG_FILE = "./utils/load_balancer/config.yaml"
 
-LB_KUSTOMIZE_PATH = "../../deployment/add-ons/load-balancer/"
+LB_KUSTOMIZE_PATH = "../../deployments/add-ons/load-balancer/"

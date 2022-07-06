@@ -44,7 +44,7 @@ client = kfp.Client(host=f"http://{kubeflow_gateway_endpoint}/pipeline", cookies
 client.list_experiments(namespace=namespace)
 ```
 
-If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer](/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/) and use the ALB address as the Kubeflow Endpoint.
+If you want to set up application load balancing (ALB) with Dex, see the [Load Balancer]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md" >}}) guide and use the ALB address as the Kubeflow Endpoint.
 
 To do programmatic authentication with Dex, refer to the following comments under [issue #140](https://github.com/kubeflow/kfctl/issues/140) in the `kfctl` repository: [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304) and [#140 (comment)](https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529).
 
@@ -63,205 +63,70 @@ client = kfp.Client(host=f"https://{kubeflow_gateway_endpoint}/pipeline", cookie
 client.list_experiments(namespace=namespace)
 ```
 
-## AWS Access from Kubeflow Pipelines
+## Access AWS Services from Pipeline Components
 
-User profiles can be granted permissions to access AWS resources. Pipelines under the profile namespace will have access to AWS resources as specified in the user profile's `awsIamRole`.
-
-## Configuration steps
-
-Generic configuration steps to configure user profiles with AWS IAM permissions can be found [here](./profiles.md#configuration-steps).
-
-The below configuration steps provide an end to end example of configuring user profiles with IAM permissions and using them with the KFP SDK.
+For pipelines components to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the `AwsIamForServiceAccount` plugin. To configure the `AwsIamForServiceAccount` plugin to work with profiles, follow the steps below.
 
 ### Prerequisites
 
-Deploy Kubeflow using the [vanilla](/kubeflow-manifests/docs/deployment/vanilla) deployment option.
+Configuration steps to configure Profiles with AWS IAM permissions can be found in the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md#configuration-steps" >}}). Follow the configuration steps to configure the profile controller to work with the `AwsIamForServiceAccount` plugin.
 
-### Create the profile
+The following is an example of a profile using the `AwsIamForServiceAccount` plugin:
+```yaml
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: some_profile
+spec:
+  owner:
+    kind: User
+    name: some-user@kubeflow.org
+  plugins:
+  - kind: AwsIamForServiceAccount
+    spec:
+      awsIamRole: arn:aws:iam::123456789012:role/some-profile-role
+```
 
-1. Define the following environment variables:
+The AWS IAM permissions granted to the pipelines components are specified in the profile's `awsIamRole`. 
 
-   ```bash
-   export CLUSTER_NAME=<your cluster name>
-   export CLUSTER_REGION=<your region>
-   export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-   export PROFILE_NAME=<the name of the profile to be created>
-   ```
+### Verify configuration
 
-2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
+There are no additional configuration steps after the prerequisites.
 
-   ```bash
-   aws iam create-policy \
-   --region $CLUSTER_REGION \
-   --policy-name kf-profile-controller-policy \
-   --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
-   ```
+You can verify that the profile was configured correctly by running the following commands:
+```bash
+export PROFILE_NAME=<name of the created profile>
 
-3. Associate IAM OIDC with your cluster.
+kubectl get serviceaccount -n ${PROFILE_NAME} default-editor -oyaml | grep "eks.amazonaws.com/role-arn"
+```
+The output should look similar to the following:
+```bash
+eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
+```
 
-   ```bash
-   aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
+### Example: S3 Access from a Pipeline Component
 
-   eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
-   ```
+The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.
+#### Prerequisites
+Make sure that you have completed the [prerequisites]({{< ref "/docs/component-guides/pipelines.md#prerequisites" >}}) and Profile configuration steps.
 
-4. Create an IRSA for the Profile controller using the policy.
+#### Steps
 
-   ```bash
-   eksctl create iamserviceaccount \
-   --cluster=$CLUSTER_NAME \
-   --name="profiles-controller-service-account" \
-   --namespace=kubeflow \
-   --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/kf-profile-controller-policy" \
-   --region=$CLUSTER_REGION \
-   --override-existing-serviceaccounts \
-   --approve
-   ```
+1. Create and apply a `PodDefault` in the desired profile namespace that allows KFP access from Jupyter notebooks.
+    - Instructions can be found in the Kubeflow [Multi-User mode](https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#multi-user-mode) instructions.
 
-5. Create an IAM trust policy to authorize federated requests from the OIDC provider.
+2. Login to your central dashboard and select the desired profile namespace from the top left corner.
 
-   ```bash
-   export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
+3. Create a notebook server using the `PodDefault`.
 
-   cat <<EOF > trust.json
-   {
-   "Version": "2012-10-17",
-   "Statement": [
-       {
-       "Effect": "Allow",
-       "Principal": {
-           "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_URL}"
-       },
-       "Action": "sts:AssumeRoleWithWebIdentity",
-       "Condition": {
-           "StringEquals": {
-           "${OIDC_URL}:aud": "sts.amazonaws.com"
-           }
-       }
-       }
-   ]
-   }
-   EOF
-   ```
+4. Open the notebook server and upload the [sample notebook](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_kfp.ipynb) into the server.
 
-6. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
+5. Run the notebook.
 
-7. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
+6. Click on the `Run details` link that appears.
 
-   ```bash
-   aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
+7. Verify that the run completes successfully and that the `Logs` are populated with the S3 buckets in the account.
 
-   aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
-   ```
-
-8. Create a Profile using the `PROFILE_NAME`.
-
-   ```bash
-   cat <<EOF > profile_iam.yaml
-   apiVersion: kubeflow.org/v1
-   kind: Profile
-   metadata:
-     name: ${PROFILE_NAME}
-   spec:
-     owner:
-       kind: User
-       name: user@example.com
-     plugins:
-     - kind: AwsIamForServiceAccount
-       spec:
-         awsIamRole: $(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query 'Role.Arn')
-   EOF
-
-   kubectl apply -f profile_iam.yaml
-   ```
-
-## Verification steps
-
-These steps continue from the configuration steps above but can be used as a starting point for other configurations.
-
-1. Port forward the central dashboard.
-
-   ```bash
-   kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-   ```
-
-2. Install the verification script dependencies. The script requires python 3.6 or greater. (opitonal: You can run this code from notebook too, after login in central dashboard)
-
-   ```bash
-   pip install boto3 kfp requests
-   ```
-
-3. Copy the below script to a file.
-
-   Replace `DEFAULT_USER_NAMESPACE` with the `PROFILE_NAME` for the profile created in step 9 of the [configuration steps](#configuration-steps).
-
-   ```python
-   import kfp
-   import requests
-
-   DEFAULT_HOST = "http://localhost:8080/"
-   DEFAULT_USER_NAMESPACE = <replace me>
-   DEFAULT_USERNAME = "user@example.com"
-   DEFAULT_PASSWORD = "12341234"
-   KUBEFLOW_NAMESPACE = "kubeflow"
-
-   def session_cookie(host, login, password):
-       session = requests.Session()
-       response = session.get(host)
-       headers = {
-           "Content-Type": "application/x-www-form-urlencoded",
-       }
-       data = {"login": login, "password": password}
-       session.post(response.url, headers=headers, data=data)
-       session_cookie = session.cookies.get_dict()["authservice_session"]
-
-       return session_cookie
-
-   def kfp_client(host, client_namespace, session_cookie):
-
-       client = kfp.Client(
-           host=f"{host}/pipeline",
-           cookies=f"authservice_session={session_cookie}",
-           namespace=client_namespace,
-       )
-       client._context_setting[
-           "namespace"
-       ] = client_namespace  # needs to be set for list_experiments
-
-       return client
-
-   def s3_op():
-       import boto3
-       s3 = boto3.client("s3", region_name="us-west-2")
-       resp = s3.list_buckets()
-       print(resp)
-
-   s3_op = kfp.components.create_component_from_func(
-       s3_op, base_image="python", packages_to_install=["boto3"]
-   )
-
-   def s3_pipeline():
-       s3_operation = s3_op()
-
-   sc = session_cookie(DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
-   client = kfp_client(DEFAULT_HOST, DEFAULT_USER_NAMESPACE, sc)
-   client.create_run_from_pipeline_func(
-       s3_pipeline, namespace=DEFAULT_USER_NAMESPACE, arguments={}
-   )
-   ```
-
-4. Run the created script file.
-
-   ```bash
-   python <script_file>.py
-   ```
-
-5. Login to the central dashboard.
-
-   1. Open your browser and visit `http://localhost:8080`. You should get the Dex login screen.
-   2. Login with the default user's credential. The default email address is `user@example.com` and the default password is `12341234`.
-
-6. Navigate to the runs dasbhoard and view the `s3_op` component in the graph. In the logs sections the buckets in the s3 account should be viewable.
 
 ## Support S3 as a source for Kubeflow Pipelines output viewers
 

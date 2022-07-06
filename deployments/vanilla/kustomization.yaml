@@ -25,7 +25,7 @@ resources:
   - ../../upstream/common/istio-1-11/kubeflow-istio-resources/base
 
   # Kubeflow Pipelines
-  - ../../awsconfigs/common/pipeline/multi-user
+  - ../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
   # KFServing
   - ../../upstream/apps/kfserving/upstream/overlays/kubeflow
   # Katib
@@ -52,7 +52,7 @@ resources:
   - ../../upstream/common/user-namespace/base
 
   # KServe
-  - ../../upstream/contrib/kserve/kserve
+  - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
   # AWS Telemetry - This is an optional component. See usage tracking documentation for more information

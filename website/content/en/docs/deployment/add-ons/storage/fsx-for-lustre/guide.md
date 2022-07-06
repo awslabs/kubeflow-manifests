@@ -7,16 +7,16 @@ weight = 20
 This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.  
 
 ## 1.0 Prerequisites
-For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the [deployment options](/kubeflow-manifests/docs/deployment/) and [general prerequisites](/kubeflow-manifests/docs/deployment/vanilla/guide/) for more information.
+For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the [deployment options]({{< ref "/docs/deployment" >}}) and [general prerequisites]({{< ref "/docs/deployment/vanilla/guide.md" >}}) for more information.
 
-1. Check that you have the necessary [prerequisites](/kubeflow-manifests/docs/deployment/vanilla/guide/).
+1. Check that you have the necessary [prerequisites]({{< ref "/docs/deployment/vanilla/guide.md" >}}).
 
 > Important: You must make sure you have an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) for your cluster and that it was added from `eksctl` >= `0.56` or if you already have an OIDC provider in place, then you must make sure you have the tag `alpha.eksctl.io/cluster-name` with the cluster name as its value. If you don't have the tag, you can add it via the AWS Console by navigating to IAM->Identity providers->Your OIDC->Tags.
 
 2. At this point, you have likely cloned the necessary repository and checked out the right branch. Save this path to help us navigate to different paths in the rest of this guide.
 ```bash
 export GITHUB_ROOT=$(pwd)
-export GITHUB_STORAGE_DIR="$GITHUB_ROOT/deployment/add-ons/storage/"
+export GITHUB_STORAGE_DIR="$GITHUB_ROOT/deployments/add-ons/storage/"
 ```
 
 3. Make sure the following environment variables are set. 
@@ -182,7 +182,7 @@ In the following two sections we will be using this PVC to create a notebook ser
 
 ### 3.1 Connect to the Kubeflow dashboard
 Once you have everything setup, Port Forward as needed and Login to the Kubeflow dashboard. At this point, you can also check the `Volumes` tab in Kubeflow and you should be able to see your PVC is available for use within Kubeflow. 
-For more details on how to access your Kubeflow dashboard, refer to one of the [deployment option guides](/kubeflow-manifests/docs/deployment/) based on your setup. If you used the vanilla deployment, see [Connect to your Kubeflow cluster](/kubeflow-manifests/docs/deployment/install/vanilla/guide/#connect-to-your-kubeflow-cluster).
+For more details on how to access your Kubeflow dashboard, refer to one of the [deployment option guides]({{< ref "/docs/deployment" >}}) based on your setup. If you used the vanilla deployment, see [Connect to your Kubeflow cluster]({{< ref "/docs/deployment/vanilla/guide.md#connect-to-your-kubeflow-cluster" >}}).
 
 ### 3.2 Note about permissions
 This step may not be necessary but you might need to specify some additional directory permissions on your worker node before you can use these as mount points. By default, new Amazon FSx file systems are owned by root:root, and only the root user (UID 0) has read-write-execute permissions. If your containers are not running as root, you must change the Amazon FSx file system permissions to allow other users to modify the file system. The set-permission-job.yaml is an example of how you could set these permissions to be able to use the fsx as your workspace in your kubeflow notebook. Modify it accordingly if you run into similar permission issues with any other job pod. 
@@ -260,7 +260,7 @@ kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 ```
 
 ## 4.0 Cleanup
-This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see [Uninstall Kubeflow](/kubeflow-manifests/docs/deployment/uninstall-kubeflow/).
+This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see [Uninstall Kubeflow]({{< ref "/docs/deployment/uninstall-kubeflow.md" >}}).
 
 ### 4.1 Clean up the TFJob
 ```bash
