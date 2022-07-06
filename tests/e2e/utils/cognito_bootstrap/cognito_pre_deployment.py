@@ -46,7 +46,8 @@ def create_certificates_cognito(
         existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
                                                                      "*." + subdomain_hosted_zone.domain,
                                                                     subdomain_hosted_zone,
-                                                                    "us-east-1")
+                                                                    "us-east-1",
+                                                                    acm_client)
         if (existed_issued_certificate):
             logger.info(
                 f"an existed 'Issued' certificate has been found for domain '*.{subdomain_hosted_zone.domain}' in region 'us-east-1'.\

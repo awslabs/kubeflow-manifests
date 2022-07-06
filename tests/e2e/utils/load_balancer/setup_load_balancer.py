@@ -1,8 +1,8 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from http import client
 import logging
-from xmlrpc.client import Boolean
 
 from e2e.fixtures import cluster
 from e2e.utils.load_balancer import common
@@ -88,7 +88,8 @@ def create_certificates(
         existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
                                                                     "*." + root_hosted_zone.domain,
                                                                     root_hosted_zone,
-                                                                    deployment_region)
+                                                                    deployment_region,
+                                                                    acm_client)
         if existed_issued_certificate:
             logger.info(
                 f"an existed 'Issued' certificate has been found for domain '*.{root_hosted_zone.domain}' in region '{deployment_region}'.\
@@ -116,7 +117,8 @@ def create_certificates(
     existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
                                                                  "*." + subdomain_hosted_zone.domain,
                                                                  subdomain_hosted_zone,
-                                                                 deployment_region)
+                                                                 deployment_region,
+                                                                 acm_client)
     if existed_issued_certificate:
         logger.info(
                 f"an existed 'Issued' certificate has been found for domain '*.{subdomain_hosted_zone.domain}' in region '{deployment_region}'.\
@@ -140,10 +142,13 @@ def create_certificates(
 
 
 #find existed issued certificate with the same domain name
-def find_existed_issued_certificate(issued_certificates: list, domain: str, hosted_zone: Route53HostedZone, region: str ) -> AcmCertificate:
+def find_existed_issued_certificate(issued_certificates: list, domain: str, hosted_zone: Route53HostedZone, region: str, acm_client: client) -> AcmCertificate:
         for certificate in issued_certificates:
-            if certificate["DomainName"] == domain: 
-                return AcmCertificate(domain, hosted_zone, region, arn=certificate["CertificateArn"])
+            if certificate["DomainName"] == domain:
+                response = acm_client.describe_certificate(CertificateArn = certificate["CertificateArn"])
+                #can not be in use or associated with another aws resource
+                if not response['Certificate']['InUseBy']: 
+                    return AcmCertificate(domain, hosted_zone, region, arn=certificate["CertificateArn"])
         return None
 
 
