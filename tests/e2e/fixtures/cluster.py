@@ -67,6 +67,16 @@ def create_iam_service_account(
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
+
+def get_iam_service_account_roleArn(service_account_name, namespace):
+    cmd = f"kubectl get sa -n {namespace} {service_account_name} -o yaml | yq '.metadata.annotations.\"eks.amazonaws.com/role-arn\"'"
+    #https://docs.python.org/3/library/subprocess.html#subprocess.run
+    result = subprocess.check_output(cmd, shell=True,universal_newlines=True).strip()
+    #assert result.returncode == 0
+    return result
+
+
+
 def delete_iam_service_account(service_account_name, namespace, cluster_name, region):
     cmd = []
     cmd += "eksctl delete iamserviceaccount".split()

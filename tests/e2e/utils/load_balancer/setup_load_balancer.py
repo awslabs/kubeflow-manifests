@@ -193,6 +193,9 @@ def configure_load_balancer_controller(
         alb_sa_name, alb_sa_namespace, cluster_name, region, [alb_policy.arn]
     )
 
+    #grab service account arn
+    service_account_roleArn = cluster.get_iam_service_account_roleArn(alb_sa_name, alb_sa_namespace)   
+
     # tag cluster subnet with kubernetes.io/cluster/<cluster_name> tag
     # see prerequisites in https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
     cluster_desc = eks_client.describe_cluster(name=cluster_name)
@@ -216,6 +219,7 @@ def configure_load_balancer_controller(
             "name": alb_sa_name,
             "namespace": alb_sa_namespace,
             "policyArn": alb_policy.arn,
+            "eks.amazonaws.com/role-arn": service_account_roleArn, 
         }
     }
 
