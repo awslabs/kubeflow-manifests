@@ -1,5 +1,6 @@
 from e2e.utils.prometheus.IAMRolesUtils import *
 from e2e.utils.utils import get_aws_account_id
+from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 # Global Variables
 SERVICE_ACCOUNT_NAMESPACE = "monitoring"
@@ -67,7 +68,7 @@ def setup_ingest_role(cluster_name, cluster_region):
         TRUST_POLICY_FILE_NAME, PERMISSION_POLICY_FILE_NAME,
         create_AMP_trust_policy_file, create_AMP_permission_policy_file)
     
-    associate_OIDC_with_IAM(CLUSTER_NAME, CLUSTER_REGION)
+    associate_iam_oidc_provider(CLUSTER_NAME, CLUSTER_REGION)
 
 def delete_ingest_role():
     print("Deleting policy function called.")

@@ -77,12 +77,6 @@ def get_OIDC_provider(cluster_name, cluster_region):
     oidc_provider = https_oidc_provider.replace("https://", "", 1)
     print("oidc_provider:", oidc_provider)
     return oidc_provider
-    
-# Associate the OIDC Provider with the AWS IAM so it can accept and validate OIDC tokens.
-def associate_OIDC_with_IAM(cluster_name, cluster_region):
-    associate_iam_with_oidc_provider_command = f'eksctl utils associate-iam-oidc-provider --cluster {cluster_name} --region {cluster_region} --approve'.split()
-    output_associate_iam_with_oidc_provider = subprocess.check_output(associate_iam_with_oidc_provider_command, encoding="utf-8")
-    print("output_associate_iam_with_oidc_provider:", output_associate_iam_with_oidc_provider)
 
 def delete_IAM_policy(role_name, policy_name):
     policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
