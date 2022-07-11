@@ -67,17 +67,8 @@ def attach_policy_to_role_if_not_attached(role_name, policy_name, policy_arn):
         )
     else:
         print("Policy named", policy_name, "is already attached to the role named", role_name, ".")
-    
-# Get the OIDC provider
-def get_OIDC_provider(cluster_name, cluster_region):
-    EKS_CLIENT = boto3.client(service_name='eks', region_name=cluster_region)
-    https_oidc_provider = EKS_CLIENT.describe_cluster(
-        name=cluster_name,
-    ).get('cluster').get('identity').get('oidc').get('issuer')
-    oidc_provider = https_oidc_provider.replace("https://", "", 1)
-    print("oidc_provider:", oidc_provider)
-    return oidc_provider
 
+# Will detach the policy from the role and then delete the policy.
 def delete_IAM_policy(role_name, policy_name):
     policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
     try:
@@ -104,7 +95,8 @@ def delete_IAM_policy(role_name, policy_name):
         print("The policy named", policy_name, "was sucessfully deleted.")
         return
     raise AssertionError("The policy", policy_name, "was not successfully deleted.")
-    
+
+# Will delete the given IAM role.
 def delete_IAM_role(role_name):
     print("Getting pre-delete role_arn.")
     try:
