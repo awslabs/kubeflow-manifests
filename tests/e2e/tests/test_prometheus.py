@@ -6,7 +6,10 @@ from e2e.utils.constants import DEFAULT_USER_NAMESPACE
 from e2e.utils.utils import (
     rand_name,
 )
-from e2e.utils.config import metadata
+from e2e.utils.config import (
+    metadata,
+    configure_resource_fixture,
+)
 
 from e2e.conftest import region
 
@@ -34,24 +37,62 @@ GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 def kustomize_path():
     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
+@pytest.fixture(scope="class")
+def prometheus_amp(request, metadata, region, kustomize):
+    metadata_key = "prometheus-amp"
+    resource_details = {}
+
+    def on_create():
+        cluster_name = metadata.get("cluster_name")
+        print("PROMETHEUS_PRINT: Setting up the workspace id in the fixture.")
+        workspace_id = set_up_prometheus_for_AMP(cluster_name, region)
+        print("PROMETHEUS_PRINT: Setting the workspace_id in the fixture.")
+        resource_details["workspace_id"] = workspace_id
+        print("PROMETHEUS_PRINT: Finished on_create of fixture.")
+        
+    def on_delete():
+        details = metadata.get(metadata_key)
+        wait_for_workspace_deletion(workspace_id=details["workspace_id"])
+        
+    return configure_resource_fixture(
+        metadata=metadata,
+        request=request,
+        resource_details=resource_details,
+        metadata_key=metadata_key,
+        on_create=on_create,
+        on_delete=on_delete,
+    )
+
 class TestPrometheus:
     @pytest.fixture(scope="class")
-    def setup(self):
+    def setup(self, metadata, prometheus_amp):
+        print("PROMETHEUS_PRINT: Starting setup.")
+        global workspace_id
+        print("PROMETHEUS_PRINT: Made global workspace_id.")
+        details = prometheus_amp
+        print("PROMETHEUS_PRINT: Got details from metadata.")
+        workspace_id = details["workspace_id"]
+        print("PROMETHEUS_PRINT: Got workspace_id from details.")
+        port_forwarding_process = set_up_prometheus_port_forwarding()
+        print("PROMETHEUS_PRINT: Finished setting up port forwarding.")
+        
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestPrometheus", metadata_file)
+        yield
+        port_forwarding_process.terminate()
 
-    def test_set_up_prometheus(self, metadata, region, kustomize):
-        global workspace_id
-        cluster_name = metadata.get("cluster_name")
-        workspace_id = set_up_prometheus_for_AMP(cluster_name, region)
-        set_up_prometheus_port_forwarding()
+    def test_set_up_prometheus(self, setup):
+        print("PROMETHEUS_PRINT: Checking prometheus is running.")
         check_prometheus_is_running()
 
-    def test_pre_kfp_experiment_count(self, region):
-        check_AMP_connects_to_prometheus(region, workspace_id, 0)
+#    def test_pre_kfp_experiment_count(self, setup, region):
+#        check_AMP_connects_to_prometheus(region, workspace_id, 0)
         
-    def test_kfp_experiment(self, kfp_client):
+    def test_kfp_experiment(self, setup, region, kfp_client):
+        initial_experiment_count = int(get_kfp_create_experiment_count())
+        print(f"PROMETHEUS_PRINT: About to check the initial kfp value, and if it matches {initial_experiment_count}")
+        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count)
         name = rand_name("experiment-")
         print("PROMETHEUS_PRINT: Created random name.")
         description = rand_name("description-")
@@ -79,11 +120,12 @@ class TestPrometheus:
         assert description == resp.description
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
+        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
 
-    def test_post_kfp_experiment_count(self, region):
-        check_AMP_connects_to_prometheus(region, workspace_id, 1)
+#    def test_post_kfp_experiment_count(self, setup, region):
+#        check_AMP_connects_to_prometheus(region, workspace_id, 1)
             
-    def test_clean_up_AMP(self, region):
+    def test_clean_up_AMP(self, setup, region):
         # Delete role, policy, and AMP workspace.
         print("PROMETHEUS_PRINT: About to start cleanup")
         delete_AMP_resources(region, workspace_id)

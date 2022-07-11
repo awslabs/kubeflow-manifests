@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 import boto3
-from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_ingest_role
+from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_ingest_role, create_AMP_ingest_policy
 from e2e.utils.prometheus.IAMRolesUtils import get_AWS_account_ID
 from e2e.utils.utils import wait_for
 
@@ -42,6 +42,14 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     subprocess.call(create_namespace_command)
 
     workspace_id = amp_client.create_workspace(alias = 'test_AMP_workspace')['workspaceId']
+    print(f"Created Workspace ID: {workspace_id}")
+
+    def callback():
+        workspace_status = amp_client.describe_workspace(workspaceId=workspace_id).get("workspace").get("status").get("statusCode")
+        print(f"Workspace Status: {workspace_status}")
+        assert "ACTIVE" == workspace_status
+    
+    wait_for(callback)
     
     setup_ingest_role(cluster_name, region)
 
@@ -50,6 +58,12 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     
     create_AMP_service_account_command = f'kubectl create -f {new_AMP_service_account}'.split()
     subprocess.call(create_AMP_service_account_command, encoding="utf-8")
+
+#    policy_arn = create_AMP_ingest_policy()
+
+#    create_AMP_service_account_command = f'eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster {cluster_name} --attach-policy-arn {policy_arn} --override-existing-serviceaccounts --approve --region {region}'.split()
+
+#    subprocess.call(create_AMP_service_account_command, encoding="utf-8")
 
     create_cluster_role_command = 'kubectl create -f utils/prometheus/clusterRole.yaml'.split()
     subprocess.call(create_cluster_role_command, encoding="utf-8")
@@ -69,9 +83,13 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     return workspace_id
 
 def set_up_prometheus_port_forwarding():
+    print("Entered prometheus port_forwarding_function.")
     def callback():
+        print("This is the start of the callback function.")
         get_pod_name_command = 'kubectl get pods --namespace=monitoring'.split()
         pod_list = subprocess.check_output(get_pod_name_command, encoding="utf-8").split('\n')[1:]
+        print(f"Monitoring Pod list: {pod_list}")
+        assert 0 < len(pod_list)
         prometheus_pod_name = None
         for pod in pod_list:
             pod_name = pod.split()[0]
@@ -96,16 +114,19 @@ def set_up_prometheus_port_forwarding():
                 prometheus_pod_name = pod_name
                 break
         return prometheus_pod_name
-    
+
+    print("About to call callback function.")
     prometheus_pod_name = wait_for(callback)
+    print("Returned from callback function.")
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
     print("About to assemble port-forwarding command.")
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n monitoring'.split()
     print("prometheus_pod_name:", prometheus_pod_name)
     print(" ".join(set_up_port_forwarding_command))
-    subprocess.Popen(set_up_port_forwarding_command)
+    port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
     time.sleep(10)  # Wait 10 seconds for port forwarding to open
+    return port_forwarding_process
     
 def check_prometheus_is_running():
     check_up_command = 'curl http://localhost:9090/api/v1/query?query=up'.split()
@@ -113,26 +134,38 @@ def check_prometheus_is_running():
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
+def get_kfp_create_experiment_count():
+    prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
+    prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
+    print("prometheus_query_results:", prometheus_query_results)
+    prometheus_create_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
+    print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
+    return prometheus_create_experiment_count
+    
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
-    time.sleep(30) # Wait for promehtue sto scrape.
+    time.sleep(30) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
-    print("ACCESS_KEY:", access_key)
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
-    print("SECRET_KEY:", secret_key)
+
+    print(f"Using Workspace ID: {workspace_id}")
     
     AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query=experiment_server_create_requests'.split()
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
     print("AMP_query_results:", AMP_query_results)
-    AMP_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
-    print("AMP_experiment_count:", AMP_experiment_count)
-    prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
-    prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
-    print("prometheus_query_results:", prometheus_query_results)
-    prometheus_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
-    print("prometheus_experiment_count:", prometheus_experiment_count)
-    assert AMP_experiment_count == prometheus_experiment_count
-    assert str(expected_value) == prometheus_experiment_count
-    return AMP_experiment_count
+    AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
+    print("AMP_create_experiment_count:", AMP_create_experiment_count)
+
+    prometheus_create_experiment_count = get_kfp_create_experiment_count()
+#    prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
+#    prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
+#    print("prometheus_query_results:", prometheus_query_results)
+#    prometheus_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
+#    print("prometheus_experiment_count:", prometheus_experiment_count)
+    print(f"Asserting #1: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
+    assert AMP_create_experiment_count == prometheus_create_experiment_count
+    print(f"Asserting #2: {expected_value} == {prometheus_create_experiment_count}")
+    assert str(expected_value) == prometheus_create_experiment_count
+    return AMP_create_experiment_count
 
 def delete_AMP_resources(region, workspace_id):
     print("About to delete ingest role.")

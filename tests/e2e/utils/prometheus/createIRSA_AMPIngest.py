@@ -53,6 +53,9 @@ def create_AMP_permission_policy_file():
         '}']))
     permission_policy.close()
 
+def create_AMP_ingest_policy():
+    return create_policy_if_not_exist(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY, PERMISSION_POLICY_FILE_NAME, create_AMP_permission_policy_file)
+
 def setup_ingest_role(cluster_name, cluster_region):
     global CLUSTER_NAME, CLUSTER_REGION
     CLUSTER_NAME = cluster_name
