@@ -6,6 +6,8 @@ from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_
 from e2e.utils.prometheus.IAMRolesUtils import get_AWS_account_ID
 from e2e.utils.utils import wait_for
 
+prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
+
 def make_new_file_with_replacement(file_path, original_to_replacement_dict):
     new_file_contents = ""
     with open(file_path, 'r') as original_file:
@@ -15,9 +17,7 @@ def make_new_file_with_replacement(file_path, original_to_replacement_dict):
                 new_line = new_line.replace(key, original_to_replacement_dict.get(key))
             new_file_contents += new_line
     old_path_array = file_path.split('/')
-    print("old_path_array:", old_path_array)
     old_path_array[-1] = 'new-' + old_path_array[-1]
-    print("new path array:", old_path_array)
     new_file_path = '/'.join(old_path_array)
     with open(new_file_path, 'w') as new_file:
         new_file.write(new_file_contents)
@@ -54,7 +54,7 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     setup_ingest_role(cluster_name, region)
 
     # Edit AMP service account to use account-id
-    new_AMP_service_account = update_AMP_service_account_id('utils/prometheus/AMP-service-account.yaml')
+    new_AMP_service_account = update_AMP_service_account_id(f'{prometheus_yaml_files_directory}/AMP-service-account.yaml')
     
     create_AMP_service_account_command = f'kubectl create -f {new_AMP_service_account}'.split()
     subprocess.call(create_AMP_service_account_command, encoding="utf-8")
@@ -65,19 +65,19 @@ def set_up_prometheus_for_AMP(cluster_name, region):
 
 #    subprocess.call(create_AMP_service_account_command, encoding="utf-8")
 
-    create_cluster_role_command = 'kubectl create -f utils/prometheus/clusterRole.yaml'.split()
+    create_cluster_role_command = f'kubectl create -f {prometheus_yaml_files_directory}/clusterRole.yaml'.split()
     subprocess.call(create_cluster_role_command, encoding="utf-8")
 
     # Edit config map to use workspace-id and region
-    new_config_map = update_config_map_AMP_workspace(workspace_id, region, 'utils/prometheus/config-map.yaml')
+    new_config_map = update_config_map_AMP_workspace(workspace_id, region, f'{prometheus_yaml_files_directory}/config-map.yaml')
     
     create_config_map_command = f'kubectl create -f {new_config_map}'.split()
     subprocess.call(create_config_map_command, encoding="utf-8")
 
-    create_prometheus_deployment_command = 'kubectl create -f utils/prometheus/prometheus-deployment.yaml'.split()
+    create_prometheus_deployment_command = f'kubectl create -f {prometheus_yaml_files_directory}/prometheus-deployment.yaml'.split()
     subprocess.call(create_prometheus_deployment_command, encoding="utf-8")
 
-    create_prometheus_server_command = 'kubectl create -f utils/prometheus/prometheus-service.yaml'.split()
+    create_prometheus_server_command = f'kubectl create -f {prometheus_yaml_files_directory}/prometheus-service.yaml'.split()
     subprocess.call(create_prometheus_server_command, encoding="utf-8")
 
     return workspace_id
@@ -85,10 +85,9 @@ def set_up_prometheus_for_AMP(cluster_name, region):
 def set_up_prometheus_port_forwarding():
     print("Entered prometheus port_forwarding_function.")
     def callback():
-        print("This is the start of the callback function.")
         get_pod_name_command = 'kubectl get pods --namespace=monitoring'.split()
         pod_list = subprocess.check_output(get_pod_name_command, encoding="utf-8").split('\n')[1:]
-        print(f"Monitoring Pod list: {pod_list}")
+        print(f"Monitoring Pods list: {pod_list}")
         assert 0 < len(pod_list)
         prometheus_pod_name = None
         for pod in pod_list:
@@ -98,7 +97,6 @@ def set_up_prometheus_port_forwarding():
             if (('p' == pod_name[0])
                 and ('prometheus' == pod_name_array[0])
                 and ('deployment' == pod_name_array[1])):
-                print("Made it into inner if loop.")
                 describe_pod_command = f'kubectl describe pod {pod_name} --namespace monitoring'.split()
                 print('\n\nAbout to call describe pod command!\n\n')
                 print(subprocess.check_output(describe_pod_command, encoding="utf-8"))
@@ -115,12 +113,9 @@ def set_up_prometheus_port_forwarding():
                 break
         return prometheus_pod_name
 
-    print("About to call callback function.")
     prometheus_pod_name = wait_for(callback)
-    print("Returned from callback function.")
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
-    print("About to assemble port-forwarding command.")
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n monitoring'.split()
     print("prometheus_pod_name:", prometheus_pod_name)
     print(" ".join(set_up_port_forwarding_command))
@@ -137,13 +132,12 @@ def check_prometheus_is_running():
 def get_kfp_create_experiment_count():
     prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
-    print("prometheus_query_results:", prometheus_query_results)
     prometheus_create_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
     print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
     return prometheus_create_experiment_count
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
-    time.sleep(40) # Wait for prometheus to scrape.
+    time.sleep(50) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 
@@ -151,7 +145,6 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
     
     AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query=experiment_server_create_requests'.split()
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
-    print("AMP_query_results:", AMP_query_results)
     AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
     print("AMP_create_experiment_count:", AMP_create_experiment_count)
 
@@ -161,9 +154,9 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
 #    print("prometheus_query_results:", prometheus_query_results)
 #    prometheus_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
 #    print("prometheus_experiment_count:", prometheus_experiment_count)
-    print(f"Asserting #1: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
+    print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
     assert AMP_create_experiment_count == prometheus_create_experiment_count
-    print(f"Asserting #2: {expected_value} == {prometheus_create_experiment_count}")
+    print(f"Asserting expected == prometheus: {expected_value} == {prometheus_create_experiment_count}")
     assert str(expected_value) == prometheus_create_experiment_count
     return AMP_create_experiment_count
 
@@ -172,14 +165,13 @@ def delete_AMP_resources(region, workspace_id):
     delete_ingest_role()
     print("Finished deleting ingest role.")
 
-    print("About to make boto3 amp client.")
     amp_client = boto3.client('amp', region_name=region)
 
     print("About to delete workspace.")
     amp_client.delete_workspace(workspaceId=workspace_id)
     
-    print("About to describe workspace.")
     try:
         amp_client.describe_workspace(workspaceId=workspace_id)
     except Exception as e:
         print(e)
+    print("Finished deleting workspace.")
