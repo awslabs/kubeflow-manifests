@@ -91,8 +91,7 @@ class TestPrometheus:
 
     def test_kfp_experiment(self, setup, region, kfp_client):
         initial_experiment_count = int(get_kfp_create_experiment_count())
-        print(f"PROMETHEUS_PRINT: About to check the initial kfp value, and if it matches {initial_experiment_count}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count)
+
         name = rand_name("experiment-")
         print("PROMETHEUS_PRINT: Created random name.")
         description = rand_name("description-")
@@ -120,6 +119,8 @@ class TestPrometheus:
         assert description == resp.description
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
+
+        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count}")
         check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
             
     def test_clean_up_AMP(self, setup, region):

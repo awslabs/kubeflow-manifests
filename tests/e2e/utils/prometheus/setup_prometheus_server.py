@@ -3,7 +3,7 @@ import time
 import os
 import boto3
 from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_ingest_role, create_AMP_ingest_policy
-from e2e.utils.prometheus.IAMRolesUtils import get_AWS_account_ID
+from e2e.utils.utils import get_aws_account_id
 from e2e.utils.utils import wait_for
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
@@ -24,7 +24,7 @@ def make_new_file_with_replacement(file_path, original_to_replacement_dict):
     return new_file_path
 
 def update_AMP_service_account_id(AMP_service_account_file_path):
-    aws_account_id = get_AWS_account_ID()
+    aws_account_id = get_aws_account_id()
     original_to_replacement_dict = {}
     original_to_replacement_dict['<my-account-id>'] = aws_account_id
     return make_new_file_with_replacement(AMP_service_account_file_path, original_to_replacement_dict)
@@ -137,7 +137,7 @@ def get_kfp_create_experiment_count():
     return prometheus_create_experiment_count
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
-    time.sleep(50) # Wait for prometheus to scrape.
+    time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 
@@ -149,11 +149,7 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
     print("AMP_create_experiment_count:", AMP_create_experiment_count)
 
     prometheus_create_experiment_count = get_kfp_create_experiment_count()
-#    prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
-#    prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
-#    print("prometheus_query_results:", prometheus_query_results)
-#    prometheus_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
-#    print("prometheus_experiment_count:", prometheus_experiment_count)
+    
     print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
     assert AMP_create_experiment_count == prometheus_create_experiment_count
     print(f"Asserting expected == prometheus: {expected_value} == {prometheus_create_experiment_count}")

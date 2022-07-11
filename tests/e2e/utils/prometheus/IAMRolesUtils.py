@@ -1,15 +1,9 @@
 import subprocess
 import boto3
 import json
+from e2e.utils.utils import get_aws_account_id
 
-STS_CLIENT = boto3.client(service_name='sts')
 IAM_CLIENT = boto3.client(service_name='iam')
-
-# Get the AWS account ID
-def get_AWS_account_ID():
-    STS_CLIENT = boto3.client('sts')
-    aws_account_id = STS_CLIENT.get_caller_identity().get('Account')
-    return aws_account_id
 
 # Will create role and create/attach a policy if not already done.
 def setup_role_and_policy(role_name, policy_name, trust_policy_file_name, permission_policy_file_name, create_trust_policy_file, create_permission_policy_file):    
@@ -40,7 +34,7 @@ def create_iam_role_if_not_exist(role_name, trust_policy_file_name, create_trust
 
 # Will create a permission policy if there is no existing policy with the given policy name.    
 def create_policy_if_not_exist(policy_name, permission_policy_file_name, create_permission_policy_file):
-    policy_arn = f'arn:aws:iam::{get_AWS_account_ID()}:policy/{policy_name}'
+    policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
     try:
         IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
     except:
@@ -91,7 +85,7 @@ def associate_OIDC_with_IAM(cluster_name, cluster_region):
     print("output_associate_iam_with_oidc_provider:", output_associate_iam_with_oidc_provider)
 
 def delete_IAM_policy(role_name, policy_name):
-    policy_arn = f'arn:aws:iam::{get_AWS_account_ID()}:policy/{policy_name}'
+    policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
     try:
         IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
     except:

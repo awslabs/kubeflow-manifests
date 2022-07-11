@@ -1,4 +1,5 @@
 from e2e.utils.prometheus.IAMRolesUtils import *
+from e2e.utils.utils import get_aws_account_id
 
 # Global Variables
 SERVICE_ACCOUNT_NAMESPACE = "monitoring"
@@ -10,7 +11,7 @@ PERMISSION_POLICY_FILE_NAME = "AMPIngestPermissionPolicy"
 
 # Create a trust policy json file
 def create_AMP_trust_policy_file():
-    aws_account_id = get_AWS_account_ID()
+    aws_account_id = get_aws_account_id()
     oidc_provider = get_OIDC_provider(CLUSTER_NAME, CLUSTER_REGION)
     trust_policy = open(TRUST_POLICY_FILE_NAME + '.json', 'w')
     trust_policy.write('\n'.join([
