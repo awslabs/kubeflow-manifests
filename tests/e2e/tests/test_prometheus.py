@@ -51,8 +51,11 @@ def prometheus_amp(request, metadata, region, kustomize):
         print("PROMETHEUS_PRINT: Finished on_create of fixture.")
         
     def on_delete():
+        print("PROMETHEUS_PRINT: Entered on-delete function of fixture.")
         details = metadata.get(metadata_key)
+        delete_AMP_resources(region, details["workspace_id"])
         wait_for_workspace_deletion(workspace_id=details["workspace_id"])
+        print("PROMETHEUS_PRINT: Finished on-delete function of fixture.")
         
     return configure_resource_fixture(
         metadata=metadata,
@@ -86,9 +89,6 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Checking prometheus is running.")
         check_prometheus_is_running()
 
-#    def test_pre_kfp_experiment_count(self, setup, region):
-#        check_AMP_connects_to_prometheus(region, workspace_id, 0)
-        
     def test_kfp_experiment(self, setup, region, kfp_client):
         initial_experiment_count = int(get_kfp_create_experiment_count())
         print(f"PROMETHEUS_PRINT: About to check the initial kfp value, and if it matches {initial_experiment_count}")
@@ -121,9 +121,6 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
         check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
-
-#    def test_post_kfp_experiment_count(self, setup, region):
-#        check_AMP_connects_to_prometheus(region, workspace_id, 1)
             
     def test_clean_up_AMP(self, setup, region):
         # Delete role, policy, and AMP workspace.

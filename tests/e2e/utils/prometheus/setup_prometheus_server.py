@@ -143,7 +143,7 @@ def get_kfp_create_experiment_count():
     return prometheus_create_experiment_count
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
-    time.sleep(30) # Wait for prometheus to scrape.
+    time.sleep(40) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 
