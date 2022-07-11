@@ -11,7 +11,7 @@ SERVICE_ACCOUNT_AMP_INGEST_NAME = "amp-iamproxy-ingest-service-account"
 SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE = "amp-iamproxy-ingest-role"
 SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY = "AMPIngestPolicy"
 TRUST_POLICY_FILE_NAME = "AMPTrustPolicy"
-PERMISSION_POLICY_FILE_NAME = "AMPIngestPermissionPolicy"
+PERMISSION_POLICY_FILE_PATH = "../../deployments/add-ons/prometheus/AMPIngestPermissionPolicy"
 
 # Create a trust policy json file
 def create_AMP_trust_policy_file():
@@ -38,28 +38,8 @@ def create_AMP_trust_policy_file():
         '}']))
     trust_policy.close()
 
-# Create a permission policy json file
-def create_AMP_permission_policy_file():
-    permission_policy = open(PERMISSION_POLICY_FILE_NAME + '.json', 'w')
-    permission_policy.write('\n'.join([
-        '{',
-        '  "Version": "2012-10-17",',
-        '   "Statement": [',
-        '       {"Effect": "Allow",',
-        '        "Action": [',
-        '           "aps:RemoteWrite", ',
-        '           "aps:GetSeries", ',
-        '           "aps:GetLabels",',
-        '           "aps:GetMetricMetadata"',
-        '        ], ',
-        '        "Resource": "*"',
-        '      }',
-        '   ]',
-        '}']))
-    permission_policy.close()
-
-def create_AMP_ingest_policy():
-    return create_policy_if_not_exist(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY, PERMISSION_POLICY_FILE_NAME, create_AMP_permission_policy_file)
+#def create_AMP_ingest_policy():
+#    return create_policy_if_not_exist(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY, PERMISSION_POLICY_FILE_PATH, create_AMP_permission_policy_file)
 
 def setup_ingest_role(cluster_name, cluster_region):
     global CLUSTER_NAME, CLUSTER_REGION
@@ -68,8 +48,8 @@ def setup_ingest_role(cluster_name, cluster_region):
     
     setup_role_and_policy(
         SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY,
-        TRUST_POLICY_FILE_NAME, PERMISSION_POLICY_FILE_NAME,
-        create_AMP_trust_policy_file, create_AMP_permission_policy_file)
+        TRUST_POLICY_FILE_NAME, PERMISSION_POLICY_FILE_PATH,
+        create_AMP_trust_policy_file)
     
     associate_iam_oidc_provider(CLUSTER_NAME, CLUSTER_REGION)
 

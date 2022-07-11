@@ -6,11 +6,11 @@ from e2e.utils.utils import get_aws_account_id
 IAM_CLIENT = boto3.client(service_name='iam')
 
 # Will create role and create/attach a policy if not already done.
-def setup_role_and_policy(role_name, policy_name, trust_policy_file_name, permission_policy_file_name, create_trust_policy_file, create_permission_policy_file):    
+def setup_role_and_policy(role_name, policy_name, trust_policy_file_name, permission_policy_file_name, create_trust_policy_file):    
     role_arn = create_iam_role_if_not_exist(role_name, trust_policy_file_name, create_trust_policy_file)
     print("role_arn:", role_arn)
 
-    policy_arn = create_policy_if_not_exist(policy_name, permission_policy_file_name, create_permission_policy_file)
+    policy_arn = create_policy_if_not_exist(policy_name, permission_policy_file_name)
     print("policy_arn:", policy_arn)
 
     attach_policy_to_role_if_not_attached(role_name, policy_name, policy_arn)
@@ -33,15 +33,13 @@ def create_iam_role_if_not_exist(role_name, trust_policy_file_name, create_trust
     return role_arn
 
 # Will create a permission policy if there is no existing policy with the given policy name.    
-def create_policy_if_not_exist(policy_name, permission_policy_file_name, create_permission_policy_file):
+def create_policy_if_not_exist(policy_name, permission_policy_file_name):
     policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
     try:
         IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
     except:
         print("Creating a new policy named", policy_name, "since there was no existing policy by this name.")
         
-        # Create a permission policy for the new role.
-        create_permission_policy_file()
         with open(f'{permission_policy_file_name}.json') as permission_policy_file:
             permission_policy = json.dumps(json.load(permission_policy_file))
         policy_arn = IAM_CLIENT.create_policy(

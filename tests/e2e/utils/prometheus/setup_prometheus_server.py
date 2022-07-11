@@ -2,7 +2,11 @@ import subprocess
 import time
 import os
 import boto3
-from e2e.utils.prometheus.createIRSA_AMPIngest import setup_ingest_role, delete_ingest_role, create_AMP_ingest_policy
+from e2e.utils.prometheus.createIRSA_AMPIngest import (
+    setup_ingest_role,
+    delete_ingest_role,
+#    create_AMP_ingest_policy,
+)
 from e2e.utils.utils import get_aws_account_id
 from e2e.utils.utils import wait_for
 
