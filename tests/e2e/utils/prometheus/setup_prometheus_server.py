@@ -40,12 +40,9 @@ def update_config_map_AMP_workspace(workspace_id, region, config_map_file_path):
     original_to_replacement_dict['<my-workspace-region>'] = region
     return make_new_file_with_replacement(config_map_file_path, original_to_replacement_dict)
 
-def set_up_prometheus_for_AMP(cluster_name, region):
+def create_AMP_workspace(region):
     amp_client = boto3.client('amp', region_name=region)
     
-    create_namespace_command = 'kubectl create namespace monitoring'.split()
-    subprocess.call(create_namespace_command)
-
     workspace_id = amp_client.create_workspace(alias = 'test_AMP_workspace')['workspaceId']
     print(f"Created Workspace ID: {workspace_id}")
 
@@ -56,6 +53,11 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     
     wait_for(check_active_workspace_status)
     
+    return workspace_id
+
+def set_up_prometheus_for_AMP(cluster_name, region):
+    workspace_id = create_AMP_workspace(region)
+    
     setup_ingest_role(cluster_name, region)
 
     # Edit AMP service account to use account-id
@@ -63,6 +65,9 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     
     # Edit config map to use workspace-id and region
     new_config_map = update_config_map_AMP_workspace(workspace_id, region, f'{prometheus_yaml_files_directory}/config-map.yaml')
+    
+    create_namespace_command = 'kubectl create namespace monitoring'.split()
+    subprocess.call(create_namespace_command)
     
     print("About to run kustomize command.")
     kustomize_build_command = f'kustomize build {prometheus_yaml_files_directory}'.split()
@@ -112,10 +117,9 @@ def set_up_prometheus_port_forwarding():
     prometheus_pod_name = wait_for(get_prometheus_pod_name, timeout=90, interval=30)
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
+
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n monitoring'.split()
-    print("prometheus_pod_name:", prometheus_pod_name)
     print(" ".join(set_up_port_forwarding_command))
-    
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
     time.sleep(10)  # Wait 10 seconds for port forwarding to open
     return port_forwarding_process
