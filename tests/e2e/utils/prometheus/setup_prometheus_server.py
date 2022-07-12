@@ -2,6 +2,7 @@ import subprocess
 import time
 import os
 import boto3
+import tempfile
 from e2e.utils.prometheus.createIRSA_AMPIngest import (
     setup_ingest_role,
     delete_ingest_role,
@@ -21,7 +22,7 @@ def make_new_file_with_replacement(file_path, original_to_replacement_dict):
                 new_line = new_line.replace(key, original_to_replacement_dict.get(key))
             new_file_contents += new_line
     old_path_array = file_path.split('/')
-    old_path_array[-1] = 'new-' + old_path_array[-1]
+    old_path_array[-1] = 'updated-' + old_path_array[-1]
     new_file_path = '/'.join(old_path_array)
     with open(new_file_path, 'w') as new_file:
         new_file.write(new_file_contents)
@@ -48,47 +49,38 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     workspace_id = amp_client.create_workspace(alias = 'test_AMP_workspace')['workspaceId']
     print(f"Created Workspace ID: {workspace_id}")
 
-    def callback():
+    def check_active_workspace_status():
         workspace_status = amp_client.describe_workspace(workspaceId=workspace_id).get("workspace").get("status").get("statusCode")
         print(f"Workspace Status: {workspace_status}")
         assert "ACTIVE" == workspace_status
     
-    wait_for(callback)
+    wait_for(check_active_workspace_status)
     
     setup_ingest_role(cluster_name, region)
 
     # Edit AMP service account to use account-id
     new_AMP_service_account = update_AMP_service_account_id(f'{prometheus_yaml_files_directory}/AMP-service-account.yaml')
     
-    create_AMP_service_account_command = f'kubectl create -f {new_AMP_service_account}'.split()
-    subprocess.call(create_AMP_service_account_command, encoding="utf-8")
-
-#    policy_arn = create_AMP_ingest_policy()
-
-#    create_AMP_service_account_command = f'eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster {cluster_name} --attach-policy-arn {policy_arn} --override-existing-serviceaccounts --approve --region {region}'.split()
-
-#    subprocess.call(create_AMP_service_account_command, encoding="utf-8")
-
-    create_cluster_role_command = f'kubectl create -f {prometheus_yaml_files_directory}/clusterRole.yaml'.split()
-    subprocess.call(create_cluster_role_command, encoding="utf-8")
-
     # Edit config map to use workspace-id and region
     new_config_map = update_config_map_AMP_workspace(workspace_id, region, f'{prometheus_yaml_files_directory}/config-map.yaml')
     
-    create_config_map_command = f'kubectl create -f {new_config_map}'.split()
-    subprocess.call(create_config_map_command, encoding="utf-8")
-
-    create_prometheus_deployment_command = f'kubectl create -f {prometheus_yaml_files_directory}/prometheus-deployment.yaml'.split()
-    subprocess.call(create_prometheus_deployment_command, encoding="utf-8")
-
-    create_prometheus_server_command = f'kubectl create -f {prometheus_yaml_files_directory}/prometheus-service.yaml'.split()
-    subprocess.call(create_prometheus_server_command, encoding="utf-8")
+    print("About to run kustomize command.")
+    kustomize_build_command = f'kustomize build {prometheus_yaml_files_directory}'.split()
+    kustomize_build_output = subprocess.check_output(kustomize_build_command)
+    print(type(kustomize_build_output))
+    
+    with tempfile.NamedTemporaryFile() as tmp_file:
+        tmp_file.write(kustomize_build_output)
+        tmp_file.flush()
+        kubectl_apply_command = f'kubectl apply -f {tmp_file.name}'.split()
+        subprocess.call(kubectl_apply_command, encoding="utf-8")
+    print("Finished running kustomize command.")
 
     return workspace_id
 
 def set_up_prometheus_port_forwarding():
     print("Entered prometheus port_forwarding_function.")
-    def callback():
+    def get_prometheus_pod_name():
         get_pod_name_command = 'kubectl get pods --namespace=monitoring'.split()
         pod_list = subprocess.check_output(get_pod_name_command, encoding="utf-8").split('\n')[1:]
         print(f"Monitoring Pods list: {pod_list}")
@@ -117,12 +109,13 @@ def set_up_prometheus_port_forwarding():
                 break
         return prometheus_pod_name
 
-    prometheus_pod_name = wait_for(callback)
+    prometheus_pod_name = wait_for(get_prometheus_pod_name, timeout=90, interval=30)
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n monitoring'.split()
     print("prometheus_pod_name:", prometheus_pod_name)
     print(" ".join(set_up_port_forwarding_command))
+    
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
     time.sleep(10)  # Wait 10 seconds for port forwarding to open
     return port_forwarding_process
