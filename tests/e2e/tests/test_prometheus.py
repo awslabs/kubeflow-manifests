@@ -123,8 +123,9 @@ class TestPrometheus:
         print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count}")
         check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
             
-    def test_clean_up_AMP(self, setup, region):
-        # Delete role, policy, and AMP workspace.
+    def test_clean_up_AMP(self, setup, metadata, region):
+        # Delete serviceaccount/role, policy, and AMP workspace.
+        cluster_name = metadata.get("cluster_name")
         print("PROMETHEUS_PRINT: About to start cleanup")
-        delete_AMP_resources(region, workspace_id)
+        delete_AMP_resources(cluster_name, region, workspace_id)
         print("PROMETHEUS_PRINT: Finished cleanup")

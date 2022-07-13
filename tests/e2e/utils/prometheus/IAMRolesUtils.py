@@ -66,27 +66,32 @@ def attach_policy_to_role_if_not_attached(role_name, policy_name, policy_arn):
     else:
         print("Policy named", policy_name, "is already attached to the role named", role_name, ".")
 
-# Will detach the policy from the role and then delete the policy.
-def delete_IAM_policy(role_name, policy_name):
+# Returns True if detachment is sucessfull, False otherwise.
+def detach_IAM_policy(role_name, policy_name):
     policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
     try:
         IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
     except:
         print("The policy named", policy_name, "does not exist, so deletion is not possible.")
-        return
+        return False
     print("About to detach policy.")
     try:
         IAM_CLIENT.detach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
     except Exception as e:
         print(e)
-        return
-    print("About to delete policy.")
+        return False
+    return True
+        
+# Will detach the policy from the role and then delete the policy.
+def delete_IAM_policy(policy_name):
+    policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
+    print("About to delete policy with arn {policy_arn}")
     try:
         IAM_CLIENT.delete_policy(PolicyArn=policy_arn)
     except Exception as e:
+        print("Triggered exception on deletion of policy.")
         print(e)
-        return
-    print("Role deleted.")
+    print("After delete of policy attempt.")
     try:
         IAM_CLIENT.get_policy(PolicyArn=policy_arn).get('Policy').get('Arn')
     except:

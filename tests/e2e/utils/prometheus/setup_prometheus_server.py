@@ -4,12 +4,14 @@ import os
 import boto3
 import tempfile
 from e2e.utils.prometheus.createIRSA_AMPIngest import (
-    setup_ingest_role,
-    delete_ingest_role,
-#    create_AMP_ingest_policy,
+#    setup_ingest_role,
+#    delete_ingest_role,
+    create_AMP_ingest_policy,
+    delete_policy,
 )
 from e2e.utils.utils import get_aws_account_id
 from e2e.utils.utils import wait_for
+from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
 
@@ -58,28 +60,38 @@ def create_AMP_workspace(region):
 def set_up_prometheus_for_AMP(cluster_name, region):
     workspace_id = create_AMP_workspace(region)
     
-    setup_ingest_role(cluster_name, region)
+#    setup_ingest_role(cluster_name, region)
 
-    # Edit AMP service account to use account-id
-    new_AMP_service_account = update_AMP_service_account_id(f'{prometheus_yaml_files_directory}/AMP-service-account.yaml')
-    
+#    # Edit AMP service account to use account-id
+#    new_AMP_service_account = update_AMP_service_account_id(f'{prometheus_yaml_files_directory}/AMP-service-account.yaml')
+
+    print("About to associate IAM with OIDC provider.")
+    associate_iam_oidc_provider(cluster_name, region)
+    print("Finished associating IAM with OIDC provider.")
+
+    # Create AMP service account:
+    policy_arn = create_AMP_ingest_policy()
+    create_AMP_service_account_command = f'eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --role-name amp-iamproxy-ingest-role --namespace monitoring --cluster {cluster_name} --attach-policy-arn {policy_arn} --override-existing-serviceaccounts --approve --region {region}'.split()
+    subprocess.call(create_AMP_service_account_command, encoding="utf-8")
+
     # Edit config map to use workspace-id and region
     new_config_map = update_config_map_AMP_workspace(workspace_id, region, f'{prometheus_yaml_files_directory}/config-map.yaml')
     
     create_namespace_command = 'kubectl create namespace monitoring'.split()
     subprocess.call(create_namespace_command)
     
-    print("About to run kustomize command.")
     kustomize_build_command = f'kustomize build {prometheus_yaml_files_directory}'.split()
+    print("About to run kustomize command.")
     kustomize_build_output = subprocess.check_output(kustomize_build_command)
-    print(type(kustomize_build_output))
+    print("Finished running kustomize command.")
     
+    print("About apply kustomize output.")
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(kustomize_build_output)
         tmp_file.flush()
         kubectl_apply_command = f'kubectl apply -f {tmp_file.name}'.split()
         subprocess.call(kubectl_apply_command, encoding="utf-8")
-    print("Finished running kustomize command.")
+    print("Finished applying kustomize output.")
 
     return workspace_id
 
@@ -157,18 +169,29 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
     assert str(expected_value) == prometheus_create_experiment_count
     return AMP_create_experiment_count
 
-def delete_AMP_resources(region, workspace_id):
-    print("About to delete ingest role.")
-    delete_ingest_role()
-    print("Finished deleting ingest role.")
+def delete_AMP_resources(cluster_name, region, workspace_id):
+#    print("About to delete ingest role.")
+#    delete_ingest_role()
+#    print("Finished deleting ingest role.")
 
+    print("About to delete service account and role.")
+    delete_AMP_service_account_command = f'eksctl delete iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster {cluster_name} --region {region}'.split()
+    subprocess.call(delete_AMP_service_account_command, encoding="utf-8")
+    print("Finished deleting service account and role.")
+
+    wait_for(delete_policy)
+    
     amp_client = boto3.client('amp', region_name=region)
 
     print("About to delete workspace.")
     amp_client.delete_workspace(workspaceId=workspace_id)
+
+    time.sleep(10) # Wait for the workspace to delete.
     
     try:
         amp_client.describe_workspace(workspaceId=workspace_id)
     except Exception as e:
         print(e)
-    print("Finished deleting workspace.")
+        print("Finished deleting workspace.")
+        return
+    raise AssertionError("The workspace with id", workspace_id, "is in the {workspace_status} state.")

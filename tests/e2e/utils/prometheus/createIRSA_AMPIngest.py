@@ -38,23 +38,27 @@ def create_AMP_trust_policy_file():
         '}']))
     trust_policy.close()
 
-#def create_AMP_ingest_policy():
-#    return create_policy_if_not_exist(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY, PERMISSION_POLICY_FILE_PATH, create_AMP_permission_policy_file)
+def create_AMP_ingest_policy():
+    return create_policy_if_not_exist(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY, PERMISSION_POLICY_FILE_PATH)
 
-def setup_ingest_role(cluster_name, cluster_region):
-    global CLUSTER_NAME, CLUSTER_REGION
-    CLUSTER_NAME = cluster_name
-    CLUSTER_REGION = cluster_region
-    
-    setup_role_and_policy(
-        SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY,
-        TRUST_POLICY_FILE_NAME, PERMISSION_POLICY_FILE_PATH,
-        create_AMP_trust_policy_file)
-    
-    associate_iam_oidc_provider(CLUSTER_NAME, CLUSTER_REGION)
+#def setup_ingest_role(cluster_name, cluster_region):
+#    global CLUSTER_NAME, CLUSTER_REGION
+#    CLUSTER_NAME = cluster_name
+#    CLUSTER_REGION = cluster_region
+#    
+#    setup_role_and_policy(
+#        SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY,
+#        TRUST_POLICY_FILE_NAME, PERMISSION_POLICY_FILE_PATH,
+#        create_AMP_trust_policy_file)
+#    
+#    associate_iam_oidc_provider(CLUSTER_NAME, CLUSTER_REGION)
 
-def delete_ingest_role():
-    print("Deleting policy function called.")
-    delete_IAM_policy(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY)
-    print("Deleting role function called.")
-    delete_IAM_role(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE)
+#def delete_ingest_role():
+#    print("Deleting policy function called.")
+#    detach_IAM_policy(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE, SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY)
+#    delete_IAM_policy(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY)
+#    print("Deleting role function called.")
+#    delete_IAM_role(SERVICE_ACCOUNT_IAM_AMP_INGEST_ROLE)
+
+def delete_policy():
+    delete_IAM_policy(SERVICE_ACCOUNT_IAM_AMP_INGEST_POLICY)
