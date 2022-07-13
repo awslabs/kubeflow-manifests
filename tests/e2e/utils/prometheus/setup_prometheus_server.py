@@ -9,26 +9,22 @@ from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
 
-def make_new_file_with_replacement(file_path, original_to_replacement_dict):
-    new_file_contents = ""
+def replace_params_env_in_line(file_path, original_to_replacement_dict):
+    updated_file_contents = ""
     with open(file_path, 'r') as original_file:
-        for original_line in original_file:
-            new_line = original_line
+        for line in original_file:
             for key in original_to_replacement_dict:
-                new_line = new_line.replace(key, original_to_replacement_dict.get(key))
-            new_file_contents += new_line
-    old_path_array = file_path.split('/')
-    old_path_array[-1] = 'updated-' + old_path_array[-1]
-    new_file_path = '/'.join(old_path_array)
-    with open(new_file_path, 'w') as new_file:
-        new_file.write(new_file_contents)
-    return new_file_path
+                if key == line.split("=")[0]:
+                    line = f'{key}={original_to_replacement_dict.get(key)}\n'
+            updated_file_contents += line
+    with open(file_path, 'w') as updated_file:
+        updated_file.write(updated_file_contents)
 
-def update_config_map_AMP_workspace(workspace_id, region, config_map_file_path):
+def update_params_env(workspace_id, region, params_env_file_path):
     original_to_replacement_dict = {}
-    original_to_replacement_dict['<my-workspace-id>'] = workspace_id
-    original_to_replacement_dict['<my-workspace-region>'] = region
-    return make_new_file_with_replacement(config_map_file_path, original_to_replacement_dict)
+    original_to_replacement_dict['workspaceId'] = workspace_id
+    original_to_replacement_dict['workspaceRegion'] = region
+    replace_params_env_in_line(params_env_file_path, original_to_replacement_dict)
 
 def create_AMP_workspace(region):
     amp_client = boto3.client('amp', region_name=region)
@@ -56,8 +52,8 @@ def set_up_prometheus_for_AMP(cluster_name, region):
 
     workspace_id = create_AMP_workspace(region)
     
-    # Edit config map to use workspace-id and region
-    new_config_map = update_config_map_AMP_workspace(workspace_id, region, f'{prometheus_yaml_files_directory}/config-map.yaml')
+    # Edit params.env to use workspace-id and region
+    update_params_env(workspace_id, region, f'{prometheus_yaml_files_directory}/params.env')
     
     create_namespace_command = f'kubectl create namespace {PROMETHEUS_NAMESPACE}'.split()
     subprocess.call(create_namespace_command)

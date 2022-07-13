@@ -24,8 +24,8 @@ data:
           max_samples_per_send: 1000
           max_shards: 200
         sigv4:
-          region: <my-workspace-region>
-        url: https://aps-workspaces.<my-workspace-region>.amazonaws.com/workspaces/<my-workspace-id>/api/v1/remote_write
+          region: $(amp-workspace-region)
+        url: https://aps-workspaces.$(amp-workspace-region).amazonaws.com/workspaces/$(amp-workspace-id)/api/v1/remote_write
     global:
       scrape_interval: 5s
       evaluation_interval: 5s

@@ -1,7 +1,27 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+configMapGenerator:
+- name: amp-config
+  env: params.env
 resources:
 - clusterRole.yaml
-- updated-config-map.yaml
+- config-map.yaml
 - prometheus-deployment.yaml
 - prometheus-service.yaml
+vars:
+- name: amp-workspace-region
+  objref:
+    kind: ConfigMap
+    name: amp-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.workspaceRegion
+- name: amp-workspace-id
+  objref:
+    kind: ConfigMap
+    name: amp-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.workspaceId
+configurations:
+- params.yaml
