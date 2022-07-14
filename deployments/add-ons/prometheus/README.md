@@ -1,4 +1,7 @@
-## Steps to Setup Prometheus and Amazon Managed Service for Prometheus (AMP)
+## Why you should use Prometheus with Amazon Managed Service for Prometheus (AMP)
+Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to remedy this hardship by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
+
+## Steps to Setup Prometheus and AMP
 1. Export cluster name and region as environment variables:
     1. `export CLUSTER_NAME=<your-cluster-name>`
     2. `export CLUSTER_REGION=<your-cluster-region>`
@@ -34,7 +37,7 @@
 7. Run the kustomize build command to build your prometheus resources:
     1. `kustomize build deployments/add-ons/prometheus | kubectl apply -f`
 
-## Verify Prometheus and AMP are Connected
+## Steps to Verify Prometheus and AMP are Connected
 1. Get the Prometheus Pod name:
     1. `export PROMETHEUS_POD_NAME=$(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1)`
 2. Start port forwarding for the prometheus pod:
