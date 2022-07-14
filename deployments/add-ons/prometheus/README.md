@@ -1,5 +1,10 @@
 ## Why you should use Prometheus with Amazon Managed Service for Prometheus (AMP)
-Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to remedy this hardship by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
+Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to simplify this issue by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
+
+## Prerequisites
+First download one of our deployment options by following the directions at: https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/
+
+**Note:** The steps below will assume you are sitting in the kubeflow-manifests directory.
 
 ## Steps to Setup Prometheus and AMP
 1. Export cluster name and region as environment variables:
@@ -40,9 +45,9 @@ Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize thei
 ## Steps to Verify Prometheus and AMP are Connected
 1. Get the Prometheus Pod name:
     1. `export PROMETHEUS_POD_NAME=$(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1)`
-2. Start port forwarding for the prometheus pod:
+2. Start port-forwarding for the prometheus pod:
     1. `kubectl port-forward $PROMETHEUS_POD_NAME 9090:9090 --namespace=monitoring &`
-3. Move into the tests directory:
+3. Navigate to the tests directory inside kubeflow-manifests:
     1. `cd tests`
 5. Run the **check_AMP_connects_to_prometheus()** function (checks the KFP create experiment count):
     1. `python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0)'`
