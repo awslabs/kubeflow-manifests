@@ -53,8 +53,9 @@ def prometheus_amp(request, metadata, region, kustomize):
     def on_delete():
         print("PROMETHEUS_PRINT: Entered on-delete function of fixture.")
         details = metadata.get(metadata_key)
-        delete_AMP_resources(region, details["workspace_id"])
-        wait_for_workspace_deletion(workspace_id=details["workspace_id"])
+        cluster_name = metadata.get("cluster_name")
+        delete_AMP_resources(cluster_name, region, details["workspace_id"])
+
         print("PROMETHEUS_PRINT: Finished on-delete function of fixture.")
         
     return configure_resource_fixture(
@@ -122,10 +123,3 @@ class TestPrometheus:
 
         print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count}")
         check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
-            
-    def test_clean_up_AMP(self, setup, metadata, region):
-        # Delete serviceaccount/role, policy, and AMP workspace.
-        cluster_name = metadata.get("cluster_name")
-        print("PROMETHEUS_PRINT: About to start cleanup")
-        delete_AMP_resources(cluster_name, region, workspace_id)
-        print("PROMETHEUS_PRINT: Finished cleanup")
