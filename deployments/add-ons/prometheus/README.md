@@ -19,12 +19,12 @@ First download one of our deployment options by following the directions at: htt
         * **\<desired-amp-policy-name\>** - a policy name of your choosing
     3. `export AMP_POLICY_ARN=$(aws iam create-policy --policy-name $AMP_POLICY_NAME --policy-document file://deployments/add-ons/prometheus/AMPIngestPermissionPolicy.json --query 'Policy.Arn' | tr -d '"')`
 3. Create a Service Account:
-    1. `eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster $CLUSTER_NAME --attach-policy-arn $POLICY_ARN --override-existing-serviceaccounts --approve —region $CLUSTER_REGION`
+    1. `eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster $CLUSTER_NAME --attach-policy-arn $POLICY_ARN --override-existing-serviceaccounts --approve —-region $CLUSTER_REGION`
 4. Create an AMP Workspace:
     1. `export AMP_WORKSPACE_ALIAS=<desired-amp-workspace-alias>`
     2. Make sure to replace the following in the above command:
         * **\<desired-workspace-alias\>** - a workspace alias of your choosing
-    3. `export AMP_WORKSPACE_ARN=$(aws amp create-workspace —alias $AMP_WORKSPACE_ALIAS —query arn | tr -d '"')`
+    3. `export AMP_WORKSPACE_ARN=$(aws amp create-workspace --region $CLUSTER_REGION --alias $AMP_WORKSPACE_ALIAS —-query arn | tr -d '"')`
     4. `export AMP_WORKSPACE_REGION=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f4)`
     5. `export AMP_WORKSPACE_ID=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f6 | cut -d'/' -f2)`
 5. Edit deployments/add-ons/prometheus/params.env:
@@ -49,6 +49,9 @@ First download one of our deployment options by following the directions at: htt
     1. `kubectl port-forward $PROMETHEUS_POD_NAME 9090:9090 --namespace=monitoring &`
 3. Navigate to the tests directory inside kubeflow-manifests:
     1. `cd tests`
-5. Run the **check_AMP_connects_to_prometheus()** function (checks the KFP create experiment count):
+5. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
     1. `python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0)'`
     2. If all is working, this should not trigger an assertion error.
+6. Get the PID and kill the port-forwarding process:
+    1. `export PORT_FORWARDING_PROCESS=$(lsof -i :9090 | sed -n 2p | cut -d' ' -f2)`
+    2. `kill $PORT_FORWARDING_PROCESS`
