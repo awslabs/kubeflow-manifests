@@ -40,7 +40,7 @@ First download one of our deployment options by following the directions at: htt
 6. Create the monitoring namespace:
     1. `kubectl create namespace monitoring`
 7. Run the kustomize build command to build your prometheus resources:
-    1. `kustomize build deployments/add-ons/prometheus | kubectl apply -f`
+    1. `kustomize build deployments/add-ons/prometheus | kubectl apply -f -`
 
 ## Steps to Verify Prometheus and AMP are Connected
 1. Get the Prometheus Pod name:
