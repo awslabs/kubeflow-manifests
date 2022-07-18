@@ -209,6 +209,11 @@ def load_yaml_file(file_path: str):
 
     return yaml.safe_load(content)
 
+def load_multiple_yaml_files(file_path: str):
+    with open(file_path, "r") as file:
+        content = file.read()
+    return yaml.safe_load_all(content)
+
 
 def write_yaml_file(yaml_content, file_path: str):
     with open(file_path, "w") as file:
