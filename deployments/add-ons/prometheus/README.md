@@ -2,7 +2,7 @@
 Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to simplify this issue by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
 
 ## Prerequisites
-First, download one of our deployment options by following the directions at: https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/
+First, download one of our deployment options by following the directions at: https://awslabs.github.io/kubeflow-manifests/docs/deployment/
 
 Second, make sure you have awscurl installed: `pip3 install awscurl`
 
@@ -10,21 +10,21 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
 
 ## Steps to Setup Prometheus and AMP
 1. Export cluster name and region as environment variables:
-    1. ```
-       export CLUSTER_NAME=<your-cluster-name>
-       ```
-    2. ```
-       export CLUSTER_REGION=<your-cluster-region>
-       ```
-    3. Make sure to replace the following in the above commands:
+    1. Make sure to replace the following in the below commands:
         * **\<your-cluster-name\>**
         * **\<your-cluster-region\>**
+    2. ```
+       export CLUSTER_NAME=<your-cluster-name>
+       ```
+    3. ```
+       export CLUSTER_REGION=<your-cluster-region>
+       ```
 2. Create an IAM Policy:
-    1. ```
+    1. Make sure to replace the following in the below command:
+        * **\<desired-amp-policy-name\>** - a policy name of your choosing
+    2. ```
        export AMP_POLICY_NAME=<desired-amp-policy-name>
        ```
-    2. Make sure to replace the following in the above command:
-        * **\<desired-amp-policy-name\>** - a policy name of your choosing
     3. ```
        export AMP_POLICY_ARN=$(aws iam create-policy --policy-name $AMP_POLICY_NAME --policy-document file://deployments/add-ons/prometheus/AMPIngestPermissionPolicy.json --query 'Policy.Arn' | tr -d '"')
        ```
@@ -33,11 +33,11 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster $CLUSTER_NAME --attach-policy-arn $AMP_POLICY_ARN --override-existing-serviceaccounts --approve —-region $CLUSTER_REGION
        ```
 4. Create an AMP Workspace:
-    1. ```
+    1. Make sure to replace the following in the below command:
+        * **\<desired-workspace-alias\>** - a workspace alias of your choosing
+    2. ```
        export AMP_WORKSPACE_ALIAS=<desired-amp-workspace-alias>
        ```
-    2. Make sure to replace the following in the above command:
-        * **\<desired-workspace-alias\>** - a workspace alias of your choosing
     3. ```
        export AMP_WORKSPACE_ARN=$(aws amp create-workspace --region $CLUSTER_REGION --alias $AMP_WORKSPACE_ALIAS —-query arn | tr -d '"')
        ```
@@ -48,11 +48,7 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        export AMP_WORKSPACE_ID=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f6 | cut -d'/' -f2)
        ```
 5. Edit deployments/add-ons/prometheus/params.env:
-    1. ```
-       workspaceRegion=<your-workspace-region>
-       workspaceId=<your-workspace-id>
-       ```
-    2. Make sure to replace the following in the above lines:
+    1. Make sure to replace the following in the below lines:
         * **\<your-workspace-region\>** - Can be retrieved by:
             * ```
               echo $AMP_WORKSPACE_REGION
@@ -61,6 +57,10 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
             * ```
               echo $AMP_WORKSPACE_ID
               ```
+    2. ```
+       workspaceRegion=<your-workspace-region>
+       workspaceId=<your-workspace-id>
+       ```
 6. Create the monitoring namespace:
     1. ```
        kubectl create namespace monitoring
@@ -84,15 +84,15 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        cd tests
        ```
 4. Export your Access key and Secret Access Key:
-    1. ```
+    1. Make sure to replace the following in the below commands:
+        * **\<your-aws-access-key-id\>**
+        * **\<your-aws-secret-access-key\>**
+    2. ```
        export AWS_ACCESS_KEY_ID=<your-aws-access-key-id>
        ```
     2. ```
        export AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key>
        ```
-    3. Make sure to replace the following in the above commands:
-        * **\<your-aws-access-key-id\>**
-        * **\<your-aws-secret-access-key\>**
 5. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
     1. ```
        python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0)'
