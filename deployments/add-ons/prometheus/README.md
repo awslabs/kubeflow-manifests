@@ -30,7 +30,7 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        ```
 3. Create a Service Account:
     1. ```
-       eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster $CLUSTER_NAME --attach-policy-arn $AMP_POLICY_ARN --override-existing-serviceaccounts --approve —-region $CLUSTER_REGION
+       eksctl create iamserviceaccount --name amp-iamproxy-ingest-service-account --namespace monitoring --cluster $CLUSTER_NAME --attach-policy-arn $AMP_POLICY_ARN --override-existing-serviceaccounts --approve --region $CLUSTER_REGION
        ```
 4. Create an AMP Workspace:
     1. Make sure to replace the following in the below command:
@@ -39,7 +39,7 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        export AMP_WORKSPACE_ALIAS=<desired-amp-workspace-alias>
        ```
     3. ```
-       export AMP_WORKSPACE_ARN=$(aws amp create-workspace --region $CLUSTER_REGION --alias $AMP_WORKSPACE_ALIAS —-query arn | tr -d '"')
+       export AMP_WORKSPACE_ARN=$(aws amp create-workspace --region $CLUSTER_REGION --alias $AMP_WORKSPACE_ALIAS --query arn | tr -d '"')
        ```
     4. ```
        export AMP_WORKSPACE_REGION=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f4)
