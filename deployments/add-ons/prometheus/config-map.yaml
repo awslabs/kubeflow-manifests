@@ -44,6 +44,21 @@ data:
         static_configs:
           - targets: ['ml-pipeline.kubeflow.svc:8888']
 
+      - job_name: 'katib-controller'
+        scrape_interval: 60s
+        static_configs:
+          - targets: ['katib-controller.kubeflow.svc:8080']
+
+      - job_name: 'katib-controller'
+        scrape_interval: 60s
+        static_configs:
+          - targets: ['katib-controller.kubeflow.svc:8080']
+
+      - job_name: 'katib-controller'
+        scrape_interval: 60s
+        static_configs:
+          - targets: ['katib-controller.kubeflow.svc:8080']
+
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
           - role: endpoints

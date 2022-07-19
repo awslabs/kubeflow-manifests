@@ -10,6 +10,10 @@ from e2e.utils.config import (
     metadata,
     configure_resource_fixture,
 )
+from e2e.utils.custom_resources import (
+    create_katib_experiment_from_yaml,
+    get_katib_experiment,
+)
 
 from e2e.conftest import region
 
@@ -32,6 +36,8 @@ from e2e.fixtures.clients import (
 from kfp_server_api.exceptions import ApiException as KFPApiException
 
 GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
 @pytest.fixture(scope="class")
 def kustomize_path():
@@ -90,36 +96,71 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Checking prometheus is running.")
         check_prometheus_is_running()
 
-    def test_kfp_experiment(self, setup, region, kfp_client):
-        initial_experiment_count = int(get_kfp_create_experiment_count())
+#    def test_kfp_experiment(self, setup, region, kfp_client):
+#        initial_experiment_count = int(get_kfp_create_experiment_count())
+#
+#        name = rand_name("experiment-")
+#        print("PROMETHEUS_PRINT: Created random name.")
+#        description = rand_name("description-")
+#        print("PROMETHEUS_PRINT: Created random description.")
+#        experiment = kfp_client.create_experiment(
+#            name, description=description, namespace=DEFAULT_USER_NAMESPACE
+#        )
+#        print("PROMETHEUS_PRINT: Created a kfp experiment")
+#        
+#        assert name == experiment.name
+#        print("PROMETHEUS_PRINT: Asserted the names were equivalent.")
+#        assert description == experiment.description
+#        print("PROMETHEUS_PRINT: Asserted the descriptions were equivalent.")
+#        assert DEFAULT_USER_NAMESPACE == experiment.resource_references[0].key.id
+#        print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
+#
+#        print("PROMETHEUS_PRINT: First getting the experiment.")
+#        resp = kfp_client.get_experiment(
+#            experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
+#        )
+#
+#        print("PROMETHEUS_PRINT: Asserted the names were equivalent.")
+#        assert name == resp.name
+#        print("PROMETHEUS_PRINT: Asserted the descriptions were equivalent.")
+#        assert description == resp.description
+#        print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
+#        assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
+#
+#        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count + 1}")
+#        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
 
-        name = rand_name("experiment-")
-        print("PROMETHEUS_PRINT: Created random name.")
-        description = rand_name("description-")
-        print("PROMETHEUS_PRINT: Created random description.")
-        experiment = kfp_client.create_experiment(
-            name, description=description, namespace=DEFAULT_USER_NAMESPACE
-        )
-        print("PROMETHEUS_PRINT: Created a kfp experiment")
+    def test_katib_experiment(self, cluster, region):
+#        katib_GET_count_query = 'rest_client_requests_total{code="403",host="10.100.0.1:443",method="GET"}'
+        prometheus_katib_GET_count_query = 'rest_client_requests_total\{code="403",host="10.100.0.1:443",method="GET"\}'
+#        AMP_katib_GET_count_query = "rest_client_requests_total&code='403'&host='10.100.0.1:443'&method='GET'"
+#        AMP_katib_GET_count_query = "rest_client_requests_total"#{code='403',host='10.100.0.1:443',method='GET'}"
+#        AMP_katib_GET_count_query = "rest_client_requests_total%7Bcode='403',host='10.100.0.1:443',method='GET'%7D"
+#        AMP_katib_GET_count_query = "rest_client_requests_total%7Bcode=%22403%22,host=%2210.100.0.1:443%22,method=%22GET%22%7D"
+#        prometheus_katib_GET_count_query = AMP_katib_GET_count_query
         
-        assert name == experiment.name
-        print("PROMETHEUS_PRINT: Asserted the names were equivalent.")
-        assert description == experiment.description
-        print("PROMETHEUS_PRINT: Asserted the descriptions were equivalent.")
-        assert DEFAULT_USER_NAMESPACE == experiment.resource_references[0].key.id
-        print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
-
-        print("PROMETHEUS_PRINT: First getting the experiment.")
-        resp = kfp_client.get_experiment(
-            experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
+        initial_experiment_count = int(get_kfp_create_experiment_count(prometheus_katib_GET_count_query))
+        filepath = os.path.abspath(
+            os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
         )
-
-        print("PROMETHEUS_PRINT: Asserted the names were equivalent.")
-        assert name == resp.name
-        print("PROMETHEUS_PRINT: Asserted the descriptions were equivalent.")
-        assert description == resp.description
-        print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
-        assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
-
-        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
+        
+        name = rand_name("katib-random-")
+        namespace = DEFAULT_USER_NAMESPACE
+        replacements = {"NAME": name, "NAMESPACE": namespace}
+        
+        resp = create_katib_experiment_from_yaml(
+            cluster, region, filepath, namespace, replacements
+        )
+        
+        assert resp["kind"] == "Experiment"
+        assert resp["metadata"]["name"] == name
+        assert resp["metadata"]["namespace"] == namespace
+        
+        resp = get_katib_experiment(cluster, region, namespace, name)
+        
+        assert resp["kind"] == "Experiment"
+        assert resp["metadata"]["name"] == name
+        assert resp["metadata"]["namespace"] == namespace
+        
+        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count + 1}")
+        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1, prometheus_katib_GET_count_query)#, AMP_katib_GET_count_query)

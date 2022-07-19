@@ -93,10 +93,10 @@ def set_up_prometheus_port_forwarding():
                 print('\n\nAbout to call describe pod command!\n\n')
                 print(subprocess.check_output(describe_pod_command, encoding="utf-8"))
                 print('\n\nDescribe Finished\n\n')
-                get_ns_pod_logs_command = f'kubectl logs {pod_name} --namespace {PROMETHEUS_NAMESPACE}'.split()
-                print(f"\n\nAbout to get {PROMETHEUS_NAMESPACE}/{pod_name} logs!\n\n")
-                print(subprocess.check_output(get_ns_pod_logs_command, encoding="utf-8"))
-                print('\n\nLogs Finished\n\n')
+#                get_ns_pod_logs_command = f'kubectl logs {pod_name} --namespace {PROMETHEUS_NAMESPACE}'.split()
+#                print(f"\n\nAbout to get {PROMETHEUS_NAMESPACE}/{pod_name} logs!\n\n")
+#                print(subprocess.check_output(get_ns_pod_logs_command, encoding="utf-8"))
+#                print('\n\nLogs Finished\n\n')
                 pod_status = pod.split()[1]
                 print("pod_status:", pod_status)
                 assert "1/1" == pod_status
@@ -121,26 +121,38 @@ def check_prometheus_is_running():
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
-def get_kfp_create_experiment_count():
-    prometheus_curl_command = "curl http://localhost:9090/api/v1/query?query=experiment_server_create_requests".split()
+def get_kfp_create_experiment_count(prometheus_query='experiment_server_create_requests'):
+    prometheus_curl_command = f"curl http://localhost:9090/api/v1/query?query={prometheus_query}".split()
+    print(f"Prometheus curl command:\n{' '.join(prometheus_curl_command)}")
+    print(f"Broken up prometheus curl command:\n{prometheus_curl_command}")
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
+    print(f"Prometheus query results:\n{prometheus_query_results}")
     prometheus_create_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
     print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
     return prometheus_create_experiment_count
     
-def check_AMP_connects_to_prometheus(region, workspace_id, expected_value):
+def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query='experiment_server_create_requests', AMP_query='experiment_server_create_requests'):
+    
     time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
 
     print(f"Using Workspace ID: {workspace_id}")
     
-    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query=experiment_server_create_requests'.split()
+    AMP_awscurl_command = f'awscurl -v --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
+#    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d "query={AMP_query}" --data-binary'.split()
+#    AMP_awscurl_command = f'awscurl -v --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d query=rest_client_requests_total -d code=403 -d host=10.100.0.1:443 -d method=GET'.split()
+#    AMP_awscurl_command = (f'awscurl -v --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d ' + '{"query":"rest_client_requests_total","code":"403","host":"10.100.0.1:443","method":"GET"}').split()
+#    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d "query={AMP_query}"'.split()
+
+    print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
+    print(f'Broken up AMP awscurl command:\n{AMP_awscurl_command}')
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
+    print(f"AMP_query_results:\n{AMP_query_results}")
     AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
     print("AMP_create_experiment_count:", AMP_create_experiment_count)
 
-    prometheus_create_experiment_count = get_kfp_create_experiment_count()
+    prometheus_create_experiment_count = get_kfp_create_experiment_count(prometheus_query)
     
     print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
     assert AMP_create_experiment_count == prometheus_create_experiment_count
