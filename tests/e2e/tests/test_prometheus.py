@@ -137,6 +137,8 @@ class TestPrometheus:
 #        AMP_katib_GET_count_query = "rest_client_requests_total"#{code='403',host='10.100.0.1:443',method='GET'}"
 #        AMP_katib_GET_count_query = "rest_client_requests_total%7Bcode='403',host='10.100.0.1:443',method='GET'%7D"
 #        AMP_katib_GET_count_query = "rest_client_requests_total%7Bcode=%22403%22,host=%2210.100.0.1:443%22,method=%22GET%22%7D"
+#        AMP_katib_GET_count_query = "rest_client_requests_total%7Bcode%3D%22403%22,host%3D%2210.100.0.1:443%22,method%3D%22GET%22%7D"
+        AMP_katib_GET_count_query = "rest_client_requests_total"
 #        prometheus_katib_GET_count_query = AMP_katib_GET_count_query
         
         initial_experiment_count = int(get_kfp_create_experiment_count(prometheus_katib_GET_count_query))
@@ -163,4 +165,4 @@ class TestPrometheus:
         assert resp["metadata"]["namespace"] == namespace
         
         print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1, prometheus_katib_GET_count_query)#, AMP_katib_GET_count_query)
+        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1, prometheus_katib_GET_count_query, AMP_katib_GET_count_query, True)
