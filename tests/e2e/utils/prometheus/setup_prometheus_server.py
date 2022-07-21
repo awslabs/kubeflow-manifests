@@ -1,5 +1,6 @@
 import subprocess
 import time
+import re
 import os
 import boto3
 import tempfile
@@ -112,7 +113,7 @@ def set_up_prometheus_port_forwarding():
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n {PROMETHEUS_NAMESPACE}'.split()
     print(" ".join(set_up_port_forwarding_command))
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
-    time.sleep(10)  # Wait 10 seconds for port forwarding to open
+    time.sleep(30)  # Wait 30 seconds for port forwarding to open and prometheus to start scraping
     return port_forwarding_process
     
 def check_prometheus_is_running():
@@ -136,9 +137,13 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
-    # AMP queries do not take '{'.
-    # In the prometheus query there is a '\' before the '{'.
-    AMP_query = prometheus_query.split('\{')[0]
+    # AMP queries do not take {} arguments.
+    AMP_query_components = re.split('\\\{|="|",|"\\\}',prometheus_query)
+    AMP_query = AMP_query_components[0]
+    AMP_query_specifics = AMP_query_components[1:-1]
+    AMP_specifics = {}
+    for i in range(1,len(AMP_query_specifics),2):
+        AMP_specifics[AMP_query_specifics[i-1]]=AMP_query_specifics[i]
 
     print(f"Using Workspace ID: {workspace_id}")
     
@@ -151,7 +156,12 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     if katib_query:
         broad_dict = json.loads(AMP_query_results)
         for specific_dict in broad_dict["data"]["result"]:
-            if  (specific_dict["metric"]["code"] == "403") and (specific_dict["metric"]["job"] == "katib-controller"):
+            found_result = True
+            for key in AMP_specifics:
+                if (specific_dict["metric"][key] != AMP_specifics[key]):
+                    found_result = False
+                    break
+            if found_result:
                 AMP_query_results=json.dumps(specific_dict)
                 break
     

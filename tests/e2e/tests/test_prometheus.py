@@ -131,9 +131,10 @@ class TestPrometheus:
 #        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1)
 
     def test_katib_experiment(self, cluster, region):
-        prometheus_katib_GET_count_query = 'rest_client_requests_total\{code="403",host="10.100.0.1:443",method="GET"\}'
-
-        initial_experiment_count = int(get_kfp_create_experiment_count(prometheus_katib_GET_count_query))
+        ## This is the number of get_katib_experiments that have been created.
+        prometheus_katib_experiment_count_query = 'rest_client_requests_total\{code="403",job="katib-controller"\}'
+        initial_experiment_count = int(get_kfp_create_experiment_count(prometheus_katib_experiment_count_query))
+        
         filepath = os.path.abspath(
             os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
         )
@@ -149,12 +150,12 @@ class TestPrometheus:
         assert resp["kind"] == "Experiment"
         assert resp["metadata"]["name"] == name
         assert resp["metadata"]["namespace"] == namespace
-        
+
         resp = get_katib_experiment(cluster, region, namespace, name)
         
         assert resp["kind"] == "Experiment"
         assert resp["metadata"]["name"] == name
         assert resp["metadata"]["namespace"] == namespace
         
-        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and if it matches {initial_experiment_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1, prometheus_katib_GET_count_query, True)
+        print(f"PROMETHEUS_PRINT: About to check the post-create katib experiment count, and if it matches {initial_experiment_count + 1}")
+        check_AMP_connects_to_prometheus(region, workspace_id, initial_experiment_count + 1, prometheus_katib_experiment_count_query, True)
