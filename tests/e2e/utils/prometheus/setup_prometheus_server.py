@@ -9,6 +9,8 @@ from e2e.utils.utils import wait_for
 from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
+default_prometheus_query = 'experiment_server_create_requests'
+local_prometheus_port_forwarding_port = "9090"
 
 def replace_params_env_in_line(file_path, original_to_replacement_dict):
     updated_file_contents = ""
@@ -110,29 +112,28 @@ def set_up_prometheus_port_forwarding():
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
 
-    set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} 9090:9090 -n {PROMETHEUS_NAMESPACE}'.split()
+    set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} {local_prometheus_port_forwarding_port}:9090 -n {PROMETHEUS_NAMESPACE}'.split()
     print(" ".join(set_up_port_forwarding_command))
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
     time.sleep(30)  # Wait 30 seconds for port forwarding to open and prometheus to start scraping
     return port_forwarding_process
     
 def check_prometheus_is_running():
-    check_up_command = 'curl http://localhost:9090/api/v1/query?query=up'.split()
+    check_up_command = f'curl http://localhost:{local_prometheus_port_forwarding_port}/api/v1/query?query=up'.split()
     print(' '.join(check_up_command))
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
-def get_kfp_create_experiment_count(prometheus_query='experiment_server_create_requests'):
-    prometheus_curl_command = f"curl http://localhost:9090/api/v1/query?query={prometheus_query}".split()
+def get_create_experiment_count(prometheus_query=default_prometheus_query):
+    prometheus_curl_command = f"curl http://localhost:{local_prometheus_port_forwarding_port}/api/v1/query?query={prometheus_query}".split()
     print(f"Prometheus curl command:\n{' '.join(prometheus_curl_command)}")
-    print(f"Broken up prometheus curl command:\n{prometheus_curl_command}")
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
     print(f"Prometheus query results:\n{prometheus_query_results}")
     prometheus_create_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
     print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
     return prometheus_create_experiment_count
     
-def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query='experiment_server_create_requests', katib_query=False):
+def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query=default_prometheus_query):
     
     time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
@@ -150,26 +151,24 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
 
     print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
-    print(f'Broken up AMP awscurl command:\n{AMP_awscurl_command}')
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
 
-    if katib_query:
-        broad_dict = json.loads(AMP_query_results)
-        for specific_dict in broad_dict["data"]["result"]:
-            found_result = True
-            for key in AMP_specifics:
-                if (specific_dict["metric"][key] != AMP_specifics[key]):
-                    found_result = False
-                    break
-            if found_result:
-                AMP_query_results=json.dumps(specific_dict)
+    broad_results = json.loads(AMP_query_results)
+    for specific_result in broad_results["data"]["result"]:
+        found_result = True
+        for key in AMP_specifics:
+            if (specific_result["metric"][key] != AMP_specifics[key]):
+                found_result = False
                 break
+        if found_result:
+            AMP_query_results=json.dumps(specific_result)
+            break
     
     print(f"AMP_query_results:\n{AMP_query_results}")
     AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
     print("AMP_create_experiment_count:", AMP_create_experiment_count)
 
-    prometheus_create_experiment_count = get_kfp_create_experiment_count(prometheus_query)
+    prometheus_create_experiment_count = get_create_experiment_count(prometheus_query)
     
     print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
     assert AMP_create_experiment_count == prometheus_create_experiment_count
