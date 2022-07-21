@@ -131,19 +131,18 @@ def get_kfp_create_experiment_count(prometheus_query='experiment_server_create_r
     print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
     return prometheus_create_experiment_count
     
-def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query='experiment_server_create_requests', AMP_query='experiment_server_create_requests', katib_query=False):
+def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query='experiment_server_create_requests', katib_query=False):
     
     time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+    # AMP queries do not take '{'.
+    # In the prometheus query there is a '\' before the '{'.
+    AMP_query = prometheus_query.split('\{')[0]
 
     print(f"Using Workspace ID: {workspace_id}")
     
     AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
-#    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d "query={AMP_query}" --data-binary'.split()
-#    AMP_awscurl_command = f'awscurl -v --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d query=rest_client_requests_total -d code=403 -d host=10.100.0.1:443 -d method=GET'.split()
-#    AMP_awscurl_command = (f'awscurl -v --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d ' + '{"query":"rest_client_requests_total","code":"403","host":"10.100.0.1:443","method":"GET"}').split()
-#    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query -d "query={AMP_query}"'.split()
 
     print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
     print(f'Broken up AMP awscurl command:\n{AMP_awscurl_command}')
