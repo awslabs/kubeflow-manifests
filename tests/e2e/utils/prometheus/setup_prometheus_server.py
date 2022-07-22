@@ -104,10 +104,6 @@ def set_up_prometheus_port_forwarding():
                 print('\n\nAbout to call describe pod command!\n\n')
                 print(subprocess.check_output(describe_pod_command, encoding="utf-8"))
                 print('\n\nDescribe Finished\n\n')
-#                get_ns_pod_logs_command = f'kubectl logs {pod_name} --namespace {PROMETHEUS_NAMESPACE}'.split()
-#                print(f"\n\nAbout to get {PROMETHEUS_NAMESPACE}/{pod_name} logs!\n\n")
-#                print(subprocess.check_output(get_ns_pod_logs_command, encoding="utf-8"))
-#                print('\n\nLogs Finished\n\n')
                 pod_status = pod.split()[1]
                 print("pod_status:", pod_status)
                 assert "1/1" == pod_status
@@ -123,7 +119,7 @@ def set_up_prometheus_port_forwarding():
     set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} {local_prometheus_port_forwarding_port}:9090 -n {PROMETHEUS_NAMESPACE}'.split()
     print(" ".join(set_up_port_forwarding_command))
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
-    time.sleep(30)  # Wait 30 seconds for port forwarding to open and prometheus to start scraping
+    time.sleep(40)  # Wait 40 seconds for port forwarding to open and prometheus to start scraping
     return port_forwarding_process
     
 def check_prometheus_is_running():
@@ -161,6 +157,8 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
 
+    print(f'Pre Parsing AMP_query_results:\n{AMP_query_results}')
+    
     broad_results = json.loads(AMP_query_results)
     for specific_result in broad_results["data"]["result"]:
         found_result = True
