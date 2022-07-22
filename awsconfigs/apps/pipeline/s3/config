@@ -4,7 +4,7 @@ artifactRepository:
     s3: {
         bucket: $(kfp-artifact-bucket-name),
         keyPrefix: artifacts,
-        endpoint: s3.amazonaws.com,
+        endpoint: $(kfp-artifact-storage-endpoint),
         insecure: true,
         accessKeySecret: {
             name: mlpipeline-minio-artifact,
