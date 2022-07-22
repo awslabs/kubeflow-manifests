@@ -44,6 +44,12 @@ def create_AMP_workspace(region):
     
     return workspace_id
 
+def patch_notebook_for_prometheus():
+    merge_patch_service_command = f'kubectl patch service notebook-controller-service --type=merge --patch-file={prometheus_yaml_files_directory}/notebook-controller-service-patch.yaml --namespace=kubeflow'.split()
+    subprocess.call(merge_patch_service_command, encoding="utf-8")
+    patch_deployment_command = f'kubectl patch deployment notebook-controller-deployment --patch-file {prometheus_yaml_files_directory}/notebook-controller-deployment-patch.yaml --namespace kubeflow'.split()
+    subprocess.call(patch_deployment_command, encoding="utf-8")
+
 def set_up_prometheus_for_AMP(cluster_name, region):    
     associate_iam_oidc_provider(cluster_name, region)
 
@@ -74,6 +80,8 @@ def set_up_prometheus_for_AMP(cluster_name, region):
         subprocess.call(kubectl_apply_command, encoding="utf-8")
     print("Finished applying kustomize output.")
 
+    patch_notebook_for_prometheus()
+    
     return workspace_id
 
 def set_up_prometheus_port_forwarding():
@@ -129,9 +137,9 @@ def get_create_experiment_count(prometheus_query=default_prometheus_query):
     print(f"Prometheus curl command:\n{' '.join(prometheus_curl_command)}")
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
     print(f"Prometheus query results:\n{prometheus_query_results}")
-    prometheus_create_experiment_count = prometheus_query_results.split(",")[-1].split('"')[1]
-    print("prometheus_create_experiment_count:", prometheus_create_experiment_count)
-    return prometheus_create_experiment_count
+    resulting_count = prometheus_query_results.split(",")[-1].split('"')[1]
+    print(f"{prometheus_query}:", resulting_count)
+    return resulting_count
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query=default_prometheus_query):
     
