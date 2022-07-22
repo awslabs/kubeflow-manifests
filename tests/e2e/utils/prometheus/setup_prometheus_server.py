@@ -128,7 +128,7 @@ def check_prometheus_is_running():
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
-def get_create_experiment_count(prometheus_query=default_prometheus_query):
+def get_prometheus_query_results(prometheus_query=default_prometheus_query):
     prometheus_curl_command = f"curl http://localhost:{local_prometheus_port_forwarding_port}/api/v1/query?query={prometheus_query}".split()
     print(f"Prometheus curl command:\n{' '.join(prometheus_curl_command)}")
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
@@ -157,8 +157,6 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")
 
-    print(f'Pre Parsing AMP_query_results:\n{AMP_query_results}')
-    
     broad_results = json.loads(AMP_query_results)
     for specific_result in broad_results["data"]["result"]:
         found_result = True
@@ -174,7 +172,7 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
     print("AMP_create_experiment_count:", AMP_create_experiment_count)
 
-    prometheus_create_experiment_count = get_create_experiment_count(prometheus_query)
+    prometheus_create_experiment_count = get_prometheus_query_results(prometheus_query)
     
     print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
     assert AMP_create_experiment_count == prometheus_create_experiment_count

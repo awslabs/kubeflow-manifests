@@ -106,7 +106,7 @@ class TestPrometheus:
     def test_kfp_experiment(self, setup, region, kfp_client):
         # This query returns the number of kfp experiments that have been created.
         prometheus_kfp_experiment_count_query = 'experiment_server_create_requests\{job="ml-pipeline"\}'
-        initial_kfp_experiment_count = int(get_create_experiment_count(prometheus_kfp_experiment_count_query))
+        initial_kfp_experiment_count = int(get_prometheus_query_results(prometheus_kfp_experiment_count_query))
 
         name = rand_name("experiment-")
         description = rand_name("description-")
@@ -138,7 +138,7 @@ class TestPrometheus:
         # This query returns the number of katib experiments that have been created.
         prometheus_katib_experiment_count_query = 'katib_experiment_created_total\{job="katib-controller"\}'
 
-        query_results = get_create_experiment_count(prometheus_katib_experiment_count_query)
+        query_results = get_prometheus_query_results(prometheus_katib_experiment_count_query)
         if "result" == query_results:
             initial_katib_experiment_count = 0
         else:
@@ -178,7 +178,7 @@ class TestPrometheus:
         # This query returns the number of notebooks that have been created in the profile-aws-iam namespace.
         prometheus_notebook_count_query = 'notebook_create_total\{namespace="profile-aws-iam"\}'
 
-        query_results = get_create_experiment_count(prometheus_notebook_count_query)
+        query_results = get_prometheus_query_results(prometheus_notebook_count_query)
         if "result" == query_results:
             initial_notebook_count = 0
         else:
