@@ -169,16 +169,16 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
             break
     
     print(f"AMP_query_results:\n{AMP_query_results}")
-    AMP_create_experiment_count = AMP_query_results.split(",")[-1].split('"')[1]
-    print("AMP_create_experiment_count:", AMP_create_experiment_count)
+    AMP_resulting_count = AMP_query_results.split(",")[-1].split('"')[1]
+    print("AMP_resulting_count:", AMP_resulting_count)
 
-    prometheus_create_experiment_count = get_prometheus_query_results(prometheus_query)
+    prometheus_resulting_count = get_prometheus_query_results(prometheus_query)
     
-    print(f"Asserting AMP == prometheus: {AMP_create_experiment_count} == {prometheus_create_experiment_count}")
-    assert AMP_create_experiment_count == prometheus_create_experiment_count
-    print(f"Asserting expected == prometheus: {expected_value} == {prometheus_create_experiment_count}")
-    assert str(expected_value) == prometheus_create_experiment_count
-    return AMP_create_experiment_count
+    print(f"Asserting AMP == prometheus: {AMP_resulting_count} == {prometheus_resulting_count}")
+    assert AMP_resulting_count == prometheus_resulting_count
+    print(f"Asserting expected == prometheus: {expected_value} == {prometheus_resulting_count}")
+    assert str(expected_value) == prometheus_resulting_count
+    return AMP_resulting_count
 
 def delete_AMP_resources(cluster_name, region, workspace_id):
     print("About to delete service account and role.")
