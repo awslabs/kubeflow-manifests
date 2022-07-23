@@ -146,10 +146,13 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
     AMP_query_components = re.split('\\\{|="|",|"\\\}',prometheus_query)
     AMP_query = AMP_query_components[0]
     AMP_query_specifics = AMP_query_components[1:-1]
+    print(f'AMP_query_specifics:\n{AMP_query_specifics}')
     AMP_specifics = {}
     for i in range(1,len(AMP_query_specifics),2):
         AMP_specifics[AMP_query_specifics[i-1]]=AMP_query_specifics[i]
-
+    print("Here is the AMP_specifics dict:")
+    print(AMP_specifics)
+        
     print(f"Using Workspace ID: {workspace_id}")
     
     AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
