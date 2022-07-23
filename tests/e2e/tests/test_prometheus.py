@@ -116,7 +116,6 @@ class TestPrometheus:
     def test_istio_request_count(self, setup, region, kfp_client):
         # This query returns the number of successfull (code 200) requests the istio ingress gateway makes to the central dashboard.
         # Such a request is made during the creation in the kfp_client fixture.
-
         print(f"PROMETHEUS_PRINT: About to check the post-create istio request count, and see if it matches {initial_istio_central_dashboard_request_count + 1}")
         check_AMP_connects_to_prometheus(region, workspace_id, initial_istio_central_dashboard_request_count + 1, istio_central_dashboard_request_count_query)
         
