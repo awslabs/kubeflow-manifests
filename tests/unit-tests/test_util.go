@@ -3,6 +3,7 @@ package tests
 import (
 	"fmt"
 	"io/ioutil"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -62,6 +63,13 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 	// This is equivalent to running:
 	// kustomize build --load_restrictor none
 	lrc := loader.RestrictionNone
+	cmd := exec.Command("python3", "../../../substitute_params.py")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(fmt.Sprint(err) + ": " + string(output))
+		return
+	}
+	fmt.Println(string(output))
 
 	_loader, loaderErr := loader.NewLoader(lrc, validators.MakeFakeValidator(), testCase.Package, fsys)
 	fmt.Println(testCase.Package)
@@ -83,9 +91,8 @@ func RunTestCase(t *testing.T, testCase *KustomizeTestCase) {
 
 	// Check that all the actual resources match the expected resources
 	for _, r := range actual.Resources() {
-		rKey := key(r.GetKind(), r.GetName())
+		rKey := key(r.GetKind(), r.GetName()+r.GetNamespace())
 		actualNames[rKey] = true
-
 		e, ok := expected[rKey]
 
 		if !ok {
@@ -146,7 +153,7 @@ func (r *expectedResource) Key() string {
 		return ""
 	}
 
-	return key(r.u.GetKind(), r.u.GetName())
+	return key(r.u.GetKind(), r.u.GetName()+r.u.GetNamespace())
 }
 
 // Pretty printing of file differences.

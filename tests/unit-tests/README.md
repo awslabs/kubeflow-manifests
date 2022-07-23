@@ -28,3 +28,16 @@ The general approach to doing this is
    cd tests/unit-tests
    make generate-changed-only
    ```
+
+
+### Running Tests
+To run the unit-tests
+   ```
+   cd tests/unit-tests
+   make 
+   ```
+
+If changes were made then the go testcache may need to be cleaned so that the unit-tests will run again instead of using cached tests.
+   ```
+   go clean -testcache
+   ```

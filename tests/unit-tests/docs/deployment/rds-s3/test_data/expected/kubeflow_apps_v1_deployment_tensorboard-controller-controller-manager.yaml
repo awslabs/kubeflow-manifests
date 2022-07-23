@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tensorboard-controller
+    control-plane: controller-manager
+    kustomize.component: tensorboard-controller
+  name: tensorboard-controller-controller-manager
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorboard-controller
+      control-plane: controller-manager
+      kustomize.component: tensorboard-controller
+  template:
+    metadata:
+      labels:
+        app: tensorboard-controller
+        control-plane: controller-manager
+        kustomize.component: tensorboard-controller
+    spec:
+      containers:
+      - args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=10
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.4.0
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+      - args:
+        - --metrics-addr=127.0.0.1:8080
+        - --enable-leader-election
+        command:
+        - /manager
+        envFrom:
+        - configMapRef:
+            name: tensorboard-controller-config-mcd64bhg84
+        image: public.ecr.aws/j1r0q0g6/notebooks/tensorboard-controller:v1.4
+        name: manager
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+      serviceAccountName: tensorboard-controller
+      terminationGracePeriodSeconds: 10

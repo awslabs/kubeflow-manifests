@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kfserving
+    app.kubernetes.io/component: kfserving-models-web-app
+    app.kubernetes.io/name: kfserving
+    kustomize.component: kfserving-models-web-app
+  name: kfserving-models-web-app
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kfserving
+      app.kubernetes.io/component: kfserving-models-web-app
+      app.kubernetes.io/name: kfserving
+      kustomize.component: kfserving-models-web-app
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: kfserving
+        app.kubernetes.io/component: kfserving-models-web-app
+        app.kubernetes.io/name: kfserving
+        kustomize.component: kfserving-models-web-app
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: kfserving-models-web-app-config-mtgm8bbd98
+        image: kfserving/models-web-app:v0.6.1
+        imagePullPolicy: Always
+        name: kfserving-models-web-app
+        ports:
+        - containerPort: 5000
+      serviceAccountName: kfserving-models-web-app
