@@ -10,7 +10,7 @@ from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
 default_prometheus_query = 'experiment_server_create_requests'
-local_prometheus_port_forwarding_port = "9090"
+local_prometheus_port_forwarding_port = "9091"
 
 def replace_params_env_in_line(file_path, original_to_replacement_dict):
     updated_file_contents = ""

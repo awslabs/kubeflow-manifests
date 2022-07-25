@@ -96,12 +96,15 @@ class TestPrometheus:
         port_forwarding_process = set_up_prometheus_port_forwarding()
         print("PROMETHEUS_PRINT: Finished setting up port forwarding.")
 
-        query_results = int(get_prometheus_query_results(istio_central_dashboard_request_count_query))
+        query_results = get_prometheus_query_results(
+            istio_central_dashboard_request_count_query)
         if "result" == query_results:
             initial_istio_central_dashboard_request_count = 0
         else:
             initial_istio_central_dashboard_request_count = int(query_results)
-        print(f'PROMETHEUS_PRINT: Got Initial value of the prometheus query: {istio_central_dashboard_request_count_query} = {initial_istio_central_dashboard_request_count}')
+        print(f'PROMETHEUS_PRINT: Got Initial value of the prometheus query: '\
+              f'{istio_central_dashboard_request_count_query} = '\
+              f'{initial_istio_central_dashboard_request_count}')
         
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
@@ -114,20 +117,31 @@ class TestPrometheus:
         check_prometheus_is_running()
 
     def test_istio_request_count(self, setup, region, kfp_client):
-        # This query returns the number of successfull (code 200) requests the istio ingress gateway makes to the central dashboard.
-        # Such a request is made during the creation in the kfp_client fixture.
+        # This query returns the number of successfull (code 200)
+        # requests the istio ingress gateway makes to the central
+        # dashboard.
+        # Such a request is made during the creation in the kfp_client
+        # fixture.
         print(f"PROMETHEUS_PRINT: About to check the post-create istio request count, and see if it matches {initial_istio_central_dashboard_request_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_istio_central_dashboard_request_count + 1, istio_central_dashboard_request_count_query)
+        check_AMP_connects_to_prometheus(
+            region, workspace_id,
+            initial_istio_central_dashboard_request_count + 1,
+            istio_central_dashboard_request_count_query)
         
     def test_kfp_experiment(self, setup, region, kfp_client):
-        # This query returns the number of kfp experiments that have been created.
+        # This query returns the number of kfp experiments that have
+        # been created.
         prometheus_kfp_experiment_count_query = 'experiment_server_create_requests\{job="ml-pipeline"\}'
-        initial_kfp_experiment_count = int(get_prometheus_query_results(prometheus_kfp_experiment_count_query))
+        initial_kfp_experiment_count = int(
+            get_prometheus_query_results(
+                prometheus_kfp_experiment_count_query))
 
         name = rand_name("experiment-")
         description = rand_name("description-")
         experiment = kfp_client.create_experiment(
-            name, description=description, namespace=DEFAULT_USER_NAMESPACE
+            name,
+            description=description,
+            namespace=DEFAULT_USER_NAMESPACE
         )
         print("PROMETHEUS_PRINT: Created a kfp experiment")
         
@@ -136,7 +150,8 @@ class TestPrometheus:
         assert DEFAULT_USER_NAMESPACE == experiment.resource_references[0].key.id
 
         resp = kfp_client.get_experiment(
-            experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
+            experiment_id=experiment.id,
+            namespace=DEFAULT_USER_NAMESPACE
         )
         print("PROMETHEUS_PRINT: Finished performing a GET on the KFP experiment.")
 
@@ -148,20 +163,27 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
 
         print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and see if it matches {initial_kfp_experiment_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_kfp_experiment_count + 1, prometheus_kfp_experiment_count_query)
+        check_AMP_connects_to_prometheus(
+            region, workspace_id,
+            initial_kfp_experiment_count + 1,
+            prometheus_kfp_experiment_count_query)
 
     def test_katib_experiment(self, cluster, region):
-        # This query returns the number of katib experiments that have been created.
+        # This query returns the number of katib experiments that have
+        # been created.
         prometheus_katib_experiment_count_query = 'katib_experiment_created_total\{job="katib-controller"\}'
 
-        query_results = get_prometheus_query_results(prometheus_katib_experiment_count_query)
+        query_results = get_prometheus_query_results(
+            prometheus_katib_experiment_count_query)
         if "result" == query_results:
             initial_katib_experiment_count = 0
         else:
             initial_katib_experiment_count = int(query_results)
         
         filepath = os.path.abspath(
-            os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
+            os.path.join(
+                CUSTOM_RESOURCE_TEMPLATES_FOLDER,
+                KATIB_EXPERIMENT_FILE)
         )
         
         name = rand_name("katib-random-")
@@ -188,13 +210,18 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         
         print(f"PROMETHEUS_PRINT: About to check the post-create katib experiment count, and see if it matches {initial_katib_experiment_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_katib_experiment_count + 1, prometheus_katib_experiment_count_query)
+        check_AMP_connects_to_prometheus(
+            region, workspace_id,
+            initial_katib_experiment_count + 1,
+            prometheus_katib_experiment_count_query)
 
     def test_notebook(self, cluster, region):
-        # This query returns the number of notebooks that have been created in the profile-aws-iam namespace.
+        # This query returns the number of notebooks that have been
+        # created in the profile-aws-iam namespace.
         prometheus_notebook_count_query = 'notebook_create_total\{namespace="profile-aws-iam"\}'
 
-        query_results = get_prometheus_query_results(prometheus_notebook_count_query)
+        query_results = get_prometheus_query_results(
+            prometheus_notebook_count_query)
         if "result" == query_results:
             initial_notebook_count = 0
         else:
@@ -217,7 +244,8 @@ class TestPrometheus:
         )
         replacements = {"S3_BUCKET_NAME": s3_bucket_name, "REGION": region}
         notebook_server = unmarshal_yaml(
-            yaml_file=notebook_server_spec_file, replacements=replacements
+            yaml_file=notebook_server_spec_file,
+            replacements=replacements
         )
         
         upload_file_as_configmap(
@@ -238,7 +266,10 @@ class TestPrometheus:
         print("PROMETHEUS_PRINT: Created a jupyter notebook")
 
         print(f"PROMETHEUS_PRINT: About to check the post-create notebook count, and see if it matches {initial_notebook_count + 1}")
-        check_AMP_connects_to_prometheus(region, workspace_id, initial_notebook_count + 1, prometheus_notebook_count_query)
+        check_AMP_connects_to_prometheus(
+            region, workspace_id,
+            initial_notebook_count + 1,
+            prometheus_notebook_count_query)
 
         print("PROMETHEUS_PRINT: About to delete the jupyter notebook")
 
@@ -252,5 +283,6 @@ class TestPrometheus:
         )
         
         delete_configmap(
-            namespace="profile-aws-iam", configmap_name="irsa-notebook-as-configmap"
+            namespace="profile-aws-iam",
+            configmap_name="irsa-notebook-as-configmap"
         )
