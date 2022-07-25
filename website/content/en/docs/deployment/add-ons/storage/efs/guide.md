@@ -239,10 +239,12 @@ yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM
 kubectl apply -f $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 ```
 
-#### Automated setup default EFS owner  
-The automated setup sets the default Kubeflow Notebook user (Jovyan) as owner of the EFS file system by default.  
-You can always change the `uid` and `gid` used for the setup by passing different parameters to the script.  
-See [Advanced Customization](#advanced-customization) for more details on the different parameters that are available.
+#### Dynamic provisioning  default owner 
+For dynamic provisioning (manual and automated setup), we already set the default Kubeflow Notebook user (Jovyan) as owner of the EFS file system by default.    
+##### Changing the default values
+You can always change the `uid` and `gid` used for the setup.  
+For the manual setup, you need to edit the `uid` and `gid` in the storage class inside `dynamic-provisioning/sc.yaml`.    
+For the automated setup, you can specify the `uid` and `gid` as arguments to the script, see [Advanced Customization](#advanced-customization) for more details on the different parameters that are available.  
 
 ### 3.4 Use existing EFS volume as workspace or data volume for a Notebook
 
