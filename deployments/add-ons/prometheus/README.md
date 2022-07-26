@@ -2,9 +2,7 @@
 Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to simplify this issue by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
 
 ## Prerequisites
-First, download one of our deployment options by following the directions at: https://awslabs.github.io/kubeflow-manifests/docs/deployment/
-
-Second, make sure you have awscurl installed: `pip3 install awscurl`
+Download one of our deployment options by following the directions at: https://awslabs.github.io/kubeflow-manifests/docs/deployment/
 
 **Note:** The steps below will assume you are sitting in the kubeflow-manifests directory.
 
@@ -61,23 +59,24 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        workspaceRegion=<your-workspace-region>
        workspaceId=<your-workspace-id>
        ```
-6. Create the monitoring namespace:
-    1. ```
-       kubectl create namespace monitoring
-       ```
-7. Run the kustomize build command to build your prometheus resources:
+6. Run the kustomize build command to build your prometheus resources:
     1. ```
        kustomize build deployments/add-ons/prometheus | kubectl apply -f -
        ```
 
 ## Steps to Verify Prometheus and AMP are Connected
-1. Get the Prometheus Pod name:
+1. Make sure you have awscurl installed:
     1. ```
-       export PROMETHEUS_POD_NAME=$(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1)
+       pip3 install awscurl
        ```
 2. Start port-forwarding for the prometheus pod:
-    1. ```
-       kubectl port-forward $PROMETHEUS_POD_NAME 9090:9090 --namespace=monitoring &
+    1. Make sure to replace the following in the below command:
+        * **\<desired-local-port\>** - a workspace alias of your choosing
+    2. ```
+       export LOCAL_PROMETHEUS_PORT=<desired-local-port>
+       ```
+    3. ```
+       kubectl port-forward $(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1) $LOCAL_PROMETHEUS_PORT:9090 --namespace=monitoring &
        ```
 3. Navigate to the tests directory inside kubeflow-manifests:
     1. ```
@@ -95,12 +94,12 @@ Second, make sure you have awscurl installed: `pip3 install awscurl`
        ```
 5. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
     1. ```
-       python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0)'
+       python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0, local_prometheus_port=local_prometheus_port)'
        ```
     2. If all is working, this should not trigger an assertion error.
 6. Get the PID and kill the port-forwarding process:
     1. ```
-       export PORT_FORWARDING_PROCESS=$(lsof -i :9090 | sed -n 2p | cut -d' ' -f2)
+       export PORT_FORWARDING_PROCESS=$(lsof -i :$LOCAL_PROMETHEUS_PORT | sed -n 2p | cut -d' ' -f2)
        ```
     2. ```
        kill $PORT_FORWARDING_PROCESS
