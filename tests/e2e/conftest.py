@@ -42,6 +42,11 @@ def pytest_addoption(parser):
         action="store",
         help="AWS account secretkey",
     )
+    parser.addoption(
+        "--installation_option",
+        action="store",
+        help="helm or kustomize"
+    )
 
 
 def keep_successfully_created_resource(request):
@@ -65,6 +70,11 @@ def get_secretkey(request):
         pytest.fail("--secretkey is required")
     return secret_key
 
+def get_installationOption(request):
+    installation_option = request.config.getoption("--installation")
+    if not installation_option:
+        pytest.fail("--installation method is required")
+    return installation_option
 
 @pytest.fixture(scope="class")
 def region(metadata, request):
@@ -81,6 +91,21 @@ def region(metadata, request):
     metadata.insert("region", region)
     return region
 
+@pytest.fixture(scope="class")
+def installation_option(metadata, request):
+    """
+    Test installation option.
+    """
+
+    if metadata.get("installation_option"):
+        return metadata.get("installation_option")
+
+    installation_option = request.config.getoption("--installation_option")
+    if not installation_option:
+        pytest.fail("--installation_option is required")
+    metadata.insert("installation_option", installation_option)
+    
+    return installation_option
 
 @pytest.fixture(scope="class")
 def root_domain_name(metadata, request):
