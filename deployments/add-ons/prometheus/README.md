@@ -46,18 +46,8 @@ Download one of our deployment options by following the directions at: https://a
        export AMP_WORKSPACE_ID=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f6 | cut -d'/' -f2)
        ```
 5. Edit deployments/add-ons/prometheus/params.env:
-    1. Make sure to replace the following in the below lines:
-        * **\<your-workspace-region\>** - Can be retrieved by:
-            * ```
-              echo $AMP_WORKSPACE_REGION
-              ```
-        * **\<your-workspace-id\>** - Can be retrieved by:
-            * ```
-              echo $AMP_WORKSPACE_ID
-              ```
-    2. ```
-       workspaceRegion=<your-workspace-region>
-       workspaceId=<your-workspace-id>
+    1. ```
+       pushd tests; python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; region = os.environ["AMP_WORKSPACE_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.update_params_env(workspace_id, region, params_env_file_path="../deployments/add-ons/prometheus/params.env")'; popd
        ```
 6. Run the kustomize build command to build your prometheus resources:
     1. ```
@@ -78,11 +68,7 @@ Download one of our deployment options by following the directions at: https://a
     3. ```
        kubectl port-forward $(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1) $LOCAL_PROMETHEUS_PORT:9090 --namespace=monitoring &
        ```
-3. Navigate to the tests directory inside kubeflow-manifests:
-    1. ```
-       cd tests
-       ```
-4. Export your Access key and Secret Access Key:
+3. Export your Access key and Secret Access Key:
     1. Make sure to replace the following in the below commands:
         * **\<your-aws-access-key-id\>**
         * **\<your-aws-secret-access-key\>**
@@ -92,12 +78,12 @@ Download one of our deployment options by following the directions at: https://a
     2. ```
        export AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key>
        ```
-5. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
+4. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
     1. ```
-       python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0, local_prometheus_port=local_prometheus_port)'
+       pushd tests; python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0, local_prometheus_port=local_prometheus_port)'; popd
        ```
     2. If all is working, this should not trigger an assertion error.
-6. Get the PID and kill the port-forwarding process:
+5. Get the PID and kill the port-forwarding process:
     1. ```
        export PORT_FORWARDING_PROCESS=$(lsof -i :$LOCAL_PROMETHEUS_PORT | sed -n 2p | cut -d' ' -f2)
        ```
