@@ -23,7 +23,7 @@ def create_policy_if_not_exist(policy_name, permission_policy_file_name):
 # Will try to delete the given IAM policy.
 def delete_IAM_policy(policy_name):
     policy_arn = f'arn:aws:iam::{get_aws_account_id()}:policy/{policy_name}'
-    print("About to delete policy with arn {policy_arn}")
+    print("Attempting to delete policy with arn {policy_arn}")
     try:
         IAM_CLIENT.delete_policy(PolicyArn=policy_arn)
     except Exception as e:
