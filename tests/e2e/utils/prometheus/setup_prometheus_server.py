@@ -48,7 +48,7 @@ def create_AMP_workspace(region):
     return workspace_id
 
 def patch_notebook_for_prometheus():
-    merge_patch_service_command = f'kubectl patch service notebook-controller-service --type=merge --patch-file={prometheus_yaml_files_directory}/notebook-controller-service-patch.yaml --namespace=kubeflow'.split()
+    merge_patch_service_command = f'kubectl patch service notebook-controller-service --patch-file={prometheus_yaml_files_directory}/notebook-controller-service-patch.yaml --namespace=kubeflow'.split()
     subprocess.call(merge_patch_service_command, encoding="utf-8")
     patch_deployment_command = f'kubectl patch deployment notebook-controller-deployment --patch-file {prometheus_yaml_files_directory}/notebook-controller-deployment-patch.yaml --namespace kubeflow'.split()
     subprocess.call(patch_deployment_command, encoding="utf-8")
