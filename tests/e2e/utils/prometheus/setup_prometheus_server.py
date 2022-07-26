@@ -23,7 +23,7 @@ def replace_params_env_in_line(file_path, original_to_replacement_dict):
     with open(file_path, 'w') as updated_file:
         updated_file.write(updated_file_contents)
 
-def update_params_env(workspace_id, region, params_env_file_path):
+def update_params_env(workspace_id, region, params_env_file_path=f'{prometheus_yaml_files_directory}/params.env'):
     original_to_replacement_dict = {}
     original_to_replacement_dict['workspaceId'] = workspace_id
     original_to_replacement_dict['workspaceRegion'] = region
@@ -65,7 +65,7 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     workspace_id = create_AMP_workspace(region)
     
     # Edit params.env to use workspace-id and region
-    update_params_env(workspace_id, region, f'{prometheus_yaml_files_directory}/params.env')
+    update_params_env(workspace_id, region)
     
     create_namespace_command = f'kubectl create namespace {PROMETHEUS_NAMESPACE}'.split()
     subprocess.call(create_namespace_command)
