@@ -46,7 +46,8 @@ CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 TO_ROOT_PATH = "../../"
 
-istio_central_dashboard_request_count_query = 'istio_requests_total\{destination_app="centraldashboard",response_code="200"\}'
+istio_central_dashboard_request_count_query = 'istio_requests_total'\
+'\{destination_app="centraldashboard",response_code="200"\}'
 
 @pytest.fixture(scope="class")
 def kustomize_path():
@@ -122,7 +123,9 @@ class TestPrometheus:
         # dashboard.
         # Such a request is made during the creation in the kfp_client
         # fixture.
-        print(f"PROMETHEUS_PRINT: About to check the post-create istio request count, and see if it matches {initial_istio_central_dashboard_request_count + 1}")
+        print(f"PROMETHEUS_PRINT: About to check the post-create istio request "\
+              f"count, and see if it matches "\
+              f"{initial_istio_central_dashboard_request_count + 1}")
         check_AMP_connects_to_prometheus(
             region, workspace_id,
             initial_istio_central_dashboard_request_count + 1,
@@ -131,7 +134,8 @@ class TestPrometheus:
     def test_kfp_experiment(self, setup, region, kfp_client):
         # This query returns the number of kfp experiments that have
         # been created.
-        prometheus_kfp_experiment_count_query = 'experiment_server_create_requests\{job="ml-pipeline"\}'
+        prometheus_kfp_experiment_count_query = 'experiment_server_create_requests'\
+                                                '\{job="ml-pipeline"\}'
         initial_kfp_experiment_count = int(
             get_prometheus_query_results(
                 prometheus_kfp_experiment_count_query))
@@ -153,7 +157,8 @@ class TestPrometheus:
             experiment_id=experiment.id,
             namespace=DEFAULT_USER_NAMESPACE
         )
-        print("PROMETHEUS_PRINT: Finished performing a GET on the KFP experiment.")
+        print("PROMETHEUS_PRINT: Finished performing a GET on the KFP "\
+              "experiment.")
 
         assert name == resp.name
         print("PROMETHEUS_PRINT: Asserted the names were equivalent.")
@@ -162,7 +167,8 @@ class TestPrometheus:
         assert DEFAULT_USER_NAMESPACE == resp.resource_references[0].key.id
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
 
-        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment count, and see if it matches {initial_kfp_experiment_count + 1}")
+        print(f"PROMETHEUS_PRINT: About to check the post-create kfp experiment "\
+              "count, and see if it matches {initial_kfp_experiment_count + 1}")
         check_AMP_connects_to_prometheus(
             region, workspace_id,
             initial_kfp_experiment_count + 1,
@@ -171,7 +177,8 @@ class TestPrometheus:
     def test_katib_experiment(self, cluster, region):
         # This query returns the number of katib experiments that have
         # been created.
-        prometheus_katib_experiment_count_query = 'katib_experiment_created_total\{job="katib-controller"\}'
+        prometheus_katib_experiment_count_query = 'katib_experiment_created_total'\
+                                                  '\{job="katib-controller"\}'
 
         query_results = get_prometheus_query_results(
             prometheus_katib_experiment_count_query)
@@ -200,7 +207,8 @@ class TestPrometheus:
         assert resp["metadata"]["namespace"] == namespace
 
         resp = get_katib_experiment(cluster, region, namespace, name)
-        print("PROMETHEUS_PRINT: Finished performing a GET on the KFP experiment.")
+        print("PROMETHEUS_PRINT: Finished performing a GET on the KFP "\
+              "experiment.")
         
         assert resp["kind"] == "Experiment"
         print("PROMETHEUS_PRINT: Asserted the GET returned an Experiment.")
@@ -209,7 +217,9 @@ class TestPrometheus:
         assert resp["metadata"]["namespace"] == namespace
         print("PROMETHEUS_PRINT: Asserted the namespaces were equivalent.")
         
-        print(f"PROMETHEUS_PRINT: About to check the post-create katib experiment count, and see if it matches {initial_katib_experiment_count + 1}")
+        print(f"PROMETHEUS_PRINT: About to check the post-create katib "\
+              f"experiment count, and see if it matches "\
+              f"{initial_katib_experiment_count + 1}")
         check_AMP_connects_to_prometheus(
             region, workspace_id,
             initial_katib_experiment_count + 1,
@@ -218,7 +228,8 @@ class TestPrometheus:
     def test_notebook(self, cluster, region):
         # This query returns the number of notebooks that have been
         # created in the profile-aws-iam namespace.
-        prometheus_notebook_count_query = 'notebook_create_total\{namespace="profile-aws-iam"\}'
+        prometheus_notebook_count_query = 'notebook_create_total'\
+                                          '\{namespace="profile-aws-iam"\}'
 
         query_results = get_prometheus_query_results(
             prometheus_notebook_count_query)
@@ -236,11 +247,13 @@ class TestPrometheus:
         )
         notebook_server_pvc_spec_file = (
             TO_ROOT_PATH
-            + "tests/e2e/resources/custom-resource-templates/profile-irsa-notebook-pvc.yaml"
+            + "tests/e2e/resources/custom-resource-templates/"\
+            "profile-irsa-notebook-pvc.yaml"
         )
         notebook_server_spec_file = (
             TO_ROOT_PATH
-            + "tests/e2e/resources/custom-resource-templates/profile-irsa-notebook-server.yaml"
+            + "tests/e2e/resources/custom-resource-templates"\
+            "/profile-irsa-notebook-server.yaml"
         )
         replacements = {"S3_BUCKET_NAME": s3_bucket_name, "REGION": region}
         notebook_server = unmarshal_yaml(
@@ -254,7 +267,9 @@ class TestPrometheus:
             file_path=notebook_file_path,
         )
         
-        subprocess.call(f"kubectl apply -f {notebook_server_pvc_spec_file}".split())
+        subprocess.call(
+            f"kubectl apply -f {notebook_server_pvc_spec_file}".split()
+        )
         
         with tempfile.NamedTemporaryFile() as tmp:
             tmp.write(str.encode(str(yaml.dump(notebook_server))))
@@ -265,7 +280,8 @@ class TestPrometheus:
 
         print("PROMETHEUS_PRINT: Created a jupyter notebook")
 
-        print(f"PROMETHEUS_PRINT: About to check the post-create notebook count, and see if it matches {initial_notebook_count + 1}")
+        print(f"PROMETHEUS_PRINT: About to check the post-create notebook "\
+              f"count, and see if it matches {initial_notebook_count + 1}")
         check_AMP_connects_to_prometheus(
             region, workspace_id,
             initial_notebook_count + 1,
