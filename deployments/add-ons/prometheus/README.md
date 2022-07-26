@@ -45,7 +45,7 @@ Download one of our deployment options by following the directions at: https://a
     5. ```
        export AMP_WORKSPACE_ID=$(echo $AMP_WORKSPACE_ARN | cut -d':' -f6 | cut -d'/' -f2)
        ```
-5. Edit deployments/add-ons/prometheus/params.env:
+5. Update deployments/add-ons/prometheus/params.env with your workspace id and region:
     1. ```
        pushd tests; python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; region = os.environ["AMP_WORKSPACE_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.update_params_env(workspace_id, region, params_env_file_path="../deployments/add-ons/prometheus/params.env")'; popd
        ```
