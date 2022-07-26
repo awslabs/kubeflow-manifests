@@ -47,12 +47,6 @@ def create_AMP_workspace(region):
     
     return workspace_id
 
-def patch_notebook_for_prometheus():
-    merge_patch_service_command = f'kubectl patch service notebook-controller-service --patch-file={prometheus_yaml_files_directory}/notebook-controller-service-patch.yaml --namespace=kubeflow'.split()
-    subprocess.call(merge_patch_service_command, encoding="utf-8")
-    patch_deployment_command = f'kubectl patch deployment notebook-controller-deployment --patch-file {prometheus_yaml_files_directory}/notebook-controller-deployment-patch.yaml --namespace kubeflow'.split()
-    subprocess.call(patch_deployment_command, encoding="utf-8")
-
 def set_up_prometheus_for_AMP(cluster_name, region):    
     associate_iam_oidc_provider(cluster_name, region)
 
@@ -83,8 +77,6 @@ def set_up_prometheus_for_AMP(cluster_name, region):
         subprocess.call(kubectl_apply_command, encoding="utf-8")
     print("Finished applying kustomize output.")
 
-    patch_notebook_for_prometheus()
-    
     return workspace_id
 
 def set_up_prometheus_port_forwarding():
