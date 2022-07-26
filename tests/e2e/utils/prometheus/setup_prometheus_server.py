@@ -10,7 +10,7 @@ from e2e.fixtures.cluster import associate_iam_oidc_provider
 
 prometheus_yaml_files_directory = "../../deployments/add-ons/prometheus"
 default_prometheus_query = 'experiment_server_create_requests'
-local_prometheus_port_forwarding_port = "9091"
+local_prometheus_port = "9091"
 
 def replace_params_env_in_line(file_path, original_to_replacement_dict):
     updated_file_contents = ""
@@ -119,20 +119,20 @@ def set_up_prometheus_port_forwarding():
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
 
-    set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} {local_prometheus_port_forwarding_port}:9090 -n {PROMETHEUS_NAMESPACE}'.split()
+    set_up_port_forwarding_command = f'kubectl port-forward {prometheus_pod_name} {local_prometheus_port}:9090 -n {PROMETHEUS_NAMESPACE}'.split()
     print(" ".join(set_up_port_forwarding_command))
     port_forwarding_process = subprocess.Popen(set_up_port_forwarding_command)
     time.sleep(40)  # Wait 40 seconds for port forwarding to open and prometheus to start scraping
     return port_forwarding_process
     
 def check_prometheus_is_running():
-    check_up_command = f'curl http://localhost:{local_prometheus_port_forwarding_port}/api/v1/query?query=up'.split()
+    check_up_command = f'curl http://localhost:{local_prometheus_port}/api/v1/query?query=up'.split()
     print(' '.join(check_up_command))
     up_results = subprocess.check_output(check_up_command, encoding="utf-8")
     assert True==bool(up_results)
 
 def get_prometheus_query_results(prometheus_query=default_prometheus_query):
-    prometheus_curl_command = f"curl http://localhost:{local_prometheus_port_forwarding_port}/api/v1/query?query={prometheus_query}".split()
+    prometheus_curl_command = f"curl http://localhost:{local_prometheus_port}/api/v1/query?query={prometheus_query}".split()
     print(f"Prometheus curl command:\n{' '.join(prometheus_curl_command)}")
     prometheus_query_results = subprocess.check_output(prometheus_curl_command, encoding="utf-8")
     print(f"Prometheus query results:\n{prometheus_query_results}")
@@ -141,7 +141,6 @@ def get_prometheus_query_results(prometheus_query=default_prometheus_query):
     return resulting_count
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query=default_prometheus_query):
-    
     time.sleep(60) # Wait for prometheus to scrape.
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
