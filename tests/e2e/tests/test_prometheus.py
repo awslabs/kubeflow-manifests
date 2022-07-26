@@ -47,7 +47,7 @@ KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 TO_ROOT_PATH = "../../"
 
 istio_central_dashboard_request_count_query = 'istio_requests_total'\
-'\{destination_app="centraldashboard",response_code="200"\}'
+'\\{destination_app="centraldashboard",response_code="200"\\}'
 
 @pytest.fixture(scope="class")
 def kustomize_path():
@@ -135,7 +135,7 @@ class TestPrometheus:
         # This query returns the number of kfp experiments that have
         # been created.
         prometheus_kfp_experiment_count_query = 'experiment_server_create_requests'\
-                                                '\{job="ml-pipeline"\}'
+                                                '\\{job="ml-pipeline"\\}'
         initial_kfp_experiment_count = int(
             get_prometheus_query_results(
                 prometheus_kfp_experiment_count_query))
@@ -178,7 +178,7 @@ class TestPrometheus:
         # This query returns the number of katib experiments that have
         # been created.
         prometheus_katib_experiment_count_query = 'katib_experiment_created_total'\
-                                                  '\{job="katib-controller"\}'
+                                                  '\\{job="katib-controller"\\}'
 
         query_results = get_prometheus_query_results(
             prometheus_katib_experiment_count_query)
@@ -229,7 +229,7 @@ class TestPrometheus:
         # This query returns the number of notebooks that have been
         # created in the profile-aws-iam namespace.
         prometheus_notebook_count_query = 'notebook_create_total'\
-                                          '\{namespace="profile-aws-iam"\}'
+                                          '\\{namespace="profile-aws-iam"\\}'
 
         query_results = get_prometheus_query_results(
             prometheus_notebook_count_query)
