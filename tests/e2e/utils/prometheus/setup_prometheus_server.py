@@ -26,8 +26,11 @@ def update_params_env(workspace_id, region, params_env_file_path):
     original_to_replacement_dict['workspaceRegion'] = region
     replace_params_env_in_line(params_env_file_path, original_to_replacement_dict)
 
+def get_amp_client(region):
+    return boto3.client('amp', region_name=region)
+    
 def create_AMP_workspace(region):
-    amp_client = boto3.client('amp', region_name=region)
+    amp_client = get_amp_client(region)
     
     workspace_id = amp_client.create_workspace(alias = 'test_AMP_workspace')['workspaceId']
     print(f"Created Workspace ID: {workspace_id}")
@@ -63,7 +66,7 @@ def set_up_prometheus_for_AMP(cluster_name, region):
     kustomize_build_output = subprocess.check_output(kustomize_build_command)
     print("Finished running kustomize command.")
     
-    print("About apply kustomize output.")
+    print("About to apply kustomize output.")
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmp_file.write(kustomize_build_output)
         tmp_file.flush()
@@ -75,7 +78,7 @@ def set_up_prometheus_for_AMP(cluster_name, region):
 
 def set_up_prometheus_port_forwarding():
     print("Entered prometheus port_forwarding_function.")
-    def get_prometheus_pod_name():
+    def get_active_prometheus_pod_name():
         get_pod_name_command = f'kubectl get pods --namespace={PROMETHEUS_NAMESPACE}'.split()
         print(' '.join(get_pod_name_command))
         pod_list = subprocess.check_output(get_pod_name_command, encoding="utf-8").split('\n')[1:]
@@ -100,12 +103,12 @@ def set_up_prometheus_port_forwarding():
                 pod_status = pod.split()[1]
                 print("pod_status:", pod_status)
                 assert "1/1" == pod_status
-                print("Assert running was succesfull.")
+                print("Assert running was successful.")
                 prometheus_pod_name = pod_name
                 break
         return prometheus_pod_name
 
-    prometheus_pod_name = wait_for(get_prometheus_pod_name, timeout=90, interval=30)
+    prometheus_pod_name = wait_for(get_active_prometheus_pod_name, timeout=90, interval=30)
     if None == prometheus_pod_name:
         raise ValueError("Prometheus Pod Not Running.")
 
@@ -156,7 +159,7 @@ def delete_AMP_resources(cluster_name, region, workspace_id):
 
     wait_for(delete_policy)
     
-    amp_client = boto3.client('amp', region_name=region)
+    amp_client = get_amp_client(region)
 
     print("About to delete workspace.")
     amp_client.delete_workspace(workspaceId=workspace_id)
