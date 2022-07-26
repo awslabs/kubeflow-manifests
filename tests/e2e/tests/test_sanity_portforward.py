@@ -7,7 +7,6 @@ Installs the vanilla distribution of kubeflow and validates the installation by:
 
 import os
 import subprocess
-
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -17,7 +16,7 @@ from e2e.utils.config import configure_resource_fixture, metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -41,11 +40,51 @@ from kubernetes.client.exceptions import ApiException as K8sApiException
 
 GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+PREREQUISITE_HELM_MANIFEST_PATH = [["../../deployments/vanilla/helm/istio-1-11", "istio-1-11"],
+                                ["../../deployments/vanilla/helm/cert-manager", "cert-manager"],
+                                ["../../deployments/vanilla/helm/kubeflow-issuer", "kubeflow-issuer"], 
+                              ["../../deployments/vanilla/helm/kubeflow-namespace", "kubeflow-namespace"],
+                              ["../../deployments/vanilla/helm/profiles-and-kfam","profiles-and-kfam"]
+]
+
+COMPONENT_HELM_MANIFEST_PATH = [["../../deployments/vanilla/helm/knative-eventing","knative-eventing"],
+                               ["../../deployments/vanilla/helm/dex","dex"],
+                               ["../../deployments/vanilla/helm/oidc-authservice","oidc-authservice"],
+                               ["../../deployments/vanilla/helm/kubeflow-roles","kubeflow-roles"],
+                               ["../../deployments/vanilla/helm/kubeflow-istio-resources","kubeflow-istio-resources"],
+                               ["../../deployments/vanilla/helm/admission-webhook","admission-webhook"],
+                               ["../../deployments/vanilla/helm/knative-serving","knative-serving"],
+                               ["../../deployments/vanilla/helm/cluster-local-gateway","cluster-local-gateway"],
+                               ["../../deployments/vanilla/helm/aws-telemetry","aws-telemetry"],
+                               ["../../deployments/vanilla/helm/training-operator","training-operator"],
+                               ["../../deployments/vanilla/helm/user-namespace","user-namespace"],
+                               ["../../deployments/vanilla/helm/tensorboard-controller","tensorboard-controller"],
+                               ["../../deployments/vanilla/helm/tensorboards-web-app","tensorboards-web-app"],
+                               ["../../deployments/vanilla/helm/volumes-web-app","volumes-web-app"],
+                               ["../../deployments/vanilla/helm/notebook-controller","notebook-controller"],
+                               ["../../deployments/vanilla/helm/jupyter-web-app","jupyter-web-app"],
+                               ["../../deployments/vanilla/helm/central-dashboard","central-dashboard"],
+                               ["../../deployments/vanilla/helm/katib","katib"], 
+                               ["../../deployments/vanilla/helm/models-web-app","models-web-app"], 
+                               ["../../deployments/vanilla/helm/kserve","kserve"], 
+                               ["../../deployments/vanilla/helm/kubeflow-pipelines","kubeflow-pipelines"], 
+]
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path(installation_option):
+    print("This is Option:")
+    print(installation_option)
+    if (installation_option == 'kustomize'):
+        return GENERIC_KUSTOMIZE_MANIFEST_PATH
+    if (installation_option == 'helm'):
+        """
+            helm_path_list[0] are pre-requisite helm charts: istio, cert-manager, kubeflow-namespace
+            helm_path_list[1] are component helm charts: notebook, katib, pipelines etc
+        """
+
+        helm_path_list = [PREREQUISITE_HELM_MANIFEST_PATH, COMPONENT_HELM_MANIFEST_PATH]
+        return helm_path_list
 
 
 PIPELINE_NAME = "[Tutorial] Data passing in python components"
