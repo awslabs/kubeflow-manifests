@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      # Get cached test image
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_CACHE_URI || true
+      - docker pull ${ECR_CACHE_URI}:latest --quiet || true
+
+      # Build test image
+      - >
+        docker build -f ./tests/pr-build/Dockerfile.pr . -t ${ECR_CACHE_URI}:latest --quiet
+        || echo "Docker Build Failed" || true
+  build:
+    commands:
+      # Run tests
+      - docker run --name kf-distro-pr-build $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
+
+      # Push test image to cache ECR repo
+      - docker push ${ECR_CACHE_URI}:latest || true
