@@ -1,0 +1,4 @@
+# Allow Kustomize vars to replace following fields.
+varReference:
+- path: data/prometheus.yml
+  kind: ConfigMap

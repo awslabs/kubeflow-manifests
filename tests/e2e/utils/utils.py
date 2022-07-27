@@ -121,6 +121,10 @@ def load_json_file(filepath):
         return json.load(file)
 
 
+def get_aws_account_id():
+    return boto3.client("sts").get_caller_identity().get("Account")
+
+
 def get_eks_client(region):
     return boto3.client("eks", region_name=region)
 
