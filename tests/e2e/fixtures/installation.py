@@ -36,6 +36,7 @@ def install_helm(chart_name, path):
     """
 
     with tempfile.NamedTemporaryFile() as tmp:
+        print(f"Installing {chart_name}...")
         install_retcode = subprocess.call(f"helm install {chart_name} {path}".split())
         assert install_retcode == 0
 
@@ -110,12 +111,14 @@ def installation(
                 chart_path = helm_chart[0]
                 chart_name = helm_chart[1]
                 wait_for(lambda: install_helm(chart_name, chart_path), timeout=3 * 60)
-                
+                time.sleep(10)
+                # wait a bit for all pods to be running
             
             for helm_chart in comp_helm_charts:
                 chart_path = helm_chart[0]
                 chart_name = helm_chart[1]
                 wait_for(lambda: install_helm(chart_name, chart_path), timeout=3 * 60)
+                time.sleep(10)
 
         time.sleep(60)
         # wait a bit for all pods to be running
@@ -137,11 +140,14 @@ def installation(
             comp_helm_charts = installation_path[1]
             preq_helm_charts.reverse()
             comp_helm_charts.reverse()
-            for helm_chart in preq_helm_charts:
+            print(preq_helm_charts)
+            print(comp_helm_charts)
+
+            for helm_chart in comp_helm_charts:
                 chart_name = helm_chart[1]
                 uninstall_helm(chart_name)
-            
-            for helm_chart in comp_helm_charts:
+
+            for helm_chart in preq_helm_charts:
                 chart_name = helm_chart[1]
                 uninstall_helm(chart_name)
 
