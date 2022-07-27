@@ -8,6 +8,13 @@ resources:
 - config-map.yaml
 - prometheus-deployment.yaml
 - prometheus-service.yaml
+
+# Notebook Controller
+- ../../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+patchesStrategicMerge:
+- notebook-controller-service-patch.yaml
+- notebook-controller-deployment-patch.yaml
+
 vars:
 - name: amp-workspace-region
   objref:
