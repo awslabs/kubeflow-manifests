@@ -4,9 +4,9 @@ description = "Use Prometheus, Amazon Managed Service for Prometheus, and Amazon
 weight = 5
 +++
 
-This guide shows how to setup a Prometheus server and an AMP workspace. It also shows to validate the correctness of this setup.
+This guide shows how to setup a Prometheus server, an AMP workspace, and an AMG workspace on top of Kubeflow on AWS. It also explains to validate the ingestion of data from Prometheus to AMP.
 
-## Why you should use Prometheus with Amazon Managed Service for Prometheus (AMP)
+## Why you should use Prometheus with Amazon Managed Service for Prometheus (AMP) and Amazon Managed Grafana (AMG)
 Many Kubeflow users utilize Prometheus and Grafana to monitor and visualize their metrics. However it can be difficult to scale open source Prometheus and Grafana as the number of nodes to be monitored increases. AMP seeks to simplify this issue by allowing multiple Prometheus servers to aggregate their metrics in Amazon Managed Prometheus, and finally Amazon Managed Grafana allows customers to then view these aggregated metrics.
 
 ## Prerequisites
@@ -92,3 +92,7 @@ Download one of our deployment options by following the directions at: https://a
     2. ```bash
        kill $PORT_FORWARDING_PROCESS
        ```
+## Steps to Setup AMG
+1. [Create an Amazon Managed Grafana Workspace.](https://docs.aws.amazon.com/grafana/latest/userguide/getting-started-with-AMG.html)
+2. [Add AMP as a data source.](https://docs.aws.amazon.com/grafana/latest/userguide/AMP-adding-AWS-config.html)
+3. [Create a dashboard to visualize metrics from your AMP data source.](https://docs.aws.amazon.com/grafana/latest/userguide/getting-started-grafanaui.html)
