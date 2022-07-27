@@ -1,7 +1,6 @@
 import subprocess
 import time
 import re
-import os
 import boto3
 import tempfile
 from e2e.utils.prometheus.createPolicy_AMPIngest import *
@@ -134,8 +133,6 @@ def get_prometheus_query_results(prometheus_query=default_prometheus_query):
     
 def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prometheus_query=default_prometheus_query):
     time.sleep(60) # Wait for prometheus to scrape.
-    access_key = os.environ['AWS_ACCESS_KEY_ID']
-    secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
     # AMP queries do not take {} arguments.
     AMP_query_components = re.split('\\\{|="|",|"\\\}',prometheus_query)
     AMP_query = AMP_query_components[0]
@@ -149,7 +146,8 @@ def check_AMP_connects_to_prometheus(region, workspace_id, expected_value, prome
         
     print(f"Using Workspace ID: {workspace_id}")
     
-    AMP_awscurl_command = f'awscurl --access_key {access_key} --secret_key {secret_key} --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
+    # The following awscurl command requires credentials (aws_access_key_id and aws_secret_access_key) to be placed in ~/.aws/credentials.
+    AMP_awscurl_command = f'awscurl --region {region} --service aps https://aps-workspaces.{region}.amazonaws.com/workspaces/{workspace_id}/api/v1/query?query={AMP_query}'.split()
 
     print(f'AMP awscurl command:\n{" ".join(AMP_awscurl_command)}')
     AMP_query_results = subprocess.check_output(AMP_awscurl_command, encoding="utf-8")

@@ -1,5 +1,6 @@
 import pytest
 import yaml
+import os
 
 from e2e.utils.prometheus.setup_prometheus_server import *
 
