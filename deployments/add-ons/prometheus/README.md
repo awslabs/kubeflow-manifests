@@ -68,19 +68,13 @@ Download one of our deployment options by following the directions at: https://a
     3. ```
        kubectl port-forward $(kubectl get pods --namespace=monitoring | grep "prometheus-deployment" | cut -d' ' -f1) $LOCAL_PROMETHEUS_PORT:9090 --namespace=monitoring &
        ```
-3. Export your Access key and Secret Access Key:
-    1. Make sure to replace the following in the below commands:
-        * **\<your-aws-access-key-id\>**
-        * **\<your-aws-secret-access-key\>**
-    2. ```
-       export AWS_ACCESS_KEY_ID=<your-aws-access-key-id>
-       ```
-    2. ```
-       export AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key>
+3. Make sure your credentials are in ~/.aws/credentials:
+    1. ```
+       aws configure
        ```
 4. Run the below command to verify the KFP create experiment count metric is being correctly exported to AMP:
     1. ```
-       pushd tests; python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0, local_prometheus_port=local_prometheus_port)'; popd
+       pushd tests; python3 -c 'import os; import e2e.utils.prometheus.setup_prometheus_server as setup_prometheus_server; cluster_region = os.environ["CLUSTER_REGION"]; workspace_id = os.environ["AMP_WORKSPACE_ID"]; setup_prometheus_server.local_prometheus_port = os.environ["LOCAL_PROMETHEUS_PORT"]; setup_prometheus_server.check_AMP_connects_to_prometheus(cluster_region, workspace_id, expected_value=0)'; popd
        ```
     2. If all is working, this should not trigger an assertion error.
 5. Get the PID and kill the port-forwarding process:
