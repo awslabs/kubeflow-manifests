@@ -1,6 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from http import client
 import logging
 
 from e2e.fixtures import cluster
@@ -17,6 +18,7 @@ from e2e.utils.utils import (
     load_json_file,
     get_eks_client,
     get_ec2_client,
+    get_acm_client,
     rand_name,
     print_banner,
     load_yaml_file,
@@ -74,16 +76,36 @@ def create_certificates(
     root_hosted_zone: Route53HostedZone = None,
 ) -> Tuple[AcmCertificate, AcmCertificate]:
     root_certificate = None
+
+    acm_client = get_acm_client(deployment_region)
+
+    #store issued certificates to check for duplicate
+    Issued_Certificates = acm_client.list_certificates(CertificateStatuses=['ISSUED'])
+        
+
     if root_hosted_zone:
-        root_certificate = AcmCertificate(
-            domain="*." + root_hosted_zone.domain,
-            hosted_zone=root_hosted_zone,
-            region=deployment_region,
-        )
-        root_certificate.request_validation()
-        validation_record = root_certificate.generate_domain_validation_record()
-        root_certificate.create_domain_validation_records(validation_record)
-        root_certificate.wait_for_certificate_validation()
+        #if root-domain certificate already exist and issued, don't need to request again
+        existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
+                                                                    "*." + root_hosted_zone.domain,
+                                                                    root_hosted_zone,
+                                                                    deployment_region,
+                                                                    acm_client)
+        if existed_issued_certificate:
+            logger.info(
+                f"an existed 'Issued' certificate has been found for domain '*.{root_hosted_zone.domain}' in region '{deployment_region}'.\
+                certificate ARN is '{existed_issued_certificate.arn}'. Certificate validation step will be skipped."
+            )
+            root_certificate = existed_issued_certificate
+        else:
+            root_certificate = AcmCertificate(
+                domain="*." + root_hosted_zone.domain,
+                hosted_zone=root_hosted_zone,
+                region=deployment_region,
+            )
+            root_certificate.request_validation()
+            validation_record = root_certificate.generate_domain_validation_record()
+            root_certificate.create_domain_validation_records(validation_record)
+            root_certificate.wait_for_certificate_validation()
     else:
         logger.info(
             f"Since your {root_hosted_zone.domain} hosted zone is not managed by route53, please create a certificate for *.{root_hosted_zone.domain} by following this document: https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console."
@@ -91,19 +113,45 @@ def create_certificates(
         )
         input("Press any key once the certificate status is ISSUED")
 
-    subdomain_cert_deployment_region = AcmCertificate(
-        domain="*." + subdomain_hosted_zone.domain,
-        hosted_zone=subdomain_hosted_zone,
-        region=deployment_region,
-    )
-    subdomain_cert_deployment_region.request_validation()
-    validation_record = (
-        subdomain_cert_deployment_region.generate_domain_validation_record()
-    )
-    subdomain_cert_deployment_region.create_domain_validation_records(validation_record)
-    subdomain_cert_deployment_region.wait_for_certificate_validation()
+    #if sub-domain certificate already exist and issued, don't need to request again
+    existed_issued_certificate = find_existed_issued_certificate(Issued_Certificates['CertificateSummaryList'],
+                                                                 "*." + subdomain_hosted_zone.domain,
+                                                                 subdomain_hosted_zone,
+                                                                 deployment_region,
+                                                                 acm_client)
+    if existed_issued_certificate:
+        logger.info(
+                f"an existed 'Issued' certificate has been found for domain '*.{subdomain_hosted_zone.domain}' in region '{deployment_region}'.\
+                certificate ARN is '{existed_issued_certificate.arn}'. Certificate validation step will be skipped."
+            )
+        subdomain_cert_deployment_region = existed_issued_certificate
+    else:
+        subdomain_cert_deployment_region = AcmCertificate(
+            domain="*." + subdomain_hosted_zone.domain,
+            hosted_zone=subdomain_hosted_zone,
+            region=deployment_region,
+        )
+        subdomain_cert_deployment_region.request_validation()
+        validation_record = (
+            subdomain_cert_deployment_region.generate_domain_validation_record()
+        )
+        subdomain_cert_deployment_region.create_domain_validation_records(validation_record)
+        subdomain_cert_deployment_region.wait_for_certificate_validation()
 
     return root_certificate, subdomain_cert_deployment_region
+
+
+#find existed issued certificate with the same domain name
+def find_existed_issued_certificate(issued_certificates: list, domain: str, hosted_zone: Route53HostedZone, region: str, acm_client: client) -> AcmCertificate:
+        for certificate in issued_certificates:
+            if certificate["DomainName"] == domain:
+                response = acm_client.describe_certificate(CertificateArn = certificate["CertificateArn"])
+                #can not be in use or associated with another aws resource
+                if not response['Certificate']['InUseBy']: 
+                    return AcmCertificate(domain, hosted_zone, region, arn=certificate["CertificateArn"])
+        return None
+
+
 
 
 # Step 3: Configure Ingress
@@ -126,6 +174,10 @@ def configure_load_balancer_controller(
     ec2_client = get_ec2_client(region)
     eks_client = get_eks_client(region)
 
+    
+    
+    
+
     # create an iam service account with required permissions for the controller
     cluster.associate_iam_oidc_provider(cluster_name, region)
     alb_policy = IAMPolicy(name=policy_name, region=region)
@@ -140,6 +192,9 @@ def configure_load_balancer_controller(
     cluster.create_iam_service_account(
         alb_sa_name, alb_sa_namespace, cluster_name, region, [alb_policy.arn]
     )
+
+    #grab service account arn
+    service_account_roleArn = cluster.get_iam_service_account_roleArn(alb_sa_name, alb_sa_namespace)   
 
     # tag cluster subnet with kubernetes.io/cluster/<cluster_name> tag
     # see prerequisites in https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
@@ -164,6 +219,7 @@ def configure_load_balancer_controller(
             "name": alb_sa_name,
             "namespace": alb_sa_namespace,
             "policyArn": alb_policy.arn,
+            "eks.amazonaws.com/role-arn": service_account_roleArn, 
         }
     }
 
