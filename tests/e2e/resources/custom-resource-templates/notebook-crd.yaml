@@ -1,19 +1,18 @@
-
 apiVersion: kubeflow.org/v1alpha1
 kind: Notebook
 metadata:
-  name: my-notebook-scipy-00
-  namespace: kubeflow-user-example-com
+  annotations:
+    notebooks.kubeflow.org/server-type: jupyter
+  labels:
+    app: ${NOTEBOOK_NAME}
+  name: ${NOTEBOOK_NAME}
+  namespace: ${NAMESPACE}
 spec:
   template:
     spec:
-      volumes:
-      - name: workspace-my-notebook-scipy-00
-      persistentVolumeClaim:
-        claimName: workspace-my-notebook-scipy-00 
       containers:
-      - image: public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-scipy:v1.4
-        name: notebook-scipy
+      - image: ${IMAGE}
+        name: ${NOTEBOOK_NAME}
         resources:
           limits:
             cpu: 600m
@@ -21,7 +20,21 @@ spec:
           requests:
             cpu: 500m
             memory: 1Gi
-        volumeMounts:
-        - name: workspace-my-notebook-scipy-00
-          mountPath: "/home/jovyan"
         serviceAccountName: default-editor
+        volumeMounts:
+        - mountPath: /home/jovyan
+          name: ${NOTEBOOK_NAME}
+        - mountPath: /home/uploaded
+          name: ${NOTEBOOK_NAME}-config-map
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: ${NOTEBOOK_NAME}
+        persistentVolumeClaim:
+          claimName: ${NOTEBOOK_NAME}
+      - configMap:
+          name: ${NOTEBOOK_NAME}-config-map
+        name: ${NOTEBOOK_NAME}-config-map
+      - emptyDir:
+          medium: Memory
+        name: dshm

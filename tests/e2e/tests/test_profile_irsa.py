@@ -221,7 +221,7 @@ def configure_manifests(profile_role, region, kustomize_path):
 
     profile_yaml_original = unmarshal_yaml(yaml_file=filename)
     profile_yaml = unmarshal_yaml(
-        yaml_file=filename, replacements={"IAM_ROLE": oidc_role_arn}
+        yaml_file=filename, replacements={"IAM_ROLE": oidc_role_arn, "NAMESPACE": "profile-aws-iam"}
     )
 
     with open(filename, "w") as file:
