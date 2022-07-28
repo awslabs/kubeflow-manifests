@@ -149,7 +149,7 @@ def create_efs_iam_policy():
 
 
 def get_efs_iam_policy_document():
-    url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.6/docs/iam-policy-example.json"
+    url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.4.0/docs/iam-policy-example.json"
     response = urllib.request.urlopen(url)
     data = response.read()
     return data.decode("utf-8")
@@ -197,7 +197,7 @@ def install_efs_driver():
     print("Installing EFS driver...")
 
     kubectl_kustomize_apply(
-        "https://github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.6"
+        "https://github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.4.0"
     )
 
     print("EFS driver installed!")
@@ -498,6 +498,8 @@ def edit_dynamic_provisioning_storage_class_fields(
     print("Editing storage class with appropriate values...")
 
     storage_class_file_yaml_content["parameters"]["fileSystemId"] = file_system_id
+    storage_class_file_yaml_content["parameters"]["gid"] = str(EFS_GID)
+    storage_class_file_yaml_content["parameters"]["uid"] = str(EFS_UID)
 
     with open(EFS_DYNAMIC_PROVISIONING_STORAGE_CLASS_FILE_PATH, "w") as file:
         file.write(yaml.dump(storage_class_file_yaml_content))
@@ -573,6 +575,22 @@ parser.add_argument(
     help=f"Default is set to {EFS_THROUGHPUT_MODE_DEFAULT}",
     required=False,
 )
+EFS_GID_DEFAULT = 100
+parser.add_argument(
+    "--efs_gid",
+    type=int,
+    default=EFS_GID_DEFAULT,
+    help=f"POSIX group Id to be applied for Access Point root directory creation. Default is set to {EFS_GID_DEFAULT}",
+    required=False,
+)
+EFS_UID_DEFAULT = 1000
+parser.add_argument(
+    "--efs_uid",
+    type=int,
+    default=EFS_UID_DEFAULT,
+    help=f"POSIX user Id to be applied for Access Point root directory creation. Default is set to {EFS_UID_DEFAULT}",
+    required=False,
+)
 DEFAULT_DIRECTORY_PATH = ""
 parser.add_argument(
     "--directory",
@@ -591,6 +609,8 @@ if __name__ == "__main__":
     EFS_SECURITY_GROUP_NAME = args.efs_security_group_name
     EFS_FILE_SYSTEM_PERFORMANCE_MODE = args.efs_performance_mode
     EFS_FILE_SYSTEM_THROUGHPUT_MODE = args.efs_throughput_mode
+    EFS_GID = args.efs_gid
+    EFS_UID = args.efs_uid
     DIRECTORY_PATH = args.directory
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
