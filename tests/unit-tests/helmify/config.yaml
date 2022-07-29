@@ -1,0 +1,2 @@
+Kustomize output yaml path: /Users/jsitu/Dev/forked-kubeflow/kubeflow-manifests/tests/unit-tests/helmify/kubeflow-pipelines-rds-and-s3-kustomized.yaml
+Helm output yaml path: /Users/jsitu/Dev/forked-kubeflow/kubeflow-manifests/tests/unit-tests/helmify/kubeflow-pipelines-rds-and-s3-helmified.yaml

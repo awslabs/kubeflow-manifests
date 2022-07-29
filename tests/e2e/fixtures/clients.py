@@ -55,7 +55,7 @@ def create_k8s_admission_registration_api_client(cluster, region):
 
 # todo make port random
 @pytest.fixture(scope="class")
-def port_forward(kustomize):
+def port_forward(installation):
     """
     Opens port forwarding to the istio-ingressgateway to allow making requests
     to kubeflow components from localhost.
