@@ -13,9 +13,7 @@ from e2e.utils.utils import (
 )
 from e2e.utils.config import metadata, configure_resource_fixture
 
-from e2e.conftest import (
-    region,
-)
+from e2e.conftest import region
 
 from e2e.fixtures.cluster import (
     cluster,
@@ -30,9 +28,11 @@ from e2e.utils.constants import DEFAULT_USER_NAMESPACE
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
+
 @pytest.fixture(scope="class")
 def kustomize_path():
     return TO_ROOT_PATH + "tests/e2e/resources/custom-manifests/profile-irsa"
+
 
 @pytest.fixture(scope="class")
 def profile_controller_policy(region, metadata, request):
@@ -127,9 +127,7 @@ def profile_trust_policy(
                     "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
-                "Condition": {"StringEquals": {
-                    f"{oidc_url}:aud": "sts.amazonaws.com"
-                }},
+                "Condition": {"StringEquals": {f"{oidc_url}:aud": "sts.amazonaws.com"}},
             }
         ],
     }
@@ -162,13 +160,16 @@ def profile_role(region, metadata, request, profile_trust_policy):
         on_delete=on_delete,
     )
 
+
 @pytest.fixture(scope="class")
 def client_namespace(profile_role):
     return "kubeflow-user-example-com"
 
+
 @pytest.fixture(scope="class")
 def login():
     return "test-user@kubeflow.org"
+
 
 @pytest.fixture(scope="class")
 def configure_manifests(profile_role, region, kustomize_path):
@@ -181,7 +182,8 @@ def configure_manifests(profile_role, region, kustomize_path):
 
     profile_yaml_original = unmarshal_yaml(yaml_file=filename)
     profile_yaml = unmarshal_yaml(
-        yaml_file=filename, replacements={"IAM_ROLE": oidc_role_arn, "NAMESPACE": DEFAULT_USER_NAMESPACE}
+        yaml_file=filename,
+        replacements={"IAM_ROLE": oidc_role_arn, "NAMESPACE": DEFAULT_USER_NAMESPACE},
     )
 
     with open(filename, "w") as file:

@@ -4,13 +4,9 @@ import pytest
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
 from e2e.utils.config import metadata, configure_resource_fixture
 
-from e2e.conftest import (
-    region,
-)
+from e2e.conftest import region
 
-from e2e.fixtures.cluster import (
-    cluster,
-)
+from e2e.fixtures.cluster import cluster
 from e2e.fixtures.kustomize import kustomize, clone_upstream
 from e2e.fixtures.profile_dependencies import (
     configure_manifests,
@@ -47,8 +43,18 @@ testdata = [
     ("scipy", NOTEBOOK_IMAGES[0], "sanity_check.ipynb", "Hello World!"),
     ("tf-gpu", NOTEBOOK_IMAGES[1], "verify_tensorflow_installation.ipynb", "2.6.3"),
     ("tf-cpu", NOTEBOOK_IMAGES[2], "verify_tensorflow_installation.ipynb", "2.6.3"),
-    ("pytorch-gpu", NOTEBOOK_IMAGES[3], "verify_pytorch_installation.ipynb", "1.11.0+cu115"),
-    ("pytorch-cpu", NOTEBOOK_IMAGES[4], "verify_pytorch_installation.ipynb", "1.11.0+cpu"),
+    (
+        "pytorch-gpu",
+        NOTEBOOK_IMAGES[3],
+        "verify_pytorch_installation.ipynb",
+        "1.11.0+cu115",
+    ),
+    (
+        "pytorch-cpu",
+        NOTEBOOK_IMAGES[4],
+        "verify_pytorch_installation.ipynb",
+        "1.11.0+cpu",
+    ),
 ]
 
 
@@ -59,8 +65,19 @@ class TestNotebookImages:
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestNotebookImages", metadata_file)
 
-    @pytest.mark.parametrize("framework_name, image_name, ipynb_notebook_file, expected_output", testdata)
-    def test_notebook_container(self, configure_manifests, notebook_server, region, framework_name, image_name, ipynb_notebook_file, expected_output):
+    @pytest.mark.parametrize(
+        "framework_name, image_name, ipynb_notebook_file, expected_output", testdata
+    )
+    def test_notebook_container(
+        self,
+        configure_manifests,
+        notebook_server,
+        region,
+        framework_name,
+        image_name,
+        ipynb_notebook_file,
+        expected_output,
+    ):
         """
         Runs once for each combination in testdata. Spins up a notebook using the image specified and runs the uploaded python notebook.
         """
