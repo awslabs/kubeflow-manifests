@@ -19,7 +19,7 @@ from e2e.utils.utils import (
     get_iam_client,
     get_s3_client,
     get_eks_client,
-    wait_for_kfp_run_succeeded_from_run_id
+    wait_for_kfp_run_succeeded_from_run_id,
 )
 from e2e.utils.config import metadata, configure_resource_fixture
 
@@ -42,7 +42,7 @@ from e2e.fixtures.clients import (
     session_cookie,
     host,
     login,
-    password
+    password,
 )
 
 from e2e.utils.custom_resources import (
@@ -53,12 +53,19 @@ from e2e.utils.custom_resources import (
 )
 
 from e2e.utils.aws.iam import IAMPolicy
-from e2e.utils.k8s_core_api import patch_configmap, delete_configmap, upload_file_as_configmap
+from e2e.utils.k8s_core_api import (
+    patch_configmap,
+    delete_configmap,
+    upload_file_as_configmap,
+)
 
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 KATIB_EXPERIMENT_FILE = "katib-experiment-profile-irsa.yaml"
-KATIB_CONFIG_MAP_PATCH_FILE = TO_ROOT_PATH + "tests/e2e/resources/custom-resource-templates/patch_katib_config_map_sa.yaml"
+KATIB_CONFIG_MAP_PATCH_FILE = (
+    TO_ROOT_PATH
+    + "tests/e2e/resources/custom-resource-templates/patch_katib_config_map_sa.yaml"
+)
 KATIB_CONFIG_MAP_NAME = "katib-config"
 
 
@@ -160,9 +167,7 @@ def profile_trust_policy(
                     "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
-                "Condition": {"StringEquals": {
-                    f"{oidc_url}:aud": "sts.amazonaws.com"
-                }},
+                "Condition": {"StringEquals": {f"{oidc_url}:aud": "sts.amazonaws.com"}},
             }
         ],
     }
@@ -202,13 +207,16 @@ def profile_role(region, metadata, request, profile_trust_policy):
         on_delete=on_delete,
     )
 
+
 @pytest.fixture(scope="class")
 def client_namespace(profile_role):
     return "profile-aws-iam"
 
+
 @pytest.fixture(scope="class")
 def login():
     return "test-user@kubeflow.org"
+
 
 @pytest.fixture(scope="class")
 def configure_manifests(profile_role, region, kustomize_path):
@@ -221,7 +229,8 @@ def configure_manifests(profile_role, region, kustomize_path):
 
     profile_yaml_original = unmarshal_yaml(yaml_file=filename)
     profile_yaml = unmarshal_yaml(
-        yaml_file=filename, replacements={"IAM_ROLE": oidc_role_arn}
+        yaml_file=filename,
+        replacements={"IAM_ROLE": oidc_role_arn, "NAMESPACE": "profile-aws-iam"},
     )
 
     with open(filename, "w") as file:
@@ -322,9 +331,8 @@ class TestProfileIRSA:
         assert bucket_name in buckets
 
         s3_client.delete_bucket(Bucket=bucket_name)
-    
-    def test_pipeline_component_irsa(self, setup, kfp_client, client_namespace):
 
+    def test_pipeline_component_irsa(self, setup, kfp_client, client_namespace):
         def s3_op():
             import boto3
             import random
@@ -337,7 +345,8 @@ class TestProfileIRSA:
 
             s3 = boto3.client("s3", region_name="us-west-2")
             s3.create_bucket(
-                Bucket=s3_bucket_name, CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
+                Bucket=s3_bucket_name,
+                CreateBucketConfiguration={"LocationConstraint": "us-west-2"},
             )
             s3.delete_bucket(Bucket=s3_bucket_name)
 
@@ -347,17 +356,18 @@ class TestProfileIRSA:
 
         def s3_pipeline():
             s3_operation = s3_op()
-        
+
         run = kfp_client.create_run_from_pipeline_func(
             s3_pipeline, namespace=client_namespace, arguments={}
         )
 
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, run.run_id)
 
-    
     def test_katib_experiment(self, setup, cluster, region, client_namespace):
 
-        patch_configmap(KUBEFLOW_NAMESPACE, KATIB_CONFIG_MAP_NAME, KATIB_CONFIG_MAP_PATCH_FILE)
+        patch_configmap(
+            KUBEFLOW_NAMESPACE, KATIB_CONFIG_MAP_NAME, KATIB_CONFIG_MAP_PATCH_FILE
+        )
 
         filepath = os.path.abspath(
             os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
