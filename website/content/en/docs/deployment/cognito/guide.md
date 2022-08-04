@@ -42,7 +42,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
     2. Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
     3. ![cognito-app-client-settings](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png)
-1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need to specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
     1. In order to use a custom domain, its root(i.e. `platform.example.com`) must have an valid A type record. Create a new record of type `A` in `platform.example.com` hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
         1. Following is a screenshot of `platform.example.com` hosted zone. A record is shown. 
             1. ![subdomain-initial-A-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png)
