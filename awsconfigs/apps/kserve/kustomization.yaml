@@ -19,3 +19,8 @@ configMapGenerator:
     behavior: merge
     envs:
     - params.env
+  - name: inferenceservice-config
+    namespace: kserve
+    behavior: merge
+    files:
+    - ingress
