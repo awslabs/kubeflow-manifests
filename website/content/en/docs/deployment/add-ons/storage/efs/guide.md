@@ -239,6 +239,13 @@ yq e '.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM
 kubectl apply -f $GITHUB_STORAGE_DIR/notebook-sample/set-permission-job.yaml
 ```
 
+#### Dynamic provisioning  default owner 
+For dynamic provisioning (manual and automated setup), we already set the default Kubeflow Notebook user (Jovyan) as owner of the EFS file system by default.    
+##### Changing the default values
+You can always change the `uid` and `gid` used for the setup.  
+For the manual setup, you need to edit the `uid` and `gid` in the storage class inside `dynamic-provisioning/sc.yaml`.    
+For the automated setup, you can specify the `uid` and `gid` as arguments to the script, see [Advanced Customization](#advanced-customization) for more details on the different parameters that are available.  
+
 ### 3.4 Use existing EFS volume as workspace or data volume for a Notebook
 
 Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (`public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`). Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 

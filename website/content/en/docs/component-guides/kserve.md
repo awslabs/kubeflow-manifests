@@ -176,7 +176,7 @@ export KUBEFLOW_DOMAIN="platform.example.com"
 Install dependencies for the script by running:
 ```bash
 cd tests/e2e
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 Run the sample python script to send an inference request based on your auth provider:
