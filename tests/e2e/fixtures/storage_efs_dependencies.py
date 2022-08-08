@@ -11,7 +11,10 @@ from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
 from e2e.utils.utils import rand_name
 from e2e.utils.config import configure_resource_fixture
-from e2e.fixtures.cluster import associate_iam_oidc_provider, create_iam_service_account
+from e2e.fixtures.cluster import (
+    associate_iam_oidc_provider,
+    create_iam_service_account,
+)
 from e2e.utils.utils import (
     rand_name,
     wait_for,
@@ -79,7 +82,9 @@ def wait_on_mount_target_status(desired_status, efs_client, file_system_id):
         response = efs_client.describe_file_systems(
             FileSystemId=file_system_id,
         )
-        number_of_mount_targets = response["FileSystems"][0]["NumberOfMountTargets"]
+        number_of_mount_targets = response["FileSystems"][0][
+            "NumberOfMountTargets"
+        ]
         print(
             f"{file_system_id} has {number_of_mount_targets} mount targets .... waiting"
         )
@@ -128,8 +133,7 @@ def create_efs_driver_sa(
             policy = myfile.read()
 
         response = iam_client.create_policy(
-            PolicyName=policy_name,
-            PolicyDocument=policy,
+            PolicyName=policy_name, PolicyDocument=policy,
         )
         assert response["Policy"]["Arn"] is not None
 
@@ -139,15 +143,22 @@ def create_efs_driver_sa(
             cluster,
             region,
             policy_arn,
+            iam_role_name=policy_name,
         )
         efs_deps["efs_iam_policy_name"] = policy_name
+        efs_deps["efs_iam_policy_arn"] = policy_arn
 
     def on_delete():
         details_efs_deps = metadata.get("efs_deps") or efs_deps
         policy_arn = details_efs_deps["efs_iam_policy_arn"]
-        iam_client.delete_policy(
-            PolicyArn=policy_arn[0],
+        role_name = details_efs_deps["efs_iam_policy_name"]
+        print(
+            f"Deleting the policy {policy_arn} after detaching role named {role_name}"
         )
+        iam_client.detach_role_policy(
+            PolicyArn=policy_arn[0], RoleName=role_name,
+        )
+        iam_client.delete_policy(PolicyArn=policy_arn[0],)
 
     return configure_resource_fixture(
         metadata, request, efs_deps, "efs_deps", on_create, on_delete
@@ -167,11 +178,7 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
         vpc_id = response["cluster"]["resourcesVpcConfig"]["vpcId"]
 
         # Get CIDR Range
-        response = ec2_client.describe_vpcs(
-            VpcIds=[
-                vpc_id,
-            ]
-        )
+        response = ec2_client.describe_vpcs(VpcIds=[vpc_id,])
         cidr_ip = response["Vpcs"][0]["CidrBlock"]
 
         # Create Security Group
@@ -204,14 +211,7 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
 
         # Get Subnet Ids
         response = ec2_client.describe_subnets(
-            Filters=[
-                {
-                    "Name": "vpc-id",
-                    "Values": [
-                        vpc_id,
-                    ],
-                },
-            ]
+            Filters=[{"Name": "vpc-id", "Values": [vpc_id,],},]
         )
 
         # Create Mount Targets for each subnet - TODO: Check how many subnets this needs to be added to.
@@ -220,9 +220,7 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
             subnet_id = subnet["SubnetId"]
             response = efs_client.create_mount_target(
                 FileSystemId=file_system_id,
-                SecurityGroups=[
-                    security_group_id,
-                ],
+                SecurityGroups=[security_group_id,],
                 SubnetId=subnet_id,
             )
 
@@ -236,23 +234,17 @@ def create_efs_volume(metadata, region, request, cluster, create_efs_driver_sa):
         sg_id = details_efs_volume["security_group_id"]
 
         # Delete the Mount Targets
-        response = efs_client.describe_mount_targets(
-            FileSystemId=fs_id,
-        )
+        response = efs_client.describe_mount_targets(FileSystemId=fs_id,)
         existing_mount_targets = response["MountTargets"]
         for mount_target in existing_mount_targets:
             mount_target_id = mount_target["MountTargetId"]
-            efs_client.delete_mount_target(
-                MountTargetId=mount_target_id,
-            )
+            efs_client.delete_mount_target(MountTargetId=mount_target_id,)
 
         wait_on_mount_target_status("deleted", efs_client, fs_id)
 
         # Delete the Filesystem
 
-        efs_client.delete_file_system(
-            FileSystemId=fs_id,
-        )
+        efs_client.delete_file_system(FileSystemId=fs_id,)
         wait_on_efs_status("deleting", efs_client, fs_id)
         wait_on_efs_deletion(efs_client, fs_id)
 
@@ -278,9 +270,7 @@ def static_provisioning(metadata, region, request, cluster, create_efs_volume):
     efs_pvc_filepath = (
         "../../deployments/add-ons/storage/efs/static-provisioning/pvc.yaml"
     )
-    efs_permissions_filepath = (
-        "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
-    )
+    efs_permissions_filepath = "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
     efs_claim = {}
 
     def on_create():
@@ -335,9 +325,7 @@ def dynamic_provisioning(metadata, region, request, cluster):
     efs_sc_filepath = (
         "../../deployments/add-ons/storage/efs/dynamic-provisioning/sc.yaml"
     )
-    efs_permissions_filepath = (
-        "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
-    )
+    efs_permissions_filepath = "../../deployments/add-ons/storage/notebook-sample/set-permission-job.yaml"
     efs_auto_script_filepath = "utils/auto-efs-setup.py"
     efs_claim_dyn = {}
     efs_client = get_efs_client(region)
@@ -390,23 +378,17 @@ def dynamic_provisioning(metadata, region, request, cluster):
         fs_id = efs_claim_dyn["file_system_id"]
 
         # Delete the Mount Targets
-        response = efs_client.describe_mount_targets(
-            FileSystemId=fs_id,
-        )
+        response = efs_client.describe_mount_targets(FileSystemId=fs_id,)
         existing_mount_targets = response["MountTargets"]
         for mount_target in existing_mount_targets:
             mount_target_id = mount_target["MountTargetId"]
-            efs_client.delete_mount_target(
-                MountTargetId=mount_target_id,
-            )
+            efs_client.delete_mount_target(MountTargetId=mount_target_id,)
 
         wait_on_mount_target_status("deleted", efs_client, fs_id)
 
         # Delete the Filesystem
 
-        efs_client.delete_file_system(
-            FileSystemId=fs_id,
-        )
+        efs_client.delete_file_system(FileSystemId=fs_id,)
         wait_on_efs_deletion(efs_client, fs_id)
 
         security_group_id = get_security_group_id_from_name(
