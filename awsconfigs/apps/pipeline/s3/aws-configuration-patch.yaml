@@ -25,6 +25,12 @@ spec:
                 secretKeyRef:
                   name: mlpipeline-minio-artifact
                   key: secretkey
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-install-config
+                  key: minioServiceRegion
+
 
 ---
 apiVersion: apps/v1
