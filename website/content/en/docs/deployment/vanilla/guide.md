@@ -73,9 +73,9 @@ network authorization, and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
@@ -106,7 +106,7 @@ Install Knative Serving:
 
 ```sh
 kustomize build upstream/common/knative/knative-serving/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing, which can be used for inference request logging.
@@ -150,7 +150,7 @@ well.
 Install Istio resources:
 
 ```sh
-kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines

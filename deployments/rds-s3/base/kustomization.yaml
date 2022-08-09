@@ -6,9 +6,9 @@ resources:
   - ../../../upstream/common/cert-manager/cert-manager/base
   - ../../../upstream/common/cert-manager/kubeflow-issuer/base
   # Istio
-  - ../../../upstream/common/istio-1-11/istio-crds/base
-  - ../../../upstream/common/istio-1-11/istio-namespace/base
-  - ../../../upstream/common/istio-1-11/istio-install/base
+  - ../../../upstream/common/istio-1-14/istio-crds/base
+  - ../../../upstream/common/istio-1-14/istio-namespace/base
+  - ../../../upstream/common/istio-1-14/istio-install/base
   # OIDC Authservice
   - ../../../upstream/common/oidc-authservice/base
   # Dex
@@ -16,16 +16,14 @@ resources:
   # KNative
   - ../../../upstream/common/knative/knative-serving/overlays/gateways
   - ../../../upstream/common/knative/knative-eventing/base
-  - ../../../upstream/common/istio-1-11/cluster-local-gateway/base
+  - ../../../upstream/common/istio-1-14/cluster-local-gateway/base
   # Kubeflow namespace
   - ../../../upstream/common/kubeflow-namespace/base
   # Kubeflow Roles
   - ../../../upstream/common/kubeflow-roles/base
   # Kubeflow Istio Resources
-  - ../../../upstream/common/istio-1-11/kubeflow-istio-resources/base
+  - ../../../upstream/common/istio-1-14/kubeflow-istio-resources/base
 
-  # KFServing
-  - ../../../upstream/apps/kfserving/upstream/overlays/kubeflow
   # Central Dashboard
   - ../../../upstream/apps/centraldashboard/upstream/overlays/kserve
   # Admission Webhook
