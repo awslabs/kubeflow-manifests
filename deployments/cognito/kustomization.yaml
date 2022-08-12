@@ -21,7 +21,7 @@ resources:
   - ../../upstream/common/istio-1-14/kubeflow-istio-resources/base
 
   # Kubeflow Pipelines
-  - ../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+  - ../../awsconfigs/apps/pipeline/base
   # Katib
   - ../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
   # Central Dashboard
@@ -46,6 +46,9 @@ resources:
   # KServe
   - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
+
+  # ACK Sagemaker
+  - ../../awsconfigs/common/ack-sagemaker-controller
 
   # Configured for AWS Cognito
 

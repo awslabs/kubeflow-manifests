@@ -1,0 +1,46 @@
+# cluster scoped ack installation 
+
+bases:
+- ./base/default/
+
+patches:
+- patch : |-
+    - op: add
+      path: "/metadata/labels"
+      value: 
+        rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
+  target:
+    kind: ClusterRole
+    name: ack-sagemaker-controller
+- patch : |-
+    - op: add
+      path: "/metadata/annotations"
+      value:
+        eks.amazonaws.com/role-arn : $(ACK_SAGEMAKER_OIDC_ROLE)
+  target:
+    kind: ServiceAccount
+    name: ack-sagemaker-controller
+
+patchesStrategicMerge:
+- deployment_env_patch.yaml
+
+# Read and replace params
+
+configMapGenerator:
+- name: ack-sagemaker-controller-install-parameters
+  namespace: ack-system
+  envs:
+  - params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: ACK_SAGEMAKER_OIDC_ROLE
+  objref:
+    kind: ConfigMap
+    name: ack-sagemaker-controller-install-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ACK_SAGEMAKER_OIDC_ROLE
+configurations:
+- params.yaml
+

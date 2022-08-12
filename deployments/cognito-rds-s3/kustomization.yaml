@@ -43,6 +43,9 @@ resources:
   - ../../awsconfigs/apps/kserve
   - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
+  # ACK Sagemaker
+  - ../../awsconfigs/common/ack-sagemaker-controller
+  
   # Configured for AWS Cognito
 
   # Ingress

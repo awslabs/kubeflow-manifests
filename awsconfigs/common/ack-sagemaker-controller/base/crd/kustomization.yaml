@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+  - common
+resources:
+  - bases/sagemaker.services.k8s.aws_apps.yaml
+  - bases/sagemaker.services.k8s.aws_dataqualityjobdefinitions.yaml
+  - bases/sagemaker.services.k8s.aws_domains.yaml
+  - bases/sagemaker.services.k8s.aws_endpoints.yaml
+  - bases/sagemaker.services.k8s.aws_endpointconfigs.yaml
+  - bases/sagemaker.services.k8s.aws_featuregroups.yaml
+  - bases/sagemaker.services.k8s.aws_hyperparametertuningjobs.yaml
+  - bases/sagemaker.services.k8s.aws_models.yaml
+  - bases/sagemaker.services.k8s.aws_modelbiasjobdefinitions.yaml
+  - bases/sagemaker.services.k8s.aws_modelexplainabilityjobdefinitions.yaml
+  - bases/sagemaker.services.k8s.aws_modelpackages.yaml
+  - bases/sagemaker.services.k8s.aws_modelpackagegroups.yaml
+  - bases/sagemaker.services.k8s.aws_modelqualityjobdefinitions.yaml
+  - bases/sagemaker.services.k8s.aws_monitoringschedules.yaml
+  - bases/sagemaker.services.k8s.aws_notebookinstances.yaml
+  - bases/sagemaker.services.k8s.aws_notebookinstancelifecycleconfigs.yaml
+  - bases/sagemaker.services.k8s.aws_processingjobs.yaml
+  - bases/sagemaker.services.k8s.aws_trainingjobs.yaml
+  - bases/sagemaker.services.k8s.aws_transformjobs.yaml
+  - bases/sagemaker.services.k8s.aws_userprofiles.yaml
