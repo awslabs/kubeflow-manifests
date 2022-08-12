@@ -11,7 +11,7 @@ export CLUSTER_NAME=<>
 export CLUSTER_REGION=<>
 
 eksctl utils associate-iam-oidc-provider --region=$CLUSTER_REGION --cluster=$CLUSTER_NAME --approve
-eksctl create iamserviceaccount --name cloudwatch-agent --namespace amazon-cloudwatch --cluster $CLUSTER_NAME --region $CLUSTER_REGION cloudwatch-agent --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+eksctl create iamserviceaccount --name cloudwatch-agent --namespace amazon-cloudwatch --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 eksctl create iamserviceaccount --name fluent-bit --namespace amazon-cloudwatch --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 ```
 ## Install
