@@ -56,7 +56,7 @@ def get_oidc_provider(cluster_name, region):
     return oidc_provider
 
 def create_iam_service_account(
-    service_account_name, namespace, cluster_name, region, iam_policy_arns=[], iam_role_arn=None
+    service_account_name, namespace, cluster_name, region, iam_policy_arns=[], iam_role_arn=None, iam_role_name=None,
 ):
     cmd = []
     cmd += "eksctl create iamserviceaccount".split()
@@ -70,6 +70,9 @@ def create_iam_service_account(
 
     if iam_role_arn != None:
         cmd += f"--attach-role-arn {iam_role_arn}".split()
+
+    if iam_role_name != None:
+        cmd += f"--role-name {iam_role_name}".split()
 
     cmd += "--override-existing-serviceaccounts".split()
     cmd += "--approve".split()
