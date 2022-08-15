@@ -7,16 +7,7 @@ from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream
-from e2e.fixtures.profile_dependencies import (
-    configure_manifests,
-    profile_controller_policy,
-    profile_controller_service_account,
-    profile_trust_policy,
-    profile_role,
-    associate_oidc,
-    kustomize_path,
-)
+from e2e.fixtures.kustomize import kustomize, clone_upstream, configure_manifests
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -57,10 +48,15 @@ testdata = [
     ),
 ]
 
+GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+
+@pytest.fixture(scope="class")
+def kustomize_path():
+    return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
 class TestNotebookImages:
     @pytest.fixture(scope="function")
-    def setup(self, metadata, kustomize):
+    def setup(self, metadata, configure_manifests, kustomize):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestNotebookImages", metadata_file)
@@ -70,9 +66,10 @@ class TestNotebookImages:
     )
     def test_notebook_container(
         self,
-        configure_manifests,
-        notebook_server,
+        setup, 
         region,
+        metadata,
+        notebook_server,
         framework_name,
         image_name,
         ipynb_notebook_file,
