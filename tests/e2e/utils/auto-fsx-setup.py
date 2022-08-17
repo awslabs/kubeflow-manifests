@@ -61,10 +61,14 @@ def verify_oidc_provider_prerequisite():
 
 def is_oidc_provider_present() -> bool:
     eks_client = get_eks_client(CLUSTER_REGION)
-    https_oidc_provider = eks_client.describe_cluster(
-        name=CLUSTER_NAME,
-    ).get('cluster').get('identity').get('oidc').get('issuer')
-    return True if "oidc" in https_oidc_provider else False
+    try:
+        https_oidc_provider = eks_client.describe_cluster(
+            name=CLUSTER_NAME,
+        ).get('cluster').get('identity').get('oidc').get('issuer')
+        return True if "oidc" in https_oidc_provider else False
+    except:
+        print("returning False")
+        return False
 
 
 def verify_eksctl_is_installed():

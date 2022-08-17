@@ -50,10 +50,13 @@ def verify_oidc_provider_prerequisite():
 
 def is_oidc_provider_present() -> bool:
     eks_client = get_eks_client()
-    https_oidc_provider = eks_client.describe_cluster(
-        name=CLUSTER_NAME,
-    ).get('cluster').get('identity').get('oidc').get('issuer')
-    return True if "oidc" in https_oidc_provider else False
+    try:
+        https_oidc_provider = eks_client.describe_cluster(
+            name=CLUSTER_NAME,
+        ).get('cluster').get('identity').get('oidc').get('issuer')
+        return True if "oidc" in https_oidc_provider else False
+    except:
+        return False
 
 
 def get_iam_client():
