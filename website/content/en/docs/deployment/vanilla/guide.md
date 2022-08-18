@@ -105,7 +105,7 @@ Knative is used by the KServe/KFServing official Kubeflow component.
 Install Knative Serving:
 
 ```sh
-kustomize build upstream/common/knative/knative-serving/base | kubectl apply -f -
+kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
 kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
 ```
 
