@@ -60,27 +60,15 @@ def verify_oidc_provider_prerequisite():
 
 
 def is_oidc_provider_present() -> bool:
-    iam_client = get_iam_client(CLUSTER_REGION)
-    oidc_providers = iam_client.list_open_id_connect_providers()[
-        "OpenIDConnectProviderList"
-    ]
-
-    if len(oidc_providers) == 0:
+    eks_client = get_eks_client(CLUSTER_REGION)
+    try:
+        https_oidc_provider = eks_client.describe_cluster(
+            name=CLUSTER_NAME,
+        ).get('cluster').get('identity').get('oidc').get('issuer')
+        return True if "oidc" in https_oidc_provider else False
+    except:
+        print("returning False")
         return False
-
-    for oidc_provider in oidc_providers:
-        oidc_provider_tags = iam_client.get_open_id_connect_provider(
-            OpenIDConnectProviderArn=oidc_provider["Arn"]
-        )["Tags"]
-
-        if any(
-            tag["Key"] == "alpha.eksctl.io/cluster-name"
-            and tag["Value"] == CLUSTER_NAME
-            for tag in oidc_provider_tags
-        ):
-            return True
-
-    return False
 
 
 def verify_eksctl_is_installed():
