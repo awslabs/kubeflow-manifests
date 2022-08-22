@@ -1,0 +1,5 @@
+rds:
+  secretName: #rds-secret
+
+s3:
+  secretName: #s3-secret

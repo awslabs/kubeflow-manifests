@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  config: "{\nartifactRepository:\n{\n    s3: {\n        bucket: {{ .Values.s3.bucketName }},\n\
+    \        keyPrefix: artifacts,\n        endpoint: {{ .Values.s3.minioServiceHost }},\n        insecure:\
+    \ true,\n        accessKeySecret: {\n            name: mlpipeline-minio-artifact,\n\
+    \            key: accesskey\n        },\n        secretKeySecret: {\n        \
+    \    name: mlpipeline-minio-artifact,\n            key: secretkey\n        }\n\
+    \    },\n    archiveLogs: true\n}\n}\n"
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    application-crd-id: kubeflow-pipelines
+  name: workflow-controller-configmap
+  namespace: kubeflow

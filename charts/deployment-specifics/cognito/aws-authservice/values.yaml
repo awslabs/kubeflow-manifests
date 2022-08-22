@@ -1,0 +1,7 @@
+cognitoUserpool:
+  appClientId: 
+  domain: 
+
+route53:
+  subDomain:
+    name: 

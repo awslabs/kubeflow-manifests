@@ -1,0 +1,77 @@
+apiVersion: v1
+data:
+  agent: "{\n    \"image\" : \"kserve/agent:v0.8.0\",\n    \"memoryRequest\": \"100Mi\"\
+    ,\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\": \"100m\",\n    \"cpuLimit\"\
+    : \"1\"\n}"
+  batcher: "{\n    \"image\" : \"kserve/agent:v0.8.0\",\n    \"memoryRequest\": \"\
+    1Gi\",\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\": \"1\",\n    \"cpuLimit\"\
+    : \"1\"\n}"
+  credentials: "{\n   \"gcs\": {\n       \"gcsCredentialFileName\": \"gcloud-application-credentials.json\"\
+    \n   },\n   \"s3\": {\n       \"s3AccessKeyIDName\": \"AWS_ACCESS_KEY_ID\",\n\
+    \       \"s3SecretAccessKeyName\": \"AWS_SECRET_ACCESS_KEY\"\n   }\n}"
+  deploy: "{\n  \"defaultDeploymentMode\": \"Serverless\"\n}"
+  explainers: "{\n    \"alibi\": {\n        \"image\" : \"kserve/alibi-explainer\"\
+    ,\n        \"defaultImageVersion\": \"latest\"\n    },\n    \"aix\": {\n     \
+    \   \"image\" : \"kserve/aix-explainer\",\n        \"defaultImageVersion\": \"\
+    latest\"\n    },\n    \"art\": {\n        \"image\" : \"kserve/art-explainer\"\
+    ,\n        \"defaultImageVersion\": \"latest\"\n    }\n}"
+  ingress: "{\n    \"ingressGateway\" : \"kubeflow/kubeflow-gateway\",\n    \"ingressService\"\
+    \ : \"istio-ingressgateway.istio-system.svc.cluster.local\",\n    \"localGateway\"\
+    \ : \"knative-serving/knative-local-gateway\",\n    \"localGatewayService\" :\
+    \ \"knative-local-gateway.istio-system.svc.cluster.local\",\n    \"ingressDomain\"\
+    \  : \"example.com\"\n}"
+  logger: "{\n    \"image\" : \"kserve/agent:v0.8.0\",\n    \"memoryRequest\": \"\
+    100Mi\",\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\": \"100m\",\n    \"\
+    cpuLimit\": \"1\",\n    \"defaultUrl\": \"http://default-broker\"\n}"
+  predictors: "{\n    \"tensorflow\": {\n        \"image\": \"tensorflow/serving\"\
+    ,\n        \"defaultImageVersion\": \"2.6.2\",\n        \"defaultGpuImageVersion\"\
+    : \"2.6.2-gpu\",\n        \"defaultTimeout\": \"60\",\n        \"supportedFrameworks\"\
+    : [\n          \"tensorflow\"\n        ],\n        \"multiModelServer\": false\n\
+    \    },\n    \"onnx\": {\n        \"image\": \"mcr.microsoft.com/onnxruntime/server\"\
+    ,\n        \"defaultImageVersion\": \"v1.0.0\",\n        \"supportedFrameworks\"\
+    : [\n          \"onnx\"\n        ],\n        \"multiModelServer\": false\n   \
+    \ },\n    \"sklearn\": {\n      \"v1\": {\n        \"image\": \"kserve/sklearnserver\"\
+    ,\n        \"defaultImageVersion\": \"v0.8.0\",\n        \"supportedFrameworks\"\
+    : [\n          \"sklearn\"\n        ],\n        \"multiModelServer\": true\n \
+    \     },\n      \"v2\": {\n        \"image\": \"docker.io/seldonio/mlserver\"\
+    ,\n        \"defaultImageVersion\": \"0.5.3\",\n        \"supportedFrameworks\"\
+    : [\n          \"sklearn\"\n        ],\n        \"multiModelServer\": true\n \
+    \     }\n    },\n    \"xgboost\": {\n      \"v1\": {\n        \"image\": \"kserve/xgbserver\"\
+    ,\n        \"defaultImageVersion\": \"v0.8.0\",\n        \"supportedFrameworks\"\
+    : [\n          \"xgboost\"\n        ],\n        \"multiModelServer\": true\n \
+    \     },\n      \"v2\": {\n        \"image\": \"docker.io/seldonio/mlserver\"\
+    ,\n        \"defaultImageVersion\": \"0.5.3\",\n        \"supportedFrameworks\"\
+    : [\n          \"xgboost\"\n        ],\n        \"multiModelServer\": true\n \
+    \     }\n    },\n    \"pytorch\": {\n      \"v1\" : {\n        \"image\": \"kserve/torchserve-kfs\"\
+    ,\n        \"defaultImageVersion\": \"0.5.3\",\n        \"defaultGpuImageVersion\"\
+    : \"0.5.3-gpu\",\n        \"supportedFrameworks\": [\n          \"pytorch\"\n\
+    \        ],\n        \"multiModelServer\": false\n      },\n      \"v2\" : {\n\
+    \        \"image\": \"kserve/torchserve-kfs\",\n        \"defaultImageVersion\"\
+    : \"0.5.3\",\n        \"defaultGpuImageVersion\": \"0.5.3-gpu\",\n        \"supportedFrameworks\"\
+    : [\n          \"pytorch\"\n        ],\n        \"multiModelServer\": false\n\
+    \      }\n    },\n    \"triton\": {\n        \"image\": \"nvcr.io/nvidia/tritonserver\"\
+    ,\n        \"defaultImageVersion\": \"21.09-py3\",\n        \"supportedFrameworks\"\
+    : [\n          \"tensorrt\",\n          \"tensorflow\",\n          \"onnx\",\n\
+    \          \"pytorch\"\n        ],\n        \"multiModelServer\": true\n    },\n\
+    \    \"pmml\": {\n        \"image\": \"kserve/pmmlserver\",\n        \"defaultImageVersion\"\
+    : \"v0.8.0\",\n        \"supportedFrameworks\": [\n          \"pmml\"\n      \
+    \  ],\n        \"multiModelServer\": false\n    },\n    \"lightgbm\": {\n    \
+    \    \"image\": \"kserve/lgbserver\",\n        \"defaultImageVersion\": \"v0.8.0\"\
+    ,\n        \"supportedFrameworks\": [\n          \"lightgbm\"\n        ],\n  \
+    \      \"multiModelServer\": false\n    },\n    \"paddle\": {\n        \"image\"\
+    : \"kserve/paddleserver\",\n        \"defaultImageVersion\": \"v0.8.0\",\n   \
+    \     \"supportedFrameworks\": [\n          \"paddle\"\n        ],\n        \"\
+    multiModelServer\": false\n    }\n}"
+  storageInitializer: "{\n    \"image\" : \"kserve/storage-initializer:v0.8.0\",\n\
+    \    \"memoryRequest\": \"100Mi\",\n    \"memoryLimit\": \"1Gi\",\n    \"cpuRequest\"\
+    : \"100m\",\n    \"cpuLimit\": \"1\"\n}"
+  transformers: '{
+
+    }'
+kind: ConfigMap
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/name: kserve
+  name: inferenceservice-config
+  namespace: kubeflow

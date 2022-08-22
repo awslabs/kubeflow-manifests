@@ -1,0 +1,27 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: kserve-torchserve
+spec:
+  containers:
+  - args:
+    - torchserve
+    - --start
+    - --model-store=/mnt/models/model-store
+    - --ts-config=/mnt/models/config/config.properties
+    env:
+    - name: TS_SERVICE_ENVELOPE
+      value: '{{`{{.Labels.serviceEnvelope}}`}}'
+    image: kserve/torchserve-kfs:0.5.3
+    name: kserve-container
+    resources:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+  supportedModelFormats:
+  - autoSelect: true
+    name: pytorch
+    version: '1'

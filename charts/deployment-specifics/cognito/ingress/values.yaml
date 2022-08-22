@@ -1,0 +1,9 @@
+clustername: 
+cognitoUserpool:
+  ARN: 
+  appClientId: 
+  domain: 
+
+route53:
+  subDomain:
+    certArn: 

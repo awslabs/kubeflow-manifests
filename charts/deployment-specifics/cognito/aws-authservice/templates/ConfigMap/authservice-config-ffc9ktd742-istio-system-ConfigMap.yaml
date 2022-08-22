@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  LOGOUT_URL: '"https://{{ .Values.cognitoUserpool.domain }}/logout?client_id={{ .Values.cognitoUserpool.appClientId
+    }}&logout_uri=https://kubeflow.{{ .Values.route53.subDomain.name }}"'
+kind: ConfigMap
+metadata:
+  name: authservice-config-ffc9ktd742
+  namespace: istio-system

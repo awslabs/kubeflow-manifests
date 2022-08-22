@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  CognitoAppClientId: '{{ .Values.cognitoUserpool.appClientId }}'
+  CognitoUserPoolArn: '{{ .Values.cognitoUserpool.ARN }}'
+  CognitoUserPoolDomain: '{{ .Values.cognitoUserpool.domain }}'
+  certArn: '{{ .Values.route53.subDomain.certArn }}'
+kind: ConfigMap
+metadata:
+  name: istio-ingress-cognito-parameters
+  namespace: istio-system

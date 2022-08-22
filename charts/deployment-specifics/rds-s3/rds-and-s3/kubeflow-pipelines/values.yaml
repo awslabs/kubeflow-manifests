@@ -1,0 +1,8 @@
+rds:
+  dbHost: #kubeflow-db.xxxxxxxxxx.ca-central-1.rds.amazonaws.com
+  mlmdDb: #metadb
+
+s3:
+  bucketName: #s3-bucket
+  minioServiceRegion: #ca-central-1
+  minioServiceHost: #s3.amazonaws.com
