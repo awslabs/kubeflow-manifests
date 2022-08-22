@@ -20,7 +20,6 @@ spec:
           requests:
             cpu: 500m
             memory: 1Gi
-        serviceAccountName: default-editor
         volumeMounts:
         - mountPath: /home/jovyan
           name: ${NOTEBOOK_NAME}
@@ -28,6 +27,7 @@ spec:
           name: ${NOTEBOOK_NAME}-config-map
         - mountPath: /dev/shm
           name: dshm
+      serviceAccountName: default-editor
       volumes:
       - name: ${NOTEBOOK_NAME}
         persistentVolumeClaim:
