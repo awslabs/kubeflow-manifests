@@ -87,7 +87,7 @@ def get_ingress(cluster, region, name="istio-ingress", namespace="istio-system")
         cluster,
         region,
         group="networking.k8s.io",
-        version="v1beta1",
+        version="v1",
         namespace=namespace,
         plural="ingresses",
         name=name,
