@@ -6,9 +6,7 @@ weight = 30
 
 This tutorial shows how to set up a load balancer endpoint for serving prediction requests over an external DNS on AWS.
 
-> Note: Kubeflow on AWS v1.4 uses [KFServing](https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition). The KFServing project is now called KServe.
-
-> Note: Kubeflow on AWS v1.6+ only includes KServe
+The KFServing project is now called [KServe](https://kserve.github.io/website/0.7/blog/articles/2021-09-27-kfserving-transition/#kfserving-is-now-kserve). To migrate from KFServing to Kserve follow this [guide](https://kserve.github.io/website/0.7/admin/migration/).
 
 Read the [background]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#background" >}}) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
 
