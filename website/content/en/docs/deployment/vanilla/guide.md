@@ -100,7 +100,7 @@ kustomize build upstream/common/oidc-authservice/base | kubectl apply -f -
 
 #### Knative
 
-Knative is used by the KServe/KFServing official Kubeflow component.
+Knative is used by the KServe official Kubeflow component.
 
 Install Knative Serving:
 
@@ -161,9 +161,10 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
-#### KServe / KFServing
+#### KServe
+Kubeflow 1.6 and above only supports KServe
+KFServing was rebranded to KServe. 
 
-KFServing was rebranded to KServe.
 
 Install the KServe component:
 
@@ -175,13 +176,6 @@ Install the Models web app:
 
 ```sh
 kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
-```
-
-For those not ready to migrate to KServe, you can still install KFServing v0.6.1 with
-the following command, but we recommend migrating to KServe as soon as possible:
-
-```sh
-kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Katib

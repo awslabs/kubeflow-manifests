@@ -8,6 +8,8 @@ This tutorial shows how to set up a load balancer endpoint for serving predictio
 
 > Note: Kubeflow on AWS v1.4 uses [KFServing](https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition). The KFServing project is now called KServe.
 
+> Note: Kubeflow on AWS v1.6+ only includes KServe
+
 Read the [background]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#background" >}}) section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.
 
 ## Prerequisites
@@ -134,7 +136,7 @@ Once your ingress-managed Load Balancer is ready, copy the `ADDRESS` of that Loa
 
 ### Create an `AuthorizationPolicy`
 
-Namespaces created by the Kubeflow profile controller have a missing authorization policy that prevents the KFServing predictor and transformer from working. 
+Namespaces created by the Kubeflow profile controller have a missing authorization policy that prevents the KServe predictor and transformer from working. 
 
 > Known Issue: See [kserve/kserve#1558](https://github.com/kserve/kserve/issues/1558) and [kubeflow/kubeflow#5965](https://github.com/kubeflow/kubeflow/issues/5965) for more information.
 
@@ -150,7 +152,7 @@ Set the environment variable value for `PROFILE_NAMESPACE`(e.g. `staging`) accor
 export PROFILE_NAMESPACE="staging"
 ```
 
-Create a scikit-learn `InferenceService` using a [sample](https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml) from the KFserving repository and wait for `READY` to be `True`.
+Create a scikit-learn `InferenceService` using a [sample](https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml) from the KServe repository and wait for `READY` to be `True`.
 
 ```bash
 kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml

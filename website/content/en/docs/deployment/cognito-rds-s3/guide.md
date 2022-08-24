@@ -58,9 +58,6 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 
-        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
-        kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-        
         # Central Dashboard
         kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
