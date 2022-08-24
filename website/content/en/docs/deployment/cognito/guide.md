@@ -110,9 +110,9 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
         
         # Cert-Manager
         kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
@@ -121,10 +121,10 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         # KNative
         kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
         
         # Kubeflow Pipelines
         # reapply manifest if you see an error
@@ -133,10 +133,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         # KServe
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
-
-        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
-        kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-
+        
         # Katib
         kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
         

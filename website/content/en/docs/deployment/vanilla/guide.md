@@ -73,9 +73,9 @@ network authorization, and implement routing policies.
 Install Istio:
 
 ```sh
-kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
 ```
 
 #### Dex
@@ -100,13 +100,13 @@ kustomize build upstream/common/oidc-authservice/base | kubectl apply -f -
 
 #### Knative
 
-Knative is used by the KServe/KFServing official Kubeflow component.
+Knative is used by the KServe official Kubeflow component.
 
 Install Knative Serving:
 
 ```sh
 kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
 ```
 
 Optionally, you can install Knative Eventing, which can be used for inference request logging.
@@ -150,7 +150,7 @@ well.
 Install Istio resources:
 
 ```sh
-kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
+kustomize build upstream/common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
 #### Kubeflow Pipelines
@@ -161,9 +161,10 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
 ```
 
-#### KServe / KFServing
+#### KServe
+Kubeflow 1.6 and above only supports KServe
+KFServing was rebranded to KServe. 
 
-KFServing was rebranded to KServe.
 
 Install the KServe component:
 
@@ -175,13 +176,6 @@ Install the Models web app:
 
 ```sh
 kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
-```
-
-For those not ready to migrate to KServe, you can still install KFServing v0.6.1 with
-the following command, but we recommend migrating to KServe as soon as possible:
-
-```sh
-kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
 #### Katib
@@ -289,8 +283,6 @@ kubectl get pods -n knative-eventing
 kubectl get pods -n knative-serving
 kubectl get pods -n kubeflow
 kubectl get pods -n kubeflow-user-example-com
-# Depending on your installation if you installed KServe
-kubectl get pods -n kserve
 ```
 
 #### Port-Forward

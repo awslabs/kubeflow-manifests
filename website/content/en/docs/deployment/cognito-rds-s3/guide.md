@@ -38,9 +38,9 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
         kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
         
         # Istio
-        kustomize build upstream/common/istio-1-11/istio-crds/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/istio-namespace/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/istio-install/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
 
         # Cert-Manager
         kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
@@ -49,18 +49,15 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
         # KNative
         kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
         kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-11/cluster-local-gateway/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
         
         # Kubeflow Istio Resources
-        kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base | kubectl apply -f -
+        kustomize build upstream/common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
         
         # KServe
         kustomize build awsconfigs/apps/kserve | kubectl apply -f -
         kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
 
-        # KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible
-        kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow | kubectl apply -f -
-        
         # Central Dashboard
         kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
         
