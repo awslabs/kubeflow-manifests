@@ -12,7 +12,7 @@ from e2e.utils.utils import (
 from e2e.utils.config import configure_resource_fixture
 
 # Todo load from yaml and replace values
-def create_cluster(cluster_name, region, cluster_version="1.19"):
+def create_cluster(cluster_name, region, cluster_version="1.22"):
     cmd = []
     cmd += "eksctl create cluster".split()
     cmd += f"--name {cluster_name}".split()
