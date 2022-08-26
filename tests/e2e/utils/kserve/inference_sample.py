@@ -7,10 +7,10 @@ from e2e.utils.utils import load_json_file
 # common vars
 KUBEFLOW_DOMAIN = os.environ.get("KUBEFLOW_DOMAIN", "kubeflow.example.com")
 PROFILE_NAMESPACE = os.environ.get("PROFILE_NAMESPACE", "staging")
-MODEL_NAME = os.environ.get("MODEL_NAME", "sklearn-irisv2")
+MODEL_NAME = os.environ.get("MODEL_NAME", "sklearn-iris")
 AUTH_PROVIDER = os.environ.get("AUTH_PROVIDER", "dex")
 
-URL = f"https://{MODEL_NAME}.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}/v2/models/{MODEL_NAME}/infer"
+URL = f"https://{MODEL_NAME}.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}/v1/models/{MODEL_NAME}/predict"
 HEADERS = {"Host": f"{MODEL_NAME}.{PROFILE_NAMESPACE}.{KUBEFLOW_DOMAIN}"}
 DASHBOARD_URL = f"https://kubeflow.{KUBEFLOW_DOMAIN}"
 
