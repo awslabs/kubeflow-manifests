@@ -30,3 +30,12 @@ patchesStrategicMerge:
 # when application is deleted.
 commonLabels:
   application-crd-id: kubeflow-pipelines
+vars:
+- name: kfp-artifact-storage-endpoint
+  objref:
+    kind: ConfigMap
+    name: pipeline-install-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.minioServiceHost
+
