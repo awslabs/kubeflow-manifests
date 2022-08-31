@@ -19,6 +19,7 @@ spec:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+        checksum/config/install: {{ include (print $.Template.BasePath "/ConfigMap/pipeline-install-config-kubeflow-ConfigMap.yaml") . | sha256sum }}
       labels:
         app: ml-pipeline-scheduledworkflow
         app.kubernetes.io/component: ml-pipeline

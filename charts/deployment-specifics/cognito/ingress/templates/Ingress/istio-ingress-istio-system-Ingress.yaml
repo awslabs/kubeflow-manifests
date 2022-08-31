@@ -12,6 +12,8 @@ metadata:
     alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
     alb.ingress.kubernetes.io/scheme: internet-facing
     kubernetes.io/ingress.class: alb
+    checksum/config/cognito/parameters: {{ include (print $.Template.BasePath "/ConfigMap/istio-ingress-cognito-parameters.yaml") . | sha256sum }}
+    checksum/config/ingress/parameters: {{ include (print $.Template.BasePath "/ConfigMap/istio-ingress-parameters-istio-system-ConfigMap.yaml") . | sha256sum }}  
   labels:
     kustomize.component: istio-ingress
   name: istio-ingress

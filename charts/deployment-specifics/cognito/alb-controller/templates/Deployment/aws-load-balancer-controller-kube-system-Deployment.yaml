@@ -20,6 +20,8 @@ spec:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: aws-load-balancer-controller
         kustomize.component: aws-load-balancer-controller
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/ConfigMap/aws-load-balancer-controller-config-kube-system-ConfigMap.yaml") . | sha256sum }}
     spec:
       containers:
       - args:

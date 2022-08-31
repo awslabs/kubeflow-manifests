@@ -23,6 +23,8 @@ spec:
         app.kubernetes.io/component: ml-pipeline
         app.kubernetes.io/name: kubeflow-pipelines
         application-crd-id: kubeflow-pipelines
+      annotations:
+        checksum/config/install: {{ include (print $.Template.BasePath "/ConfigMap/pipeline-install-config-kubeflow-ConfigMap.yaml") . | sha256sum }}
     spec:
       containers:
       - args:

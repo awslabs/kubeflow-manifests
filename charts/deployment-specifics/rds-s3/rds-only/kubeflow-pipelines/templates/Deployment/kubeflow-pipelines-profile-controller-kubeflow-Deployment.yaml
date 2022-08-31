@@ -20,6 +20,7 @@ spec:
     metadata:
       annotations:
         sidecar.istio.io/inject: 'false'
+        checksum/config/install: {{ include (print $.Template.BasePath "/ConfigMap/pipeline-install-config-kubeflow-ConfigMap.yaml") . | sha256sum }}
       labels:
         app: kubeflow-pipelines-profile-controller
         app.kubernetes.io/component: ml-pipeline

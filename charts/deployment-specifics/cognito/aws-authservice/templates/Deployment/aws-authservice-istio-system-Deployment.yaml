@@ -14,6 +14,7 @@ spec:
     metadata:
       annotations:
         sidecar.istio.io/inject: 'false'
+        checksum/config: {{ include (print $.Template.BasePath "/ConfigMap/authservice-config-istio-system-ConfigMap.yaml") . | sha256sum }}
       labels:
         app: aws-authservice
     spec:

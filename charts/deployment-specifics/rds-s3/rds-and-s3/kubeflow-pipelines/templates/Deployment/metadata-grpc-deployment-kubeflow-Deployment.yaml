@@ -17,6 +17,8 @@ spec:
       labels:
         application-crd-id: kubeflow-pipelines
         component: metadata-grpc-server
+      annotations:
+        checksum/config/install: {{ include (print $.Template.BasePath "/ConfigMap/pipeline-install-config-kubeflow-ConfigMap.yaml") . | sha256sum }}
     spec:
       containers:
       - args:
