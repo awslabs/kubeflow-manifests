@@ -1,0 +1,7 @@
+# Code generated in runtime. DO NOT EDIT.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - bases/services.k8s.aws_adoptedresources.yaml
+  - bases/services.k8s.aws_fieldexports.yaml

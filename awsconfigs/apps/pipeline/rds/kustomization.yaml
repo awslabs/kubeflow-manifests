@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
 bases:
-- ../../../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+- ../base
 configMapGenerator:
 - name: pipeline-install-config
   env: params.env

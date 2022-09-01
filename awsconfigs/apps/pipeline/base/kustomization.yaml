@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubeflow
+bases:
+- ../../../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+
+images:
+  - name: gcr.io/ml-pipeline/api-server
+    newName: public.ecr.aws/c9e4w0g3/ml-pipeline/api-server
+    newTag: dev-2.0.0-alpha.3
+
