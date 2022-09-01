@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SagemakerStudioAccess",
+      "Effect": "Allow",
+      "Action": [
+        "sagemaker:*"
+      ],
+      "Resource": [
+        "arn:aws:sagemaker:*:*:domain/*",
+        "arn:aws:sagemaker:*:*:user-profile/*",
+        "arn:aws:sagemaker:*:*:app/*"
+      ]
+    }
+  ]
+}
