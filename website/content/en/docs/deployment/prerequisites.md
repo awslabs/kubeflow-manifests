@@ -55,7 +55,7 @@ Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-man
 
 Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.5.1) and `AWS_RELEASE_VERSION`(e.g. v1.5.1-aws-b1.0.1) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
 ```bash
-export KUBEFLOW_RELEASE_VERSION=v1.5.1
+export KUBEFLOW_RELEASE_VERSION=v1.6.0-rc.3
 export AWS_RELEASE_VERSION=v1.5.1-aws-b1.0.1
 git clone https://github.com/awslabs/kubeflow-manifests.git && cd kubeflow-manifests
 git checkout ${AWS_RELEASE_VERSION}
