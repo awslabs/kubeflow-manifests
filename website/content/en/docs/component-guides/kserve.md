@@ -153,17 +153,17 @@ export PROFILE_NAMESPACE="staging"
 Create a scikit-learn `InferenceService` using a [sample](https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml) from the KServe repository and wait for `READY` to be `True`.
 
 ```bash
-kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml
+kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v1/sklearn.yaml
 ```
 
 ### Check `InferenceService` status
 
 Check the `InferenceService` status. Once it is ready, copy the URL to use for sending a prediction request.
 ```bash
-kubectl get inferenceservices sklearn-irisv2 -n ${PROFILE_NAMESPACE}
+kubectl get inferenceservices sklearn-iris -n ${PROFILE_NAMESPACE}
 
 NAME             URL                                                 READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                      AGE
-sklearn-irisv2   http://sklearn-iris2.staging.platform.example.com   True           100                              sklearn-irisv2-predictor-default-00001   3m31s
+sklearn-iris   http://sklearn-iris.staging.platform.example.com   True           100                              sklearn-iris-predictor-default-00001   3m31s
 ```
 
 ### Send an inference request
@@ -198,24 +198,7 @@ The output should look similar to the following:
 ```bash
 Status Code 200
 JSON Response  {
-  "model_name": "sklearn-irisv2",
-  "model_version": null,
-  "id": "e5fc40ba-5f02-42f7-aff8-34042facbe11",
-  "parameters": null,
-  "outputs": [
-    {
-      "name": "predict",
-      "shape": [
-        2
-      ],
-      "datatype": "FP32",
-      "parameters": null,
-      "data": [
-        1,
-        2
-      ]
-    }
-  ]
+"predictions": [1, 1]
 }
 ```
 
@@ -235,23 +218,6 @@ The output should look similar to the following:
 ```bash
 Status Code 200
 JSON Response  {
-  "model_name": "sklearn-irisv2",
-  "model_version": null,
-  "id": "e5fc40ba-5f02-42f7-aff8-34042facbe11",
-  "parameters": null,
-  "outputs": [
-    {
-      "name": "predict",
-      "shape": [
-        2
-      ],
-      "datatype": "FP32",
-      "parameters": null,
-      "data": [
-        1,
-        2
-      ]
-    }
-  ]
+"predictions": [1, 1]
 }
 ```
