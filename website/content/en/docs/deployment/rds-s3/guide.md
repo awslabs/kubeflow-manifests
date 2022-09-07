@@ -131,7 +131,7 @@ Follow this step if you prefer to manually set up each component.
       1. Rename the `parameters.objects.objectName` field in [the RDS Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml) to the name of the Secret. 
          - Rename the field with the following command:
            ```bash
-           yq e -i '.spec.parameters.objects |= sub("rds-secret",env($RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+           yq e -i '.spec.parameters.objects |= sub("rds-secret",env(RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
            ```
          - For example, if your Secret name is `rds-secret-new`, the configuration should look similar to the following:
          - ```bash
@@ -169,7 +169,7 @@ Follow this step if you prefer to manually set up each component.
       1. Rename the `parameters.objects.objectName` field in [the S3 Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the Secret. 
          - Rename the field with the following command:
            ```bash
-           yq e -i '.spec.parameters.objects |= sub("s3-secret",env($S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
+           yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
            ```
          - For example, if your Secret name is `s3-secret-new`, the configuration should look similar to the following:
          - ```bash
