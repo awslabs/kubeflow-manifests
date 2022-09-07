@@ -17,7 +17,7 @@
 spawnerFormDefaults:
   image:
     # The container Image for the user's Jupyter Notebook
-    value: kubeflownotebookswg/jupyter-scipy:v1.6.0
+    value: public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8
     # The list of available standard container Images
     options:
     - kubeflownotebookswg/jupyter-scipy:v1.6.0
