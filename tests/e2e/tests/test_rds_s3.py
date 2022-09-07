@@ -234,7 +234,7 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 
         return resp
 
-    return wait_for(callback)
+    return wait_for(callback, timeout=600)
 
 
 def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):

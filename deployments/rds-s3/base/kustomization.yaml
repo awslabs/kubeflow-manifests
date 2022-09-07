@@ -50,7 +50,7 @@ resources:
   - ../../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
 
   # ACK Sagemaker
-  - ../../awsconfigs/common/ack-sagemaker-controller
+  - ../../../awsconfigs/common/ack-sagemaker-controller
 
   # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
   - ../../../awsconfigs/common/aws-telemetry
