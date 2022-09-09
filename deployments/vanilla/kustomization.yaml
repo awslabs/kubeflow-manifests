@@ -8,7 +8,7 @@ resources:
   # Istio
   - ../../upstream/common/istio-1-14/istio-crds/base
   - ../../upstream/common/istio-1-14/istio-namespace/base
-  - ../../upstream/common/istio-1-14/istio-install/base
+  - ../../awsconfigs/common/istio
   # OIDC Authservice
   - ../../upstream/common/oidc-authservice/base
   # Dex

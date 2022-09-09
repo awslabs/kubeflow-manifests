@@ -12,7 +12,7 @@ resources:
   # Istio
   - ../../upstream/common/istio-1-14/istio-crds/base
   - ../../upstream/common/istio-1-14/istio-namespace/base
-  - ../../upstream/common/istio-1-14/istio-install/base
+  - ../../awsconfigs/common/istio
   # KNative
   - ../../upstream/common/knative/knative-serving/overlays/gateways
   - ../../upstream/common/knative/knative-eventing/base
