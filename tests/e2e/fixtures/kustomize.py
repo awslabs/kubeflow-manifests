@@ -74,7 +74,7 @@ def kustomize(
 
     def on_create():
         wait_for(lambda: apply_kustomize(kustomize_path), timeout=20 * 60)
-        time.sleep(5 * 60)  # wait a bit for all pods to be running
+        time.sleep(1 * 60)  # wait a bit for all pods to be running
         # TODO: verify this programmatically
 
     def on_delete():
