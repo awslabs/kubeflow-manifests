@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  ingressGateway: kubeflow/kubeflow-gateway
+kind: ConfigMap
+metadata:
+  labels:
+    app: kserve
+    app.kubernetes.io/name: kserve
+  name: kserve-config
+  namespace: kubeflow
