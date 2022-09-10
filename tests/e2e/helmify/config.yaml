@@ -1,0 +1,250 @@
+Kustomization Filepaths:
+#Vanilla
+  # Kubeflow-Issuer
+  - ../../upstream/common/cert-manager/kubeflow-issuer/base
+
+  # Istio
+  - ../../upstream/common/istio-1-14/istio-crds/base
+  - ../../upstream/common/istio-1-14/istio-namespace/base
+  - ../../awsconfigs/common/istio
+
+  # OIDC Authservice
+  - ../../upstream/common/oidc-authservice/base
+  # Dex
+  - ../../upstream/common/dex/overlays/istio
+  # KNative
+  - ../../upstream/common/knative/knative-serving/overlays/gateways
+  - ../../upstream/common/knative/knative-eventing/base
+  - ../../upstream/common/istio-1-14/cluster-local-gateway/base
+  # Kubeflow namespace
+  - ../../upstream/common/kubeflow-namespace/base
+  # Kubeflow Roles
+  - ../../upstream/common/kubeflow-roles/base
+  # Kubeflow Istio Resources
+  - ../../upstream/common/istio-1-14/kubeflow-istio-resources/base
+
+  # Kubeflow Pipelines
+  - ../../awsconfigs/apps/pipeline/base
+  # Katib
+  - ../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
+  # Central Dashboard
+  - ../../upstream/apps/centraldashboard/upstream/overlays/kserve
+  # Admission Webhook
+  - ../../upstream/apps/admission-webhook/upstream/overlays/cert-manager
+  # Jupyter Web App
+  - ../../awsconfigs/apps/jupyter-web-app
+  # Notebook Controller
+  - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+  # Profiles + KFAM
+  - ../../upstream/apps/profiles/upstream/overlays/kubeflow
+  # Volumes Web App
+  - ../../upstream/apps/volumes-web-app/upstream/overlays/istio
+  # Tensorboard Controller
+  - ../../upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+  # Tensorboards Web App
+  - ../../upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  # Training Operator
+  - ../../upstream/apps/training-operator/upstream/overlays/kubeflow
+  # User namespace
+  - ../../upstream/common/user-namespace/base
+
+  # KServe
+  - ../../awsconfigs/apps/kserve
+  # Models Web App
+  - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
+
+
+  # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+  - ../../awsconfigs/common/aws-telemetry
+#Cognito
+# Ingress
+  - ../../awsconfigs/common/istio-ingress/overlays/cognito
+# Authservice
+  - ../../awsconfigs/common/aws-authservice/base
+
+#RDS-AND-S3
+# AWS Secret Manager
+  - ../../awsconfigs/common/aws-secrets-manager
+# Kubeflow Pipelines
+  - ../../awsconfigs/apps/pipeline
+# Katib
+  - ../../awsconfigs/apps/katib-external-db-with-kubeflow
+#RDS-only
+# AWS Secret Manager
+  - ../../awsconfigs/common/aws-secrets-manager/rds
+# Kubeflow Pipelines
+  - ../../awsconfigs/apps/pipeline/rds
+
+#S3-only
+  # AWS Secret Manager
+  - ../../awsconfigs/common/aws-secrets-manager/s3
+  # Kubeflow Pipelines
+  - ../../awsconfigs/apps/pipeline/s3
+
+  
+Helm Chart Names:
+#Vanilla
+ # Kubeflow-Issuer
+  - kubeflow-issuer
+# Istio
+  - istio-1-14
+  - istio-1-14
+  - istio-1-14
+# OIDC Authservice
+  - oidc-authservice
+# Dex
+  - dex
+# KNative-serving
+  - knative-serving
+# KNative-eventing
+  - knative-eventing
+# Cluster-local-gateway
+  - cluster-local-gateway
+# Kubeflow namespace
+  - kubeflow-namespace
+# Kubeflow Roles
+  - kubeflow-roles
+# Kubeflow Istio Resources
+  - kubeflow-istio-resources
+# Kubeflow Pipelines
+  - kubeflow-pipelines
+  # Katib
+  - katib
+  # Central Dashboard
+  - central-dashboard
+  # Admission Webhook
+  - admission-webhook
+  # Jupyter Web App
+  - jupyter-web-app
+  # Notebook Controller
+  - notebook-controller
+  # Profiles + KFAM
+  - profiles-and-kfam
+  # Volumes Web App
+  - volumes-web-app
+  # Tensorboard Controller
+  - tensorboard-controller
+  # Tensorboards Web App
+  - tensorboards-web-app
+  # Training Operator
+  - training-operator
+  # User namespace
+  - user-namespace
+
+  # KServe
+  - kserve
+  # Models Web App
+  - models-web-app
+
+  # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+  - aws-telemetry
+
+#Cognito
+# Ingress
+  - ingress
+# Authservice
+  - aws-authservice
+
+#RDS-AND-S3
+# AWS Secret Manager
+  - aws-secrets-manager
+# Kubeflow Pipelines
+  - kubeflow-pipelines
+# Katib
+  - katib-external-db
+
+#RDS-only
+# AWS Secret Manager
+  - aws-secrets-manager
+# Kubeflow Pipelines
+  - kubeflow-pipelines
+
+#S3-only
+  # AWS Secret Manager
+  - aws-secrets-manager
+  # Kubeflow Pipelines
+  - kubeflow-pipelines
+
+Output Helm Filepaths: 
+#Vanilla
+  # Kubeflow-Issuer
+  - ../../charts/common
+
+# Istio
+  - ../../charts/common
+  - ../../charts/common
+  - ../../charts/common
+# OIDC Authservice
+  - ../../charts/common
+# Dex
+  - ../../charts/common
+# KNative-serving
+  - ../../charts/common
+# KNative-eventing
+  - ../../charts/common
+# Cluster-local-gateway
+  - ../../charts/common
+# Kubeflow namespace
+  - ../../charts/common
+# Kubeflow Roles
+  - ../../charts/common
+# Kubeflow Istio Resources
+  - ../../charts/common
+# Kubeflow Pipelines
+  - ../../charts/apps/kubeflow-pipelines/vanilla
+  # Katib
+  - ../../charts/apps/katib/vanilla
+  # Central Dashboard
+  - ../../charts/apps
+  # Admission Webhook
+  - ../../charts/common
+  # Jupyter Web App
+  - ../../charts/apps
+  # Notebook Controller
+  - ../../charts/apps
+  # Profiles + KFAM
+  - ../../charts/common
+  # Volumes Web App
+  - ../../charts/apps
+  # Tensorboard Controller
+  - ../../charts/apps
+  # Tensorboards Web App
+  - ../../charts/apps
+  # Training Operator
+  - ../../charts/apps
+  # User namespace
+  - ../../charts/common
+
+  # KServe
+  - ../../charts/common
+  # Models Web App
+  - ../../charts/apps
+
+  # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
+  - ../../charts/common
+
+#Cognito
+# Ingress
+  - ../../charts/common/ingress/cognito
+# Authservice
+  - ../../charts/common/auth-service/cognito
+
+#RDS-AND-S3
+# AWS Secret Manager
+  - ../../charts/common/aws-secrets-manager/rds-and-s3
+# Kubeflow Pipelines
+  - ../../charts/apps/kubeflow-pipelines/rds-and-s3
+# Katib
+  - ../../charts/apps/katib/katib-external-db-with-kubeflow
+
+#RDS-only
+# AWS Secret Manager
+  - ../../charts/common/aws-secrets-manager/rds-only
+# Kubeflow Pipelines
+  - ../../charts/apps/kubeflow-pipelines/rds-only
+
+#S3-only
+  # AWS Secret Manager
+  - ../../charts/common/aws-secrets-manager/s3-only
+  # Kubeflow Pipelines
+  - ../../charts/apps/kubeflow-pipelines/s3-only
