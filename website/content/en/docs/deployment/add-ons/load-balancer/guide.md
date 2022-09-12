@@ -98,7 +98,7 @@ Set up resources required for the Load Balancer controller:
             export CLUSTER_SUBNET_IDS=$(aws ec2 describe-subnets --region $CLUSTER_REGION --filters Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME --output json | jq -r '.Subnets[].SubnetId')
             for i in "${CLUSTER_SUBNET_IDS[@]}"
             do
-                aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${TAG_VALUE}
+                aws ec2 create-tags --resources ${i} --tags Key=kubernetes.io/cluster/${CLUSTER_NAME},Value=${TAG_VALUE} --region $CLUSTER_REGION
             done
             ```
         - `kubernetes.io/role/internal-elb`. Add this tag only to private subnets.
