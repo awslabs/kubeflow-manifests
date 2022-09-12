@@ -86,6 +86,9 @@ def split_yaml(kustomized_output_path: str ,helm_chart_name: str):
                     
 
 def create_helm_chart(helm_chart_path: str, helm_chart_name: str, curdir: str):
+    print(helm_chart_path)
+    if os.path.isdir(f"{helm_chart_path}") == False:
+        os.mkdir(f"{helm_chart_path}")
     os.chdir(f"{helm_chart_path}")
     if os.path.isdir(f"{helm_chart_name}"):
         os.chdir(curdir)
