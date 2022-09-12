@@ -1,7 +1,7 @@
 +++
 title = "Deployment"
 description = "Deploy Kubeflow on AWS"
-weight = 10
+weight = 20
 +++
 Kubeflow on AWS provides its own Kubeflow manifests that support integrations with various AWS services that are highly available and scalable. This reduces the operational overhead of maintaining the Kubeflow platform. 
 
