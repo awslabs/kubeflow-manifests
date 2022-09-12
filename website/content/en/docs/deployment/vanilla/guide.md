@@ -75,7 +75,7 @@ Install Istio:
 ```sh
 kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
 kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
-kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
+kustomize build awsconfigs/common/istio | kubectl apply -f -
 ```
 
 #### Dex
