@@ -213,6 +213,10 @@ def load_yaml_file(file_path: str):
 
     return yaml.safe_load(content)
 
+def load_multiple_yaml_files(file_path: str):
+    with open(file_path, "r") as file:
+        content = file.read()
+    return yaml.safe_load_all(content)
 
 def write_yaml_file(yaml_content, file_path: str):
     with open(file_path, "w") as file:
@@ -249,3 +253,13 @@ def get_security_group_id_from_name(
         ]
     )
     return response["SecurityGroups"][0]["GroupId"]
+
+def write_env_to_yaml(env_dict,yaml_file_path,module=None):
+    print(f"Editing {yaml_file_path} with appropriate values...")
+    content = load_yaml_file(yaml_file_path)
+    for key, value in env_dict.items():
+        if module == None:
+            content[key] = value
+        else:
+            content[module][key] = value
+    write_yaml_file(content,yaml_file_path)
