@@ -116,7 +116,7 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
 def configure_aws_authservice(
     cognito_userpool: CustomDomainCognitoUserPool, subdomain_name: str
 ):
-    aws_auth_service_values_file = "../../charts/common/auth-service/cognito/values.yaml"
+    aws_auth_service_values_file = "../../charts/common/aws-authservice/cognito/values.yaml"
     logout_url_dict = {
         "LOGOUT_URL": f"https://{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}"
     }
