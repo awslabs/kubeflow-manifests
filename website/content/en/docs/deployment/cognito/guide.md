@@ -112,7 +112,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
         # Istio
         kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
         kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-14/istio-install/base | kubectl apply -f -
+        kustomize build awsconfigs/common/istio | kubectl apply -f -
         
         # Cert-Manager
         kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
