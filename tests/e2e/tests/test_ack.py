@@ -7,16 +7,16 @@ from e2e.utils.config import metadata, configure_resource_fixture, configure_env
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream, configure_manifests
-# from e2e.fixtures.profile_dependencies import (
-#     configure_manifests,
-#     profile_controller_policy,
-#     profile_controller_service_account,
-#     profile_trust_policy,
-#     profile_role,
-#     associate_oidc,
-#     kustomize_path,
-# )
+from e2e.fixtures.kustomize import kustomize, clone_upstream #, configure_manifests
+from e2e.fixtures.profile_dependencies import (
+    configure_manifests,
+    profile_controller_policy,
+    profile_controller_service_account,
+    profile_trust_policy,
+    profile_role,
+    associate_oidc,
+    kustomize_path,
+)
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -39,23 +39,23 @@ testdata = [
     ("ack", NOTEBOOK_IMAGES[0], "verify_ack_integration.ipynb", "No resources found in kubeflow-user-example-com namespace"),
 ]
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+# GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
 
-@pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+# @pytest.fixture(scope="class")
+# def kustomize_path():
+#     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
-class TestNotebookImages:
+class TestACK:
     @pytest.fixture(scope="function")
     def setup(self, metadata, configure_manifests, kustomize):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
-        print("Created metadata file for TestNotebookImages", metadata_file)
+        print("Created metadata file for TestACK", metadata_file)
 
     @pytest.mark.parametrize(
         "framework_name, image_name, ipynb_notebook_file, expected_output", testdata
     )
-    def test_notebook_container(
+    def test_ack_crds(
         self,
         setup, 
         region,
@@ -67,7 +67,7 @@ class TestNotebookImages:
         expected_output,
     ):
         """
-        Runs once for each combination in testdata. Spins up a notebook using the image specified and runs the uploaded python notebook.
+        Spins up a DLC Notebook and checks that the basic ACK CRD is installed. 
         """
         nb_list = subprocess.check_output(
             f"kubectl get notebooks -n {DEFAULT_USER_NAMESPACE}".split()

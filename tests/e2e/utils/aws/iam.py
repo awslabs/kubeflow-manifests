@@ -75,3 +75,52 @@ class IAMPolicy:
             assert len(resp['PolicyRoles']) == 0
         
         wait_for(callback)
+
+
+class IAMRole:
+    """
+    Encapsulates IAMRole functions.
+    """
+
+    def __init__(
+        self, name: str = None, region: str = "us-east-1", iam_client: Any = None, arn: str = None,
+    ):
+        self.region = region
+        self.iam_client = iam_client or boto3.client("iam", region_name=region)
+        self.name = name
+        self.arn = arn
+        if not name and not arn:
+            raise ValueError("Either role name or arn should be defined")
+    
+    def create(
+        self, policy_document: dict, policies: list
+    ):
+        try:
+            response = self.iam_client.create_role(
+                RoleName=self.name, AssumeRolePolicyDocument=policy_document
+            )
+
+            for policy in policies:
+                self.iam_client.attach_role_policy(
+                    RoleName=self.name, PolicyArn=f"arn:aws:iam::aws:policy/{policy}"
+                )
+        except ClientError:
+            logger.exception(
+                f"failed to create IAM Role {self.name}"
+            )
+            raise
+        else:
+            self.arn = response["Role"]["Arn"]
+            logger.info(
+                f"created iam role {self.arn}."
+            )
+            return self.arn
+    
+    def delete(self):
+        try:
+            self.iam_client.delete_role(RoleName=self.name)
+            logger.info(f"deleted iam role {self.arn}")
+        except ClientError:
+            logger.exception(f"failed to delete iam policy {self.arn}")
+            raise
+
