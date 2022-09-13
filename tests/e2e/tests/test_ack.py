@@ -7,7 +7,7 @@ from e2e.utils.config import metadata, configure_resource_fixture, configure_env
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream #, configure_manifests
+from e2e.fixtures.kustomize import kustomize, clone_upstream
 from e2e.fixtures.profile_dependencies import (
     configure_manifests,
     profile_controller_policy,
@@ -36,14 +36,14 @@ NOTEBOOK_IMAGES = [
 ]
 
 testdata = [
-    ("ack", NOTEBOOK_IMAGES[0], "verify_ack_integration.ipynb", "No resources found in kubeflow-user-example-com namespace"),
+    (
+        "ack",
+        NOTEBOOK_IMAGES[0],
+        "verify_ack_integration.ipynb",
+        "No resources found in kubeflow-user-example-com namespace",
+    ),
 ]
 
-# GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
-
-# @pytest.fixture(scope="class")
-# def kustomize_path():
-#     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
 class TestACK:
     @pytest.fixture(scope="function")
@@ -57,7 +57,7 @@ class TestACK:
     )
     def test_ack_crds(
         self,
-        setup, 
+        setup,
         region,
         metadata,
         notebook_server,

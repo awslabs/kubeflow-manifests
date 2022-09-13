@@ -36,6 +36,7 @@ from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 PIPELINE_NAME = "[Tutorial] SageMaker Training"
 
+
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
         resp = kfp_client.get_run(run.id).run
@@ -56,21 +57,18 @@ def create_execution_role(
         "Statement": [
             {
                 "Effect": "Allow",
-                "Principal": {
-                    "Service": "sagemaker.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
+                "Principal": {"Service": "sagemaker.amazonaws.com"},
+                "Action": "sts:AssumeRole",
             }
-        ]
+        ],
     }
 
     managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
 
     role = IAMRole(name=role_name, region=region)
     return role.create(
-        policy_document=json.dumps(trust_policy), 
-        policies=managed_policies,
-        )
+        policy_document=json.dumps(trust_policy), policies=managed_policies,
+    )
 
 
 def create_s3_bucket_with_data(
@@ -89,23 +87,20 @@ class TestKFPPipeline:
         print("Created metadata file for KFP Pipeline Test", metadata_file)
 
     def test_run_pipeline(
-        self,
-        setup, 
-        region,
-        metadata,
-        kfp_client, 
-        configure_manifests,
-        ):
+        self, setup, region, metadata, kfp_client, configure_manifests,
+    ):
 
         random_prefix = rand_name("kfp-")
         profile_role = configure_manifests["profile_role"]
-        experiment_name = "experiment-"+random_prefix
-        experiment_description = "description-"+random_prefix
-        sagemaker_execution_role_name="role-"+random_prefix
-        bucket_name = "s3-"+random_prefix
-        job_name = "kfp-run-"+random_prefix
+        experiment_name = "experiment-" + random_prefix
+        experiment_description = "description-" + random_prefix
+        sagemaker_execution_role_name = "role-" + random_prefix
+        bucket_name = "s3-" + random_prefix
+        job_name = "kfp-run-" + random_prefix
 
-        sagemaker_execution_role_arn = create_execution_role(sagemaker_execution_role_name, region)
+        sagemaker_execution_role_arn = create_execution_role(
+            sagemaker_execution_role_name, region
+        )
         create_s3_bucket_with_data(bucket_name, "us-east-1")
         time.sleep(120)
 
@@ -118,9 +113,9 @@ class TestKFPPipeline:
         pipeline_id = kfp_client.get_pipeline_id(PIPELINE_NAME)
 
         params = {
-            "sagemaker_role_arn": sagemaker_execution_role_arn, 
+            "sagemaker_role_arn": sagemaker_execution_role_arn,
             "s3_bucket_name": bucket_name,
-            }
+        }
 
         run = kfp_client.run_pipeline(
             experiment.id, job_name=job_name, pipeline_id=pipeline_id, params=params
