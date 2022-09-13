@@ -112,7 +112,16 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
         env_dict = cognito_dict
     )
 
-    write_env_to_yaml(cognito_dict, ingress_values_file)
+    cognito_helm_dict = {
+        "cognito": {
+            "appClientId": cognito_userpool.client_id,
+            "UserPoolArn": cognito_userpool.arn,
+            "UserPoolDomain": cognito_userpool.userpool_domain,
+        },
+        "certArn": tls_cert_arn,
+    }
+
+    write_env_to_yaml(cognito_helm_dict, ingress_values_file, "alb")
 
 #TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.
 def configure_aws_authservice(
