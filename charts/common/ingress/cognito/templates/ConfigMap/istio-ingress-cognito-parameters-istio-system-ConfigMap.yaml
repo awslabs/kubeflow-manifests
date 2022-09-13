@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  CognitoAppClientId: {{ .Values.CognitoAppClientId }}
+  CognitoUserPoolArn: {{ .Values.CognitoUserPoolArn }}
+  CognitoUserPoolDomain: {{ .Values.CognitoUserPoolDomain }}
+  certArn: {{ .Values.certArn }}
+kind: ConfigMap
+metadata:
+  name: istio-ingress-cognito-parameters
+  namespace: istio-system
