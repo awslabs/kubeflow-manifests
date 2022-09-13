@@ -96,6 +96,7 @@ def create_cognito_userpool(
 
 
 # Step 3: Configure Ingress
+#TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.  
 def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str):
     ingress_values_file = "../../charts/common/ingress/cognito/values.yaml"
     cognito_dict = {
@@ -113,6 +114,7 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
 
     write_env_to_yaml(cognito_dict, ingress_values_file)
 
+#TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.
 def configure_aws_authservice(
     cognito_userpool: CustomDomainCognitoUserPool, subdomain_name: str
 ):
