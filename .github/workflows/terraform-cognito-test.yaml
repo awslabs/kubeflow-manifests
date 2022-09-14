@@ -1,7 +1,7 @@
 name: Terraform Cognito Test
 on:
   # Run on PR configuration
-  pull_request:
+  push:
     paths:
       - deployments/cognito/terraform/**
       - iaac/terraform/aws-infra/cognito/**
@@ -26,7 +26,7 @@ jobs:
       contents: read
     env:
       TF_VAR_cognito_user_pool_name: testpool-${{ github.run_id }}-${{ github.run_attempt }}
-      TF_VAR_aws_route53_zone_id: Z0185628O2NTXJM8CTCR
+      TF_VAR_aws_route53_zone_id: {{ secrets.HOSTED_ZONE_ID }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -34,9 +34,9 @@ jobs:
     - name: Configure AWS credentials from Test account
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::976195024272:role/github-pr-builds
+        role-to-assume: {{ secrets.PR_BUILD_ROLE }}
         role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
-        aws-region: us-east-1
+        aws-region: {{ secrets.AWS_REGION }}
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
