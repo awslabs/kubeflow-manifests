@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  ISTIO_GATEWAY: kubeflow/kubeflow-gateway
+  RWO_PVC_SCHEDULING: 'True'
+  TENSORBOARD_IMAGE: tensorflow/tensorflow:2.1.0
+kind: ConfigMap
+metadata:
+  name: tensorboard-controller-config-fm46g724mf
+  namespace: kubeflow

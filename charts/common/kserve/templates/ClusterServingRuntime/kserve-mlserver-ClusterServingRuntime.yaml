@@ -1,0 +1,34 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ClusterServingRuntime
+metadata:
+  name: kserve-mlserver
+spec:
+  containers:
+  - env:
+    - name: MLSERVER_MODEL_IMPLEMENTATION
+      value: '{{`{{.Labels.modelClass}}`}}'
+    - name: MLSERVER_HTTP_PORT
+      value: '8080'
+    - name: MLSERVER_GRPC_PORT
+      value: '9000'
+    - name: MODELS_DIR
+      value: /mnt/models
+    image: docker.io/seldonio/mlserver:0.5.3
+    name: kserve-container
+    resources:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: '1'
+        memory: 2Gi
+  supportedModelFormats:
+  - name: sklearn
+    version: '0'
+  - name: xgboost
+    version: '1'
+  - name: lightgbm
+    version: '3'
+  - autoSelect: true
+    name: mlflow
+    version: '1'
