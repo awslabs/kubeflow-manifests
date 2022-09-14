@@ -18,6 +18,8 @@ from e2e.utils.utils import print_banner, load_yaml_file, write_yaml_file, write
 
 from typing import Tuple
 
+INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
+path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -98,7 +100,8 @@ def create_cognito_userpool(
 # Step 3: Configure Ingress
 #TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.  
 def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str):
-    ingress_values_file = "../../charts/common/ingress/cognito/values.yaml"
+    ingress_helm_path = path_dic["ingress"]["installation_options"]["helm"]
+    ingress_values_file = f"{ingress_helm_path}/values.yaml"
     cognito_dict = {
             "CognitoUserPoolArn": cognito_userpool.arn,
             "CognitoAppClientId": cognito_userpool.client_id,
@@ -127,7 +130,8 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
 def configure_aws_authservice(
     cognito_userpool: CustomDomainCognitoUserPool, subdomain_name: str
 ):
-    aws_auth_service_values_file = "../../charts/common/aws-authservice/cognito/values.yaml"
+    aws_auth_service_helm_path = path_dic["aws-authservice"]["installation_options"]["helm"]
+    aws_auth_service_values_file = f"{aws_auth_service_helm_path}/values.yaml"
     logout_url_dict = {
         "LOGOUT_URL": f"https://{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}"
     }

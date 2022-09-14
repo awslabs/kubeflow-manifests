@@ -258,7 +258,7 @@ aws-authservice:
   installation_options:
     kustomize: 
       - "../../awsconfigs/common/aws-authservice/base"
-    helm: "../../charts/common/aws-authservice/cognito"
+    helm: "../../charts/common/aws-authservice"
   validations:
     namespace: 'istio-system'
     common_label: 'aws-authservice'
