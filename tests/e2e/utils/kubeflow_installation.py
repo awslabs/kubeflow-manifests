@@ -13,32 +13,32 @@ INSTALLATION_PATH_FILE_VANILLA = "./resources/installation_config/vanilla.yaml"
 INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
 
 Install_Sequence = [
-    "cert-manager",
-    "kubeflow-roles",
-    "kubeflow-issuer",
-    "istio-1-14",
-    "kubeflow-namespace",
-    "dex",
-    "cluster-local-gateway",
-    "knative-serving",
-    "knative-eventing",
-    "oidc-authservice",
-    "kubeflow-istio-resources",
-    "kserve",
-    "models-web-app",
-    "central-dashboard",
-    "aws-secrets-manager",
-    "kubeflow-pipelines",
-    "admission-webhook",
-    "jupyter-web-app",
-    "notebook-controller",
-    "volumes-web-app",
-    "training-operator",
-    "katib",
-    "tensorboards-web-app",
-    "tensorboard-controller",
-    "profiles-and-kfam",
-    "user-namespace",
+    #"cert-manager",
+    #"kubeflow-roles",
+    #"kubeflow-issuer",
+    #"istio-1-14",
+    #"kubeflow-namespace",
+    #"dex",
+    #"cluster-local-gateway",
+    #"knative-serving",
+    #"knative-eventing",
+    #"oidc-authservice",
+    #"kubeflow-istio-resources",
+    #"kserve",
+    #"models-web-app",
+    #"central-dashboard",
+    #"aws-secrets-manager",
+    #"kubeflow-pipelines",
+    #"admission-webhook",
+    #"jupyter-web-app",
+    #"notebook-controller",
+    #"volumes-web-app",
+    #"training-operator",
+    #"katib",
+    #"tensorboards-web-app",
+    #"tensorboard-controller",
+    #"profiles-and-kfam",
+    #"user-namespace",
     #"ack-sagemaker-controller",
     "ingress",
     "aws-load-balancer-controller",
@@ -159,7 +159,7 @@ def build_alb_controller(cluster_name):
             --set clusterName={cluster_name} \
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-load-balancer-controller \
-            --version v2.4.3".split()
+            --version v1.4.3".split()
     return subprocess.call(cmd)
 
 
