@@ -16,6 +16,7 @@ kfp==1.8.13
 kfp-server-api==1.8.3
 kfserving==0.6.1
 kubeflow-training==1.4.0
+kubeflow-katib==0.14.0
 
 # Common data science packages
 h5py==3.7.0
