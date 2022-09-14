@@ -1,0 +1,7 @@
+alb:
+  certArn: 
+  cognito:
+    UserPoolArn: 
+    UserPoolDomain: 
+    appClientId: 
+  scheme: internet-facing
