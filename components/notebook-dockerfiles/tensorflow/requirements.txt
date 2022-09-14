@@ -31,3 +31,4 @@ boto3==1.24.44
 
 # TF Packages
 keras==2.9.0
+protobuf==3.19.5
