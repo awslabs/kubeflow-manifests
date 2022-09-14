@@ -139,7 +139,7 @@ admission-webhook:
   installation_options:
     kustomize:
       - "../../upstream/apps/admission-webhook/upstream/overlays/cert-manager"
-    helm: "../../charts/common/admission-webhook"
+    helm: "../../charts/apps/admission-webhook"
   validations:
     namespace: 'kubeflow'
     identifier: 'app'
@@ -226,7 +226,7 @@ profiles-and-kfam:
   installation_options:
     kustomize: 
       - "../../upstream/apps/profiles/upstream/overlays/kubeflow"
-    helm: "../../charts/common/profiles-and-kfam"
+    helm: "../../charts/apps/profiles-and-kfam"
   validations:
     namespace: 'kubeflow'
     identifier: 'kustomize.component'
