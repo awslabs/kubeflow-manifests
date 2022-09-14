@@ -65,9 +65,9 @@ def create_execution_role(
 
     managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
 
-    role = IAMRole(name=role_name, region=region)
+    role = IAMRole(name=role_name, region=region, policies=managed_policies)
     return role.create(
-        policy_document=json.dumps(trust_policy), policies=managed_policies,
+        policy_document=json.dumps(trust_policy)
     )
 
 

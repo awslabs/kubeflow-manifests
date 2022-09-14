@@ -147,24 +147,25 @@ def profile_trust_policy(
 def profile_role(region, metadata, request, profile_trust_policy):
     role_name = rand_name("profile-role-")
     metadata_key = "profile_role_name"
+    policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
+    iam_client = get_iam_client(region=region)
 
     def on_create():
-        iam_client = get_iam_client(region=region)
         iam_client.create_role(
             RoleName=role_name, AssumeRolePolicyDocument=profile_trust_policy
         )
 
-        iam_client.attach_role_policy(
-            RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
-        )
-
-        iam_client.attach_role_policy(
-            RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
-        )
+        for policy in policies:
+            iam_client.attach_role_policy(
+                RoleName=role_name, PolicyArn=f"arn:aws:iam::aws:policy/{policy}"
+            )
 
     def on_delete():
         name = metadata.get(metadata_key) or role_name
-        iam_client = get_iam_client(region=region)
+        for policy in policies:
+            iam_client.detach_role_policy(
+            PolicyArn=policy, RoleName=role_name,
+            )
         iam_client.delete_role(RoleName=name)
 
     return configure_resource_fixture(
