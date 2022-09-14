@@ -160,7 +160,6 @@ def build_alb_controller(cluster_name):
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-load-balancer-controller \
             --version v1.4.3".split()
-
     return subprocess.call(cmd)
 
 
