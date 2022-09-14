@@ -7,7 +7,7 @@ from e2e.utils.config import metadata, configure_resource_fixture, configure_env
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream
+from e2e.fixtures.kustomize import kustomize, clone_upstream #, configure_manifests
 from e2e.fixtures.profile_dependencies import (
     configure_manifests,
     profile_controller_policy,
@@ -19,14 +19,20 @@ from e2e.fixtures.profile_dependencies import (
 )
 from e2e.fixtures.clients import (
     account_id,
+    login,
     kfp_client,
     port_forward,
     session_cookie,
     host,
-    login,
     password,
 )
 from e2e.fixtures.notebook_dependencies import notebook_server
+
+# GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+
+# @pytest.fixture(scope="class")
+# def kustomize_path():
+#     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
