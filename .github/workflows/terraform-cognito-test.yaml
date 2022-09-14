@@ -17,7 +17,7 @@ concurrency: cognito
 jobs:
   build:
     runs-on: ubuntu-latest
-    # environment enables protection rules and secrets (e.g. need approval to run the workflow)
+    # environment enables protection rules (e.g. need approval to run the workflow)
     environment: gh-actions-test
     permissions:
       # needed to interact with GitHub's OIDC Token endpoint
@@ -26,7 +26,7 @@ jobs:
       contents: read
     env:
       TF_VAR_cognito_user_pool_name: testpool-${{ github.run_id }}-${{ github.run_attempt }}
-      TF_VAR_aws_route53_zone_id: ${{ secrets.HOSTED_ZONE_ID }}
+      TF_VAR_aws_route53_zone_id: Z0185628O2NTXJM8CTCR
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -34,9 +34,9 @@ jobs:
     - name: Configure AWS credentials from Test account
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
+        role-to-assume: arn:aws:iam::976195024272:role/github-pr-builds
         role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: us-east-1
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
