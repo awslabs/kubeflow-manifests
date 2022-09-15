@@ -26,8 +26,8 @@ NOTEBOOK_IMAGES = [
     "public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-scipy:v1.5.0",
     "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2",
     "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-cpu-py38-ubuntu20.04-e3-v1.1",
+    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2",
+    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2",
 ]
 
 testdata = [
@@ -38,13 +38,13 @@ testdata = [
         "pytorch-gpu",
         NOTEBOOK_IMAGES[3],
         "verify_pytorch_installation.ipynb",
-        "1.11.0+cu115",
+        "1.12.0+cu116",
     ),
     (
         "pytorch-cpu",
         NOTEBOOK_IMAGES[4],
         "verify_pytorch_installation.ipynb",
-        "1.11.0+cpu",
+        "1.12.0+cpu",
     ),
 ]
 
