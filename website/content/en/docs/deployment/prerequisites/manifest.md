@@ -1,6 +1,6 @@
 +++
-title = "Prerequisites for Manual Deployment"
-description = "Everything you need to get started with Kubeflow on AWS"
+title = "Prerequisites for Manifest Deployment"
+description = "Set up your environment to deploy Kubeflow using Kustomize or Helm"
 weight = 20
 +++
 

@@ -1,6 +1,6 @@
 +++
 title = "Terraform Deployment Guide"
-description = "Deploy the vanilla distribution of Kubeflow on AWS using Terraform"
+description = "Deploy Kubeflow with RDS and S3 using Terraform"
 weight = 30
 +++
 

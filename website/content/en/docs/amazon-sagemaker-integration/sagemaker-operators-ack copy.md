@@ -4,6 +4,18 @@ description = "Use SageMaker Operators for Kubernetes (ACK) with Kubeflow on AWS
 weight = 10
 +++
 
-The [ACK Operators for SageMaker](https://aws-controllers-k8s.github.io/community/docs/tutorials/sagemaker-example/) make it easier for developers and data scientists using Kubernetes to train, tune, and deploy machine learning (ML) models in SageMaker. [ACK](https://aws-controllers-k8s.github.io/community/docs/community/overview/) lets you define and use AWS service resources directly from Kubernetes. With ACK, you can take advantage of AWS-managed services for your Kubernetes applications without needing to define resources outside of the cluster or run services that provide supporting capabilities like databases or message queues within the cluster.
+[SageMaker Operators for Kubernetes (ACK)](https://github.com/aws-controllers-k8s/sagemaker-controller) make it easier for developers and data scientists using Kubernetes to train, tune, and deploy machine learning (ML) models using Amazon SageMaker. [ACK](https://aws-controllers-k8s.github.io/community/docs/community/overview/) lets you define and use AWS service resources directly from Kubernetes. With ACK, you can take advantage of AWS-managed services for your Kubernetes applications without needing to define resources outside of the cluster or run services that provide supporting capabilities like databases or message queues within the cluster.
 
-The Kubeflow Distribution for AWS bundles with it kustomize and helm templates which make it easy to deploy the ACK operators for SageMaker. Once installed, you can use ACK to manage your SageMaker resources not only from your kubernetes cluster directly but also from the Kubeflow notebooks by spawning one of our AWS optimized DLC based images. 
+## ACK 
+
+The Kubeflow Distribution for AWS bundles with it kustomize and helm templates which make it easy to deploy the ACK operators for SageMaker. 
+
+For more in-depth guides on installing and using the new SageMaker Operator for Kubernetes, see the following tutorials:
+- [Machine Learning with the ACK SageMaker Controller](https://aws-controllers-k8s.github.io/community/docs/tutorials/sagemaker-example/)
+- [Scale SageMaker Workloads with Application Auto Scaling](https://aws-controllers-k8s.github.io/community/docs/tutorials/autoscaling-example/)
+
+## Notebooks
+
+Use SageMaker Operators for Kubernetes (ACK) to manage your SageMaker resources from your Kubernetes cluster directly or from AWS-optimized [Kubeflow Notebooks]({{< ref "/docs/component-guides/notebooks.md" >}}) that are built on top of [AWS Deep Learning Containers](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html).
+
+[TODO @akartsky - example link?]

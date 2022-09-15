@@ -1,6 +1,6 @@
 +++
 title = "Prerequisites for Automated Deployment"
-description = "Everything you need to get started with Kubeflow on AWS"
+description = "Prepare your environment for automated setup"
 weight = 20
 +++
 

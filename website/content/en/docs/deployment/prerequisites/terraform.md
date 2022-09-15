@@ -1,6 +1,6 @@
 +++
 title = "Prerequisites for Terraform Deployment"
-description = "Everything you need to get started with Kubeflow on AWS"
+description = "Get ready to deploy Kubeflow on AWS using Terraform"
 weight = 20
 +++
 

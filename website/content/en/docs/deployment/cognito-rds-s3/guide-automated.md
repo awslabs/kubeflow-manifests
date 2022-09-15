@@ -1,6 +1,6 @@
 +++
 title = "Automated Deployment Guide"
-description = "Deploy the vanilla distribution of Kubeflow on AWS automatically"
+description = "Deploy Kubeflow with Cognito, RDS, and S3 automatically"
 weight = 10
 +++
 
@@ -33,7 +33,7 @@ export CLUSTER_REGION=
 
 ```sh
 make install-all-prerequisites
-make deploy-kf-vanilla
+make [TODO @akartsky]
 ```
 
 ## Connect to the Kubeflow UI

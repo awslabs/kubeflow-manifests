@@ -1,6 +1,6 @@
 +++
-title = "Manual Deployment Guide"
-description = "Deploying Kubeflow with AWS Cognito as identity provider"
+title = "Manifest Deployment Guide"
+description = "Deploying Kubeflow with AWS Cognito as identity provider using Kustomize or Helm"
 weight = 20
 +++
 
@@ -11,7 +11,7 @@ This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your 
 - create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB's public DNS names)
 
 ## Prerequisites
-Check to make sure that you have the necessary [prerequisites]({{< ref "/docs/deployment/prerequisites/manual.md" >}}).
+Check to make sure that you have the necessary [prerequisites]({{< ref "/docs/deployment/prerequisites/manifest.md" >}}).
 
 ## Background 
 

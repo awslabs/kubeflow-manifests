@@ -8,7 +8,7 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
 
 ## Prerequisites
 
-This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites]({{< ref "/docs/deployment/prerequisites/manual.md" >}}).
+This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites]({{< ref "/docs/deployment/prerequisites/manifest.md" >}}).
 
 ## Create required resources and deploy Kubeflow
 

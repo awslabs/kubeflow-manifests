@@ -1,6 +1,6 @@
 +++
-title = "Manual"
-description = "Deploying Kubeflow with RDS and S3"
+title = "Manifest Deployment Guid"
+description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
 weight = 20
 +++
 
@@ -47,7 +47,7 @@ To install for only RDS or only S3, complete the steps relevant to your installa
 To install for both RDS and S3, complete all the steps below.
 
 ## 1.0 Prerequisites
-Follow the steps in [Prerequisites]({{< ref "/docs/deployment/prerequisites/manual.md" >}}) to make sure that you have everything you need to get started. 
+Follow the steps in [Prerequisites]({{< ref "/docs/deployment/prerequisites/manifest.md" >}}) to make sure that you have everything you need to get started. 
 
 Make sure you are starting from the repository root directory. 
 Export the below variable:

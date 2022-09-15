@@ -1,5 +1,5 @@
 +++
 title = "Vanilla Installation"
-description = "Deploying the vanilla distribution of Kubeflow on AWS automatically, manually, or using Terraform."
+description = "Deploy the vanilla distribution of Kubeflow on AWS."
 weight = 30
 +++
