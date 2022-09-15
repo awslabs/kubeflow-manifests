@@ -1,0 +1,34 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: 'true'
+    rbac.authorization.kubeflow.org/aggregate-to-kubeflow-training-admin: 'true'
+  name: kubeflow-training-edit
+rules:
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs
+  - tfjobs
+  - pytorchjobs
+  - mxjobs
+  - xgboostjobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubeflow.org
+  resources:
+  - mpijobs/status
+  - tfjobs/status
+  - pytorchjobs/status
+  - mxjobs/status
+  - xgboostjobs/status
+  verbs:
+  - get

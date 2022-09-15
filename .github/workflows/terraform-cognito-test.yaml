@@ -1,0 +1,55 @@
+name: Terraform Cognito Test
+on:
+  # Run on PR configuration
+  push:
+    paths:
+      - deployments/cognito/terraform/**
+      - iaac/terraform/aws-infra/cognito/**
+      # TODO: Add relevant helm chart path
+    branches:
+      - main
+
+  workflow_dispatch:
+
+# Ensure that only a single workflow which deploy cognito related stack will be run at a time. TODO: enable parallel runs by creating separate hosted zones
+concurrency: cognito
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # environment enables protection rules (e.g. need approval to run the workflow)
+    environment: gh-actions-test
+    permissions:
+      # needed to interact with GitHub's OIDC Token endpoint
+      id-token: write
+      # needed to checkout repository
+      contents: read
+    env:
+      TF_VAR_cognito_user_pool_name: testpool-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_aws_route53_zone_id: ${{ secrets.HOSTED_ZONE_ID }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
+        role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v2
+    
+    - name: Plan and apply terraform
+      run: |
+        cd iaac/terraform/aws-infra/cognito
+        terraform init
+        terraform plan
+        terraform apply -auto-approve
+        terraform state list
+    - name: Clean up terraform
+      if: success() || failure()
+      run: |
+        cd iaac/terraform/aws-infra/cognito
+        terraform destroy -auto-approve
