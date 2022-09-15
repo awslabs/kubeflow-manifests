@@ -1,6 +1,6 @@
 # Add a custom domain to the user pool
 data "aws_route53_zone" "platform" {
-  zone_id = var.aws_route53_zone_id
+  name = var.aws_route53_subdomain_zone_name
 }
 
 # In order to use a custom domain, its root(i.e. platform.example.com) must have an valid A type record
