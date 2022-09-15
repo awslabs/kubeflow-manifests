@@ -36,31 +36,12 @@ Option 2 targets customization and ability to pick and choose individual compone
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 {{< tabpane persistLang=false >}}
-{{< tab header="Configuration file:" disabled=true />}}
+{{< tab header="Command:" disabled=true />}}
 {{< tab header="kustomize" lang="toml" >}}
 while ! kustomize build deployments/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-markup:
-  goldmark:
-    renderer:
-      unsafe: true
-  highlight:
-    style: tango
-{{< /tab >}}
-{{< tab header="Terraform" lang="json" >}}
-{
-  "markup": {
-    "goldmark": {
-      "renderer": {
-        "unsafe": true
-      }
-    },
-    "highlight": {
-      "style": "tango"
-    }
-  }
-}
+[TODO: @jsitu777]
 {{< /tab >}}
 {{< /tabpane >}}
 

@@ -73,9 +73,15 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             ```
 
 1. Install Kubeflow using the following command:
-   ```bash
+    {{< tabpane persistLang=false >}}
+    {{< tab header="Command:" disabled=true />}}
+    {{< tab header="kustomize" lang="toml" >}}
     while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-    ```
+    {{< /tab >}}
+    {{< tab header="Helm" lang="yaml" >}}
+    [TODO: @jsitu777]
+    {{< /tab >}}
+    {{< /tabpane >}}
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
