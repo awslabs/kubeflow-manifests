@@ -11,6 +11,9 @@ import os
 
 INSTALLATION_PATH_FILE_VANILLA = "./resources/installation_config/vanilla.yaml"
 INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
+INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
+INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
+INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
 
 Install_Sequence = [
     "cert-manager",
@@ -57,6 +60,12 @@ def install_kubeflow(
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_VANILLA)
     elif DEPLOYMENT_OPTION == "cognito":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO)
+    elif DEPLOYMENT_OPTION == "rds-s3":
+        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
+    elif DEPLOYMENT_OPTION == "rds-only":
+        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
+    elif DEPLOYMENT_OPTION == "s3-only":
+        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
 
     print_banner(
         f"You are installing kubeflow {DEPLOYMENT_OPTION} deployment with {INSTALLATION_OPTION}"
@@ -186,7 +195,7 @@ if __name__ == "__main__":
         "--deployment_option",
         type=str,
         default=DEPLOYMENT_OPTION_DEFAULT,
-        help=f"Kubeflow deployment options (vanilla/cognito/rds_and_s3/rds_only/s3_only/cognito-rds-s3), default is set to {DEPLOYMENT_OPTION_DEFAULT}",
+        help=f"Kubeflow deployment options (vanilla/cognito/rds-s3/rds-only/s3-only/cognito-rds-s3), default is set to {DEPLOYMENT_OPTION_DEFAULT}",
         required=False,
     )
 
