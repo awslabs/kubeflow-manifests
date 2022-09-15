@@ -312,7 +312,7 @@ kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 ```
 
 ## 4.0 Cleanup
-This section cleans up the resources created in this guide. To clean up other resources, such as the Kubeflow deployment, see [Uninstall Kubeflow]({{< ref "/docs/deployment/uninstall-kubeflow.md" >}}).
+This section cleans up the resources created in this guide.
 
 ### 4.1 Clean up the TFJob
 ```bash
