@@ -1,16 +1,16 @@
 +++
-title = "Manual Deployment Guide"
-description = "Deploy the vanilla distribution of Kubeflow on AWS using Kustomize or Helm"
-weight = 20
+title = "Terraform Deployment Guide"
+description = "Deploy the vanilla distribution of Kubeflow on AWS using Terraform"
+weight = 30
 +++
 
 # Deploying Kubeflow on EKS
 
-This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
+This guide describes how to deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (Amazon EKS). This vanilla version has minimal changes to the upstream Kubeflow manifests.
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites/manual.md" >}}) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites/terraform.md" >}}) before working through this guide.
 
 ### Build Manifests and install Kubeflow
 

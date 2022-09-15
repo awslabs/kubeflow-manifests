@@ -8,7 +8,7 @@ For general errors related to Kubernetes and Amazon EKS, please refer to the [Am
 
 ### Validate prerequisites
 
-You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}) installed. 
+You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites]({{< ref "/docs/deployment/prerequisites/_index.md" >}}) installed. 
 
 ### ALB fails to provision
 

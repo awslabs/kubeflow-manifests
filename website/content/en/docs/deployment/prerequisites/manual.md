@@ -1,5 +1,5 @@
 +++
-title = "Prerequisites"
+title = "Prerequisites for Manual Deployment"
 description = "Everything you need to get started with Kubeflow on AWS"
 weight = 20
 +++

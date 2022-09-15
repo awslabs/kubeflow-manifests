@@ -1,5 +1,5 @@
 +++
-title = "Cognito, RDS, and S3"
+title = "Manual"
 description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
 weight = 60
 +++
@@ -7,7 +7,7 @@ weight = 60
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
 
 ## 1. Prerequisites
-Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisites.md" >}}) and the [RDS and S3 setup guide]({{< ref "/docs/deployment/rds-s3/guide.md" >}}) in order to:
+Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisites/manual.md" >}}) and the [RDS and S3 setup guide]({{< ref "/docs/deployment/rds-s3/guide.md" >}}) in order to:
 1. Install the CLI tools
 2. Clone the repositories
 3. Create an EKS cluster
