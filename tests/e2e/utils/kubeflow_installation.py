@@ -8,6 +8,7 @@ from e2e.utils.utils import (
 )
 import subprocess
 import os
+import time
 
 INSTALLATION_PATH_FILE_VANILLA = "./resources/installation_config/vanilla.yaml"
 INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
@@ -121,6 +122,12 @@ def build_component(
                     apply_kustomize(kustomize_path, crd_required)
                     crd_meet = True
                 apply_kustomize(kustomize_path)
+            
+            #TO DO: Debug and add additional validation step for cert-manager resources in future for kubeflow-issuer to be installed
+            #temporary solution to wait for 30s
+            if component_name == "cert-manager":
+                print("wait for 30s for cert-manager-webhook resource to be ready...")
+                time.sleep(30)
 
     if "validations" in path_dic[component_name]:
         identifier = path_dic[component_name]["validations"]["identifier"]
