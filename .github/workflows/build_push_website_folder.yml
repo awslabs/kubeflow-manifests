@@ -3,6 +3,8 @@ name: hugo-build-push-folder
 on:
   # Trigger the workflow on git push to a branch where this workflow file exists 
   push:
+    paths:
+      - website/**
     branches:
       - main
       - 'release-v[0-9].[0-9]+.[0-9]+-aws-b[0-9].[0-9]+.[0-9]+'
