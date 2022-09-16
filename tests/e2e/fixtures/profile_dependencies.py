@@ -224,21 +224,8 @@ def configure_manifests(profile_role, metadata, request, region, kustomize_path)
         with open(ack_filename, "w") as file:
             file.write(str(yaml.dump(ack_yaml)))
 
-        # # 3. Edit Params.env
-        # ack_filename = TO_ROOT_PATH + "awsconfigs/common/ack-sagemaker-controller/params.env"
-        # ack_yaml_original = unmarshal_yaml(yaml_file=ack_filename)
-        # ack_yaml = unmarshal_yaml(
-        #     yaml_file=ack_filename,
-        #     replacements={"ACK_SAGEMAKER_OIDC_ROLE": oidc_role_arn},
-        # )
-
-        # with open(ack_filename, "w") as file:
-        #     file.write(str(yaml.dump(ack_yaml)))
-
     def on_delete():
         pass
-        # with open(filename, "w") as file:
-        #     file.write(str(yaml.dump(profile_yaml_original)))
 
     return configure_resource_fixture(
         metadata=metadata,

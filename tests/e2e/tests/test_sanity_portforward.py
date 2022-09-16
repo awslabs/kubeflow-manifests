@@ -52,6 +52,7 @@ from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 from e2e.utils.aws.iam import IAMRole
 from e2e.utils.s3_for_training.data_bucket import S3BucketWithTrainingData
+from e2e.fixtures.notebook_dependencies import notebook_server
 
 
 GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
@@ -62,6 +63,18 @@ CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 def kustomize_path():
     return GENERIC_KUSTOMIZE_MANIFEST_PATH
 
+NOTEBOOK_IMAGES = [
+    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8",
+]
+
+testdata = [
+    (
+        "ack",
+        NOTEBOOK_IMAGES[0],
+        "verify_ack_integration.ipynb",
+        "No resources found in kubeflow-user-example-com namespace",
+    ),
+]
 
 PIPELINE_NAME = "[Tutorial] Data passing in python components"
 PIPELINE_NAME_KFP = "[Tutorial] SageMaker Training"
@@ -204,6 +217,41 @@ class TestSanity:
         except K8sApiException as e:
             assert "Not Found" == e.reason
 
+    @pytest.mark.parametrize(
+        "framework_name, image_name, ipynb_notebook_file, expected_output", testdata
+    )
+    def test_ack_crds(
+        self,
+        region,
+        metadata,
+        notebook_server,
+        framework_name,
+        image_name,
+        ipynb_notebook_file,
+        expected_output,
+    ):
+        """
+        Spins up a DLC Notebook and checks that the basic ACK CRD is installed. 
+        """
+        nb_list = subprocess.check_output(
+            f"kubectl get notebooks -n {DEFAULT_USER_NAMESPACE}".split()
+        ).decode()
+
+        metadata_key = f"{framework_name}-notebook_server"
+        notebook_name = notebook_server["NOTEBOOK_NAME"]
+        assert notebook_name is not None
+        assert notebook_name in nb_list
+        print(notebook_name)
+
+        sub_cmd = f"jupyter nbconvert --to notebook --execute ../uploaded/{ipynb_notebook_file} --stdout"
+        cmd = f"kubectl -n kubeflow-user-example-com exec -it {notebook_name}-0 -- /bin/bash -c".split()
+        cmd.append(sub_cmd)
+
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
+        print(output)
+        # The second condition is now required in case the kfp test runs before this one.
+        assert expected_output in output or "training-job-" in output
+    
     def test_run_kfp_sagemaker_pipeline(
         self, region, metadata, kfp_client,
     ):

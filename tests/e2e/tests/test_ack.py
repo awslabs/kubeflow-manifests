@@ -28,12 +28,6 @@ from e2e.fixtures.clients import (
 )
 from e2e.fixtures.notebook_dependencies import notebook_server
 
-# GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
-
-# @pytest.fixture(scope="class")
-# def kustomize_path():
-#     return GENERIC_KUSTOMIZE_MANIFEST_PATH
-
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
