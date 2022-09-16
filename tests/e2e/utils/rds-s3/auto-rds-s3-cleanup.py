@@ -1,6 +1,6 @@
 import argparse
 from time import sleep
-import boto3
+import boto3, botocore
 from e2e.fixtures.cluster import delete_iam_service_account
 
 from e2e.utils.utils import (
@@ -27,22 +27,40 @@ def delete_s3_bucket(metadata, secrets_manager_client, region):
     s3_resource = boto3.resource("s3")
     bucket_name = metadata["S3"]["bucket"]
 
-    print("Deleting S3 bucket...")
-
-    bucket = s3_resource.Bucket(bucket_name)
-    bucket.objects.all().delete()
-    s3_client.delete_bucket(Bucket=bucket_name)
+    if check_bucket(bucket_name, s3_client):
+        bucket = s3_resource.Bucket(bucket_name)
+        print("Deleting S3 bucket...")
+        bucket.objects.all().delete()
+        s3_client.delete_bucket(Bucket=bucket_name)
+    else:
+        print("Skip deleting S3 bucket...")
 
     secrets_manager_client.delete_secret(
         SecretId=metadata["S3"]["secretName"], ForceDeleteWithoutRecovery=True
     )
+
+def check_bucket(bucket_name,s3_client):
+    try:
+        s3_client.head_bucket(Bucket=bucket_name)
+        print("Bucket Exists!")
+        return True
+    except botocore.exceptions.ClientError as e:
+        # If a client error is thrown, then check that it was a 404 error.
+        # If it was a 404 error, then the bucket does not exist.
+        error_code = int(e.response['Error']['Code'])
+        if error_code == 403:
+            print("Private Bucket. Forbidden Access!")
+            return True
+        elif error_code == 404:
+            print("Bucket Does Not Exist!")
+            return False
 
 
 def delete_rds(metadata, secrets_manager_client, region):
     rds_client = get_rds_client(region)
     db_instance_name = metadata["RDS"]["instanceName"]
     db_subnet_group_name = metadata["RDS"]["subnetGroupName"]
-
+    
     print("Deleting RDS instance...")
 
     rds_client.modify_db_instance(
@@ -65,11 +83,13 @@ def delete_rds(metadata, secrets_manager_client, region):
         except:
             print("RDS instance has been successfully deleted")
             break
+  
 
     print("Deleting DB Subnet Group...")
-
+ 
     rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
     print("DB Subnet Group has been successfully deleted")
+
 
     secrets_manager_client.delete_secret(
         SecretId=metadata["RDS"]["secretName"], ForceDeleteWithoutRecovery=True
