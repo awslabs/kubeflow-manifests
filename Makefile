@@ -97,19 +97,12 @@ cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
-verify-installation-option:
+verify-automation-variables:
 	test $(INSTALLATION_OPTION) || (echo Please export INSTALLATION_OPTION variable; exit 1)
-
-verify-deployment-option:
 	test $(DEPLOYMENT_OPTION) || (echo Please export DEPLOYMENT_OPTION variable; exit 1)
 
-verify-aws-telemetry-option:
-	test $(AWS_TELEMETRY_OPTION) || (echo Please export AWS_TELEMETRY_OPTION variable; exit 1)
+deploy-kubeflow: bootstrap-ack verify-automation-variables
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
 
-install-ack: bootstrap-ack
-
-deploy-kf: verify-cluster-variables connect-to-eks-cluster verify-installation-option verify-deployment-option
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --aws_telemetry_option $(AWS_TELEMETRY_OPTION) && cd -; 
-
-uninstall-kf: verify-cluster-variables connect-to-eks-cluster verify-installation-option verify-deployment-option verify-cluster-variables
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --aws_telemetry_option $(AWS_TELEMETRY_OPTION) && cd -;
+delete-kubeflow: verify-automation-variables
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
