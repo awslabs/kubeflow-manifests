@@ -16,7 +16,7 @@ patches:
     - op: add
       path: "/metadata/annotations"
       value:
-        eks.amazonaws.com/role-arn : ${ACK_SAGEMAKER_OIDC_ROLE}
+        eks.amazonaws.com/role-arn : $(ACK_SAGEMAKER_OIDC_ROLE)
   target:
     kind: ServiceAccount
     name: ack-sagemaker-controller

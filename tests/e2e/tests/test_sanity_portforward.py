@@ -7,7 +7,8 @@ Installs the vanilla distribution of kubeflow and validates the installation by:
 
 import os
 import subprocess
-
+import json
+import time
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -17,7 +18,7 @@ from e2e.utils.config import configure_resource_fixture, metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
+from e2e.fixtures.kustomize import kustomize, clone_upstream #, configure_manifests
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -26,6 +27,18 @@ from e2e.fixtures.clients import (
     login,
     password,
     client_namespace,
+    account_id
+)
+from e2e.fixtures.profile_dependencies import (
+    configure_manifests,
+    profile_controller_policy,
+    profile_controller_service_account,
+    profile_trust_policy,
+    profile_role,
+    associate_oidc,
+    kustomize_path,
+    client_namespace,
+    login,
 )
 
 from e2e.utils.custom_resources import (
@@ -37,6 +50,8 @@ from e2e.utils.custom_resources import (
 from e2e.utils.load_balancer.common import CONFIG_FILE as LB_CONFIG_FILE
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
+from e2e.utils.aws.iam import IAMRole
+from e2e.utils.s3_for_training.data_bucket import S3BucketWithTrainingData
 
 
 GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
@@ -49,6 +64,7 @@ def kustomize_path():
 
 
 PIPELINE_NAME = "[Tutorial] Data passing in python components"
+PIPELINE_NAME_KFP = "[Tutorial] SageMaker Training"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
 
@@ -60,7 +76,38 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
         assert resp.pipeline_spec.pipeline_id == pipeline_id
         assert resp.status == "Succeeded"
 
-    wait_for(callback)
+    wait_for(callback, 600)
+
+def create_execution_role(
+    role_name, region,
+):
+
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {"Service": "sagemaker.amazonaws.com"},
+                "Action": "sts:AssumeRole",
+            }
+        ],
+    }
+
+    managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
+
+    role = IAMRole(name=role_name, region=region, policies=managed_policies)
+    return role.create(
+        policy_document=json.dumps(trust_policy)
+    )
+
+
+def create_s3_bucket_with_data(
+    bucket_name, region,
+):
+
+    bucket = S3BucketWithTrainingData(name=bucket_name, region=region)
+    bucket.create()
+
 
 class TestSanity:
     @pytest.fixture(scope="class")
@@ -156,3 +203,45 @@ class TestSanity:
             raise AssertionError("Expected K8sApiException Not Found")
         except K8sApiException as e:
             assert "Not Found" == e.reason
+
+    def test_run_kfp_sagemaker_pipeline(
+        self, region, metadata, kfp_client,
+    ):
+
+        random_prefix = rand_name("kfp-")
+        experiment_name = "experiment-" + random_prefix
+        experiment_description = "description-" + random_prefix
+        sagemaker_execution_role_name = "role-" + random_prefix
+        bucket_name = "s3-" + random_prefix
+        job_name = "kfp-run-" + random_prefix
+
+        sagemaker_execution_role_arn = create_execution_role(
+            sagemaker_execution_role_name, region
+        )
+        create_s3_bucket_with_data(bucket_name, "us-east-1")
+        time.sleep(120)
+
+        experiment = kfp_client.create_experiment(
+            experiment_name,
+            description=experiment_description,
+            namespace=DEFAULT_USER_NAMESPACE,
+        )
+
+        pipeline_id = kfp_client.get_pipeline_id(PIPELINE_NAME_KFP)
+
+        params = {
+            "sagemaker_role_arn": sagemaker_execution_role_arn,
+            "s3_bucket_name": bucket_name,
+        }
+
+        run = kfp_client.run_pipeline(
+            experiment.id, job_name=job_name, pipeline_id=pipeline_id, params=params
+        )
+
+        assert run.name == job_name
+        assert run.pipeline_spec.pipeline_id == pipeline_id
+        assert run.status == None
+
+        wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
+
+        kfp_client.delete_experiment(experiment.id)
