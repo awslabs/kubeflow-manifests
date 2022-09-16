@@ -97,12 +97,8 @@ cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
-verify-automation-variables:
-	test $(INSTALLATION_OPTION) || (echo Please export INSTALLATION_OPTION variable; exit 1)
-	test $(DEPLOYMENT_OPTION) || (echo Please export DEPLOYMENT_OPTION variable; exit 1)
-
-deploy-kubeflow: bootstrap-ack verify-automation-variables
+deploy-kubeflow: bootstrap-ack
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
 
-delete-kubeflow: verify-automation-variables
+delete-kubeflow:
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
