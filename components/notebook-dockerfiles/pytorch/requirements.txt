@@ -29,5 +29,6 @@ ipympl==0.9.1
 awscli==1.25.44
 boto3==1.24.44
 
-# pytorch packages, latest version reinstalls Pytorch.
-fastai==2.7.3
+# Pytorch packages
+# a version mismatch for fastai can cause a different version of torch to get installed, be careful.
+fastai==2.7.9
