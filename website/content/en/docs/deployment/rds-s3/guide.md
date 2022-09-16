@@ -1,5 +1,5 @@
 +++
-title = "Manifest Deployment Guid"
+title = "Manifest Deployment Guide"
 description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
 weight = 20
 +++
@@ -47,7 +47,7 @@ To install for only RDS or only S3, complete the steps relevant to your installa
 To install for both RDS and S3, complete all the steps below.
 
 ## 1.0 Prerequisites
-Follow the steps in [Prerequisites]({{< ref "/docs/deployment/prerequisites/manifest.md" >}}) to make sure that you have everything you need to get started. 
+Follow the steps in [Prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}) to make sure that you have everything you need to get started. 
 
 Make sure you are starting from the repository root directory. 
 Export the below variable:
@@ -242,26 +242,22 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
-{{< tab header="Command:" disabled=true />}}
-{{< tab header="kustomize" lang="toml" >}}
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+{{< tab header="Kustomize" lang="toml" >}}
+make
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-[TODO: @jsitu777]
+make
 {{< /tab >}}
 {{< /tabpane >}}
 
 #### [RDS] Deploy RDS only
 Use the following command to deploy the Kubeflow manifests for RDS only:
 {{< tabpane persistLang=false >}}
-{{< tab header="Command:" disabled=true />}}
-{{< tab header="kustomize" lang="toml" >}}
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+{{< tab header="Kustomize" lang="toml" >}}
+make
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-[TODO: @jsitu777]
+make
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -269,13 +265,11 @@ while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do ech
 #### [S3] Deploy S3 only
 Use the following command to deploy the Kubeflow manifests for S3 only:
 {{< tabpane persistLang=false >}}
-{{< tab header="Command:" disabled=true />}}
-{{< tab header="kustomize" lang="toml" >}}
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+{{< tab header="Kustomize" lang="toml" >}}
+make
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-[TODO: @jsitu777]
+make
 {{< /tab >}}
 {{< /tabpane >}}
 

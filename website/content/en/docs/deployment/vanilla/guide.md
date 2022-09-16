@@ -1,5 +1,5 @@
 +++
-title = "Manual Deployment Guide"
+title = "Manifest Deployment Guide"
 description = "Deploy the vanilla distribution of Kubeflow on AWS using Kustomize or Helm"
 weight = 20
 +++
@@ -10,14 +10,14 @@ This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites/manifest.md" >}}) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites]({{< ref "prerequisites.md" >}}) before working through this guide.
 
-### Build Manifests and install Kubeflow
+## Build Manifests and install Kubeflow
 
 There two options for installing Kubeflow official components and common services with kustomize.
 
-1. Single-command installation of all components under `apps` and `common`
-2. Multi-command, individual components installation for `apps` and `common`
+1. [Single-command installation]({{< ref "#install-with-a-single-command" >}}) of all components under `apps` and `common`
+2. [Multi-command installation]({{< ref "#install-individual-components" >}}) of individual components for `apps` and `common`
 
 Option 1 targets ease of deployment for end users. \
 Option 2 targets customization and ability to pick and choose individual components.
@@ -36,12 +36,11 @@ Option 2 targets customization and ability to pick and choose individual compone
 You can install all Kubeflow official components (residing under `apps`) and all common services (residing under `common`) using the following command:
 
 {{< tabpane persistLang=false >}}
-{{< tab header="Command:" disabled=true />}}
-{{< tab header="kustomize" lang="toml" >}}
+{{< tab header="Kustomize" lang="toml" >}}
 while ! kustomize build deployments/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-[TODO: @jsitu777]
+make
 {{< /tab >}}
 {{< /tabpane >}}
 

@@ -11,7 +11,7 @@ This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your 
 - create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB's public DNS names)
 
 ## Prerequisites
-Check to make sure that you have the necessary [prerequisites]({{< ref "/docs/deployment/prerequisites/manifest.md" >}}).
+Check to make sure that you have the necessary [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}).
 
 ## Background 
 
@@ -99,12 +99,11 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 1. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         {{< tabpane persistLang=false >}}
-        {{< tab header="Command:" disabled=true />}}
-        {{< tab header="kustomize" lang="toml" >}}
-        while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+        {{< tab header="Kustomize" lang="toml" >}}
+        make
         {{< /tab >}}
         {{< tab header="Helm" lang="yaml" >}}
-        [TODO: @jsitu777]
+        make
         {{< /tab >}}
         {{< /tabpane >}}
     1. **[Option 2]** Install individual components:
