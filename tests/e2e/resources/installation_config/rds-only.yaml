@@ -1,0 +1,285 @@
+#level 1
+#cert-manager
+cert-manager: 
+  installation_options:  
+    kustomize: 
+      - "../../upstream/common/cert-manager/cert-manager/base"
+    helm: "../../charts/common/cert-manager"
+  namespace: 'cert-manager'
+  validations:
+    identifier: 'app.kubernetes.io/instance'
+    common_label: 'cert-manager'
+
+#kubeflow-roles
+kubeflow-roles:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/kubeflow-roles/base"
+    helm: "../../charts/common/kubeflow-roles"
+  namespace: 'kubeflow'
+  
+#level 2
+#kubeflow-issuer
+kubeflow-issuer:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/cert-manager/kubeflow-issuer/base"
+    helm: "../../charts/common/kubeflow-issuer"
+  namespace: 'cert-manager'
+
+#istio
+istio-1-14:
+  installation_options:
+    kustomize: 
+        - "../../upstream/common/istio-1-14/istio-crds/base"
+        - "../../upstream/common/istio-1-14/istio-namespace/base"
+        - "../../upstream/common/istio-1-14/istio-install/base"
+    helm: "../../charts/common/istio-1-14"
+  namespace: 'istio-system'
+  validations: 
+    identifier: 'app'
+    common_label: 'istio-ingressgateway, istiod'
+
+#dex
+dex:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/dex/overlays/istio"
+    helm: "../../charts/common/dex"
+  namespace: 'auth'
+  validations:
+    identifier: 'app'
+    common_label: 'dex'
+
+#kubeflow-namespace
+kubeflow-namespace:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/kubeflow-namespace/base"
+    helm: "../../charts/common/kubeflow-namespace"
+  namespace: 'kubeflow'
+
+#cluster-local-gateway
+cluster-local-gateway:
+  installation_options:
+    kustomize:
+      - "../../upstream/common/istio-1-14/cluster-local-gateway/base"
+    helm: "../../charts/common/cluster-local-gateway"
+  namespace: 'istio-system'
+  validations: 
+    identifier: 'app'
+    common_label: 'cluster-local-gateway'
+
+#knative
+knative-serving:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/knative/knative-serving/overlays/gateways"
+    helm: "../../charts/common/knative-serving"
+  crd_required: 'images.caching.internal.knative.dev'
+  namespace: 'knative-serving'
+  validations: 
+    identifier: 'app.kubernetes.io/name'
+    common_label: 'knative-serving'
+
+knative-eventing:
+  installation_options:
+    kustomize:
+      - "../../upstream/common/knative/knative-eventing/base"
+    helm: "../../charts/common/knative-eventing"
+  namespace: 'knative-eventing'
+  validations:
+    identifier: 'app.kubernetes.io/name'
+    common_label: 'knative-eventing'
+
+#level 4
+#oidc-authservice
+oidc-authservice:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/oidc-authservice/base"
+    helm: "../../charts/common/oidc-authservice"
+  namespace: 'istio-system'
+  validations:
+    identifier: 'app'
+    common_label: 'authservice'
+
+#kubeflow-istio-resources
+kubeflow-istio-resources:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/istio-1-14/kubeflow-istio-resources/base"
+    helm: "../../charts/common/kubeflow-istio-resources"
+  namespace: 'kubeflow'
+
+#kserve
+kserve:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/apps/kserve"
+    helm: "../../charts/common/kserve"
+  namespace: 'kubeflow'
+  crd_required: 'clusterservingruntimes.serving.kserve.io'
+  validations:
+    identifier: 'app'
+    common_label: 'kserve'
+
+#models-web-app
+models-web-app:
+  installation_options:
+    kustomize:
+      - "../../upstream/contrib/kserve/models-web-app/overlays/kubeflow"
+    helm: "../../charts/apps/models-web-app"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'kustomize.component'
+    common_label: 'kserve-models-web-app'
+
+#level 5
+#central-dashboard
+central-dashboard:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/centraldashboard/upstream/overlays/kserve"
+    helm: "../../charts/apps/central-dashboard"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'centraldashboard'
+
+#pipelines
+kubeflow-pipelines:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/apps/pipeline/rds"
+    helm: "../../charts/apps/kubeflow-pipelines/rds-only"
+  namespace: 'kubeflow'
+  crd_required: 'compositecontrollers.metacontroller.k8s.io'
+  validations:
+    identifier: 'application-crd-id'
+    common_label: 'kubeflow-pipelines'
+
+#notebook
+#admission-webhook
+admission-webhook:
+  installation_options:
+    kustomize:
+      - "../../upstream/apps/admission-webhook/upstream/overlays/cert-manager"
+    helm: "../../charts/apps/admission-webhook"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'poddefaults'
+
+#jupyter-web-app
+jupyter-web-app:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/apps/jupyter-web-app"
+    helm: "../../charts/apps/jupyter-web-app"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'jupyter-web-app'
+
+#notebook-controller
+notebook-controller:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow"
+    helm: "../../charts/apps/notebook-controller"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'notebook-controller'
+
+#volume-web-app
+volumes-web-app:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/volumes-web-app/upstream/overlays/istio"
+    helm: "../../charts/apps/volumes-web-app"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'volumes-web-app'
+
+#training-operator
+training-operator:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/training-operator/upstream/overlays/kubeflow"
+    helm: "../../charts/apps/training-operator"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'control-plane'
+    common_label: 'kubeflow-training-operator'
+
+#katib
+katib:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/apps/katib-external-db-with-kubeflow"
+    helm: "../../charts/apps/katib/katib-external-db-with-kubeflow"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'katib.kubeflow.org/component'
+    common_label: 'controller, db-manager, ui'
+
+#tensorboard
+tensorboard-controller:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow"
+    helm: "../../charts/apps/tensorboard-controller"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'tensorboard-controller'
+
+tensorboards-web-app:
+  installation_options:
+    kustomize:  
+      - "../../upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio"
+    helm: "../../charts/apps/tensorboards-web-app"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'tensorboards-web-app'
+
+#profiles and kfam
+profiles-and-kfam:
+  installation_options:
+    kustomize: 
+      - "../../upstream/apps/profiles/upstream/overlays/kubeflow"
+    helm: "../../charts/apps/profiles-and-kfam"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'kustomize.component'
+    common_label: 'profiles'
+
+#user namespace
+user-namespace:
+  installation_options:
+    kustomize: 
+      - "../../upstream/common/user-namespace/base"
+    helm: "../../charts/common/user-namespace"
+  namespace: 'kubeflow-example-com'
+
+#AWS Secrets Manager
+aws-secrets-manager:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/common/aws-secrets-manager/rds"
+    helm: "../../charts/common/aws-secrets-manager/rds-only"
+  namespace: 'kubeflow'
+  validations:
+    identifier: 'app'
+    common_label: 'aws-secrets-sync'
+
+#AWS Telemetry (Optional)
+aws-telemetry:
+  installation_options:
+    kustomize: 
+      - "../../awsconfigs/common/aws-telemetry"
+    helm: "../../charts/common/aws-telemetry"
