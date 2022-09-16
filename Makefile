@@ -98,7 +98,12 @@ cleanup-ack-req: verify-cluster-variables
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
 deploy-kubeflow: bootstrap-ack
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
+	$(eval DEPLOYMENT_OPTION:=vanilla)
+	$(eval INSTALLATION_OPTION:=kustomize)
+	$(eval AWS_TELEMETRY_OPTION:=enable)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --aws_telemetry_option $(AWS_TELEMETRY_OPTION)
 
 delete-kubeflow:
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --$(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
+	$(eval DEPLOYMENT_OPTION:=vanilla)
+	$(eval INSTALLATION_OPTION:=kustomize)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
