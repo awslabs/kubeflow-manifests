@@ -61,39 +61,35 @@ def delete_rds(metadata, secrets_manager_client, region):
     db_instance_name = metadata["RDS"]["instanceName"]
     db_subnet_group_name = metadata["RDS"]["subnetGroupName"]
     
-    try:
-        rds_client.modify_db_instance(
-            DBInstanceIdentifier=db_instance_name,
-            DeletionProtection=False,
-            ApplyImmediately=True,
-        )
-        print("Deleting RDS instance...")
-        rds_client.delete_db_instance(
-            DBInstanceIdentifier=db_instance_name, SkipFinalSnapshot=True
-        )
-        wait_periods = 30
-        period_length = 30
-        for _ in range(wait_periods):
-            try:
-                if (
-                    rds_client.describe_db_instances(DBInstanceIdentifier=db_instance_name)
-                    is not None
-                ):
-                    sleep(period_length)
-            except:
-                print("RDS instance has been successfully deleted")
-                break
-    except:
-        print("RDS instance does not exist...")
+    print("Deleting RDS instance...")
 
-    
+    rds_client.modify_db_instance(
+        DBInstanceIdentifier=db_instance_name,
+        DeletionProtection=False,
+        ApplyImmediately=True,
+    )
+    rds_client.delete_db_instance(
+        DBInstanceIdentifier=db_instance_name, SkipFinalSnapshot=True
+    )
+    wait_periods = 30
+    period_length = 30
+    for _ in range(wait_periods):
+        try:
+            if (
+                rds_client.describe_db_instances(DBInstanceIdentifier=db_instance_name)
+                is not None
+            ):
+                sleep(period_length)
+        except:
+            print("RDS instance has been successfully deleted")
+            break
+  
 
-    try:
-        rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
-        print("Deleting DB Subnet Group...")
-        print("DB Subnet Group has been successfully deleted")
-    except:
-        print("DB Subnet Group does not exist...")
+    print("Deleting DB Subnet Group...")
+ 
+    rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
+    print("DB Subnet Group has been successfully deleted")
+
 
     secrets_manager_client.delete_secret(
         SecretId=metadata["RDS"]["secretName"], ForceDeleteWithoutRecovery=True
