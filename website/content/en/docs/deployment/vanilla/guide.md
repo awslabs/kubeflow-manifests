@@ -6,7 +6,7 @@ weight = 20
 
 # Deploying Kubeflow on EKS
 
-This guide describes how to deploy Kubeflow on AWS EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
+This guide describes how to deploy Kubeflow on Amazon EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ You can install all Kubeflow official components (residing under `apps`) and all
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-while ! kustomize build deployments/vanilla | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+make deploy-kf-vanilla
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
 make

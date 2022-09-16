@@ -79,7 +79,7 @@ The command above installs the following tools:
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
 
 ## Create an EC2 Cluster
-> Note : You do not need to create an EKS cluster if you are using Terraform
+> Note : You do not need to create an EC2 cluster if you are using Terraform
 
 Use the following command to automatically provision an EKS cluster:
 ```sh

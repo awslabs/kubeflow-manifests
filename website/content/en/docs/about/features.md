@@ -27,5 +27,5 @@ Running Kubeflow on AWS gives you the following feature benefits and configurati
 * Leverage the **[Amazon FSx CSI driver](https://github.com/kubernetes-sigs/aws-fsx-csi-driver)** to manage Lustre file systems which are optimized for compute-intensive workloads, such as high-performance computing and machine learning. **[Amazon FSx for Lustre](https://aws.amazon.com/fsx/lustre/)** can scale to hundreds of GBps of throughput and millions of IOPS.
 
 ## Integrate with Amazon SageMaker
-* Train, tune, and deploy machine learning models in Amazon SageMaker without logging into the SageMaker console using [SageMaker Operators for Kubernetes (ACK)](https://github.com/aws-controllers-k8s/sagemaker-controller).
-* Create a Kubeflow Pipeline built entirely using [SageMaker Components for Kubeflow Pipelines](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker), or integrate individual components into your workflow as needed.
+* Train, tune, and deploy machine learning models in Amazon SageMaker without logging into the SageMaker console using **[SageMaker Operators for Kubernetes (ACK)](https://github.com/aws-controllers-k8s/sagemaker-controller)**.
+* Create a Kubeflow Pipeline built entirely using **[SageMaker Components for Kubeflow Pipelines](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker)**, or integrate individual components into your workflow as needed.
