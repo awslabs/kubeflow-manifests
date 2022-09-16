@@ -6,7 +6,7 @@ resource "aws_route53_zone" "platform" {
   name = var.aws_route53_subdomain_zone_name
 
   tags = {
-    platform = "kubeflow"
+    Platform = "kubeflow-on-aws"
   }
 
   depends_on = [
