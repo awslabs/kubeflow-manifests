@@ -18,6 +18,12 @@ def pytest_addoption(parser):
         help="Keep successfully created resources on delete.",
     )
     parser.addoption(
+        "--deletecluster",
+        action="store_true",
+        default=False,
+        help="Delete EKS cluster",
+    )
+    parser.addoption(
         "--region",
         action="store",
         help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
@@ -42,11 +48,29 @@ def pytest_addoption(parser):
         action="store",
         help="AWS account secretkey",
     )
+    parser.addoption(
+        "--installation_option",
+        action="store",
+        help="helm or kustomize, default is set to kustomize"
+    )
+    parser.addoption(
+        "--deployment_option",
+        action="store",
+        help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla"
+    )
+
+    parser.addoption(
+        "--aws_telemetry_option",
+        action="store",
+        help="Usage tracking (enable/disable), default is set to enable"
+    )
 
 
 def keep_successfully_created_resource(request):
     return request.config.getoption("--keepsuccess")
 
+def clean_up_eks_cluster(request):
+    return request.config.getoption("--deletecluster")
 
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
@@ -65,6 +89,24 @@ def get_secretkey(request):
         pytest.fail("--secretkey is required")
     return secret_key
 
+def get_installation_option(request):
+    installation_option = request.config.getoption("--installation_option")
+    if not installation_option:
+        installation_option = "kustomize"
+    return installation_option
+
+def get_depployment_option(request):
+    deployment_option = request.config.getoption("--deployment_option")
+    if not deployment_option:
+        deployment_option = "vanilla"
+    return deployment_option
+
+def get_aws_telemetry_option(request):
+    aws_telemetry_option = request.config.getoption("--aws_telemetry")
+    if not aws_telemetry_option:
+        aws_telemetry_option = "enable"
+    return aws_telemetry_option
+
 
 @pytest.fixture(scope="class")
 def region(metadata, request):
@@ -81,6 +123,49 @@ def region(metadata, request):
     metadata.insert("region", region)
     return region
 
+@pytest.fixture(scope="class")
+def installation_option(metadata, request):
+    """
+    Test installation option.
+    """
+    if metadata.get("installation_option"):
+        return metadata.get("installation_option")
+
+    installation_option = request.config.getoption("--installation_option")
+    if not installation_option:
+        installation_option = 'kustomize'
+    metadata.insert("installation_option", installation_option)
+    
+    return installation_option
+
+@pytest.fixture(scope="class")
+def deployment_option(metadata, request):
+    """
+    Test deployment option.
+    """
+    if metadata.get("deployment_option"):
+        return metadata.get("deployment_option")
+
+    deployment_option = request.config.getoption("--deployment_option")
+    if not deployment_option:
+        deployment_option = 'vanilla'
+    metadata.insert("deployment_option", deployment_option)
+    
+    return deployment_option
+
+@pytest.fixture(scope="class")
+def aws_telemetry_option(metadata, request):
+    """
+    Test aws-telemetry option.
+    """
+    if metadata.get("aws_telemetry_option"):
+        return metadata.get("aws_telemetry_option")
+
+    aws_telemetry_option = request.config.getoption("--aws_telemetry_option")
+    if not aws_telemetry_option:
+        aws_telemetry_option = 'enable'
+    metadata.insert("aws_telemetry_option", aws_telemetry_option)
+    return aws_telemetry_option
 
 @pytest.fixture(scope="class")
 def root_domain_name(metadata, request):

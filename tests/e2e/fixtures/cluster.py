@@ -4,6 +4,7 @@ EKS cluster fixture module
 
 import subprocess
 import pytest
+from e2e.conftest import clean_up_eks_cluster
 
 from e2e.utils.utils import (
     rand_name,
@@ -20,7 +21,7 @@ def create_cluster(cluster_name, region, cluster_version="1.22"):
     cmd += f"--region {region}".split()
     cmd += "--node-type m5.xlarge".split()
     cmd += "--nodes 5".split()
-    cmd += "--nodes-min 1".split()
+    cmd += "--nodes-min 5".split()
     cmd += "--nodes-max 10".split()
     cmd += "--managed".split()
 
@@ -56,7 +57,7 @@ def get_oidc_provider(cluster_name, region):
     return oidc_provider
 
 def create_iam_service_account(
-    service_account_name, namespace, cluster_name, region, iam_policy_arns=[], iam_role_arn=None, iam_role_name=None,
+    service_account_name, namespace, cluster_name, region, iam_policy_arns=[], iam_role_arn=None
 ):
     cmd = []
     cmd += "eksctl create iamserviceaccount".split()
@@ -70,9 +71,6 @@ def create_iam_service_account(
 
     if iam_role_arn != None:
         cmd += f"--attach-role-arn {iam_role_arn}".split()
-
-    if iam_role_name != None:
-        cmd += f"--role-name {iam_role_name}".split()
 
     cmd += "--override-existing-serviceaccounts".split()
     cmd += "--approve".split()
@@ -125,7 +123,10 @@ def cluster(metadata, region, request):
 
     def on_delete():
         name = metadata.get("cluster_name") or cluster_name
-        delete_cluster(name, region)
+        if clean_up_eks_cluster(request):
+            delete_cluster(name, region)
+        else:
+            return
 
     return configure_resource_fixture(
         metadata, request, cluster_name, "cluster_name", on_create, on_delete

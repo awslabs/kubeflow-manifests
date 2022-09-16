@@ -29,8 +29,8 @@ kubeflow-issuer:
 istio-1-14:
   installation_options:
     kustomize: 
-        - "../../upstream/common/istio-1-14/istio-crds/base"
         - "../../upstream/common/istio-1-14/istio-namespace/base"
+        - "../../upstream/common/istio-1-14/istio-crds/base"
         - "../../awsconfigs/common/istio"
     helm: "../../charts/common/istio-1-14"
   validations: 
