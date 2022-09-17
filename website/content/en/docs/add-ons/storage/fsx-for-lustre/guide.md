@@ -260,7 +260,7 @@ kubectl logs -n $PVC_NAMESPACE image-classification-pvc-worker-0 -f
 ```
 
 ## 4.0 Cleanup
-This section cleans up the resources created in this guide. 
+This section cleans up the resources created in this guide. To clean up additional deployment-specific resources, see the uninstall section in the deployment guide for the deployment option of your choice.
 
 ### 4.1 Clean up the TFJob
 ```bash

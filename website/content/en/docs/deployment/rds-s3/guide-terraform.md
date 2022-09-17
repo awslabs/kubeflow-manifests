@@ -9,65 +9,51 @@ weight = 30
 Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
 
 Specifially, you must:
-- [Create a Ubuntu environment]({{< ref "../prerequisites/#create-a-ubuntu-environment.md" >}})
-- [Clone the repository]({{< ref "../prerequisites/#clone-the-repository.md" >}})
-- [Install the necessary tools]({{< ref "../prerequisites/#create-a-ubuntu-environment.md" >}})
+- [Create a Ubuntu environment]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
+- [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
+- [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
 ## Deployment Steps
 
-Export the following variables as inputs for the cluster to be created
-
+Define the following environment variables:
 ```sh
 export TF_VAR_cluster_name=<desired_cluster_name>
 export TF_VAR_cluster_region=<desired_cluster_region>
+export TF_VAR_s3_bucket=<desired_s3_bucket>
+export TF_VAR_db_instance_name=<desired_db_instance_name>
+export TF_VAR_db_subnet_group_name=<desired_subnet_group_name>
+export TF_VAR_minio_aws_access_key_id=<desired_minio_aws_access_key_id>
+export TF_VAR_minio_aws_secret_access_key=<desired_minio_aws_secret_access_key>
+export TF_VAR_rds_secret_name=<desired_rds_secret_name>
+export TF_VAR_s3_secret_name=<desired_s3_secret_name>
 ```
 
-Run the below command to deploy
+### RDS and S3
+Run the following command:
 ```sh
+cd deployments/rds-s3/terraform
 make deploy
 ```
 
-## Verification
-
-The following steps will allow you to access the Kubeflow central dashboard from your browser.
-
-#### Step 0: Update the kubeconfig
+### RDS only
 ```sh
-$(terraform output -raw configure_kubectl)
+cd deployments/rds-s3/rds-only/terraform
+make deploy
 ```
 
-#### Step 1: Enable portforwarding for the central dashboard
+### S3 only
 ```sh
-kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+cd deployments/rds-s3/s3-only/terraform
+make deploy
 ```
 
-#### [Optional] Step 2: Enable portfowarding from your EC2 instance
+## Connect to your Kubeflow dashboard
 
-If you are running kubectl on an ec2 instance you will need to run the below command on your local machine to access the dashboard.
-```sh
-ssh -i your-ssh-key.pem -N -L 8080:localhost:8080 your-ec2-instance-username@your-ec2-instance-dns.us-west-2.compute.amazonaws.com
-```
-
-This is an extension of the ssh command used to ssh to the instance, so if your ssh command was:
-```sh
-ssh -i "key.pem" ubuntu@ec2-xx-xx-xxx-xx.us-west-2.compute.amazonaws.com
-```
-
-then you would run:
-```sh
-ssh -i "key.pem" -N -L 8080:localhost:8080 ubuntu@ec2-xx-xx-xxx-xx.us-west-2.compute.amazonaws.com
-```
-
-#### Step 3: Login to the central dashboard.
-
-Open `http://localhost:8080` in a browser of your choosing.
-
-Provide the following username and password at the login screen:
-- Username: `user@example.com`
-- Password: `12341234`
+For information on connecting to your Kubeflow dashboard depending on your deployment environment, see [Port-forward (Terraform deployment)]({{< ref "../connect-kubeflow-dashboard/#port-forward-terraform-deployment" >}}). Then, [log into the Kubeflow UI]({{< ref "../connect-kubeflow-dashboard/#log-into-the-kubeflow-ui" >}}).
 
 ## Cleanup
 
+Uninstall Kubeflow on AWS with a single command. 
 ```sh
 make delete
 ```

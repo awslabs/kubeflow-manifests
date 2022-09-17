@@ -4,12 +4,14 @@ description = "Set up your environment for deploying Kubeflow on AWS"
 weight = 10
 +++
 
-## Create a Ubuntu environment
+For all Kubeflow on AWS deployment options, you need to [create a Ubuntu environment]({{< ref "#create-ubuntu-environment" >}}), [clone the necessary repositories]({{< ref "#clone-repository" >}}), and [install the necessary tools]({{< ref "#install-necessary-tools" >}}). 
+
+## Create Ubuntu environment
 
 To get started with automated deployment, you must have a Ubuntu environment using one of the following methods:
-- [Option 1: Amazon EC2]({{< ref "#amazon-ec2.md" >}})
-- [Option 2: Docker]({{< ref "#docker.md" >}}) 
-- [Option 3: AWS Cloud9]({{< ref "#aws-cloud9.md" >}})
+- [Option 1: Amazon EC2]({{< ref "#amazon-ec2" >}})
+- [Option 2: Docker]({{< ref "#docker" >}}) 
+- [Option 3: AWS Cloud9]({{< ref "#aws-cloud9" >}})
 
 ### Option 1: Amazon EC2
 
@@ -46,7 +48,7 @@ Launch a Ubuntu instance using Cloud9:
 Launch Ubuntu 18.04 cloud9 instance 
 ```
 
-## Clone the repository 
+## Clone repository 
 
 Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
 
@@ -59,10 +61,9 @@ git checkout ${AWS_RELEASE_VERSION}
 git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
 ```
 
-## Install the necessary tools 
+## Install necessary tools 
 
 Install the necessary tools with the following command: 
-[TO DO: Where is this command located in the repo?]
 ```sh
 make install-all-prerequisites
 ```
@@ -77,47 +78,3 @@ The command above installs the following tools:
 > Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 - [python 3.8+](https://www.python.org/downloads/) - A programming language used for automated installation scripts.
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
-
-## Create an EC2 Cluster
-> Note : You do not need to create an EC2 cluster if you are using Terraform
-
-Use the following command to automatically provision an EKS cluster:
-```sh
-make
-```
-
-[What are the default settings/instance types, etc for this make command?]
-
-> Note: Be sure to check [Amazon EKS and Kubeflow Compatibility]({{< ref "/docs/about/eks-compatibility.md" >}}) when creating your cluster with specific EKS versions.
-
-If you do not want to use the default settings, you can create a customized EKS cluster with the following commands:
-
-> Note: Various controllers use IAM roles for service accounts (IRSA). An [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) must exist for your cluster to use IRSA.
-
-Change the values for the `CLUSTER_NAME` and `CLUSTER_REGION` environment variables: 
-```bash
-export CLUSTER_NAME=$CLUSTER_NAME
-export CLUSTER_REGION=$CLUSTER_REGION
-```
-
-Run the following command to create an EKS cluster:
-```bash
-eksctl create cluster \
---name ${CLUSTER_NAME} \
---version 1.21 \
---region ${CLUSTER_REGION} \
---nodegroup-name linux-nodes \
---node-type m5.xlarge \
---nodes 5 \
---nodes-min 5 \
---nodes-max 10 \
---managed \
---with-oidc
-```
-
-If you are using an existing EKS cluster, create an [OIDC provider](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) and associate it with for your EKS cluster with the following command:
-```bash
-eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
---region ${CLUSTER_REGION} --approve
-```
-More details about cluster creation via `eksctl` can be found in the [Creating and managing clusters](https://eksctl.io/usage/creating-and-managing-clusters/) guide.

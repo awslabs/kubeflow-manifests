@@ -1,5 +1,5 @@
 +++
-title = "Add-ons"
+title = "Deployment Add-ons"
 description = "Add-on installation guides for Kubeflow on AWS"
 weight = 25
 +++

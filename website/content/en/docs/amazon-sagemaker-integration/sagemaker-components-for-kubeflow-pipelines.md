@@ -10,15 +10,7 @@ These components integrate SageMaker with the portability and orchestration of K
 
 ## Available components
 
-You can create a Kubeflow Pipeline built entirely using SageMaker components, or integrate individual components into your workflow as needed. The following SageMaker components are available:
-
-* [Training](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/train)
-* [Hyperparameter Optimization](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/hyperparameter_tuning)
-* [Processing](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/process)
-* [Hosting Deploy](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/deploy)
-* [Batch Transform component](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/batch_transform)
-* [Ground Truth](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/ground_truth)
-* [Workteam](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker/workteam)
+You can create a Kubeflow Pipeline built entirely using SageMaker components, or integrate individual components into your workflow as needed. Available Amazon SageMaker components can be found in the [Kubeflow GitHub repository](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker).
 
 ## Tutorials
 
