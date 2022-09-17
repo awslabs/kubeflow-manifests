@@ -118,8 +118,8 @@ disableKinds = ["taxonomy", "taxonomyTerm"]
     url = "https://awslabs.github.io/kubeflow-manifests/docs"
   [[params.versions]]
     version = "v1.5"
-    githubbranch = "release-v1.5.1-aws-b1.0.1"
-    url = "https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.1/docs"
+    githubbranch = "release-v1.5.1-aws-b1.0.2"
+    url = "https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs"
   [[params.versions]]
     version = "v1.4"
     githubbranch = "release-v1.4.1-aws-b1.0.0"
