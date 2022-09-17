@@ -103,7 +103,7 @@ Resources:
       DBInstanceClass:
         Ref: DBClass
       Engine: MySQL
-      EngineVersion: "8.0.17"
+      EngineVersion: "8.0.28"
       MultiAZ:
         Ref: MultiAZ
       MasterUsername:
