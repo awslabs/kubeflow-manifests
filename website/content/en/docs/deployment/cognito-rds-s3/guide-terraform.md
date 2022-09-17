@@ -4,6 +4,8 @@ description = "Deploy Kubeflow with Cognito, RDS, and S3 using Terraform"
 weight = 30
 +++
 
+> Note: Terraform deployment options are still in preview.
+
 ## Prerequisites
 
 Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
