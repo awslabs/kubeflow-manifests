@@ -7,7 +7,7 @@ Installs the vanilla distribution of kubeflow and validates the installation by:
 
 import os
 import subprocess
-
+import time
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -115,7 +115,10 @@ def setup_load_balancer(metadata, region, request, cluster, installation, root_d
 @pytest.fixture(scope="class")
 def host(setup_load_balancer):
     print(setup_load_balancer["config"]["route53"]["subDomain"]["name"])
+    print("wait for 60s for website to be available...")
+    time.sleep(60)
     host = "https://kubeflow." + setup_load_balancer["config"]["route53"]["subDomain"]["name"]
+    print(f"accessing {host}...")
     return host
 
 @pytest.fixture(scope="class")

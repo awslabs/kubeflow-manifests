@@ -197,7 +197,7 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
 
 def create_ingress():
     def callback():
-        apply_kustomize(path=common.LB_KUSTOMIZE_PATH)
+        apply_kustomize(path=common.LB_KUSTOMIZE_PATH, crd_required = "ingressclassparams.elbv2.k8s.aws")
 
     wait_for(callback)
 
