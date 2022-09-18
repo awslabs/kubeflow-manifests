@@ -49,12 +49,6 @@ dex:
     identifier: 'app'
     common_label: 'dex'
 
-#kubeflow-namespace
-kubeflow-namespace:
-  installation_options:
-    kustomize: 
-      - "../../upstream/common/kubeflow-namespace/base"
-    helm: "../../charts/common/kubeflow-namespace"
 
 #cluster-local-gateway
 cluster-local-gateway:
