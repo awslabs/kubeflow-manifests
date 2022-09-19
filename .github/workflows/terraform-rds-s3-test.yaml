@@ -1,12 +1,14 @@
-name: Terraform Vanilla Test
+name: Terraform RDS S3 Test
 on:
   # Run on PR configuration
   push:
     paths:
-      - deployments/vanilla/terraform/**
+      - deployments/rds-s3/terraform/**
       - iaac/terraform/apps/**
       - iaac/terraform/common/**
       - iaac/terraform/utils/**
+      - iaac/terraform/aws-infra/rds/**
+      - iaac/terraform/aws-infra/s3/**
     branches:
       - main
 
@@ -30,7 +32,7 @@ jobs:
       # needed to checkout repository
       contents: read
     env:
-      TF_VAR_cluster_name: testvanilla-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_cluster_name: testrdss3-${{ github.run_id }}-${{ github.run_attempt }}
       TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
     steps:
     - name: Checkout
