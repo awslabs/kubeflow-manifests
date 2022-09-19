@@ -89,11 +89,13 @@ variable "force_destroy_s3_bucket" {
 variable "aws_access_key" {
   type        = string
   description = "AWS access key to authenticate minio client"
+  default = null
 }
 
 variable "aws_secret_key" {
   type        = string
   description = "AWS secret key to authenticate minio client"
+  default = null
 }
 
 variable "kf_helm_repo_path" {
