@@ -16,8 +16,8 @@ on:
 
   workflow_dispatch:
 
-# Ensure that only a single workflow which deploy vanilla related stack will be run at a time. TODO: enable parallel runs
-concurrency: vanilla
+# Ensure that only a single workflow which deploy tf build related stack will be run at a time. TODO: enable parallel runs
+concurrency: tf-build
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
       # needed to checkout repository
       contents: read
     env:
-      TF_VAR_cluster_name: testpool-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_cluster_name: testvanilla-${{ github.run_id }}-${{ github.run_attempt }}
       TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
     steps:
     - name: Checkout
@@ -52,6 +52,7 @@ jobs:
         make deploy
     - name: Clean up terraform
       if: success() || failure()
+      # retry delete if flakiness present
       run: |
         cd deployments/vanilla/terraform
-        make delete
+        make delete || make delete || make delete
