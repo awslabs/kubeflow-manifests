@@ -242,7 +242,7 @@ def configure_manifests(profile_role, region, installation_path):
     yield
 
     with open(filename, "w") as file:
-        file.write(str(yaml.dump(profile_yaml_original)))     
+        file.write(str(yaml.dump(profile_yaml_original)))
 
 
 class TestProfileIRSA:
