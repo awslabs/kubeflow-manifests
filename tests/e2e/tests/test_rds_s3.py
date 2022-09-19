@@ -39,7 +39,6 @@ from e2e.fixtures.clients import (
     client_namespace,
     create_k8s_admission_registration_api_client,
 )
-from e2e.utils.utils import kubectl_label_namespace
 from e2e.utils import mysql_utils
 
 from e2e.utils.cloudformation_resources import (
@@ -170,10 +169,6 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
     s3_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
         s3_secret_provider_objects
     )
-    #annotate kubeflow namespace
-    print("Labeling kubeflow namespace...")
-    kubectl_label_namespace(namespace="kubeflow", label="istio-injection='enabled'")
-    kubectl_label_namespace(namespace="kubeflow", label="control-plane='kubeflow'")
     with open(RDS_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(rds_secret_provider, file)
 

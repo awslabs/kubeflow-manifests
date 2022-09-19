@@ -45,7 +45,6 @@ def main():
     setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client)
     setup_cluster_secrets()
     setup_kubeflow_pipeline()
-    annotate_kubeflow_namespace()
     print_banner("RDS S3 Setup Complete")
     script_metadata = [
         f"bucket_name={S3_BUCKET_NAME}",
@@ -66,11 +65,6 @@ def main():
         yaml_content=script_metadata, file_path="utils/rds-s3/metadata.yaml"
     )
 
-
-def annotate_kubeflow_namespace():
-    print("Labeling kubeflow namespace...")
-    kubectl_label_namespace(namespace="kubeflow", label="istio-injection='enabled'")
-    kubectl_label_namespace(namespace="kubeflow", label="control-plane='kubeflow'")
 
 def verify_prerequisites():
     print_banner("Prerequisites Verification")

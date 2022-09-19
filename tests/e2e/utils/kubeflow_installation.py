@@ -121,7 +121,8 @@ def build_component(
                 assert build_retcode == 0
             ##deal with namespace already exist issue for rds-s3 auto set-up script
             elif component_name == "kubeflow-namespace":
-                apply_kustomize(path_dic[component_name]["installation_options"]["kustomize"])
+                for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
+                    apply_kustomize(kustomize_path)
             else:
                 install_helm(component_name, installation_path, namespace)
         # kustomize
