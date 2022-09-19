@@ -1,11 +1,11 @@
-variable "aws_access_key" {
+variable "minio_aws_access_access_key_id" {
   type        = string
-  description = "AWS access key to authenticate minio client"
+  description = "AWS access key ID to authenticate minio client"
 }
 
-variable "aws_secret_key" {
+variable "minio_aws_secret_access_key" {
   type        = string
-  description = "AWS secret key to authenticate minio client"
+  description = "AWS secret access key to authenticate minio client"
 }
 
 variable "secret_recovery_window_in_days" {

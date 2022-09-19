@@ -102,10 +102,6 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name = "syncSecret.enabled",
         value = "true"
-      },
-      {
-        name = "enableSecretRotation",
-        value = "true"
       }
     ]
   }
@@ -157,13 +153,15 @@ module "kubeflow_components" {
   db_password = var.db_password
   db_class = var.db_class
   db_allocated_storage = var.db_allocated_storage
+  mysql_engine_version = var.mysql_engine_version
   multi_az = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
   generate_db_password = var.generate_db_password
 
+  minio_service_region = var.minio_service_region
   force_destroy_s3_bucket = var.force_destroy_s3_bucket
-  aws_access_key = var.aws_access_key
-  aws_secret_key = var.aws_secret_key
+  minio_aws_access_key_id = var.minio_aws_access_key_id
+  minio_aws_secret_access_key = var.minio_aws_secret_access_key
 }
 
 #---------------------------------------------------------------

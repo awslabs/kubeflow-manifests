@@ -1,11 +1,15 @@
 locals {
-  katib_chart_vanilla  = "${var.kf_helm_repo_path}/charts/apps/katib/-external-db-with-kubeflow"
-  katib_chart_rds  = "${var.kf_helm_repo_path}/charts/apps/katib/vanilla"
+  katib_chart_vanilla  = "${var.kf_helm_repo_path}/charts/apps/katib/vanilla"
+  katib_chart_rds  = "${var.kf_helm_repo_path}/charts/apps/katib/katib-external-db-with-kubeflow"
 
   kfp_chart_vanilla  = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/vanilla"
   kfp_chart_rds_only  = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-only"
   kfp_chart_s3_only  = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/s3-only"
   kfp_chart_rds_and_s3  = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-s3"
+
+  secrets_manager_chart_rds = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-only"
+  secrets_manager_chart_s3 = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/s3-only"
+  secrets_manager_chart_rds_s3 = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-s3"
 
   kfp_chart_map = {
     (local.kfp_chart_vanilla) = !var.use_rds && !var.use_s3,
@@ -14,8 +18,15 @@ locals {
     (local.kfp_chart_rds_and_s3) = var.use_rds && var.use_s3
   }
 
+  secrets_manager_chart_map = {
+    (local.secrets_manager_chart_rds) = var.use_rds && !var.use_s3,
+    (local.secrets_manager_chart_s3) = !var.use_rds && var.use_s3,
+    (local.secrets_manager_chart_rds_s3) = var.use_rds && var.use_s3
+  }
+
   katib_chart = var.use_rds ? local.katib_chart_rds : local.katib_chart_vanilla
   kfp_chart = [for k,v in local.kfp_chart_map : k if v == true][0]
+  secrets_manager_chart = [for k,v in local.secrets_manager_chart_map : k if v == true][0]
 }
 
 resource "kubernetes_namespace" "kubeflow" {
@@ -68,8 +79,8 @@ module "s3" {
   count = var.use_s3 ? 1 : 0
   source            = "../../../../iaac/terraform/aws-infra/s3"
   force_destroy_bucket = var.force_destroy_s3_bucket
-  aws_access_key = var.aws_access_key
-  aws_secret_key = var.aws_secret_key
+  minio_aws_access_key_id = var.minio_aws_access_key_id
+  minio_aws_secret_access_key = var.minio_aws_secret_access_key
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
 }
 
@@ -85,7 +96,7 @@ module "secrets_manager" {
   count = var.use_rds || var.use_s3 ? 1 : 0
   source            = "../../../../iaac/terraform/common/aws-secrets-manager"
   helm_config = {
-    chart = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-s3"
+    chart = local.secrets_manager_chart
     set = module.filter_secrets_manager_set_values.set_values
   }
 
@@ -180,7 +191,7 @@ module "filter_kfp_set_values" {
   set_values = {
     "rds.dbHost" = try(module.rds[0].rds_endpoint, null),
     "s3.bucketName" = try(module.s3[0].s3_bucket_name ,null),
-    "s3.minioServiceRegion" = var.addon_context.aws_region_name,
+    "s3.minioServiceRegion" = try(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb" = var.mlmdb_name,
     "s3.minioServiceHost" = var.minio_service_host
   }

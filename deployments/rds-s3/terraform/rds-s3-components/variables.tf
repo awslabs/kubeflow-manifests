@@ -81,6 +81,12 @@ variable "db_allocated_storage" {
   default = "20"
 }
 
+variable "mysql_engine_version" {
+  type        = string
+  description = "The engine version of MySQL"
+  default = "8.0.30"
+}
+
 variable "multi_az" {
   type        = string
   description = "Enables multi AZ for the master database"
@@ -91,6 +97,12 @@ variable "mlmdb_name" {
   type        = string
   default = "metadb"
   description = "Name of the mlm DB to create"
+}
+
+variable "minio_service_region" {
+  type        = string
+  default = null
+  description = "S3 service region. Change this field if the S3 bucket will be in a different region than the EKS cluster"
 }
 
 variable "minio_service_host" {
@@ -116,12 +128,12 @@ variable "force_destroy_s3_bucket" {
   default = false
 }
 
-variable "aws_access_key" {
+variable "minio_aws_access_key_id" {
   type        = string
-  description = "AWS access key to authenticate minio client"
+  description = "AWS access key ID to authenticate minio client"
 }
 
-variable "aws_secret_key" {
+variable "minio_aws_secret_access_key" {
   type        = string
-  description = "AWS secret key to authenticate minio client"
+  description = "AWS secret access key to authenticate minio client"
 }

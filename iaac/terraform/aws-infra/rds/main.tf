@@ -5,7 +5,7 @@ resource "aws_db_subnet_group" "rds_db_subnet_group" {
 resource "random_uuid" "db_snapshot_suffix" {
   keepers = {
     instance_class       = var.db_class
-    db_name                 = var.db_name
+    db_name              = var.db_name
     username = var.db_username
     password = var.db_password
     multi_az = var.multi_az
@@ -17,7 +17,7 @@ resource "random_uuid" "db_snapshot_suffix" {
 resource "aws_db_instance" "kubeflow_db" {
   allocated_storage    = var.db_allocated_storage
   engine               = "mysql"
-  engine_version       = "8.0.30"
+  engine_version       = var.mysql_engine_version
   instance_class       = var.db_class
   db_name                 = var.db_name
   username = var.db_username

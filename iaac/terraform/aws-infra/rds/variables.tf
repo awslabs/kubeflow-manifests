@@ -42,6 +42,12 @@ variable "db_allocated_storage" {
   default = "20"
 }
 
+variable "mysql_engine_version" {
+  type        = string
+  description = "The engine version of MySQL"
+  default = "8.0.30"
+}
+
 variable "multi_az" {
   type        = string
   description = "Enables multi AZ for the master database"
