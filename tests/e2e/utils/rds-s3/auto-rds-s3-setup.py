@@ -19,8 +19,7 @@ from e2e.utils.utils import (
     load_yaml_file,
     wait_for,
     WaitForCircuitBreakerError,
-    write_env_to_yaml,
-    kubectl_label_namespace
+    write_env_to_yaml
 )
 
 from shutil import which

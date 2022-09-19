@@ -54,7 +54,7 @@ from e2e.utils.custom_resources import (
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
-INSTALLATION_PATH_FILE = "./resources/installation_config/rds-and-s3.yaml"
+INSTALLATION_PATH_FILE = "./resources/installation_config/rds-s3.yaml"
 RDS_S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/rds-s3.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 DISABLE_PIPELINE_CACHING_PATCH_FILE = (
