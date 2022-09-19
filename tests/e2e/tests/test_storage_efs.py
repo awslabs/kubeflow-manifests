@@ -33,7 +33,7 @@ from e2e.fixtures.clients import (
 )
 from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
 
-from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 
 from e2e.fixtures.storage_efs_dependencies import (
     install_efs_csi_driver,
@@ -54,13 +54,14 @@ from e2e.utils.utils import (
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 MOUNT_PATH = "/home/jovyan/"
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 
 class TestEFS_Static:
@@ -68,7 +69,7 @@ class TestEFS_Static:
     def setup(
         self,
         metadata,
-        kustomize,
+        installation,
         patch_kfp_to_disable_cache,
         port_forward,
         static_provisioning,
@@ -148,13 +149,13 @@ class TestEFS_Static:
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
 
-
+"""
 class TestEFS_Dynamic:
     @pytest.fixture(scope="class")
     def setup_dynamic(
         self,
         metadata,
-        kustomize,
+        installation,
         patch_kfp_to_disable_cache,
         port_forward,
         dynamic_provisioning,
@@ -239,3 +240,4 @@ class TestEFS_Dynamic:
         read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
+"""
