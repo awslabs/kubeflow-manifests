@@ -27,7 +27,7 @@ from e2e.fixtures.clients import (
     patch_kfp_to_disable_cache,
 )
 
-from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 
 from e2e.fixtures.storage_fsx_dependencies import (
     static_provisioning,
@@ -45,7 +45,7 @@ from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 DISABLE_PIPELINE_CACHING_PATCH_FILE = (
     "./resources/custom-resource-templates/patch-disable-pipeline-caching.yaml"
 )
@@ -53,13 +53,13 @@ MOUNT_PATH = "/home/jovyan/"
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 
 class TestFSx:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, kustomize, patch_kfp_to_disable_cache, port_forward, static_provisioning):
+    def setup(self, metadata, installation, patch_kfp_to_disable_cache, port_forward, static_provisioning):
 
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged

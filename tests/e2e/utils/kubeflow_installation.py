@@ -1,4 +1,4 @@
-from pickle import FALSE
+from retrying import retry
 from e2e.utils.utils import load_yaml_file, print_banner
 import argparse
 from e2e.utils.utils import (
@@ -18,17 +18,17 @@ INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
 
 Install_Sequence = [
     "cert-manager",
+    "istio-1-14",
+    "dex",
+    "oidc-authservice",
+    "cluster-local-gateway",
+    "kubeflow-istio-resources",
     "kubeflow-roles",
     "kubeflow-issuer",
-    "istio-1-14",
-    "kubeflow-namespace",
-    "dex",
-    "cluster-local-gateway",
     "knative-serving",
     "knative-eventing",
-    "oidc-authservice",
-    "kubeflow-istio-resources",
     "kserve",
+    "kubeflow-namespace",
     "models-web-app",
     "central-dashboard",
     "aws-secrets-manager",
@@ -119,6 +119,9 @@ def build_component(
             elif component_name == "aws-load-balancer-controller":
                 build_retcode = build_alb_controller(cluster_name)
                 assert build_retcode == 0
+            ##deal with namespace already exist issue for rds-s3 auto set-up script
+            elif component_name == "kubeflow-namespace":
+                apply_kustomize(path_dic[component_name]["installation_options"]["kustomize"])
             else:
                 install_helm(component_name, installation_path, namespace)
         # kustomize
@@ -137,15 +140,19 @@ def build_component(
             if component_name == "cert-manager":
                 print("wait for 30s for cert-manager-webhook resource to be ready...")
                 time.sleep(30)
-
-    if "validations" in path_dic[component_name]:
-        identifier = path_dic[component_name]["validations"]["identifier"]
-        common_label = path_dic[component_name]["validations"]["common_label"]
-        namespace = path_dic[component_name]["validations"]["namespace"]
-        print(f"Waiting for {component_name} pods to be ready ...")
-        retcode = kubectl_wait_pods(common_label, namespace, identifier)
-        assert retcode == 0
-    print(f"All {component_name} pods are running!")
+        
+        if "validations" in path_dic[component_name]:
+            validate_component_installation(path_dic, component_name)
+        print(f"All {component_name} pods are running!")
+   
+@retry (stop_max_attempt_number=3)
+def validate_component_installation(path_dic,component_name):
+    identifier = path_dic[component_name]["validations"]["identifier"]
+    common_label = path_dic[component_name]["validations"]["common_label"]
+    namespace = path_dic[component_name]["validations"]["namespace"]
+    print(f"Waiting for {component_name} pods to be ready ...")
+    retcode = kubectl_wait_pods(common_label, namespace, identifier)
+    assert retcode == 0
 
 
 def build_certmanager():

@@ -7,6 +7,7 @@ from e2e.utils.cognito_bootstrap.cognito_pre_deployment import (
     configure_ingress,
     configure_aws_authservice,
 )
+from e2e.conftest import keep_successfully_created_resource
 from e2e.utils.load_balancer.setup_load_balancer import (
     create_subdomain_hosted_zone,
     configure_load_balancer_controller,
@@ -94,7 +95,11 @@ def cognito_bootstrap(
 
     def on_delete():
         cfg = metadata.get("cognito_dependencies") or cognito_deps
-        delete_cognito_dependency_resources(cfg)
+        print("keep Success Option for Cognito Fixture:")
+        print(keep_successfully_created_resource(request))
+        if keep_successfully_created_resource(request) == False:
+            print("start to uninstall Cognito Dependencies...")
+            delete_cognito_dependency_resources(cfg)
 
     return configure_resource_fixture(
         metadata, request, cognito_deps, "cognito_dependencies", on_create, on_delete
@@ -118,12 +123,14 @@ def wait_for_alb_dns(cluster, region):
 
 @pytest.fixture(scope="class")
 def post_deployment_dns_update(
-    metadata, region, request, cluster, cognito_bootstrap, kustomize
+    metadata, region, request, cluster, cognito_bootstrap, installation
 ):
-
+    print ("get into post deployment...")
     wait_for_alb_dns(cluster, region)
     ingress = get_ingress(cluster, region)
     alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+    print ("running command: kubectl get ingress -n istio-system")
+    print(alb_dns)
     update_hosted_zone_with_alb(
         subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],
         subdomain_hosted_zone_id=cognito_bootstrap["route53"]["subDomain"][
@@ -132,3 +139,4 @@ def post_deployment_dns_update(
         alb_dns=alb_dns,
         deployment_region=region,
     )
+    cognito_bootstrap["kubeflow"]["alb"]["dns"] = alb_dns
