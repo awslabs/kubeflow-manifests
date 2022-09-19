@@ -2,15 +2,11 @@
 variable "cluster_name" {
   description = "Name of cluster"
   type        = string
-  #todo remove
-  default     = "kf-tf-rds-s3"
 }
 
 variable "cluster_region" {
   description = "Region to create the cluster"
   type        = string
-  #todo remove
-  default     = "us-west-2"
 }
 
 variable "eks_version" {
@@ -75,21 +71,19 @@ variable "minio_service_host" {
 
 variable "secret_recovery_window_in_days" {
   type = number
-  default = 0 # todo: change to default, 7
+  default = 7
 }
 
 variable "generate_db_password" {
   description = "Generates a random admin password for the RDS database. Is overriden by db_password"
   type = bool
-  # default = false
-  default = true  #todo change back
+  default = false
 }
 
 variable "force_destroy_s3_bucket" {
   type = bool
   description = "Destroys s3 bucket even when the bucket is not empty"
-  # default = false
-  default = true  #todo change back
+  default = false
 }
 
 variable "aws_access_key" {

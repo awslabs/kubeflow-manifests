@@ -30,7 +30,7 @@ jobs:
       # needed to checkout repository
       contents: read
     env:
-      TF_VAR_cluster_name: testpool-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_cluster_name: testvanilla-${{ github.run_id }}-${{ github.run_attempt }}
       TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
     steps:
     - name: Checkout
