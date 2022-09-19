@@ -7,7 +7,7 @@ import tempfile
 import time
 import pytest
 import os
-from e2e.conftest import keep_successfully_created_resource, is_running_profile_irsa_test
+from e2e.conftest import keep_successfully_created_resource
 
 from e2e.utils.config import configure_resource_fixture
 from e2e.utils.constants import KUBEFLOW_VERSION

@@ -237,8 +237,6 @@ def configure_manifests(profile_role, region, installation_path):
 
     with open(filename, "w") as file:
         file.write(str(yaml.dump(profile_yaml)))
-    print("applying profile_iam.yaml...")
-    kubectl_apply(filename)
     yield
 
     with open(filename, "w") as file:
@@ -248,6 +246,8 @@ def configure_manifests(profile_role, region, installation_path):
 class TestProfileIRSA:
     @pytest.fixture(scope="class")
     def setup(self, metadata, configure_manifests, installation):
+        print("applying profile_iam.yaml...")
+        kubectl_apply(f"{installation_path}/profile_iam.yaml")
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestProfileIRSA", metadata_file)
