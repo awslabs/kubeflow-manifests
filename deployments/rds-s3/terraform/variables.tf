@@ -15,6 +15,16 @@ variable "eks_version" {
   default     = "1.22"
 }
 
+variable "use_rds" {
+  type = bool
+  default = true
+}
+
+variable "use_s3" {
+  type = bool
+  default = true
+}
+
 variable "enable_aws_telemetry" {
   description = "Enable AWS telemetry component"
   type = bool

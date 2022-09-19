@@ -52,6 +52,7 @@ jobs:
         make deploy
     - name: Clean up terraform
       if: success() || failure()
+      # retry delete if flakiness present
       run: |
         cd deployments/vanilla/terraform
-        make delete
+        make delete || make delete || make delete

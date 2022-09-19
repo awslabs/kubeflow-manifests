@@ -146,6 +146,9 @@ module "kubeflow_components" {
   addon_context = module.eks_blueprints_outputs.addon_context
   enable_aws_telemetry = var.enable_aws_telemetry
 
+  use_rds = var.use_rds
+  use_s3 = var.use_s3
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
   security_group_id = module.eks_blueprints.cluster_primary_security_group_id
