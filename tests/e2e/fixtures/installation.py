@@ -49,22 +49,13 @@ def installation(
     """
 
     def on_create():
-        if is_running_profile_irsa_test(request):
-            print("running profile irsa test...")
-            print(installation_path)
-            wait_for(lambda: apply_kustomize(installation_path), timeout=20 * 60)
-            time.sleep(5 * 60)
-        else:
-            install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
-
+        #install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
+        print("skip")
 
     def on_delete():
         if keep_successfully_created_resource(request) == False:
-            if is_running_profile_irsa_test(request):
-                delete_kustomize(installation_path)
-            else:    
-                print("Start to Uninstall KubeFlow...")
-                uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
+            print("Start to Uninstall KubeFlow...")
+            uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
 
 
 

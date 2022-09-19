@@ -59,6 +59,7 @@ from e2e.utils.k8s_core_api import (
     delete_configmap,
     upload_file_as_configmap,
 )
+from e2e.utils.utils import kubectl_apply
 
 TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
@@ -216,12 +217,12 @@ def client_namespace(profile_role):
 
 @pytest.fixture(scope="class")
 def login():
-    return "test-user@kubeflow.org"
+    return "user@example.com"
 
 
 @pytest.fixture(scope="class")
 def configure_manifests(profile_role, region, installation_path):
-
+    print("configuring manifests...")
     iam_client = get_iam_client(region=region)
     resp = iam_client.get_role(RoleName=profile_role)
     oidc_role_arn = resp["Role"]["Arn"]
@@ -236,11 +237,12 @@ def configure_manifests(profile_role, region, installation_path):
 
     with open(filename, "w") as file:
         file.write(str(yaml.dump(profile_yaml)))
-
+    print("applying profile_iam.yaml...")
+    kubectl_apply(filename)
     yield
 
     with open(filename, "w") as file:
-        file.write(str(yaml.dump(profile_yaml_original)))
+        file.write(str(yaml.dump(profile_yaml_original)))     
 
 
 class TestProfileIRSA:

@@ -4,20 +4,12 @@ Add additional pytest supported test configurations.
 https://docs.pytest.org/en/6.2.x/example/simple.html
 """
 
-from argparse import Action
-from email.policy import default
 import pytest
 
 
 def pytest_addoption(parser):
     parser.addoption(
         "--metadata", action="store", help="Metadata file to resume a test class from."
-    )
-    parser.addoption(
-        "--running_profle_irsa_test",
-        action="store_true",
-        default=False,
-        help="Running profile_irsa e2e test.",
     )
     parser.addoption(
         "--keepsuccess",
@@ -82,9 +74,6 @@ def clean_up_eks_cluster(request):
 
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
-
-def is_running_profile_irsa_test(request):
-    return request.config.getoption("--running_profle_irsa_test")
 
 def get_accesskey(request):
     access_key = request.config.getoption("--accesskey")
