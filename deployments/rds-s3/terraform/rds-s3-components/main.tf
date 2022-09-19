@@ -71,6 +71,11 @@ module "rds" {
   db_password = coalesce(var.db_password, random_password.db_password[0].result)
   db_class = var.db_class
   db_allocated_storage = var.db_allocated_storage
+  backup_retention_period = var.backup_retention_period
+  storage_type = var.storage_type
+  deletion_protection = var.deletion_protection
+  max_allocated_storage = var.max_allocated_storage
+  publicly_accessible = var.publicly_accessible
   multi_az = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
 }

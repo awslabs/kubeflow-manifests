@@ -25,6 +25,11 @@ resource "aws_db_instance" "kubeflow_db" {
   multi_az = var.multi_az
   db_subnet_group_name = aws_db_subnet_group.rds_db_subnet_group.id
   vpc_security_group_ids = [var.security_group_id]
+  backup_retention_period = var.backup_retention_period
+  storage_type = var.storage_type
+  deletion_protection = var.deletion_protection
+  max_allocated_storage = var.max_allocated_storage
+  publicly_accessible = var.publicly_accessible
   final_snapshot_identifier = "snp-${random_uuid.db_snapshot_suffix.result}"
 }
 

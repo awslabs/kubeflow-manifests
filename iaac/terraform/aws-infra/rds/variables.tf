@@ -48,6 +48,36 @@ variable "mysql_engine_version" {
   default = "8.0.30"
 }
 
+variable "backup_retention_period" {
+  type        = number
+  description = "Number of days to retain backups for"
+  default = 7
+}
+
+variable "storage_type" {
+  type        = string
+  description = "Instance storage type: standard, gp2, or io1"
+  default = "gp2"
+}
+
+variable "deletion_protection" {
+  type        = bool
+  description = "Prevents the deletion of the instance when set to true"
+  default = true
+}
+
+variable "max_allocated_storage" {
+  type        = number
+  description = "The upper limit of scalable storage (Gb)"
+  default = 1000
+}
+
+variable "publicly_accessible" {
+  type        = bool
+  description = "Makes the instance publicly accessible when true"
+  default = false
+}
+
 variable "multi_az" {
   type        = string
   description = "Enables multi AZ for the master database"
