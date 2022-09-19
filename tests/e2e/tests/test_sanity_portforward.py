@@ -18,7 +18,7 @@ from e2e.utils.config import configure_resource_fixture, metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream #, configure_manifests
+from e2e.fixtures.kustomize import kustomize, clone_upstream, configure_manifests
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -28,17 +28,6 @@ from e2e.fixtures.clients import (
     password,
     client_namespace,
     account_id
-)
-from e2e.fixtures.profile_dependencies import (
-    configure_manifests,
-    profile_controller_policy,
-    profile_controller_service_account,
-    profile_trust_policy,
-    profile_role,
-    associate_oidc,
-    kustomize_path,
-    client_namespace,
-    login,
 )
 
 from e2e.utils.custom_resources import (

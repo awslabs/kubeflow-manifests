@@ -42,7 +42,6 @@ class S3BucketWithTrainingData:
                 # CreateBucketConfiguration={"LocationConstraint": self.region},
             )
 
-            print(os.getcwd())
             cmd = f"python3 utils/s3_for_training/sync.py {self.name} {self.region}".split()
             proc = subprocess.Popen(cmd)
 
