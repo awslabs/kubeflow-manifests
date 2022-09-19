@@ -20,6 +20,7 @@ from e2e.utils.utils import (
     get_s3_client,
     get_eks_client,
     wait_for_kfp_run_succeeded_from_run_id,
+    apply_kustomize
 )
 from e2e.utils.config import metadata, configure_resource_fixture
 
@@ -34,7 +35,7 @@ from e2e.fixtures.cluster import (
     associate_iam_oidc_provider,
     delete_iam_service_account,
 )
-from e2e.fixtures.kustomize import kustomize, clone_upstream
+from e2e.fixtures.installation import installation, clone_upstream
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -70,7 +71,7 @@ KATIB_CONFIG_MAP_NAME = "katib-config"
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
+def installation_path():
     return TO_ROOT_PATH + "tests/e2e/resources/custom-manifests/profile-irsa"
 
 
@@ -219,13 +220,13 @@ def login():
 
 
 @pytest.fixture(scope="class")
-def configure_manifests(profile_role, region, kustomize_path):
+def configure_manifests(profile_role, region, installation_path):
 
     iam_client = get_iam_client(region=region)
     resp = iam_client.get_role(RoleName=profile_role)
     oidc_role_arn = resp["Role"]["Arn"]
 
-    filename = kustomize_path + "/profile_iam.yaml"
+    filename = installation_path + "/profile_iam.yaml"
 
     profile_yaml_original = unmarshal_yaml(yaml_file=filename)
     profile_yaml = unmarshal_yaml(
@@ -244,7 +245,7 @@ def configure_manifests(profile_role, region, kustomize_path):
 
 class TestProfileIRSA:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, configure_manifests, kustomize):
+    def setup(self, metadata, configure_manifests, installation):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestProfileIRSA", metadata_file)

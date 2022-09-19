@@ -7,11 +7,11 @@ import tempfile
 import time
 import pytest
 import os
-from e2e.conftest import keep_successfully_created_resource
+from e2e.conftest import keep_successfully_created_resource, is_running_profile_irsa_test
 
 from e2e.utils.config import configure_resource_fixture
 from e2e.utils.constants import KUBEFLOW_VERSION
-from e2e.utils.utils import wait_for,kubectl_delete, kubectl_delete_crd, kubectl_wait_crd
+from e2e.utils.utils import wait_for,kubectl_delete, kubectl_delete_crd, kubectl_wait_crd, apply_kustomize, delete_kustomize
 from e2e.utils.kubeflow_installation import install_kubeflow
 from e2e.utils.kubeflow_uninstallation import uninstall_kubeflow
 
@@ -49,13 +49,22 @@ def installation(
     """
 
     def on_create():
-        install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
+        if is_running_profile_irsa_test(request):
+            print("running profile irsa test...")
+            print(installation_path)
+            wait_for(lambda: apply_kustomize(installation_path), timeout=20 * 60)
+            time.sleep(5 * 60)
+        else:
+            install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
 
 
     def on_delete():
         if keep_successfully_created_resource(request) == False:
-            print("Start to Uninstall KubeFlow...")
-            uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
+            if is_running_profile_irsa_test(request):
+                delete_kustomize(installation_path)
+            else:    
+                print("Start to Uninstall KubeFlow...")
+                uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
 
 
 
