@@ -153,7 +153,7 @@ export PROFILE_NAMESPACE="staging"
 Create a scikit-learn `InferenceService` using a [sample](https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml) from the KServe repository and wait for `READY` to be `True`.
 
 ```bash
-kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v1/sklearn.yaml
+kubectl apply -n ${PROFILE_NAMESPACE} -f https://raw.githubusercontent.com/kserve/kserve/release-0.8/docs/samples/v1beta1/sklearn/v1/sklearn.yaml
 ```
 
 ### Check `InferenceService` status
