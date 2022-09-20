@@ -8,6 +8,7 @@ Installs the vanilla distribution of kubeflow and validates FSx for Lustre integ
 
 import pytest
 import subprocess
+import time
 
 from e2e.utils.config import metadata
 
@@ -93,6 +94,8 @@ class TestFSx:
             cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
         )
         assert pvc_name == CLAIM_NAME
+        print("wait 60s for FSx to be Bound...")
+        time.sleep(60)
         assert claim_status == "Bound"
 
         # TODO: The following can be put into a method or split this into different tests
@@ -131,6 +134,8 @@ class TestFSx:
             cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
         )
         assert pvc_name == CLAIM_NAME
+        print("wait 60s for FSx to be Bound...")
+        time.sleep(60)
         assert claim_status == "Bound"
 
         write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
