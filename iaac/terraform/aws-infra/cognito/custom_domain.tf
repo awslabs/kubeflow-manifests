@@ -1,3 +1,11 @@
+provider "aws" {
+  alias = "aws"
+}
+
+provider "aws" {
+  alias = "virginia"
+}
+
 # Add a custom domain to the user pool
 data "aws_route53_zone" "platform" {
   name = var.aws_route53_subdomain_zone_name
@@ -16,13 +24,6 @@ resource "aws_route53_record" "pre_cognito_domain_a_record" {
   lifecycle {
     ignore_changes = [records, alias, ttl]
   }
-}
-
-# Cognito requires a certificate in N.Virginia in order to have a custom domain for a user pool
-# https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html
-provider "aws" {
-  region = "us-east-1"
-  alias = "virginia"
 }
 
 resource "aws_acm_certificate" "cognito_domain_cert" {

@@ -25,9 +25,20 @@ variable "cognito_user_pool_name" {
   type        = string
 }
 
+variable "aws_route53_root_zone_name" {
+  description = "TOP LEVEL/ROOT Route 53 hosted zone name (e.g. example.com). Must match exactly one zone."
+  type        = string
+}
+
 variable "aws_route53_subdomain_zone_name" {
   description = "SUBDOMAIN Route 53 hosted zone name(e.g. platform.example.com) which will be used for Kubeflow Platform. Must match exactly one zone"
   type        = string
+}
+
+variable "create_subdomain" {
+  description = "Creates a subdomain with the name provided in var.aws_route53_subdomain_zone_name"
+  type = bool
+  default = true
 }
 
 variable "load_balancer_scheme" {

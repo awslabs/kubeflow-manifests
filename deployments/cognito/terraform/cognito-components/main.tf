@@ -1,3 +1,11 @@
+provider "aws" {
+  alias = "aws"
+}
+
+provider "aws" {
+  alias = "virginia"
+}
+
 resource "kubernetes_namespace" "kubeflow" {
   metadata {
     labels = {
@@ -9,10 +17,24 @@ resource "kubernetes_namespace" "kubeflow" {
   }
 }
 
+module "subdomain" {
+  count = var.create_subdomain ? 1 : 0
+  source            = "../../../../iaac/terraform/aws-infra/subdomain"
+  aws_route53_root_zone_name = var.aws_route53_root_zone_name
+  aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+}
+
 module "cognito" {
   source            = "../../../../iaac/terraform/aws-infra/cognito"
   cognito_user_pool_name = var.cognito_user_pool_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+
+  providers = {
+    aws = aws
+    aws.virginia = aws.virginia
+  }
+
+  depends_on = [module.subdomain]
 }
 
 module "kubeflow_issuer" {
@@ -34,7 +56,7 @@ module "kubeflow_istio" {
   depends_on = [module.kubeflow_issuer]
 }
 
-module "kubeflow_cognito" {
+module "ingress_cognito" {
   source            = "../../../../iaac/terraform/common/ingress/cognito"
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
   cluster_name = var.addon_context.eks_cluster_id
@@ -58,7 +80,7 @@ module "kubeflow_aws_authservice" {
     ]
   }
   addon_context = var.addon_context
-  depends_on = [module.kubeflow_cognito]
+  depends_on = [module.ingress_cognito]
 }
 
 module "kubeflow_knative_serving" {

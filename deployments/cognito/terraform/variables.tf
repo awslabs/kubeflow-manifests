@@ -2,13 +2,11 @@
 variable "cluster_name" {
   description = "Name of cluster"
   type        = string
-  default = "tf-cognito-cluster" #todo remove
 }
 
 variable "cluster_region" {
   description = "Region to create the cluster"
   type        = string
-  default = "us-west-2" #todo remove
 }
 
 variable "eks_version" {
@@ -20,13 +18,22 @@ variable "eks_version" {
 variable "cognito_user_pool_name" {
   description = "Cognito User Pool name"
   type        = string
-  default = "tf-cognito-up" #todo remove
+}
+
+variable "aws_route53_root_zone_name" {
+  description = "TOP LEVEL/ROOT Route 53 hosted zone name (e.g. example.com). Must match exactly one zone."
+  type        = string
 }
 
 variable "aws_route53_subdomain_zone_name" {
   description = "SUBDOMAIN Route 53 hosted zone name(e.g. platform.example.com) which will be used for Kubeflow Platform. Must match exactly one zone"
   type        = string
-  default = "tmp.rkharse.people.aws.dev" #todo remove
+}
+
+variable "create_subdomain" {
+  description = "Creates a subdomain with the name provided in var.aws_route53_subdomain_zone_name"
+  type = bool
+  default = true
 }
 
 variable "load_balancer_scheme" {
