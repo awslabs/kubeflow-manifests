@@ -1,7 +1,7 @@
 +++
-title = "RDS and S3"
-description = "Deploying Kubeflow with RDS and S3"
-weight = 40
+title = "Manifest Deployment Guide"
+description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
+weight = 20
 +++
 
 This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
@@ -241,24 +241,37 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 #### [RDS and S3] Deploy both RDS and S3
 
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make
+{{< /tab >}}
+{{< /tabpane >}}
 
 #### [RDS] Deploy RDS only
 Use the following command to deploy the Kubeflow manifests for RDS only:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make
+{{< /tab >}}
+{{< /tabpane >}}
+
 
 #### [S3] Deploy S3 only
 Use the following command to deploy the Kubeflow manifests for S3 only:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make
+{{< /tab >}}
+{{< /tabpane >}}
 
 Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster]({{< ref "/docs/deployment/vanilla/guide.md#connect-to-your-kubeflow-cluster" >}}).
 

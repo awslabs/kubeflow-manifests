@@ -1,7 +1,7 @@
 +++
-title = "Cognito, RDS, and S3"
+title = "Manifest Deployment Guide"
 description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
-weight = 60
+weight = 10
 +++
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
@@ -26,9 +26,15 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
     1. Configure Ingress
 2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
-        ```sh
-        while ! kustomize build deployments/cognito-rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-        ```
+        {{< tabpane persistLang=false >}}
+        {{< tab header="Kustomize" lang="toml" >}}
+        make
+        {{< /tab >}}
+        {{< tab header="Helm" lang="yaml" >}}
+        make
+        {{< /tab >}}
+        {{< /tabpane >}}
+
     1. **[Option 2]** Install individual components:
         ```sh
         # Kubeflow namespace

@@ -20,8 +20,13 @@ Running Kubeflow on AWS gives you the following feature benefits and configurati
 * Manage external traffic with **[AWS Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)**.
 * Get started with TLS authentication using **[AWS Certificate Manager](https://aws.amazon.com/certificate-manager/)** and **[AWS Cognito](https://aws.amazon.com/cognito/)**.
 
-## Integrate with AWS database and storage solutions
+## AWS database and storage solutions
 * Integrate Kubeflow with **[Amazon Relational Database Service (RDS)](https://aws.amazon.com/rds/)** for a highly scalable pipelines and metadata store.
 * Deploy Kubeflow with integrations for **[Amazon S3](https://aws.amazon.com/s3/)** for an easy-to-use pipeline artifacts store.
 * Use Kubeflow with **[Amazon Elastic File System (EFS)](https://aws.amazon.com/efs/)** for a simple, scalabale, and serverless storage solution. 
 * Leverage the **[Amazon FSx CSI driver](https://github.com/kubernetes-sigs/aws-fsx-csi-driver)** to manage Lustre file systems which are optimized for compute-intensive workloads, such as high-performance computing and machine learning. **[Amazon FSx for Lustre](https://aws.amazon.com/fsx/lustre/)** can scale to hundreds of GBps of throughput and millions of IOPS.
+
+## Integrate with Amazon SageMaker
+* Use Kubeflow on AWS with **[Amazon SageMaker](https://aws.amazon.com/sagemaker/)** to create hybrid machine learning workflows.
+* Train, tune, and deploy machine learning models in Amazon SageMaker without logging into the SageMaker console using **[SageMaker Operators for Kubernetes (ACK)](https://github.com/aws-controllers-k8s/sagemaker-controller)**.
+* Create a Kubeflow Pipeline built entirely using **[SageMaker Components for Kubeflow Pipelines](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker)**, or integrate individual components into your workflow as needed.
