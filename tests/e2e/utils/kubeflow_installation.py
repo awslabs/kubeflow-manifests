@@ -51,7 +51,7 @@ Install_Sequence = [
 
 
 def install_kubeflow(
-    installation_option, aws_telemetry_option, deployment_option, cluster_name
+    installation_option,  deployment_option, cluster_name, aws_telemetry_option="enable"
 ):
     INSTALLATION_OPTION = installation_option
     AWS_TELEMETRY_OPTION = aws_telemetry_option
@@ -220,5 +220,5 @@ if __name__ == "__main__":
     DEPLOYMENT_OPTION = args.deployment_option
     CLUSTER_NAME = os.environ["CLUSTER_NAME"]
     install_kubeflow(
-        INSTALLATION_OPTION, AWS_TELEMETRY_OPTION, DEPLOYMENT_OPTION, CLUSTER_NAME
+        INSTALLATION_OPTION,  DEPLOYMENT_OPTION, CLUSTER_NAME, AWS_TELEMETRY_OPTION
     )
