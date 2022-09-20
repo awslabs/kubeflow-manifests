@@ -238,38 +238,67 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 - RDS only
 - S3 only
 
+#### Set your Installation Option
+For kustomize
+1. Export kustomize as the installation option
+    ```
+    export INSTALLATION_OPTION=kustomize
+    ```
+1. Export helm as the installation option
+    ```
+    export INSTALLATION_OPTION=helm
+    ```
+
 #### [RDS and S3] Deploy both RDS and S3
+
+1. Set your Deployment Option
+    ```
+    export DEPLOYMENT_OPTION=rds-s3
+    ```
 
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
 #### [RDS] Deploy RDS only
+
+1. Set your Deployment Option
+    ```
+    export DEPLOYMENT_OPTION=rds-only
+    ```
+
 Use the following command to deploy the Kubeflow manifests for RDS only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
 
 #### [S3] Deploy S3 only
+
+1. Set your Deployment Option
+    ```
+    export DEPLOYMENT_OPTION=s3-only
+    ```
+
+
 Use the following command to deploy the Kubeflow manifests for S3 only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -364,8 +393,11 @@ mysql> select * from observation_logs;
 ## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall your Kubeflow deployment:
+
+> Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation
+
 ```sh
-kustomize build deployments/rds-s3 | kubectl delete -f -
+make delete-kubeflow 
 ```
 
 The following cleanup steps may also be required:

@@ -24,18 +24,8 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
     1. Configure Ingress
-2. Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
-    1. **[Option 1]** Install with a single command:
-        {{< tabpane persistLang=false >}}
-        {{< tab header="Kustomize" lang="toml" >}}
-        make
-        {{< /tab >}}
-        {{< tab header="Helm" lang="yaml" >}}
-        make
-        {{< /tab >}}
-        {{< /tabpane >}}
-
-    1. **[Option 2]** Install individual components:
+2. Deploy Kubeflow.
+    1. Install individual components:
         ```sh
         # Kubeflow namespace
         kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -

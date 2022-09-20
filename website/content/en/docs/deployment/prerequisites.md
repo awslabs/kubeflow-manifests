@@ -21,7 +21,7 @@ For more information about DLAMI options, see [Release Notes for DLAMI](https://
 
 ### Option 2: Docker
 
-Create a Ubuntu environment using Docker. Pull the latest version of the Ubuntu image of your choice. For more information, see [Pull an image by digest (immutable identifier)](https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier) in the Docker documentation.
+Create a Ubuntu environment using Docker. Pull the latest version of the Ubuntu image of your choice.
 ```sh
 docker pull ubuntu:18.04
 ```
@@ -52,7 +52,7 @@ Launch Ubuntu 18.04 cloud9 instance
 
 Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
 
-Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.6.0) and `AWS_RELEASE_VERSION`(e.g. v1.6.1-aws-b1.0.1) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
+Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.6.0) and `AWS_RELEASE_VERSION`(e.g. v1.6.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
 ```bash
 export KUBEFLOW_RELEASE_VERSION=v1.6.0
 export AWS_RELEASE_VERSION=main
@@ -65,7 +65,7 @@ git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manif
 
 Install the necessary tools with the following command: 
 ```sh
-make install-all-prerequisites
+make install-tools
 ```
 
 The command above installs the following tools: 
@@ -78,3 +78,8 @@ The command above installs the following tools:
 > Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see [kubernetes-sigs/kustomize#3794](https://github.com/kubernetes-sigs/kustomize/issues/3794) and [kubeflow/manifests#1797](https://github.com/kubeflow/manifests/issues/1797). We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.
 - [python 3.8+](https://www.python.org/downloads/) - A programming language used for automated installation scripts.
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
+- [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - An infrastructure as code tool that lets you develop cloud and on-prem resources.
+- [helm](https://helm.sh/docs/intro/install/) - A package manager for Kubernetes
+
+## Installation options
+Kubeflow on AWS can be installed completely using terraform or using manifests(kustomize, helm). If you are looking to install using terraform, navigate directly to one of the Terraform deployment guides. To deploy using manifests, proceed to [Create an EKS Cluster guide]({{< ref "/docs/deployment/create-eks-cluster.md" >}})
