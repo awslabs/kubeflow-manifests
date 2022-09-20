@@ -146,7 +146,7 @@ def build_component(
             validate_component_installation(path_dic, component_name)
         print(f"All {component_name} pods are running!")
    
-@retry (stop_max_attempt_number=3, wait_fixed=3000)
+@retry (stop_max_attempt_number=3, wait_fixed=15000)
 def validate_component_installation(path_dic,component_name):
     identifier = path_dic[component_name]["validations"]["identifier"]
     common_label = path_dic[component_name]["validations"]["common_label"]
