@@ -6,6 +6,21 @@ weight = 30
 
 > Note: Terraform deployment options are still in preview.
 
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Create a Route53 subdomain
+- Create a Cognito user pool
+- Create a S3 bucket
+- Create an RDS DB instance
+- Deploy Kubeflow with Cognito as an identity provider, RDS as a KFP and Katib persistence layer, and S3 as an artifact store
+
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
+
 ## Prerequisites
 
 Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
@@ -15,30 +30,95 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+Additionally, ensure you are in the `REPO_ROOT/deployments/cognito-rds-s3/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/cognito-rds-s3/terraform
+pwd
+```
+
 ## Deployment Steps
+
+### Configure
+
+Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+
+To create a subdomain manually as well follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
+
+[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
 
 Define the following environment variables:
 ```sh
-export TF_VAR_cluster_name=<desired_cluster_name>
-export TF_VAR_cluster_region=<desired_cluster_region>
-export TF_VAR_s3_bucket=<desired_s3_bucket>
-export TF_VAR_db_instance_name=<desired_db_instance_name>
-export TF_VAR_db_subnet_group_name=<desired_subnet_group_name>
-export TF_VAR_minio_aws_access_key_id=<desired_minio_aws_access_key_id>
-export TF_VAR_minio_aws_secret_access_key=<desired_minio_aws_secret_access_key>
-export TF_VAR_rds_secret_name=<desired_rds_secret_name>
-export TF_VAR_s3_secret_name=<desired_s3_secret_name>
+# Region to create the cluster in
+export CLUSTER_REGION=
+# Name of the cluster to create
+export CLUSTER_NAME=
+# AWS access key id of the static credentials used to authenticate the Minio Client
+export TF_VAR_minio_aws_access_key_id=
+# AWS secret access key of the static credentials used to authenticate the Minio Client
+export TF_VAR_minio_aws_secret_access_key=
+# Name of an existing Route53 root domain (e.g. example.com)
+export ROOT_DOMAIN=
+# Name of the subdomain to create (e.g. platform.example.com)
+export SUBDOMAIN=
+# Name of the cognito user pool to create
+export USER_POOL_NAME=
+# true/false flag to configure and deploy with RDS
+export USE_RDS="true"
+# true/false flag to configure and deploy with S3
+export USE_S3="true"
+# true/false flag to configure and deploy with Cognito
+export USE_COGNITO="true"
 ```
+
+Save the variables to a `.tfvars` file:
+```sh
+cat <<EOF > sample.auto.tfvars
+cluster_name="${CLUSTER_NAME}"
+cluster_region="${CLUSTER_REGION}"
+generate_db_password="true"
+aws_route53_root_zone_name="${ROOT_DOMAIN}"
+aws_route53_subdomain_zone_name="${SUBDOMAIN}"
+cognito_user_pool_name="${USER_POOL_NAME}"
+create_subdomain="true"
+use_rds="${USE_RDS}"
+use_s3="${USE_S3}"
+use_cognito="${USE_COGNITO}"
+
+# The below values are set to make cleanup easier but are not recommended for production
+deletion_protection="false"
+secret_recovery_window_in_days="0"
+force_destroy_s3_bucket="true"
+EOF
+```
+
+### All Configurations
+
+A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf).
+
+### Preview
+
+View a preview of the configuration you are about apply:
+```sh
+terraform init && terraform plan
+```
+
+### Apply
 
 Run the following command:
 ```sh
-cd deployments/cognito-rds-s3/terraform
 make deploy
 ```
 
 ## Connect to your Kubeflow dashboard
 
-For information on connecting to your Kubeflow dashboard depending on your deployment environment, see [Port-forward (Terraform deployment)]({{< ref "../connect-kubeflow-dashboard/#port-forward-terraform-deployment" >}}). Then, [log into the Kubeflow UI]({{< ref "../connect-kubeflow-dashboard/#log-into-the-kubeflow-ui" >}}).
+1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
+1. Get the link to the central dashboard:
+    ```sh
+    terraform output -raw kubelow_platform_domain
+    ```
+1. Open the link in the browser and connect via the user credentials that were just configured.
 
 ## Cleanup
 

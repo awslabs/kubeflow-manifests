@@ -1,10 +1,23 @@
 +++
 title = "Terraform Deployment Guide"
-description = "Deploy Kubeflow with AWS Cognito as identity provider using Terraform"
+description = "Deploy Kubeflow with AWS Cognito as an identity provider using Terraform"
 weight = 30
 +++
 
 > Note: Terraform deployment options are still in preview.
+
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Create a Route53 subdomain
+- Create a Cognito user pool
+- Deploy Kubeflow with Cognito as an identity provider
+
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
 
 ## Prerequisites
 
@@ -15,23 +28,74 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+Additionally, ensure you are in the `REPO_ROOT/deployments/cognito/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/cognito/terraform
+pwd
+```
+
 ## Deployment Steps
+
+### Configure
+
+Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+
+To create a subdomain manually as well follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
 
 Define the following environment variables:
 ```sh
-export TF_VAR_cluster_name=<desired_cluster_name>
-export TF_VAR_cluster_region=<desired_cluster_region>
+# Region to create the cluster in
+export CLUSTER_REGION=
+# Name of the cluster to create
+export CLUSTER_NAME=
+# Name of an existing Route53 root domain (e.g. example.com)
+export ROOT_DOMAIN=
+# Name of the subdomain to create (e.g. platform.example.com)
+export SUBDOMAIN=
+# Name of the cognito user pool to create
+export USER_POOL_NAME=
 ```
+
+Save the variables to a `.tfvars` file:
+```sh
+cat <<EOF > sample.auto.tfvars
+cluster_name="${CLUSTER_NAME}"
+cluster_region="${CLUSTER_REGION}"
+aws_route53_root_zone_name="${ROOT_DOMAIN}"
+aws_route53_subdomain_zone_name="${SUBDOMAIN}"
+cognito_user_pool_name="${USER_POOL_NAME}"
+create_subdomain="true"
+EOF
+```
+
+### All Configurations
+
+A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf).
+
+### Preview
+
+View a preview of the configuration you are about apply:
+```sh
+terraform init && terraform plan
+```
+
+### Apply
 
 Run the following command:
 ```sh
-cd deployments/cognito/terraform
 make deploy
 ```
 
 ## Connect to your Kubeflow dashboard
 
-For information on connecting to your Kubeflow dashboard depending on your deployment environment, see [Port-forward (Terraform deployment)]({{< ref "../connect-kubeflow-dashboard/#port-forward-terraform-deployment" >}}). Then, [log into the Kubeflow UI]({{< ref "../connect-kubeflow-dashboard/#log-into-the-kubeflow-ui" >}}).
+1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
+1. Get the link to the central dashboard:
+    ```sh
+    terraform output -raw kubelow_platform_domain
+    ```
+1. Open the link in the browser and connect via the user credentials that were just configured.
 
 ## Cleanup
 
