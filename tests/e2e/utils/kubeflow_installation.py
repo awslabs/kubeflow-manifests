@@ -15,6 +15,7 @@ INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
 INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
 INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
 INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+INSTALLATION_PATH_FILE_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rds-s3.yaml"
 
 Install_Sequence = [
     "cert-manager",
@@ -51,40 +52,39 @@ Install_Sequence = [
 
 
 def install_kubeflow(
-    installation_option,  deployment_option, cluster_name, aws_telemetry_option="enable"
+    installation_option,  deployment_option, cluster_name, disable_aws_telemetry
 ):
-    INSTALLATION_OPTION = installation_option
-    AWS_TELEMETRY_OPTION = aws_telemetry_option
-    DEPLOYMENT_OPTION = deployment_option
-
-    if DEPLOYMENT_OPTION == "vanilla":
+    print(cluster_name)
+    if deployment_option == "vanilla":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_VANILLA)
-    elif DEPLOYMENT_OPTION == "cognito":
+    elif deployment_option == "cognito":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO)
-    elif DEPLOYMENT_OPTION == "rds-s3":
+    elif deployment_option == "rds-s3":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
-    elif DEPLOYMENT_OPTION == "rds-only":
+    elif deployment_option == "rds-only":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
-    elif DEPLOYMENT_OPTION == "s3-only":
+    elif deployment_option == "s3-only":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
+    elif deployment_option == "cognito-rds-s3":
+        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO_RDS_S3)
 
     print_banner(
-        f"You are installing kubeflow {DEPLOYMENT_OPTION} deployment with {INSTALLATION_OPTION}"
+        f"You are installing kubeflow {deployment_option} deployment with {installation_option}"
     )
 
     for component in Install_Sequence:
         build_component(
-            INSTALLATION_OPTION,
-            DEPLOYMENT_OPTION,
+            installation_option,
+            deployment_option,
             component,
             path_dic,
             cluster_name,
         )
 
-    if AWS_TELEMETRY_OPTION == "enable":
+    if disable_aws_telemetry == False:
         build_component(
-            INSTALLATION_OPTION,
-            DEPLOYMENT_OPTION,
+            installation_option,
+            deployment_option,
             "aws-telemetry",
             path_dic,
             cluster_name,
@@ -92,8 +92,8 @@ def install_kubeflow(
 
 
 def build_component(
-    INSTALLATION_OPTION,
-    DEPLOYMENT_OPTION,
+    installation_option,
+    deployment_option,
     component_name,
     path_dic,
     cluster_name,
@@ -103,15 +103,15 @@ def build_component(
     print(f"==========Installing {component_name}==========")
     if component_name not in path_dic:
         print(
-            f"component {component_name} is not applicable for deployment option: {DEPLOYMENT_OPTION}"
+            f"component {component_name} is not applicable for deployment option: {deployment_option}"
         )
         return
     else:
         installation_path = path_dic[component_name]["installation_options"][
-            INSTALLATION_OPTION
+            installation_option
         ]
 
-        if INSTALLATION_OPTION == "helm":
+        if installation_option == "helm":
             # cert-manager official chart command call
             if component_name == "cert-manager":
                 build_retcode = build_certmanager()
@@ -194,31 +194,36 @@ if __name__ == "__main__":
         "--installation_option",
         type=str,
         default=INSTALLATION_OPTION_DEFAULT,
-        help=f"Kubeflow Installation option (helm/kustomize), default is set to {INSTALLATION_OPTION_DEFAULT}",
+        help=f"Kubeflow Installation option default is set to {INSTALLATION_OPTION_DEFAULT}",
+        choices=['kustomize','helm'],
         required=False,
     )
-    AWS_TELEMETRY_DEFAULT = "enable"
+    
     parser.add_argument(
-        "--aws_telemetry_option",
-        type=str,
-        default=AWS_TELEMETRY_DEFAULT,
-        help=f"Usage tracking (enable/disable), default is set to {AWS_TELEMETRY_DEFAULT}",
-        required=False,
+        "--disable_aws_telemetry",
+        action="store_true",
+        default=False,
+        help=f"diable AWS Telemetry tracking",
     )
     DEPLOYMENT_OPTION_DEFAULT = "vanilla"
     parser.add_argument(
         "--deployment_option",
         type=str,
         default=DEPLOYMENT_OPTION_DEFAULT,
-        help=f"Kubeflow deployment options (vanilla/cognito/rds-s3/rds-only/s3-only/cognito-rds-s3), default is set to {DEPLOYMENT_OPTION_DEFAULT}",
+        choices=['vanilla','cognito','rds-s3','rds-only','s3-only','cognito-rds-s3'],
+        help=f"Kubeflow deployment options default is set to {DEPLOYMENT_OPTION_DEFAULT}",
         required=False,
+    )
+    CLUSTER_NAME_DEFAULT=os.environ["CLUSTER_NAME"]
+    parser.add_argument(
+        "--cluster_name",
+        type=str,
+        default=CLUSTER_NAME_DEFAULT,
+        help=f"EKS cluster Name",
     )
 
     args, _ = parser.parse_known_args()
-    INSTALLATION_OPTION = args.installation_option
-    AWS_TELEMETRY_OPTION = args.aws_telemetry_option
-    DEPLOYMENT_OPTION = args.deployment_option
-    CLUSTER_NAME = os.environ["CLUSTER_NAME"]
+    
     install_kubeflow(
-        INSTALLATION_OPTION,  DEPLOYMENT_OPTION, CLUSTER_NAME, AWS_TELEMETRY_OPTION
+        args.installation_option,  args.deployment_option, args.cluster_name, args.disable_aws_telemetry
     )

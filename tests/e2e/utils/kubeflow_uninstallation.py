@@ -15,6 +15,7 @@ INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
 INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
 INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
 INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+INSTALLATION_PATH_FILE_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rds-s3.yaml"
 
 Uninstall_Sequence = [
     "aws-authservice",
@@ -51,22 +52,23 @@ Uninstall_Sequence = [
 
 
 def uninstall_kubeflow(installation_option, deployment_option):
-    INSTALLATION_OPTION = installation_option
-    DEPLOYMENT_OPTION = deployment_option
+    
 
-    if DEPLOYMENT_OPTION == "vanilla":
+    if deployment_option == "vanilla":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_VANILLA)
-    elif DEPLOYMENT_OPTION == "cognito":
+    elif deployment_option == "cognito":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO)
-    elif DEPLOYMENT_OPTION == "rds-s3":
+    elif deployment_option == "rds-s3":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
-    elif DEPLOYMENT_OPTION == "rds-only":
+    elif deployment_option == "rds-only":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
-    elif DEPLOYMENT_OPTION == "s3-only":
+    elif deployment_option == "s3-only":
         path_dic = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
+    elif deployment_option == "cognito-rds-s3":
+        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO_RDS_S3)
 
     print_banner(
-        f"You are uninstalling kubeflow {DEPLOYMENT_OPTION} deployment with {INSTALLATION_OPTION}"
+        f"You are uninstalling kubeflow {deployment_option} deployment with {installation_option}"
     )
 
     for component in Uninstall_Sequence:
@@ -77,26 +79,26 @@ def uninstall_kubeflow(installation_option, deployment_option):
         else:
             namespace = None
         delete_component(
-            INSTALLATION_OPTION, DEPLOYMENT_OPTION, path_dic, component, namespace
+            installation_option, deployment_option, path_dic, component, namespace
         )
 
 
 
 def delete_component(
-    INSTALLATION_OPTION, DEPLOYMENT_OPTION, path_dic, component_name, namespace
+    installation_option, deployment_option, path_dic, component_name, namespace
 ):
     print(f"==========uninstallating {component_name}...==========")
     if component_name not in path_dic:
         print(
-            f"component {component_name} is not applicable for deployment option: {DEPLOYMENT_OPTION}"
+            f"component {component_name} is not applicable for deployment option: {deployment_option}"
         )
         return
     else:
         installation_path = path_dic[component_name]["installation_options"][
-            INSTALLATION_OPTION
+            installation_option
         ]
 
-        if INSTALLATION_OPTION == "helm":
+        if installation_option == "helm":
             if component_name == "kubeflow-namespace":
                 for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
                     delete_kustomize(kustomize_path)
@@ -138,28 +140,21 @@ if __name__ == "__main__":
         "--installation_option",
         type=str,
         default=INSTALLATION_OPTION_DEFAULT,
-        help=f"Kubeflow Installation option (helm/kustomize), default is set to {INSTALLATION_OPTION_DEFAULT}",
+        help=f"Kubeflow Installation option default is set to {INSTALLATION_OPTION_DEFAULT}",
+        choices=['kustomize','helm'],
         required=False,
     )
-    AWS_TELEMETRY_DEFAULT = "enable"
-    parser.add_argument(
-        "--aws_telemetry_option",
-        type=str,
-        default=AWS_TELEMETRY_DEFAULT,
-        help=f"Usage tracking (enable/disable), default is set to {AWS_TELEMETRY_DEFAULT}",
-        required=False,
-    )
+    
     DEPLOYMENT_OPTION_DEFAULT = "vanilla"
     parser.add_argument(
         "--deployment_option",
         type=str,
         default=DEPLOYMENT_OPTION_DEFAULT,
-        help=f"Kubeflow deployment options (vanilla/cognito/rds-s3/rds-only/s3-only/cognito-rds-s3), default is set to {DEPLOYMENT_OPTION_DEFAULT}",
+        choices=['vanilla','cognito','rds-s3','rds-only','s3-only','cognito-rds-s3'],
+        help=f"Kubeflow deployment options default is set to {DEPLOYMENT_OPTION_DEFAULT}",
         required=False,
     )
 
     args, _ = parser.parse_known_args()
-    INSTALLATION_OPTION = args.installation_option
-    AWS_TELEMETRY_OPTION = args.aws_telemetry_option
-    DEPLOYMENT_OPTION = args.deployment_option
-    uninstall_kubeflow(INSTALLATION_OPTION,  DEPLOYMENT_OPTION)
+
+    uninstall_kubeflow(args.installation_option,  args.deployment_option)
