@@ -43,27 +43,13 @@ jobs:
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
     
-    - name: Create subdomain
+    - name: Plan and apply terraform
       run: |
-        cd iaac/terraform/aws-infra/subdomain
-        terraform init
-        terraform plan
-        terraform apply -auto-approve
-        terraform state list
-    - name: Create userpool
-      run: |
-        cd iaac/terraform/aws-infra/cognito
-        terraform init
-        terraform plan
-        terraform apply -auto-approve
-        terraform state list
-    - name: Clean up terraform cognito
+        cd deployments/cognito/terraform
+        make deploy
+    - name: Clean up terraform
       if: success() || failure()
+      # retry delete if flakiness present
       run: |
-        cd iaac/terraform/aws-infra/cognito
-        terraform destroy -auto-approve
-    - name: Clean up terraform subdomain
-      if: success() || failure()
-      run: |
-        cd iaac/terraform/aws-infra/subdomain
-        terraform destroy -auto-approve
+        cd deployments/cognito/terraform
+        make delete || make delete || make delete
