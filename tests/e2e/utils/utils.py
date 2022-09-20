@@ -252,7 +252,6 @@ def uninstall_helm(chart_name, namespace=None):
         uninstall_retcode = subprocess.call(f"helm uninstall {chart_name}".split())
     assert uninstall_retcode == 0
 
-
 def kubectl_wait_pods(
     pods, namespace=None, identifier="app", timeout=240, condition="ready"
 ):

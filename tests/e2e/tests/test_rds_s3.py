@@ -28,7 +28,7 @@ from e2e.conftest import (
 
 from e2e.fixtures.cluster import cluster
 from e2e.fixtures.secrets import aws_secrets_driver, create_secret_string
-from e2e.fixtures.kustomize import kustomize, clone_upstream
+from e2e.fixtures.installation import installation, clone_upstream
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -39,7 +39,6 @@ from e2e.fixtures.clients import (
     client_namespace,
     create_k8s_admission_registration_api_client,
 )
-
 from e2e.utils import mysql_utils
 
 from e2e.utils.cloudformation_resources import (
@@ -55,7 +54,7 @@ from e2e.utils.custom_resources import (
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
-RDS_S3_KUSTOMIZE_MANIFEST_PATH = "../../deployments/rds-s3/"
+INSTALLATION_PATH_FILE = "./resources/installation_config/rds-s3.yaml"
 RDS_S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/rds-s3.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 DISABLE_PIPELINE_CACHING_PATCH_FILE = (
@@ -64,8 +63,8 @@ DISABLE_PIPELINE_CACHING_PATCH_FILE = (
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return RDS_S3_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 
 @pytest.fixture(scope="class")
@@ -135,12 +134,12 @@ def cfn_stack(metadata, cluster, region, request):
 
 
 KFP_MANIFEST_FOLDER = "../../awsconfigs/apps/pipeline"
-KFP_RDS_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/rds/params.env"
-KFP_S3_PARAMS_ENV_FILE = KFP_MANIFEST_FOLDER + "/s3/params.env"
+KFP_RDS_PARAMS_ENV_FILE = f"{KFP_MANIFEST_FOLDER}/rds/params.env"
+KFP_S3_PARAMS_ENV_FILE = f"{KFP_MANIFEST_FOLDER}/s3/params.env"
 
 AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manager"
-RDS_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/rds/secret-provider.yaml"
-S3_SECRET_PROVIDER_CLASS_FILE = AWS_SECRETS_MANAGER_MANIFEST_FOLDER + "/s3/secret-provider.yaml"
+RDS_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/rds/secret-provider.yaml"
+S3_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/s3/secret-provider.yaml"
 
 METADB_NAME = "metadata_db"
 
@@ -170,7 +169,6 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
     s3_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
         s3_secret_provider_objects
     )
-
     with open(RDS_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(rds_secret_provider, file)
 

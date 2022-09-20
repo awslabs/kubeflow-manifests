@@ -7,7 +7,7 @@ from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream, configure_manifests
+from e2e.fixtures.installation import installation, clone_upstream, configure_manifests
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -48,15 +48,15 @@ testdata = [
     ),
 ]
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 class TestNotebookImages:
     @pytest.fixture(scope="function")
-    def setup(self, metadata, configure_manifests, kustomize):
+    def setup(self, metadata, configure_manifests, installation):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestNotebookImages", metadata_file)

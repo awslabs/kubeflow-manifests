@@ -57,7 +57,6 @@ kubeflow-namespace:
     kustomize: 
       - "../../upstream/common/kubeflow-namespace/base"
     helm: "../../charts/common/kubeflow-namespace"
-  namespace: 'kubeflow'
 
 #cluster-local-gateway
 cluster-local-gateway:

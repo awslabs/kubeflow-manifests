@@ -44,7 +44,6 @@ def main():
     setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client)
     setup_cluster_secrets()
     setup_kubeflow_pipeline()
-
     print_banner("RDS S3 Setup Complete")
     script_metadata = [
         f"bucket_name={S3_BUCKET_NAME}",
