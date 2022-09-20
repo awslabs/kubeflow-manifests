@@ -147,7 +147,7 @@ central-dashboard:
 kubeflow-pipelines:
   installation_options:
     kustomize: 
-      - "../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user"   
+      - "../../awsconfigs/apps/pipeline/base"   
     helm: "../../charts/apps/kubeflow-pipelines/vanilla"
   crd_required: 'compositecontrollers.metacontroller.k8s.io'
   validations:
