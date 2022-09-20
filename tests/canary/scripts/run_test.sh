@@ -29,6 +29,6 @@ mkdir -p $E2E_TEST_DIR/.metadata/
 cp metadata-canary $E2E_TEST_DIR/.metadata/
 
 cd $E2E_TEST_DIR
-pytest tests/test_sanity_portforward.py -s -q --metadata .metadata/metadata-canary --keepsuccess --region $CLUSTER_REGION
+pytest tests/test_sanity_portforward.py -s -q --metadata .metadata/metadata-canary --region $CLUSTER_REGION
 
 
