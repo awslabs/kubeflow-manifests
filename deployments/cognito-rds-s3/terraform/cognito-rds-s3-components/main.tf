@@ -1,3 +1,11 @@
+provider "aws" {
+  alias = "aws"
+}
+
+provider "aws" {
+  alias = "virginia"
+}
+
 locals {
   katib_chart_vanilla  = "${var.kf_helm_repo_path}/charts/apps/katib/vanilla"
   katib_chart_rds  = "${var.kf_helm_repo_path}/charts/apps/katib/katib-external-db-with-kubeflow"
@@ -90,6 +98,27 @@ module "s3" {
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
 }
 
+module "subdomain" {
+  count = var.use_cognito && var.create_subdomain ? 1 : 0
+  source            = "../../../../iaac/terraform/aws-infra/subdomain"
+  aws_route53_root_zone_name = var.aws_route53_root_zone_name
+  aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+}
+
+module "cognito" {
+  count = var.use_cognito ? 1 : 0
+  source            = "../../../../iaac/terraform/aws-infra/cognito"
+  cognito_user_pool_name = var.cognito_user_pool_name
+  aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+
+  providers = {
+    aws = aws
+    aws.virginia = aws.virginia
+  }
+
+  depends_on = [module.subdomain]
+}
+
 module "filter_secrets_manager_set_values" {
   source            = "../../../../iaac/terraform/utils/set-values-filter"
   set_values = {
@@ -130,6 +159,7 @@ module "kubeflow_istio" {
 }
 
 module "kubeflow_dex" {
+  count = var.use_cognito ? 0 : 1
   source            = "../../../../iaac/terraform/common/dex"
   helm_config = {
     chart = "${var.kf_helm_repo_path}/charts/common/dex"
@@ -139,6 +169,7 @@ module "kubeflow_dex" {
 }
 
 module "kubeflow_oidc_authservice" {
+  count = var.use_cognito ? 0 : 1
   source            = "../../../../iaac/terraform/common/oidc-authservice"
   helm_config = {
     chart = "${var.kf_helm_repo_path}/charts/common/oidc-authservice" 
@@ -147,13 +178,42 @@ module "kubeflow_oidc_authservice" {
   depends_on = [module.kubeflow_dex]
 }
 
+module "ingress_cognito" {
+  count = var.use_cognito ? 1 : 0
+  source            = "../../../../iaac/terraform/common/ingress/cognito"
+  aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+  cluster_name = var.addon_context.eks_cluster_id
+  cognito_user_pool_arn = module.cognito[0].user_pool_arn
+  cognito_app_client_id = module.cognito[0].app_client_id
+  cognito_user_pool_domain = module.cognito[0].user_pool_domain
+  load_balancer_scheme = var.load_balancer_scheme
+
+  depends_on = [module.kubeflow_istio, module.cognito]
+}
+
+module "kubeflow_aws_authservice" {
+  count = var.use_cognito ? 1 : 0
+  source            = "../../../../iaac/terraform/common/aws-authservice"
+  helm_config = {
+    chart = "${var.kf_helm_repo_path}/charts/common/aws-authservice" 
+    set = [
+      {
+        name = "LOGOUT_URL"
+        value = module.cognito[0].logout_url
+      }
+    ]
+  }
+  addon_context = var.addon_context
+  depends_on = [module.ingress_cognito]
+}
+
 module "kubeflow_knative_serving" {
   source            = "../../../../iaac/terraform/common/knative-serving"
   helm_config = {
     chart = "${var.kf_helm_repo_path}/charts/common/knative-serving"
   }  
   addon_context = var.addon_context
-  depends_on = [module.kubeflow_oidc_authservice]
+  depends_on = [module.kubeflow_oidc_authservice, module.kubeflow_aws_authservice]
 }
 
 module "kubeflow_cluster_local_gateway" {
