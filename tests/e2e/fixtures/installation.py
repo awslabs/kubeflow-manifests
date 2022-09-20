@@ -36,7 +36,7 @@ def clone_upstream():
 
 @pytest.fixture(scope="class")
 def installation(
-    metadata, aws_telemetry_option, deployment_option, cluster, clone_upstream, configure_manifests, installation_path, installation_option, request
+    metadata, deployment_option, cluster, clone_upstream, configure_manifests, installation_path, installation_option, request
 ):
     """
     This fixture is created once for each test class.
@@ -49,10 +49,10 @@ def installation(
     """
 
     def on_create():
-        install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
+        install_kubeflow(installation_option, deployment_option, cluster)
         
     def on_delete():
-        uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
+        uninstall_kubeflow(installation_option, deployment_option)
 
 
 

@@ -50,9 +50,8 @@ Uninstall_Sequence = [
 ]
 
 
-def uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option):
+def uninstall_kubeflow(installation_option, deployment_option):
     INSTALLATION_OPTION = installation_option
-    AWS_TELEMETRY_OPTION = aws_telemetry_option
     DEPLOYMENT_OPTION = deployment_option
 
     if DEPLOYMENT_OPTION == "vanilla":
@@ -81,14 +80,6 @@ def uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_opt
             INSTALLATION_OPTION, DEPLOYMENT_OPTION, path_dic, component, namespace
         )
 
-    if AWS_TELEMETRY_OPTION == "enable":
-        delete_component(
-            INSTALLATION_OPTION,
-            DEPLOYMENT_OPTION,
-            path_dic,
-            "aws-telemetry",
-            namespace=None,
-        )
 
 
 def delete_component(
@@ -168,4 +159,4 @@ if __name__ == "__main__":
     INSTALLATION_OPTION = args.installation_option
     AWS_TELEMETRY_OPTION = args.aws_telemetry_option
     DEPLOYMENT_OPTION = args.deployment_option
-    uninstall_kubeflow(INSTALLATION_OPTION, AWS_TELEMETRY_OPTION, DEPLOYMENT_OPTION)
+    uninstall_kubeflow(INSTALLATION_OPTION,  DEPLOYMENT_OPTION)
