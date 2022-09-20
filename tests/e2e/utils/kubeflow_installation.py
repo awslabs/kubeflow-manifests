@@ -43,7 +43,7 @@ Install_Sequence = [
     "tensorboard-controller",
     "profiles-and-kfam",
     "user-namespace",
-    #"ack-sagemaker-controller",
+    "ack-sagemaker-controller",
     "ingress",
     "aws-load-balancer-controller",
     "aws-authservice",

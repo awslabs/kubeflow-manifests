@@ -19,7 +19,11 @@ class IAMPolicy:
     """
 
     def __init__(
-        self, name: str = None, region: str = "us-east-1", iam_client: Any = None, arn: str = None,
+        self,
+        name: str = None,
+        region: str = "us-east-1",
+        iam_client: Any = None,
+        arn: str = None,
     ):
         self.region = region
         self.iam_client = iam_client or boto3.client("iam", region_name=region)
@@ -27,37 +31,28 @@ class IAMPolicy:
         self.arn = arn
         if not name and not arn:
             raise ValueError("Either policy name or arn should be defined")
-    
-    def create(
-        self, policy_document: dict
-    ):
+
+    def create(self, policy_document: dict):
         try:
             response = self.iam_client.create_policy(
-                PolicyName=self.name,
-                PolicyDocument=json.dumps(policy_document)
+                PolicyName=self.name, PolicyDocument=json.dumps(policy_document)
             )
         except ClientError:
-            logger.exception(
-                f"failed to create IAM policy {self.name}"
-            )
+            logger.exception(f"failed to create IAM policy {self.name}")
             raise
         else:
             self.arn = response["Policy"]["Arn"]
-            logger.info(
-                f"created iam policy {self.arn}."
-            )
+            logger.info(f"created iam policy {self.arn}.")
             return self.arn
-    
+
     def delete(self):
         try:
-            self.iam_client.delete_policy(
-                PolicyArn=self.arn
-            )
+            self.iam_client.delete_policy(PolicyArn=self.arn)
             logger.info(f"deleted iam policy {self.arn}")
         except ClientError:
             logger.exception(f"failed to delete iam policy {self.arn}")
             raise
-    
+
     def wait_for_policy_detachments(self):
         """
         Policies can't be deleted unless they are not attached to any IAM resources.
@@ -66,12 +61,62 @@ class IAMPolicy:
         """
 
         def callback():
-            resp = self.iam_client.list_entities_for_policy(
-                PolicyArn=self.arn
+            resp = self.iam_client.list_entities_for_policy(PolicyArn=self.arn)
+
+            assert len(resp["PolicyGroups"]) == 0
+            assert len(resp["PolicyUsers"]) == 0
+            assert len(resp["PolicyRoles"]) == 0
+
+        wait_for(callback)
+
+
+class IAMRole:
+    """
+    Encapsulates IAMRole functions.
+    """
+
+    def __init__(
+        self,
+        name: str = None,
+        region: str = "us-east-1",
+        iam_client: Any = None,
+        policies: list = None,
+        arn: str = None,
+    ):
+        self.region = region
+        self.iam_client = iam_client or boto3.client("iam", region_name=region)
+        self.name = name
+        self.policies = policies
+        self.arn = arn
+        if not name and not arn:
+            raise ValueError("Either role name or arn should be defined")
+
+    def create(self, policy_document: dict):
+        try:
+            response = self.iam_client.create_role(
+                RoleName=self.name, AssumeRolePolicyDocument=policy_document
             )
 
-            assert len(resp['PolicyGroups']) == 0
-            assert len(resp['PolicyUsers']) == 0
-            assert len(resp['PolicyRoles']) == 0
-        
-        wait_for(callback)
+            for policy in self.policies:
+                self.iam_client.attach_role_policy(
+                    RoleName=self.name, PolicyArn=f"arn:aws:iam::aws:policy/{policy}"
+                )
+        except ClientError:
+            logger.exception(f"failed to create IAM Role {self.name}")
+            raise
+        else:
+            self.arn = response["Role"]["Arn"]
+            logger.info(f"created iam role {self.arn}.")
+            return self.arn
+
+    def delete(self):
+        try:
+            for policy in self.policies:
+                self.iam_client.detach_role_policy(
+                PolicyArn=policy, RoleName=self.name,
+                )
+            self.iam_client.delete_role(RoleName=self.name)
+            logger.info(f"deleted iam role {self.arn}")
+        except ClientError:
+            logger.exception(f"failed to delete iam policy {self.arn}")
+            raise

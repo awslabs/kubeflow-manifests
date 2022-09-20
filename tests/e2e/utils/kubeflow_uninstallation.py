@@ -20,7 +20,7 @@ Uninstall_Sequence = [
     "aws-authservice",
     "ingress",
     "aws-load-balancer-controller",
-    # "ack-sagemaker-controller",
+    "ack-sagemaker-controller",
     "user-namespace",
     "profiles-and-kfam",
     "tensorboard-controller",

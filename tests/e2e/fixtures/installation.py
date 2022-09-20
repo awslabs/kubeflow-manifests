@@ -18,9 +18,11 @@ from e2e.utils.kubeflow_uninstallation import uninstall_kubeflow
 
 
 @pytest.fixture(scope="class")
-def configure_manifests():
-    pass
-
+def configure_manifests(region, cluster):
+    os.environ["CLUSTER_REGION"] = region
+    os.environ["CLUSTER_NAME"] = cluster
+    apply_retcode = subprocess.call(f"make bootstrap-ack".split(), cwd='../..')
+    assert apply_retcode == 0
 
 @pytest.fixture(scope="class")
 def clone_upstream():
