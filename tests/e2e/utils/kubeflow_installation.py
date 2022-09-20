@@ -52,7 +52,7 @@ Install_Sequence = [
 
 
 def install_kubeflow(
-    installation_option,  deployment_option, cluster_name, disable_aws_telemetry
+    installation_option,  deployment_option, cluster_name, disable_aws_telemetry=False
 ):
     print(cluster_name)
     if deployment_option == "vanilla":
