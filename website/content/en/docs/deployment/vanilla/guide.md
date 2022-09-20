@@ -1,6 +1,6 @@
 +++
 title = "Manifest Deployment Guide"
-description = "Deploy the vanilla distribution of Kubeflow on AWS using Kustomize or Helm"
+description = "Deploy the vanilla version of Kubeflow on AWS using Kustomize or Helm"
 weight = 20
 +++
 
@@ -17,11 +17,6 @@ Be sure that you have satisfied the installation prerequisites before working th
 > ⚠️ Warning: We use a default email (`user@example.com`) and password (`12341234`) for our guides. For any production Kubeflow deployment, you should change the default password by following the steps in [Change default user password]({{< ref "../connect-kubeflow-dashboard#change-the-default-user-password-kustomize" >}}).
 
 ---
-**NOTE**
-
-`kubectl apply` commands may fail on the first try. This is inherent in how Kubernetes and `kubectl` work (e.g., CR must be created after CRD becomes ready). The solution is to re-run the command until it succeeds. For the single-line command, we have included a bash one-liner to retry the command.
-
----
 
 ### Install with a single command
 
@@ -29,12 +24,30 @@ Install all Kubeflow official components (residing under `apps`) and all common 
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kf-vanilla
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=kustomize
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=vanilla
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=helm
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
+
+### Connect to your Kubeflow cluster
+
+After installation, it will take some time for all Pods to become ready. Make sure all Pods are ready before trying to connect, otherwise you might get unexpected errors. To check that all Kubeflow-related Pods are ready, use the following commands:
+
+```sh
+kubectl get pods -n cert-manager
+kubectl get pods -n istio-system
+kubectl get pods -n auth
+kubectl get pods -n knative-eventing
+kubectl get pods -n knative-serving
+kubectl get pods -n kubeflow
+kubectl get pods -n kubeflow-user-example-com
+```
 
 ### Connect to your Kubeflow Dashboard
 
@@ -45,13 +58,18 @@ For information on connecting to your Kubeflow dashboard depending on your deplo
 ### Uninstall Kubeflow on AWS
 
 Uninstall Kubeflow on AWS with a single command. 
+> Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make delete-kubeflow 
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=kustomize
+make delete-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make delete-kubeflow DEPLOYMENT_OPTION=rds-s3
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=helm
+make delete-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
