@@ -94,7 +94,7 @@ def get_installation_option(request):
         installation_option = "kustomize"
     return installation_option
 
-def get_depployment_option(request):
+def get_deployment_option(request):
     deployment_option = request.config.getoption("--deployment_option")
     if not deployment_option:
         deployment_option = "vanilla"
