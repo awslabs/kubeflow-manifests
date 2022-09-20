@@ -10,7 +10,7 @@ module "irsa" {
   create_kubernetes_namespace = true
   create_kubernetes_service_account = false
   kubernetes_service_account = local.name
-  irsa_iam_role_name = format("%s-%s-%s-%s", "ack-sagemaker-controller", "irsa", var.eks_cluster_id, var.addon_context.aws_region_name)
+  irsa_iam_role_name = format("%s-%s-%s-%s", "ack-sagemaker-controller", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
   irsa_iam_policies = ["arn:aws:iam::aws:policy/AmazonSageMakerFullAccess", aws_iam_policy.sagemaker_ack_controller_studio_access.arn]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary

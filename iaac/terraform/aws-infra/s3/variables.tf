@@ -1,4 +1,4 @@
-variable "minio_aws_access_access_key_id" {
+variable "minio_aws_access_key_id" {
   type        = string
   description = "AWS access key ID to authenticate minio client"
 }

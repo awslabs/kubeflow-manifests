@@ -14,7 +14,7 @@ resource "aws_secretsmanager_secret" "s3_secret" {
 resource "aws_secretsmanager_secret_version" "s3_secret_version" {
   secret_id     = aws_secretsmanager_secret.s3_secret.id
   secret_string = jsonencode({
-    accesskey = var.minio_aws_access_access_key_id
+    accesskey = var.minio_aws_access_key_id
     secretkey = var.minio_aws_secret_access_key
   })
 }
