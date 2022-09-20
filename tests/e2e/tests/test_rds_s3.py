@@ -16,6 +16,8 @@ from e2e.utils.utils import (
     get_ec2_client,
     get_s3_client,
     get_mysql_client,
+    load_yaml_file,
+    write_env_to_yaml
 )
 from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
 
@@ -141,6 +143,20 @@ AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manag
 RDS_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/rds/secret-provider.yaml"
 S3_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/s3/secret-provider.yaml"
 
+path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE)
+#pipelines helm path
+pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
+
+#secrets-manager helm path
+secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
+
+#pipelines values file
+pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
+
+#secrets-manager values file
+secrets_manager_rds_s3_values_file = f"{secrets_manager_rds_s3_helm_path}/values.yaml" 
+
+
 METADB_NAME = "metadata_db"
 
 @pytest.fixture(scope="class")
@@ -175,23 +191,58 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
     with open(S3_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(s3_secret_provider, file)
 
+    rds_params = {
+        "dbHost": stack_outputs["RDSEndpoint"],
+        "mlmdDb": METADB_NAME,
+    }
+
+    s3_params = {
+        "bucketName": stack_outputs["S3BucketName"],
+        "minioServiceHost": "s3.amazonaws.com",
+        "minioServiceRegion": region,
+    }
+
+
     configure_env_file(
         env_file_path=KFP_RDS_PARAMS_ENV_FILE,
-        env_dict={
-            "dbHost": stack_outputs["RDSEndpoint"],
-            "mlmdDb": METADB_NAME,
-        },
+        env_dict=rds_params
     )
 
     configure_env_file(
         env_file_path=KFP_S3_PARAMS_ENV_FILE,
-        env_dict={
-            "bucketName": stack_outputs["S3BucketName"],
-            "minioServiceHost": "s3.amazonaws.com",
-            "minioServiceRegion": region,
-        },
+        env_dict=s3_params
+        
     )
 
+    #pipelines helm path
+    pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
+
+    #secrets-manager helm path
+    secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
+
+    #pipelines values file
+    pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
+
+    #secrets-manager values file
+    secrets_manager_rds_s3_values_file = f"{secrets_manager_rds_s3_helm_path}/values.yaml" 
+
+    write_env_to_yaml(rds_params, pipeline_rds_s3_values_file, module="rds")
+    write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
+    
+    s3_secret_params = {
+        "secretName": "-".join(
+        stack_outputs["S3SecretName"].split(":")[-1].split("-")[:-1]
+    )
+    }
+
+    rds_secret_params = {
+        "secretName": "-".join(
+        stack_outputs["RDSSecretName"].split(":")[-1].split("-")[:-1]
+        )
+    }
+
+    write_env_to_yaml(rds_secret_params, secrets_manager_rds_s3_values_file, module="rds")
+    write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
 
 @pytest.fixture(scope="class")
 def delete_s3_bucket_contents(cfn_stack, request, region):
