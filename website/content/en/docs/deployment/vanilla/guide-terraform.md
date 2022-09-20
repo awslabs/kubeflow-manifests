@@ -1,10 +1,19 @@
 +++
 title = "Terraform Deployment Guide"
-description = "Deploy the vanilla distribution of Kubeflow on AWS using Terraform"
+description = "Deploy the vanilla version of Kubeflow on AWS using Terraform"
 weight = 30
 +++
 
 > Note: Terraform deployment options are still in preview.
+
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Deploy the vanilla distribution of Kubeflow on AWS
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
 
 ## Prerequisites
 
@@ -15,17 +24,49 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+Additionally, ensure you are in the `REPO_ROOT/deployments/vanilla/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/vanilla/terraform
+pwd
+```
+
 ## Deployment Steps
+
+### Configure
 
 Define the following environment variables:
 ```sh
-export TF_VAR_cluster_name=<desired_cluster_name>
-export TF_VAR_cluster_region=<desired_cluster_region>
+# Region to create the cluster in
+export CLUSTER_REGION=
+# Name of the cluster to create
+export CLUSTER_NAME=
 ```
+
+Save the variables to a `.tfvars` file:
+```sh
+cat <<EOF > sample.auto.tfvars
+cluster_name="${CLUSTER_NAME}"
+cluster_region="${CLUSTER_REGION}"
+EOF
+```
+
+### All Configurations
+
+A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/terraform/variables.tf).
+
+### Preview
+
+View a preview of the configuration you are about apply:
+```sh
+terraform init && terraform plan
+```
+
+### Apply
 
 Run the following command:
 ```sh
-cd deployments/vanilla/terraform
 make deploy
 ```
 

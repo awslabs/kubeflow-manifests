@@ -243,33 +243,47 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+export DEPLOYMENT_OPTION=rds-s3
+export INSTALLATION_OPTION=kustomize
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+export DEPLOYMENT_OPTION=rds-s3
+export INSTALLATION_OPTION=helm
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
 #### [RDS] Deploy RDS only
+
 Use the following command to deploy the Kubeflow manifests for RDS only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+export DEPLOYMENT_OPTION=rds-only
+export INSTALLATION_OPTION=kustomize
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+export DEPLOYMENT_OPTION=rds-only
+export INSTALLATION_OPTION=helm
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
 
 #### [S3] Deploy S3 only
+
 Use the following command to deploy the Kubeflow manifests for S3 only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make
+export DEPLOYMENT_OPTION=s3-only
+export INSTALLATION_OPTION=kustomize
+make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make
+export DEPLOYMENT_OPTION=s3-only
+export INSTALLATION_OPTION=helm
+make deploy-kubeflow
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -364,9 +378,22 @@ mysql> select * from observation_logs;
 ## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall your Kubeflow deployment:
-```sh
-kustomize build deployments/rds-s3 | kubectl delete -f -
-```
+
+> Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation
+
+
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+export DEPLOYMENT_OPTION=rds-s3
+export INSTALLATION_OPTION=kustomize
+make delete-kubeflow
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+export DEPLOYMENT_OPTION=rds-s3
+export INSTALLATION_OPTION=helm
+make delete-kubeflow
+{{< /tab >}}
+{{< /tabpane >}}
 
 The following cleanup steps may also be required:
 

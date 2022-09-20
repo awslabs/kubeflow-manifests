@@ -60,7 +60,7 @@ install-python:
 install-python-packages:
 	python3.8 -m pip install -r tests/e2e/requirements.txt
 
-install-all-prerequisites: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-jq install-terraform install-helm install-python install-python-packages
+install-tools: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-jq install-terraform install-helm install-python install-python-packages
 
 verify-cluster-variables:
 	test $(CLUSTER_NAME) || (echo Please export CLUSTER_NAME variable ; exit 1)

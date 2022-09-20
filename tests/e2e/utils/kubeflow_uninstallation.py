@@ -99,6 +99,7 @@ def delete_component(
         ]
 
         if installation_option == "helm":
+
             if component_name == "kubeflow-namespace":
                 for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
                     delete_kustomize(kustomize_path)

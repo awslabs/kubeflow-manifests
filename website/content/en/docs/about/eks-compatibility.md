@@ -19,7 +19,7 @@ Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kube
     <tbody>
     <tr>
         <td>1.23</td>
-        <td><b>Incompatible</b></td>
+        <td><b>Compatible</b></td>
       </tr>
       <tr>
         <td>1.22</td>
@@ -31,10 +31,6 @@ Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kube
       </tr>
       <tr>
         <td>1.20</td>
-        <td><b>Incompatible</b></td>
-      </tr>
-      <tr>
-        <td>1.19</td>
         <td><b>Incompatible</b></td>
       </tr>
     </tbody>
