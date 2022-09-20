@@ -1,4 +1,3 @@
-# todo: test how this will work with the dual input provider changes
 name: Terraform Cognito Test
 on:
   # Run on PR configuration

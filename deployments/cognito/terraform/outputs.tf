@@ -48,7 +48,6 @@ output "configure_kubectl" {
   value       = module.eks_blueprints.configure_kubectl
 }
 
-# Region used for Terratest
 output "region" {
   value       = local.region
   description = "AWS region"
