@@ -5,7 +5,7 @@ artifactRepository:
         bucket: $(kfp-artifact-bucket-name),
         keyPrefix: artifacts,
         endpoint: $(kfp-artifact-storage-endpoint),
-        insecure: true,
+        insecure: false,
         accessKeySecret: {
             name: mlpipeline-minio-artifact,
             key: accesskey
