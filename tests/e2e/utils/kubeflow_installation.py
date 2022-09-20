@@ -214,12 +214,12 @@ if __name__ == "__main__":
         help=f"Kubeflow deployment options default is set to {DEPLOYMENT_OPTION_DEFAULT}",
         required=False,
     )
-    CLUSTER_NAME_DEFAULT=os.environ["CLUSTER_NAME"]
+    
     parser.add_argument(
         "--cluster_name",
         type=str,
-        default=CLUSTER_NAME_DEFAULT,
         help=f"EKS cluster Name",
+        required=True,
     )
 
     args, _ = parser.parse_known_args()
