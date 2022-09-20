@@ -15,6 +15,18 @@ variable "eks_version" {
   default     = "1.22"
 }
 
+variable "node_instance_type" {
+  description = "The instance type of an EKS node"
+  type        = string
+  default     = "m5.xlarge"
+}
+
+variable "install_nvidia_device_plugin" {
+  description = "Installs the nvidia device plugin. Required for GPU training"
+  type = bool
+  default = false
+}
+
 variable "use_rds" {
   type = bool
   default = true
