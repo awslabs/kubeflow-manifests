@@ -73,9 +73,9 @@ force_destroy_s3_bucket="true"
 EOF
 ```
 
-### Full Configuration
+### All Configurations
 
-A full list of inputs for the terraform stack can be found in the `variables.tf` file.
+A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/rds-s3/terraform/variables.tf).
 
 ### Preview
 

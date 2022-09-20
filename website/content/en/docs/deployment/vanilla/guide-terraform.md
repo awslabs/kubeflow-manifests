@@ -52,17 +52,9 @@ cluster_region="${CLUSTER_REGION}"
 EOF
 ```
 
-### Full Configuration
+### All Configurations
 
-A full list of inputs for the terraform stack can be found here and in the `variables.tf` file:
-
-| Name                 | Description                                       | Type   | Default  | Required |
-|----------------------|---------------------------------------------------|--------|----------|----------|
-| cluster_name         | Name of the cluster                               | string |          | Yes      |
-| cluster_region       | Region to create the cluster                      | string |          | Yes      |
-| eks_version          | The EKS version to use                            | string | 1.22     | No       |
-| enable_aws_telemetry | Enable AWS telemetry component                    | bool   | true     | No       |
-| kf_helm_repo_path    | Full path to the location of the helm repo for KF | string | ../../.. | No       |
+A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/terraform/variables.tf).
 
 ### Preview
 
