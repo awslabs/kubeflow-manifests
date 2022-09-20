@@ -40,6 +40,8 @@ pwd
 
 ### Configure
 
+Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+
 Define the following environment variables:
 ```sh
 # Region to create the cluster in

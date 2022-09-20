@@ -42,6 +42,8 @@ pwd
 
 ### Configure
 
+Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+
 [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
 
 Define the following environment variables:
