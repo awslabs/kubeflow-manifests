@@ -1,10 +1,23 @@
 +++
 title = "Terraform Deployment Guide"
-description = "Deploy Kubeflow with AWS Cognito as identity provider using Terraform"
+description = "Deploy Kubeflow with AWS Cognito as an identity provider using Terraform"
 weight = 30
 +++
 
 > Note: Terraform deployment options are still in preview.
+
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Create a Route53 subdomain
+- Create a Cognito user pool
+- Deploy Kubeflow with Cognito as an identity provider
+
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide.md/#background" >}}).
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
 
 ## Prerequisites
 
@@ -15,11 +28,15 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+Additionally, ensure you are in the `REPO_ROOT/deployments/cognito/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/cognito/terraform
+pwd
+```
+
 ## Deployment Steps
-
-### Directory
-
-Ensure you are in the `REPO_ROOT/deployments/cognito/terraform` folder.
 
 ### Configure
 
@@ -49,6 +66,10 @@ create_subdomain="true"
 EOF
 ```
 
+### Full Configuration
+
+A full list of inputs for the terraform stack can be found in the `variables.tf` file.
+
 ### Preview
 
 View a preview of the configuration you are about apply:
@@ -65,22 +86,7 @@ make deploy
 
 ## Connect to your Kubeflow dashboard
 
-1. Head over to your user pool in the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
-    1. ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
-1. Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). The following is an example Profile for reference:
-    1. ```bash
-        apiVersion: kubeflow.org/v1beta1
-        kind: Profile
-        metadata:
-            # replace with the name of profile you want, this will be user's namespace name
-            name: namespace-for-my-user
-            namespace: kubeflow
-        spec:
-            owner:
-                kind: User
-                # replace with the email of the user
-                name: my_user_email@kubeflow.com
-        ```
+1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
 1. Get the link to the central dashboard:
     ```sh
     terraform output -raw kubelow_platform_domain

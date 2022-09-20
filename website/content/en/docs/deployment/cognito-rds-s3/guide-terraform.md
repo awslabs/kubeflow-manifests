@@ -6,6 +6,21 @@ weight = 30
 
 > Note: Terraform deployment options are still in preview.
 
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Create a Route53 subdomain
+- Create a Cognito user pool
+- Create a S3 bucket
+- Create an RDS DB instance
+- Deploy Kubeflow with Cognito as an identity provider, RDS as a KFP and Katib persistence layer, and S3 as an artifact store
+
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide.md/#background" >}}).
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
+
 ## Prerequisites
 
 Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
@@ -15,13 +30,19 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+Additionally, ensure you are in the `REPO_ROOT/deployments/cognito-rds-s3/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/cognito-rds-s3/terraform
+pwd
+```
+
 ## Deployment Steps
 
-### Directory
-
-Ensure you are in the `REPO_ROOT/deployments/cognito-rds-s3/terraform` folder.
-
 ### Configure
+
+[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
 
 Define the following environment variables:
 ```sh
@@ -30,9 +51,9 @@ export CLUSTER_REGION=
 # Name of the cluster to create
 export CLUSTER_NAME=
 # AWS access key id of the static credentials used to authenticate the Minio Client
-export MINIO_AWS_ACCESS_KEY_ID=
+export TF_VAR_minio_aws_access_key_id=
 # AWS secret access key of the static credentials used to authenticate the Minio Client
-export MINIO_AWS_SECRET_ACCESS_KEY=
+export TF_VAR_minio_aws_secret_access_key=
 # Name of an existing Route53 root domain (e.g. example.com)
 export ROOT_DOMAIN=
 # Name of the subdomain to create (e.g. platform.example.com)
@@ -52,8 +73,6 @@ Save the variables to a `.tfvars` file:
 cat <<EOF > sample.auto.tfvars
 cluster_name="${CLUSTER_NAME}"
 cluster_region="${CLUSTER_REGION}"
-minio_aws_access_key_id="${MINIO_AWS_ACCESS_KEY_ID}"
-minio_aws_secret_access_key="${MINIO_AWS_SECRET_ACCESS_KEY}"
 generate_db_password="true"
 aws_route53_root_zone_name="${ROOT_DOMAIN}"
 aws_route53_subdomain_zone_name="${SUBDOMAIN}"
@@ -69,6 +88,10 @@ secret_recovery_window_in_days="0"
 force_destroy_s3_bucket="true"
 EOF
 ```
+
+### Full Configuration
+
+A full list of inputs for the terraform stack can be found in the `variables.tf` file.
 
 ### Preview
 
@@ -86,22 +109,7 @@ make deploy
 
 ## Connect to your Kubeflow dashboard
 
-1. Head over to your user pool in the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
-    1. ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
-1. Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). The following is an example Profile for reference:
-    1. ```bash
-        apiVersion: kubeflow.org/v1beta1
-        kind: Profile
-        metadata:
-            # replace with the name of profile you want, this will be user's namespace name
-            name: namespace-for-my-user
-            namespace: kubeflow
-        spec:
-            owner:
-                kind: User
-                # replace with the email of the user
-                name: my_user_email@kubeflow.com
-        ```
+1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
 1. Get the link to the central dashboard:
     ```sh
     terraform output -raw kubelow_platform_domain

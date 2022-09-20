@@ -6,6 +6,17 @@ weight = 30
 
 > Note: Terraform deployment options are still in preview.
 
+## Background
+
+This guide will walk you through using Terraform to:
+- Create a VPC
+- Create an EKS cluster
+- Create a S3 bucket
+- Create an RDS DB instance
+- Deploy Kubeflow with RDS as a KFP and Katib persistence layer and S3 as an artifact store
+
+Terraform documentation can be found [here](https://www.terraform.io/docs).
+
 ## Prerequisites
 
 Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
@@ -15,13 +26,20 @@ Specifially, you must:
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
 - [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 
+
+Additionally, ensure you are in the `REPO_ROOT/deployments/rds-s3/terraform` folder.
+
+If you are in repository's root folder, run:
+```sh
+cd deployments/rds-s3/terraform
+pwd
+```
+
 ## Deployment Steps
 
-### Directory
-
-Ensure you are in the `REPO_ROOT/deployments/rds-s3/terraform` folder.
-
 ### Configure
+
+[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
 
 Define the following environment variables:
 ```sh
@@ -30,9 +48,9 @@ export CLUSTER_REGION=
 # Name of the cluster to create
 export CLUSTER_NAME=
 # AWS access key id of the static credentials used to authenticate the Minio Client
-export MINIO_AWS_ACCESS_KEY_ID=
+export TF_VAR_minio_aws_access_key_id=
 # AWS secret access key of the static credentials used to authenticate the Minio Client
-export MINIO_AWS_SECRET_ACCESS_KEY=
+export TF_VAR_minio_aws_secret_access_key=
 # true/false flag to configure and deploy with RDS
 export USE_RDS="true"
 # true/false flag to configure and deploy with S3
@@ -44,8 +62,6 @@ Save the variables to a `.tfvars` file:
 cat <<EOF > sample.auto.tfvars
 cluster_name="${CLUSTER_NAME}"
 cluster_region="${CLUSTER_REGION}"
-minio_aws_access_key_id="${MINIO_AWS_ACCESS_KEY_ID}"
-minio_aws_secret_access_key="${MINIO_AWS_SECRET_ACCESS_KEY}"
 generate_db_password="true"
 use_rds="${USE_RDS}"
 use_s3="${USE_S3}"
@@ -56,6 +72,10 @@ secret_recovery_window_in_days="0"
 force_destroy_s3_bucket="true"
 EOF
 ```
+
+### Full Configuration
+
+A full list of inputs for the terraform stack can be found in the `variables.tf` file.
 
 ### Preview
 
