@@ -17,35 +17,57 @@ Specifially, you must:
 
 ## Deployment Steps
 
+### Directory
+
+Ensure you are in the `REPO_ROOT/deployments/rds-s3/terraform` folder.
+
+### Configure
+
 Define the following environment variables:
 ```sh
-export TF_VAR_cluster_name=<desired_cluster_name>
-export TF_VAR_cluster_region=<desired_cluster_region>
-export TF_VAR_s3_bucket=<desired_s3_bucket>
-export TF_VAR_db_instance_name=<desired_db_instance_name>
-export TF_VAR_db_subnet_group_name=<desired_subnet_group_name>
-export TF_VAR_minio_aws_access_key_id=<desired_minio_aws_access_key_id>
-export TF_VAR_minio_aws_secret_access_key=<desired_minio_aws_secret_access_key>
-export TF_VAR_rds_secret_name=<desired_rds_secret_name>
-export TF_VAR_s3_secret_name=<desired_s3_secret_name>
+# Region to create the cluster in
+export CLUSTER_REGION=
+# Name of the cluster to create
+export CLUSTER_NAME=
+# AWS access key id of the static credentials used to authenticate the Minio Client
+export MINIO_AWS_ACCESS_KEY_ID=
+# AWS secret access key of the static credentials used to authenticate the Minio Client
+export MINIO_AWS_SECRET_ACCESS_KEY=
+# true/false flag to configure and deploy with RDS
+export USE_RDS="true"
+# true/false flag to configure and deploy with S3
+export USE_S3="true"
 ```
 
-### RDS and S3
+Save the variables to a `.tfvars` file:
+```sh
+cat <<EOF > sample.auto.tfvars
+cluster_name="${CLUSTER_NAME}"
+cluster_region="${CLUSTER_REGION}"
+minio_aws_access_key_id="${MINIO_AWS_ACCESS_KEY_ID}"
+minio_aws_secret_access_key="${MINIO_AWS_SECRET_ACCESS_KEY}"
+generate_db_password="true"
+use_rds="${USE_RDS}"
+use_s3="${USE_S3}"
+
+# The below values are set to make cleanup easier but are not recommended for production
+deletion_protection="false"
+secret_recovery_window_in_days="0"
+force_destroy_s3_bucket="true"
+EOF
+```
+
+### Preview
+
+View a preview of the configuration you are about apply:
+```sh
+terraform init && terraform plan
+```
+
+### Apply
+
 Run the following command:
 ```sh
-cd deployments/rds-s3/terraform
-make deploy
-```
-
-### RDS only
-```sh
-cd deployments/rds-s3/rds-only/terraform
-make deploy
-```
-
-### S3 only
-```sh
-cd deployments/rds-s3/s3-only/terraform
 make deploy
 ```
 

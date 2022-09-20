@@ -17,15 +17,39 @@ Specifially, you must:
 
 ## Deployment Steps
 
+### Directory
+
+Ensure you are in the `REPO_ROOT/deployments/vanilla/terraform` folder.
+
+### Configure
+
 Define the following environment variables:
 ```sh
-export TF_VAR_cluster_name=<desired_cluster_name>
-export TF_VAR_cluster_region=<desired_cluster_region>
+# Region to create the cluster in
+export CLUSTER_REGION=
+# Name of the cluster to create
+export CLUSTER_NAME=
 ```
+
+Save the variables to a `.tfvars` file:
+```sh
+cat <<EOF > sample.auto.tfvars
+cluster_name="${CLUSTER_NAME}"
+cluster_region="${CLUSTER_REGION}"
+EOF
+```
+
+### Preview
+
+View a preview of the configuration you are about apply:
+```sh
+terraform init && terraform plan
+```
+
+### Apply
 
 Run the following command:
 ```sh
-cd deployments/vanilla/terraform
 make deploy
 ```
 
