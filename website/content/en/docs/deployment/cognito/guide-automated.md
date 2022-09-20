@@ -20,7 +20,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
     1. Substitute values in `tests/e2e/utils/cognito_bootstrap/config.yaml`.
         1. Registed root domain in `route53.rootDomain.name`. Lets assume this domain is `example.com`
             1. If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
-        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section]({{< ref "/docs/deployment/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) to understand why we use a subdomain.
+        1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section]({{< ref "/docs/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) to understand why we use a subdomain.
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
         1. The config file will look something like:
@@ -73,9 +73,14 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             ```
 
 1. Install Kubeflow using the following command:
-   ```bash
-    while ! kustomize build deployments/cognito | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-    ```
+        {{< tabpane persistLang=false >}}
+        {{< tab header="Kustomize" lang="toml" >}}
+        make
+        {{< /tab >}}
+        {{< tab header="Helm" lang="yaml" >}}
+        make
+        {{< /tab >}}
+        {{< /tabpane >}}
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
