@@ -59,11 +59,6 @@ def pytest_addoption(parser):
         help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla"
     )
 
-    parser.addoption(
-        "--aws_telemetry_option",
-        action="store",
-        help="Usage tracking (enable/disable), default is set to enable"
-    )
 
 
 def keep_successfully_created_resource(request):
@@ -100,11 +95,6 @@ def get_deployment_option(request):
         deployment_option = "vanilla"
     return deployment_option
 
-def get_aws_telemetry_option(request):
-    aws_telemetry_option = request.config.getoption("--aws_telemetry")
-    if not aws_telemetry_option:
-        aws_telemetry_option = "enable"
-    return aws_telemetry_option
 
 
 @pytest.fixture(scope="class")
@@ -152,19 +142,6 @@ def deployment_option(metadata, request):
     
     return deployment_option
 
-@pytest.fixture(scope="class")
-def aws_telemetry_option(metadata, request):
-    """
-    Test aws-telemetry option.
-    """
-    if metadata.get("aws_telemetry_option"):
-        return metadata.get("aws_telemetry_option")
-
-    aws_telemetry_option = request.config.getoption("--aws_telemetry_option")
-    if not aws_telemetry_option:
-        aws_telemetry_option = 'enable'
-    metadata.insert("aws_telemetry_option", aws_telemetry_option)
-    return aws_telemetry_option
 
 @pytest.fixture(scope="class")
 def root_domain_name(metadata, request):

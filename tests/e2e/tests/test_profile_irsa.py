@@ -19,8 +19,7 @@ from e2e.utils.utils import (
     get_iam_client,
     get_s3_client,
     get_eks_client,
-    wait_for_kfp_run_succeeded_from_run_id,
-    apply_kustomize
+    wait_for_kfp_run_succeeded_from_run_id
 )
 from e2e.utils.config import metadata, configure_resource_fixture
 

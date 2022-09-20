@@ -50,11 +50,9 @@ def installation(
 
     def on_create():
         install_kubeflow(installation_option, aws_telemetry_option, deployment_option, cluster)
-
+        
     def on_delete():
-        if keep_successfully_created_resource(request) == False:
-            print("Start to Uninstall KubeFlow...")
-            uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
+        uninstall_kubeflow(installation_option, aws_telemetry_option, deployment_option)
 
 
 

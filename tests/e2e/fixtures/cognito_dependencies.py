@@ -95,11 +95,7 @@ def cognito_bootstrap(
 
     def on_delete():
         cfg = metadata.get("cognito_dependencies") or cognito_deps
-        print("keep Success Option for Cognito Fixture:")
-        print(keep_successfully_created_resource(request))
-        if keep_successfully_created_resource(request) == False:
-            print("start to uninstall Cognito Dependencies...")
-            delete_cognito_dependency_resources(cfg)
+        delete_cognito_dependency_resources(cfg)
 
     return configure_resource_fixture(
         metadata, request, cognito_deps, "cognito_dependencies", on_create, on_delete
@@ -125,7 +121,6 @@ def wait_for_alb_dns(cluster, region):
 def post_deployment_dns_update(
     metadata, region, request, cluster, cognito_bootstrap, installation
 ):
-    print ("get into post deployment...")
     wait_for_alb_dns(cluster, region)
     ingress = get_ingress(cluster, region)
     alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]

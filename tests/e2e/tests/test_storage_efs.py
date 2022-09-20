@@ -149,7 +149,6 @@ class TestEFS_Static:
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
 
-"""
 class TestEFS_Dynamic:
     @pytest.fixture(scope="class")
     def setup_dynamic(
@@ -240,4 +239,3 @@ class TestEFS_Dynamic:
         read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
         subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
-"""
