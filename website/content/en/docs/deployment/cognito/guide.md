@@ -96,19 +96,16 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 4.0 Building manifests and deploying Kubeflow
 
-1. Export the current deployment option
-    ```
-    export DEPLOYMENT_OPTION=cognito
-    ```
-
 1. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
         {{< tabpane persistLang=false >}}
         {{< tab header="Kustomize" lang="toml" >}}
+        export DEPLOYMENT_OPTION=cognito
         export INSTALLATION_OPTION=kustomize
         make deploy-kubeflow
         {{< /tab >}}
         {{< tab header="Helm" lang="yaml" >}}
+        export DEPLOYMENT_OPTION=cognito
         export INSTALLATION_OPTION=helm
         make deploy-kubeflow
         {{< /tab >}}

@@ -16,10 +16,6 @@ Be sure that you have satisfied the installation prerequisites before working th
 
 > ⚠️ Warning: We use a default email (`user@example.com`) and password (`12341234`) for our guides. For any production Kubeflow deployment, you should change the default password by following the steps in [Change default user password]({{< ref "../connect-kubeflow-dashboard#change-the-default-user-password-kustomize" >}}).
 
-Export the current deployment option
-```
-export DEPLOYMENT_OPTION=vanilla
-```
 ---
 
 ### Install with a single command
@@ -28,10 +24,12 @@ Install all Kubeflow official components (residing under `apps`) and all common 
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
+export DEPLOYMENT_OPTION=vanilla
 export INSTALLATION_OPTION=kustomize
 make deploy-kubeflow
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
+export DEPLOYMENT_OPTION=vanilla
 export INSTALLATION_OPTION=helm
 make deploy-kubeflow
 {{< /tab >}}
@@ -62,9 +60,18 @@ For information on connecting to your Kubeflow dashboard depending on your deplo
 Uninstall Kubeflow on AWS with a single command. 
 > Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation
 
-```bash
-make delete-kubeflow 
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=kustomize
+make delete-kubeflow
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+export DEPLOYMENT_OPTION=vanilla
+export INSTALLATION_OPTION=helm
+make delete-kubeflow
+{{< /tab >}}
+{{< /tabpane >}}
 
 > Note: This will not delete your Amazon EKS cluster.
 
