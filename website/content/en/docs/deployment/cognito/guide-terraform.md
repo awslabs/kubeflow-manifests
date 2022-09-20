@@ -15,7 +15,7 @@ This guide will walk you through using Terraform to:
 - Create a Cognito user pool
 - Deploy Kubeflow with Cognito as an identity provider
 
-Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide.md/#background" >}}).
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
 
 Terraform documentation can be found [here](https://www.terraform.io/docs).
 
@@ -41,6 +41,8 @@ pwd
 ### Configure
 
 Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+
+To create a subdomain manually as well follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
 
 Define the following environment variables:
 ```sh
