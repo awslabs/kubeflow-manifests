@@ -46,6 +46,7 @@ module "kubeflow_secrets_manager_irsa" {
   create_kubernetes_namespace = false
   create_kubernetes_service_account = true
   kubernetes_service_account        = "kubeflow-secrets-manager-sa"
+  irsa_iam_role_name = format("%s-%s-%s", var.eks_cluster_id, "kf-secrets-manager", "irsa")
   irsa_iam_policies                 = ["arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess", "arn:aws:iam::aws:policy/SecretsManagerReadWrite"]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary

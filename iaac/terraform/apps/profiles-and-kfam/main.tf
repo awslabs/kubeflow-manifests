@@ -10,6 +10,7 @@ module "irsa" {
   create_kubernetes_namespace = false
   create_kubernetes_service_account = false
   kubernetes_service_account = "profiles-controller-service-account"
+  irsa_iam_role_name = format("%s-%s-%s", var.eks_cluster_id, "profiles-controller", "irsa")
   irsa_iam_policies = [aws_iam_policy.profile_controller_policy.arn]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
