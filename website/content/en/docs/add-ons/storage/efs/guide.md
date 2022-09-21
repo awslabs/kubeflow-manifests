@@ -248,7 +248,7 @@ For the automated setup, you can specify the `uid` and `gid` as arguments to the
 
 ### 3.4 Use existing EFS volume as workspace or data volume for a Notebook
 
-Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (`public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow`). Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
+Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We'll assume you created a PVC with the name `efs-claim` via Kubeflow Volumes UI or via the manual setup step [Static Provisioning](#4-option-2-static-provisioning). For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (`public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow`). Additionally, use the existing `efs-claim` volume as the workspace volume at the default mount point `/home/jovyan`. The server might take a few minutes to come up. 
 
 In case the server does not start up in the expected time, do make sure to check:
 1. The Notebook Controller Logs
