@@ -24,7 +24,7 @@ Be sure that you have satisfied the [installation prerequisites]({{< ref "../pre
 Specifially, you must:
 - [Create a Ubuntu environment]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
 - [Clone the repository]({{< ref "../prerequisites/#clone-repository" >}})
-- [Install the necessary tools]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
+- [Install the necessary tools]({{< ref "../prerequisites/#install-necessary-tools" >}})
 
 
 Additionally, ensure you are in the `REPO_ROOT/deployments/rds-s3/terraform` folder.
