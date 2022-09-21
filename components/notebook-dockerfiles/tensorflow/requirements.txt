@@ -14,7 +14,7 @@ ipywidgets==7.7.1
 # Kubeflow Related Packages
 kfp==1.8.13
 kfp-server-api==1.8.3
-kfserving==0.6.1
+kserve==0.9.0
 kubeflow-training==1.4.0
 kubeflow-katib==0.14.0
 
@@ -26,8 +26,8 @@ xgboost==1.6.1
 ipympl==0.9.1
 
 # AWS related packages
-awscli==1.25.44
-boto3==1.24.44
+awscli==1.22.101
+boto3==1.21.0
 
 # TF Packages
 keras==2.9.0
