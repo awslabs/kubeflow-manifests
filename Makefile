@@ -100,8 +100,8 @@ cleanup-ack-req: verify-cluster-variables
 deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	$(eval AWS_TELEMETRY_OPTION:=enable)
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --aws_telemetry_option $(AWS_TELEMETRY_OPTION)
+	$(eval AWS_TELEMETRY_OPTION:=True)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --aws_telemetry $(AWS_TELEMETRY_OPTION)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
