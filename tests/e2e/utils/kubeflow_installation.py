@@ -5,6 +5,9 @@ from e2e.utils.utils import (
     kubectl_wait_pods,
     apply_kustomize,
     install_helm,
+    exec_shell,
+    get_variable_from_params,
+    find_and_replace_in_file,
 )
 import subprocess
 import os
@@ -123,6 +126,8 @@ def build_component(
             elif component_name == "kubeflow-namespace":
                 for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
                     apply_kustomize(kustomize_path)
+            elif component_name == "ack-sagemaker-controller":
+                build_ack_controller()
             else:
                 install_helm(component_name, installation_path, namespace)
         # kustomize
@@ -186,6 +191,28 @@ def build_alb_controller(cluster_name):
             --version v1.4.3".split()
     return subprocess.call(cmd)
 
+def build_ack_controller():
+    SERVICE="sagemaker"
+    RELEASE_VERSION="v0.4.4"
+    CHART_EXPORT_PATH="../../chart/common/ack-controller/sagemaker-chart"
+    CHART_REF=f"{SERVICE}-chart"
+    CHART_REPO=f"public.ecr.aws/aws-controllers-k8s/{CHART_REF}"
+    CHART_PACKAGE=f"{CHART_REF}-{RELEASE_VERSION}.tgz"
+    ACK_K8S_NAMESPACE="ack-system"
+    PARAMS_PATH="../../awsconfigs/common/ack-sagemaker-controller/params.env"
+    IAM_ROLE_ARN_FOR_IRSA=get_variable_from_params(PARAMS_PATH, "ACK_SAGEMAKER_OIDC_ROLE")
+    ACK_AWS_REGION=get_variable_from_params(PARAMS_PATH, "ACK_AWS_REGION")
+    LABEL_STRING='rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"'
+    
+    exec_shell(f"helm pull oci://{CHART_REPO} --version {RELEASE_VERSION} -d {CHART_EXPORT_PATH}")
+    exec_shell(f"tar xvf {CHART_EXPORT_PATH}/{CHART_PACKAGE} -C {CHART_EXPORT_PATH}")
+    exec_shell(f"yq e .aws.region=\"{ACK_AWS_REGION}\" -i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
+    exec_shell(f"yq e .serviceAccount.annotations.\"eks.amazonaws.com/role-arn\"=\"{IAM_ROLE_ARN_FOR_IRSA}\" " +
+        f"-i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
+    find_and_replace_in_file(f"{CHART_EXPORT_PATH}/{SERVICE}-chart/templates/cluster-role-controller.yaml",
+        "metadata:", f"metadata:\n  labels:\n    {LABEL_STRING}")
+    exec_shell(f"helm install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "
+        f"{CHART_EXPORT_PATH}/{SERVICE}-chart")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
