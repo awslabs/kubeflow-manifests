@@ -25,7 +25,7 @@ resources:
   - ../../../upstream/common/istio-1-14/kubeflow-istio-resources/base
 
   # Central Dashboard
-  - ../../../upstream/apps/centraldashboard/upstream/overlays/kserve
+  - ../../../awsconfigs/apps/centraldashboard
   # Admission Webhook
   - ../../../upstream/apps/admission-webhook/upstream/overlays/cert-manager
   # Jupyter Web App
