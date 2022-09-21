@@ -40,13 +40,13 @@ pwd
 
 ### Configure
 
-1. Create a root domain
-
-    Create a root domain manually (e.g. through the AWS console, a different Terraform stack, etc.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
-
-1. The provided Terraform stack will create a subdomain manually, however you can disable this behavior and provide your own subdomain.
-
-    To create a subdomain manually follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
+1. Register a domain using [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html). When you register a domain with Route 53, it automatically creates a hosted zone for the domain. 
+    - The provided Terraform stack will create and delegate a subdomain for the Kubeflow platform automatically.
+    - If you do not use Route53 for your top level domain, you can follow the steps in [create a subdomain section]({{< ref "../../add-ons/load-balancer/guide/#create-a-subdomain" >}}) of load balancer guide to create a subdomain manually and provide the route 53 subdomain hosted zone name as input to the terraform stack. 
+        - Additionally you have to set the Terraform variable `create_subdomain=false`:
+            ```sh
+            export TF_VAR_create_subdomain="false"
+            ```
 
 1. Define the following environment variables:
 
@@ -72,7 +72,6 @@ pwd
     aws_route53_root_zone_name="${ROOT_DOMAIN}"
     aws_route53_subdomain_zone_name="${SUBDOMAIN}"
     cognito_user_pool_name="${USER_POOL_NAME}"
-    create_subdomain="true"
     EOF
     ```
 
