@@ -24,6 +24,7 @@ def create_cluster(cluster_name, region, cluster_version="1.22"):
     cmd += "--nodes-min 5".split()
     cmd += "--nodes-max 10".split()
     cmd += "--managed".split()
+    cmd += "--with-oidc".split()
 
     retcode = subprocess.call(cmd)
     assert retcode == 0
