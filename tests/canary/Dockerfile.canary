@@ -30,7 +30,7 @@ RUN wget "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomi
  && cp ./kustomize_kustomize.v3.2.1_linux_amd64 /bin/kustomize
 
 RUN wget https://github.com/mikefarah/yq/releases/download/v4.26.1/yq_linux_amd64.tar.gz -O - | tar xz \
- && sudo mv yq_linux_amd64 /usr/bin/yq \
+ && mv yq_linux_amd64 /usr/bin/yq \
  && rm install-man-page.sh \
  && rm yq.1 \
  && yq --version
