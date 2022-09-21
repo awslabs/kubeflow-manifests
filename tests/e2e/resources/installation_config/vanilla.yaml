@@ -264,8 +264,8 @@ user-namespace:
 ack-sagemaker-controller:
   installation_options:
     kustomize: 
-      - ../../awsconfigs/common/ack-sagemaker-controller
-    helm: "remote repo"
+      - "../../awsconfigs/common/ack-sagemaker-controller"
+    helm: "./../chart/common/ack-controller/sagemaker-chart"
 
 #AWS Telemetry (Optional)
 aws-telemetry:

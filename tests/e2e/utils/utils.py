@@ -359,3 +359,22 @@ def write_env_to_yaml(env_dict, yaml_file_path, module=None):
         else:
             content[module][key] = value
     write_yaml_file(content, yaml_file_path)
+
+
+def exec_shell(cmd):
+    retcode = subprocess.call(cmd.split())
+    if retcode != 0:
+        raise Exception(f"ERROR: Failed to execute shell command \n{cmd}")
+
+def get_variable_from_params(path, var_name):
+    with open(path) as f:
+        for line in f:
+            if var_name in line:
+                return line.split("=")[1].strip()
+
+def find_and_replace_in_file(path, old_val, new_val):
+    with open(path, 'r') as file :
+        filedata = file.read()
+    filedata = filedata.replace(old_val, new_val)
+    with open(path, 'w') as file:
+        file.write(filedata)

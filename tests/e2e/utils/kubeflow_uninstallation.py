@@ -22,7 +22,7 @@ Uninstall_Sequence = [
     "aws-authservice",
     "ingress",
     "aws-load-balancer-controller",
-    # "ack-sagemaker-controller",
+    "ack-sagemaker-controller",
     "user-namespace",
     "profiles-and-kfam",
     "tensorboard-controller",
@@ -77,6 +77,8 @@ def uninstall_kubeflow(installation_option, deployment_option):
             namespace = "cert-manager"
         elif component == "aws-load-balancer-controller":
             namespace = "kube-system"
+        elif component == "ack-sagemaker-controller":
+            namespace = "ack-system"
         else:
             namespace = None
         delete_component(
