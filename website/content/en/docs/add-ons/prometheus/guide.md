@@ -1,7 +1,7 @@
 +++
 title = "Prometheus"
 description = "Use Prometheus, Amazon Managed Service for Prometheus, and Amazon Managed Grafana to monitor metrics with Kubeflow on AWS"
-weight = 5
+weight = 40
 +++
 
 This guide shows how to setup a Prometheus server, an AMP workspace, and an AMG workspace on top of Kubeflow on AWS. It also explains to validate the ingestion of data from Prometheus to AMP.

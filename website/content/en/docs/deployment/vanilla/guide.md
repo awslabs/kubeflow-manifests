@@ -4,6 +4,8 @@ description = "Deploy the vanilla version of Kubeflow on AWS using Kustomize or 
 weight = 20
 +++
 
+> Note: Helm installation option is still in preview.
+
 This guide describes how to deploy Kubeflow on Amazon EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
 
 ## Prerequisites

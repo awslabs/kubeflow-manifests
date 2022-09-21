@@ -4,6 +4,8 @@ description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
 weight = 10
 +++
 
+> Note: Helm installation option is still in preview.
+
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
 
 ## 1. Prerequisites
@@ -19,7 +21,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}) in order to:
+1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
