@@ -194,7 +194,7 @@ def build_alb_controller(cluster_name):
 def build_ack_controller():
     SERVICE="sagemaker"
     RELEASE_VERSION="v0.4.4"
-    CHART_EXPORT_PATH="../../chart/common/ack-controller/sagemaker-chart"
+    CHART_EXPORT_PATH="../../charts/common/ack-controller/sagemaker-chart"
     CHART_REF=f"{SERVICE}-chart"
     CHART_REPO=f"public.ecr.aws/aws-controllers-k8s/{CHART_REF}"
     CHART_PACKAGE=f"{CHART_REF}-{RELEASE_VERSION}.tgz"
