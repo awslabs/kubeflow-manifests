@@ -75,14 +75,10 @@ This guide assumes you have Python 3.8 installed and that you have completed the
 1. Install Kubeflow using the following command:
         {{< tabpane persistLang=false >}}
         {{< tab header="Kustomize" lang="toml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=kustomize
-        make deploy-kubeflow
+        make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
         {{< /tab >}}
         {{< tab header="Helm" lang="yaml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=helm
-        make deploy-kubeflow
+        make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
         {{< /tab >}}
         {{< /tabpane >}}
 
@@ -128,14 +124,10 @@ This guide assumes you have Python 3.8 installed and that you have completed the
  
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=cognito
-export INSTALLATION_OPTION=kustomize
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=cognito
-export INSTALLATION_OPTION=helm
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< /tabpane >}}
  
