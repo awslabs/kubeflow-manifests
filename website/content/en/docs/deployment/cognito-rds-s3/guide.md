@@ -26,14 +26,14 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
     1. Configure Ingress
 2. Deploy Kubeflow.
     1. Install Kubeflow using the following command:
-        {{< tabpane persistLang=false >}}
-        {{< tab header="Kustomize" lang="toml" >}}
-        make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3
-        {{< /tab >}}
-        {{< tab header="Helm" lang="yaml" >}}
-        make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
-        {{< /tab >}}
-        {{< /tabpane >}}
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
+{{< /tab >}}
+{{< /tabpane >}}
 1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
     1. Add/Update the DNS records in a custom domain with the ALB address
     1. Create a user in a Cognito user pool
