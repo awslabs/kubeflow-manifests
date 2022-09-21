@@ -4,7 +4,7 @@ description = "Deploying Kubeflow with AWS Cognito as identity provider using Ku
 weight = 20
 +++
 
-> Note: Helm deployment is still in preview.
+> Note: Helm installation option is still in preview.
 
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:
 - create an Ingress to manage external traffic to the Kubernetes services
@@ -100,18 +100,14 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 1. Choose one of the two options to deploy kubeflow:
     1. **[Option 1]** Install with a single command:
-        {{< tabpane persistLang=false >}}
-        {{< tab header="Kustomize" lang="toml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=kustomize
-        make deploy-kubeflow
-        {{< /tab >}}
-        {{< tab header="Helm" lang="yaml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=helm
-        make deploy-kubeflow
-        {{< /tab >}}
-        {{< /tabpane >}}
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
+{{< /tab >}}
+{{< /tabpane >}}
     1. **[Option 2]** Install individual components:
         ```bash
         # Kubeflow namespace

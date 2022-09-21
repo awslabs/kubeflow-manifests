@@ -4,7 +4,7 @@ description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
 weight = 20
 +++
 
-> Note: Helm deployment is still in preview.
+> Note: Helm installation option is still in preview.
 
 This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
 
@@ -245,14 +245,10 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=rds-s3
-export INSTALLATION_OPTION=kustomize
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=rds-s3
-export INSTALLATION_OPTION=helm
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -261,14 +257,10 @@ make deploy-kubeflow
 Use the following command to deploy the Kubeflow manifests for RDS only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=rds-only
-export INSTALLATION_OPTION=kustomize
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-only
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=rds-only
-export INSTALLATION_OPTION=helm
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -278,14 +270,10 @@ make deploy-kubeflow
 Use the following command to deploy the Kubeflow manifests for S3 only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=s3-only
-export INSTALLATION_OPTION=kustomize
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=s3-only
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=s3-only
-export INSTALLATION_OPTION=helm
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -386,14 +374,10 @@ Run the following command to uninstall your Kubeflow deployment:
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=rds-s3
-export INSTALLATION_OPTION=kustomize
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=rds-s3
-export INSTALLATION_OPTION=helm
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< /tabpane >}}
 

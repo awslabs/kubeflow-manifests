@@ -4,7 +4,7 @@ description = "Deploy the vanilla version of Kubeflow on AWS using Kustomize or 
 weight = 20
 +++
 
-> Note: Helm deployment is still in preview.
+> Note: Helm installation option is still in preview.
 
 This guide describes how to deploy Kubeflow on Amazon EKS. This vanilla version has minimal changes to the upstream Kubeflow manifests.
 
@@ -26,14 +26,10 @@ Install all Kubeflow official components (residing under `apps`) and all common 
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=kustomize
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=helm
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -64,14 +60,10 @@ Uninstall Kubeflow on AWS with a single command.
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=kustomize
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=helm
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< /tabpane >}}
 

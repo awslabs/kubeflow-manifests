@@ -4,7 +4,7 @@ description = "Deploying Kubeflow with AWS Cognito as identity provider using se
 weight = 10
 +++
 
-> Note: Helm deployment is still in preview.
+> Note: Helm installation option is still in preview.
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB's public DNS names are not supported.
 
@@ -75,18 +75,14 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             ```
 
 1. Install Kubeflow using the following command:
-        {{< tabpane persistLang=false >}}
-        {{< tab header="Kustomize" lang="toml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=kustomize
-        make deploy-kubeflow
-        {{< /tab >}}
-        {{< tab header="Helm" lang="yaml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=helm
-        make deploy-kubeflow
-        {{< /tab >}}
-        {{< /tabpane >}}
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
+{{< /tab >}}
+{{< /tabpane >}}
 
 1. Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
@@ -130,14 +126,10 @@ This guide assumes you have Python 3.8 installed and that you have completed the
  
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=cognito
-export INSTALLATION_OPTION=kustomize
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=cognito
-export INSTALLATION_OPTION=helm
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< /tabpane >}}
  
