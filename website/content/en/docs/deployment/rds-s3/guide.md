@@ -243,7 +243,7 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kubeflow NSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
 make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
