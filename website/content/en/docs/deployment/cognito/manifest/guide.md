@@ -4,6 +4,8 @@ description = "Deploying Kubeflow with AWS Cognito as identity provider using Ku
 weight = 20
 +++
 
+> Note: Helm deployment is still in preview.
+
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:
 - create an Ingress to manage external traffic to the Kubernetes services
 - create an Application Load Balancer (ALB) to provide public DNS

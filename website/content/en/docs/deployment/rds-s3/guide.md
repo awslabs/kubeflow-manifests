@@ -4,6 +4,8 @@ description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
 weight = 20
 +++
 
+> Note: Helm deployment is still in preview.
+
 This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
 
 ### RDS

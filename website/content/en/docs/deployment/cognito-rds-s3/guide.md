@@ -4,6 +4,8 @@ description = "Deploying Kubeflow with Amazon Cognito, RDS and S3"
 weight = 10
 +++
 
+> Note: Helm deployment is still in preview.
+
 This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.
 
 ## 1. Prerequisites
