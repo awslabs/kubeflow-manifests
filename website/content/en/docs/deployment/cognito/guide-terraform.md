@@ -40,35 +40,41 @@ pwd
 
 ### Configure
 
-Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+1. Create a root domain
 
-To create a subdomain manually as well follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
+    Create a root domain manually (e.g. through the AWS console, a different Terraform stack, etc.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
 
-Define the following environment variables:
-```sh
-# Region to create the cluster in
-export CLUSTER_REGION=
-# Name of the cluster to create
-export CLUSTER_NAME=
-# Name of an existing Route53 root domain (e.g. example.com)
-export ROOT_DOMAIN=
-# Name of the subdomain to create (e.g. platform.example.com)
-export SUBDOMAIN=
-# Name of the cognito user pool to create
-export USER_POOL_NAME=
-```
+1. The provided Terraform stack will create a subdomain manually, however you can disable this behavior and provide your own subdomain.
 
-Save the variables to a `.tfvars` file:
-```sh
-cat <<EOF > sample.auto.tfvars
-cluster_name="${CLUSTER_NAME}"
-cluster_region="${CLUSTER_REGION}"
-aws_route53_root_zone_name="${ROOT_DOMAIN}"
-aws_route53_subdomain_zone_name="${SUBDOMAIN}"
-cognito_user_pool_name="${USER_POOL_NAME}"
-create_subdomain="true"
-EOF
-```
+    To create a subdomain manually follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
+
+1. Define the following environment variables:
+
+    ```sh
+    # Region to create the cluster in
+    export CLUSTER_REGION=
+    # Name of the cluster to create
+    export CLUSTER_NAME=
+    # Name of an existing Route53 root domain (e.g. example.com)
+    export ROOT_DOMAIN=
+    # Name of the subdomain to create (e.g. platform.example.com)
+    export SUBDOMAIN=
+    # Name of the cognito user pool to create
+    export USER_POOL_NAME=
+    ```
+
+1. Save the variables to a `.tfvars` file:
+
+    ```sh
+    cat <<EOF > sample.auto.tfvars
+    cluster_name="${CLUSTER_NAME}"
+    cluster_region="${CLUSTER_REGION}"
+    aws_route53_root_zone_name="${ROOT_DOMAIN}"
+    aws_route53_subdomain_zone_name="${SUBDOMAIN}"
+    cognito_user_pool_name="${USER_POOL_NAME}"
+    create_subdomain="true"
+    EOF
+    ```
 
 ### All Configurations
 

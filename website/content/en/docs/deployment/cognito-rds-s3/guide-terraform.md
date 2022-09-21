@@ -42,56 +42,63 @@ pwd
 
 ### Configure
 
-Create a root domain manually (e.g. not through Terraform.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
+1. Create a root domain
 
-To create a subdomain manually as well follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
+    Create a root domain manually (e.g. through the AWS console, a different Terraform stack, etc.) To create a domain as the root domain through Route53 follow the steps [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html).
 
-[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
+1. The provided Terraform stack will create a subdomain manually, however you can disable this behavior and provide your own subdomain.
 
-Define the following environment variables:
-```sh
-# Region to create the cluster in
-export CLUSTER_REGION=
-# Name of the cluster to create
-export CLUSTER_NAME=
-# AWS access key id of the static credentials used to authenticate the Minio Client
-export TF_VAR_minio_aws_access_key_id=
-# AWS secret access key of the static credentials used to authenticate the Minio Client
-export TF_VAR_minio_aws_secret_access_key=
-# Name of an existing Route53 root domain (e.g. example.com)
-export ROOT_DOMAIN=
-# Name of the subdomain to create (e.g. platform.example.com)
-export SUBDOMAIN=
-# Name of the cognito user pool to create
-export USER_POOL_NAME=
-# true/false flag to configure and deploy with RDS
-export USE_RDS="true"
-# true/false flag to configure and deploy with S3
-export USE_S3="true"
-# true/false flag to configure and deploy with Cognito
-export USE_COGNITO="true"
-```
+    To create a subdomain manually follow the steps [here]({{< ref "../../add-ons/load-balancer/guide/#create-domain-and-certificates" >}}).
 
-Save the variables to a `.tfvars` file:
-```sh
-cat <<EOF > sample.auto.tfvars
-cluster_name="${CLUSTER_NAME}"
-cluster_region="${CLUSTER_REGION}"
-generate_db_password="true"
-aws_route53_root_zone_name="${ROOT_DOMAIN}"
-aws_route53_subdomain_zone_name="${SUBDOMAIN}"
-cognito_user_pool_name="${USER_POOL_NAME}"
-create_subdomain="true"
-use_rds="${USE_RDS}"
-use_s3="${USE_S3}"
-use_cognito="${USE_COGNITO}"
+1. Create an IAM user to use with the Minio Client
 
-# The below values are set to make cleanup easier but are not recommended for production
-deletion_protection="false"
-secret_recovery_window_in_days="0"
-force_destroy_s3_bucket="true"
-EOF
-```
+    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
+
+1. Define the following environment variables:
+
+    ```sh
+    # Region to create the cluster in
+    export CLUSTER_REGION=
+    # Name of the cluster to create
+    export CLUSTER_NAME=
+    # AWS access key id of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_access_key_id=
+    # AWS secret access key of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_secret_access_key=
+    # Name of an existing Route53 root domain (e.g. example.com)
+    export ROOT_DOMAIN=
+    # Name of the subdomain to create (e.g. platform.example.com)
+    export SUBDOMAIN=
+    # Name of the cognito user pool to create
+    export USER_POOL_NAME=
+    # true/false flag to configure and deploy with RDS
+    export USE_RDS="true"
+    # true/false flag to configure and deploy with S3
+    export USE_S3="true"
+    # true/false flag to configure and deploy with Cognito
+    export USE_COGNITO="true"
+    ```
+
+1. Save the variables to a `.tfvars` file:
+    ```sh
+    cat <<EOF > sample.auto.tfvars
+    cluster_name="${CLUSTER_NAME}"
+    cluster_region="${CLUSTER_REGION}"
+    generate_db_password="true"
+    aws_route53_root_zone_name="${ROOT_DOMAIN}"
+    aws_route53_subdomain_zone_name="${SUBDOMAIN}"
+    cognito_user_pool_name="${USER_POOL_NAME}"
+    create_subdomain="true"
+    use_rds="${USE_RDS}"
+    use_s3="${USE_S3}"
+    use_cognito="${USE_COGNITO}"
+
+    # The below values are set to make cleanup easier but are not recommended for production
+    deletion_protection="false"
+    secret_recovery_window_in_days="0"
+    force_destroy_s3_bucket="true"
+    EOF
+    ```
 
 ### All Configurations
 
