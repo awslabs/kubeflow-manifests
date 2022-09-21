@@ -98,8 +98,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 4.0 Building manifests and deploying Kubeflow
 
-1. Choose one of the two options to deploy kubeflow:
-    1. **[Option 1]** Install with a single command:
+1. Install with a single command:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
 make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
@@ -108,77 +107,6 @@ make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
 make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< /tabpane >}}
-    1. **[Option 2]** Install individual components:
-        ```bash
-        # Kubeflow namespace
-        kustomize build upstream/common/kubeflow-namespace/base | kubectl apply -f -
-        
-        # Kubeflow Roles
-        kustomize build upstream/common/kubeflow-roles/base | kubectl apply -f -
-        
-        # Istio
-        kustomize build upstream/common/istio-1-14/istio-crds/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-14/istio-namespace/base | kubectl apply -f -
-        kustomize build awsconfigs/common/istio | kubectl apply -f -
-        
-        # Cert-Manager
-        kustomize build upstream/common/cert-manager/cert-manager/base | kubectl apply -f -
-        kustomize build upstream/common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
-        
-        # KNative
-        kustomize build upstream/common/knative/knative-serving/overlays/gateways | kubectl apply -f -
-        kustomize build upstream/common/knative/knative-eventing/base | kubectl apply -f -
-        kustomize build upstream/common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
-        
-        # Kubeflow Istio Resources
-        kustomize build upstream/common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
-        
-        # Kubeflow Pipelines
-        # reapply manifest if you see an error
-        kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
-        
-        # KServe
-        kustomize build awsconfigs/apps/kserve | kubectl apply -f -
-        kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
-        
-        # Katib
-        kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
-        
-        # Central Dashboard
-        kustomize build awsconfigs/apps/centraldashboard | kubectl apply -f -
-        
-        # Notebooks
-        kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
-        kustomize build awsconfigs/apps/jupyter-web-app | kubectl apply -f -
-        
-        # Admission Webhook
-        kustomize build upstream/apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
-        
-        # Profiles + KFAM
-        kustomize build upstream/apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
-        
-        # Volumes Web App
-        kustomize build upstream/apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
-        
-        # Tensorboard
-        kustomize build upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
-        kustomize build upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
-        
-        # Training Operator
-        kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
-
-        # AWS Telemetry - This is an optional component. See usage tracking documentation for more information
-        kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
-
-        # Ingress
-        kustomize build awsconfigs/common/istio-ingress/overlays/cognito | kubectl apply -f -
-
-        # ALB controller
-        kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
-
-        # AWS Authservice
-        kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -
-        ```
 
 ## 5.0 Updating the domain with ALB address
 
