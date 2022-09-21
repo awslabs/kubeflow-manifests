@@ -42,6 +42,7 @@ jobs:
         role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
         role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
         aws-region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
+        role-duration-seconds: 14400
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
