@@ -26,8 +26,8 @@ xgboost==1.6.1
 ipympl==0.9.1
 
 # AWS related packages
-awscli==1.25.44
-boto3==1.24.44
+awscli==1.22.101
+boto3==1.21.0
 
 # Pytorch packages
 # a version mismatch for fastai can cause a different version of torch to get installed, be careful.
