@@ -52,7 +52,7 @@ Install_Sequence = [
 
 
 def install_kubeflow(
-    installation_option,  deployment_option, cluster_name, disable_aws_telemetry=False
+    installation_option,  deployment_option, cluster_name, aws_telemetry=True
 ):
     print(cluster_name)
     if deployment_option == "vanilla":
@@ -81,7 +81,7 @@ def install_kubeflow(
             cluster_name,
         )
 
-    if disable_aws_telemetry == False:
+    if aws_telemetry == True:
         build_component(
             installation_option,
             deployment_option,
@@ -200,10 +200,11 @@ if __name__ == "__main__":
     )
     
     parser.add_argument(
-        "--disable_aws_telemetry",
-        action="store_true",
-        default=False,
-        help=f"diable AWS Telemetry tracking",
+        "--aws_telemetry",
+        type=bool,
+        default=True,
+        help=f"AWS Telemetry tracking",
+        required=False,
     )
     DEPLOYMENT_OPTION_DEFAULT = "vanilla"
     parser.add_argument(
@@ -225,5 +226,5 @@ if __name__ == "__main__":
     args, _ = parser.parse_known_args()
     
     install_kubeflow(
-        args.installation_option,  args.deployment_option, args.cluster_name, args.disable_aws_telemetry
+        args.installation_option,  args.deployment_option, args.cluster_name, args.aws_telemetry
     )
