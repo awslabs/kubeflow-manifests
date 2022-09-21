@@ -100,24 +100,19 @@ data:
             "link": "https://www.kubeflow.org/docs/started/getting-started/"
           },
           {
-            "text": "MiniKF",
-            "desc": "A fast and easy way to deploy Kubeflow locally",
-            "link": "https://www.kubeflow.org/docs/distributions/minikf/"
-          },
-          {
-            "text": "Microk8s for Kubeflow",
-            "desc": "Quickly get Kubeflow running locally on native hypervisors",
-            "link": "https://www.kubeflow.org/docs/distributions/microk8s/kubeflow-on-microk8s/"
-          },
-          {
-            "text": "Kubeflow on GCP",
-            "desc": "Running Kubeflow on Kubernetes Engine and Google Cloud Platform",
-            "link": "https://www.kubeflow.org/docs/gke/"
-          },
-          {
             "text": "Kubeflow on AWS",
             "desc": "Running Kubeflow on Amazon Elastic Kubernetes Service (Amazon EKS) and Amazon Web Services",
             "link": "https://www.kubeflow.org/docs/distributions/aws/"
+          },
+          {
+            "text": "Amazon SageMaker Components for Kubeflow Pipelines",
+            "desc": "Create Machine Learning workflows to run on Amazon SageMaker from Kubeflow Pipelines",
+            "link": "https://awslabs.github.io/kubeflow-manifests/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines"
+          },
+          {
+            "text": "Amazon SageMaker Operator for Kubernetes (ACK)",
+            "desc": "Use SageMaker Operators for Kubernetes (ACK) to manage your SageMaker resources from your Kubernetes cluster directly",
+            "link": "https://awslabs.github.io/kubeflow-manifests/docs/amazon-sagemaker-integration/sagemaker-operators-ack"
           },
           {
             "text": "Requirements for Kubeflow",
