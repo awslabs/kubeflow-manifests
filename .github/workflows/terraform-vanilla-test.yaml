@@ -10,9 +10,9 @@ on:
     branches:
       - main
 
-  # Run on schedule (every 6 hours)
+  # Run on schedule (every 4 hours)
   schedule:
-    - cron: '0 0/6 * * *'
+    - cron: '0 0/4 * * *'
 
   workflow_dispatch:
 
@@ -45,6 +45,8 @@ jobs:
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.2.7
     
     - name: Plan and apply terraform
       run: |
