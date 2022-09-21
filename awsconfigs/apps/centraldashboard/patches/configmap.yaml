@@ -1,5 +1,9 @@
 apiVersion: v1
 data:
+  settings: |-
+    {
+      "DASHBOARD_FORCE_IFRAME": true
+    }
   links: |-
     {
       "menuLinks": [
@@ -102,7 +106,7 @@ data:
           {
             "text": "Kubeflow on AWS",
             "desc": "Running Kubeflow on Amazon Elastic Kubernetes Service (Amazon EKS) and Amazon Web Services",
-            "link": "https://www.kubeflow.org/docs/distributions/aws/"
+            "link": "https://www.kubeflow.org/docs/aws/"
           },
           {
             "text": "Amazon SageMaker Components for Kubeflow Pipelines",
@@ -121,16 +125,6 @@ data:
           }
         ]
     }
-  settings: |-
-    {
-      "DASHBOARD_FORCE_IFRAME": true
-    }
 kind: ConfigMap
 metadata:
-  labels:
-    app: centraldashboard
-    app.kubernetes.io/component: centraldashboard
-    app.kubernetes.io/name: centraldashboard
-    kustomize.component: centraldashboard
   name: centraldashboard-config
-  namespace: kubeflow

@@ -114,7 +114,7 @@ models-web-app:
 central-dashboard:
   installation_options:
     kustomize: 
-      - "../../upstream/apps/centraldashboard/upstream/overlays/kserve"
+      - "../../awsconfigs/apps/centraldashboard"
     helm: "../../charts/apps/central-dashboard"
   validations:
     namespace: 'kubeflow'
@@ -268,7 +268,7 @@ ack-sagemaker-controller:
   installation_options:
     kustomize: 
       - "../../awsconfigs/common/ack-sagemaker-controller"
-    helm: "../../chart/common/ack-controller/sagemaker-chart"
+    helm: "../../charts/common/ack-controller/sagemaker-chart"
 
 #AWS Telemetry (Optional)
 aws-telemetry:
