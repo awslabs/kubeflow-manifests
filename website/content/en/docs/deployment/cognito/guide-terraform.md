@@ -15,7 +15,7 @@ This guide will walk you through using Terraform to:
 - Create a Cognito user pool
 - Deploy Kubeflow with Cognito as an identity provider
 
-Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
+Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./manifest/guide/#background" >}}).
 
 Terraform documentation can be found [here](https://www.terraform.io/docs).
 

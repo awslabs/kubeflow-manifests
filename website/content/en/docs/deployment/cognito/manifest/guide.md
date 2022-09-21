@@ -1,5 +1,5 @@
 +++
-title = "Manifest Deployment Guide"
+title = "Manual Deployment Guide"
 description = "Deploying Kubeflow with AWS Cognito as identity provider using Kustomize or Helm"
 weight = 20
 +++
@@ -20,7 +20,7 @@ Read the [background section]({{< ref "/docs/add-ons/load-balancer/guide.md#back
 Read the [create domain and certificate section]({{< ref "/docs/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) for information on why we use a subdomain for hosting Kubeflow.
 
 ## (Optional) Automated setup
-The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide]({{< ref "/docs/deployment/cognito/guide-automated.md" >}}).
+The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the [automated setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md" >}}).
 
 ## 1.0 Custom domain and certificates
 
@@ -223,4 +223,4 @@ From this point onwards, we will be creating/updating the DNS records **only in 
 
 ## 7.0 Uninstall Kubeflow
 
-To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/guide-automated.md#uninstall-kubeflow" >}})
+To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md#uninstall-kubeflow" >}})

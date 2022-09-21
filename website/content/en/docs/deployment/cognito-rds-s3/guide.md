@@ -19,7 +19,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}) in order to:
+1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -100,7 +100,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
         # Authservice
         kustomize build awsconfigs/common/aws-authservice/base | kubectl apply -f -        
         ```
-1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
+1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/manifest/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
     1. Add/Update the DNS records in a custom domain with the ALB address
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool

@@ -12,7 +12,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
 
 ## Create required resources and deploy Kubeflow
 
-1. The following steps automate [section 1.0(Custom domain and certificates)]({{< ref "/docs/deployment/cognito/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)]({{< ref "/docs/deployment/cognito/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)]({{< ref "/docs/deployment/cognito/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
+1. The following steps automate [section 1.0(Custom domain and certificates)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)]({{< ref "/docs/deployment/cognito/manifest/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
         ```sh
         pip install -r tests/e2e/requirements.txt
@@ -110,7 +110,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
-1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/guide.md#60-connecting-to-central-dashboard" >}}) to:
+1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
