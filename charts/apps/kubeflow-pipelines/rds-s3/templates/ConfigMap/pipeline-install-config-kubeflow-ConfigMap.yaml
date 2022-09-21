@@ -13,7 +13,7 @@ data:
   dbPort: '3306'
   defaultPipelineRoot: ''
   minioServiceHost: '{{ .Values.s3.minioServiceHost }}'
-  minioServiceRegion: '{{ .Values.s3.minioServiceRegion}}'
+  minioServiceRegion: '{{ .Values.s3.minioServiceRegion }}'
   mlmdDb: '{{ .Values.rds.mlmdDb }}'
   pipelineDb: mlpipeline
   warning: '1. Do not use kubectl to edit this configmap, because some values are

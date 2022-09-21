@@ -8,7 +8,7 @@ data:
             bucket: {{ .Values.s3.bucketName }},
             keyPrefix: artifacts,
             endpoint: {{ .Values.s3.minioServiceHost }},
-            insecure: true,
+            insecure: false,
             accessKeySecret: {
                 name: mlpipeline-minio-artifact,
                 key: accesskey
