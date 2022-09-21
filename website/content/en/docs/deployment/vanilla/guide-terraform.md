@@ -36,21 +36,23 @@ pwd
 
 ### Configure
 
-Define the following environment variables:
-```sh
-# Region to create the cluster in
-export CLUSTER_REGION=
-# Name of the cluster to create
-export CLUSTER_NAME=
-```
+1. Define the following environment variables:
 
-Save the variables to a `.tfvars` file:
-```sh
-cat <<EOF > sample.auto.tfvars
-cluster_name="${CLUSTER_NAME}"
-cluster_region="${CLUSTER_REGION}"
-EOF
-```
+    ```sh
+    # Region to create the cluster in
+    export CLUSTER_REGION=
+    # Name of the cluster to create
+    export CLUSTER_NAME=
+    ```
+
+1. Save the variables to a `.tfvars` file:
+
+    ```sh
+    cat <<EOF > sample.auto.tfvars
+    cluster_name="${CLUSTER_NAME}"
+    cluster_region="${CLUSTER_REGION}"
+    EOF
+    ```
 
 ### All Configurations
 

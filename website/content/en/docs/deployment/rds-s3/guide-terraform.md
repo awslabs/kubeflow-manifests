@@ -39,39 +39,43 @@ pwd
 
 ### Configure
 
-[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as TF_VAR_minio_aws_access_key_id and TF_VAR_minio_aws_secret_access_key respectively.
+1. Create an IAM user to use with the Minio Client
 
-Define the following environment variables:
-```sh
-# Region to create the cluster in
-export CLUSTER_REGION=
-# Name of the cluster to create
-export CLUSTER_NAME=
-# AWS access key id of the static credentials used to authenticate the Minio Client
-export TF_VAR_minio_aws_access_key_id=
-# AWS secret access key of the static credentials used to authenticate the Minio Client
-export TF_VAR_minio_aws_secret_access_key=
-# true/false flag to configure and deploy with RDS
-export USE_RDS="true"
-# true/false flag to configure and deploy with S3
-export USE_S3="true"
-```
+    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively.
 
-Save the variables to a `.tfvars` file:
-```sh
-cat <<EOF > sample.auto.tfvars
-cluster_name="${CLUSTER_NAME}"
-cluster_region="${CLUSTER_REGION}"
-generate_db_password="true"
-use_rds="${USE_RDS}"
-use_s3="${USE_S3}"
+1. Define the following environment variables:
 
-# The below values are set to make cleanup easier but are not recommended for production
-deletion_protection="false"
-secret_recovery_window_in_days="0"
-force_destroy_s3_bucket="true"
-EOF
-```
+    ```sh
+    # Region to create the cluster in
+    export CLUSTER_REGION=
+    # Name of the cluster to create
+    export CLUSTER_NAME=
+    # AWS access key id of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_access_key_id=
+    # AWS secret access key of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_secret_access_key=
+    # true/false flag to configure and deploy with RDS
+    export USE_RDS="true"
+    # true/false flag to configure and deploy with S3
+    export USE_S3="true"
+    ```
+
+1. Save the variables to a `.tfvars` file:
+
+    ```sh
+    cat <<EOF > sample.auto.tfvars
+    cluster_name="${CLUSTER_NAME}"
+    cluster_region="${CLUSTER_REGION}"
+    generate_db_password="true"
+    use_rds="${USE_RDS}"
+    use_s3="${USE_S3}"
+
+    # The below values are set to make cleanup easier but are not recommended for production
+    deletion_protection="false"
+    secret_recovery_window_in_days="0"
+    force_destroy_s3_bucket="true"
+    EOF
+    ```
 
 ### All Configurations
 

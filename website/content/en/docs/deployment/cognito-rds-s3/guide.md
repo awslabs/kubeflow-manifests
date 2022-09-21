@@ -36,7 +36,7 @@ make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds
 make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
 {{< /tab >}}
 {{< /tabpane >}}
-1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
+1. Follow the rest of the Cognito guide from [section 5.0 (Updating the domain with ALB address)]({{< ref "/docs/deployment/cognito/manifest/guide.md#50-updating-the-domain-with-alb-address" >}}) in order to:
     1. Add/Update the DNS records in a custom domain with the ALB address
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool
