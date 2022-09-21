@@ -29,7 +29,7 @@ resources:
   # Katib
   - ../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
   # Central Dashboard
-  - ../../upstream/apps/centraldashboard/upstream/overlays/kserve
+  - ../../awsconfigs/apps/centraldashboard
   # Admission Webhook
   - ../../upstream/apps/admission-webhook/upstream/overlays/cert-manager
   # Jupyter Web App

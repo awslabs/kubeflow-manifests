@@ -139,7 +139,7 @@ models-web-app:
 central-dashboard:
   installation_options:
     kustomize: 
-      - "../../upstream/apps/centraldashboard/upstream/overlays/kserve"
+      - "../../awsconfigs/apps/centraldashboard"
     helm: "../../charts/apps/central-dashboard"
   namespace: 'kubeflow'
   validations:

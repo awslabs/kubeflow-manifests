@@ -145,7 +145,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
         kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
         
         # Central Dashboard
-        kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+        kustomize build awsconfigs/apps/centraldashboard | kubectl apply -f -
         
         # Notebooks
         kustomize build upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
