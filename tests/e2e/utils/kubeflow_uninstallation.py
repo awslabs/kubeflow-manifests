@@ -8,6 +8,7 @@ from e2e.utils.utils import (
     load_yaml_file,
 )
 import os
+import subprocess
 
 
 INSTALLATION_PATH_FILE_VANILLA = "./resources/installation_config/vanilla.yaml"
@@ -99,10 +100,15 @@ def delete_component(
         ]
 
         if installation_option == "helm":
-
             if component_name == "kubeflow-namespace":
                 for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
                     delete_kustomize(kustomize_path)
+
+            elif component_name == "ingress":
+                uninstall_helm(component_name, namespace)
+                #Helm doesn't seem to delete ingress during uninstall
+                retcode = subprocess.call(f"kubectl delete ingress -n istio-system istio-ingress".split())
+                assert retcode == 0
             else:
                 uninstall_helm(component_name, namespace)
                 if os.path.isdir(f"{installation_path}/crds"):
