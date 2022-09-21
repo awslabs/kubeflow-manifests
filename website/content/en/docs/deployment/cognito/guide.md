@@ -100,14 +100,10 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. **[Option 1]** Install with a single command:
         {{< tabpane persistLang=false >}}
         {{< tab header="Kustomize" lang="toml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=kustomize
-        make deploy-kubeflow
+        make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
         {{< /tab >}}
         {{< tab header="Helm" lang="yaml" >}}
-        export DEPLOYMENT_OPTION=cognito
-        export INSTALLATION_OPTION=helm
-        make deploy-kubeflow
+        make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
         {{< /tab >}}
         {{< /tabpane >}}
     1. **[Option 2]** Install individual components:

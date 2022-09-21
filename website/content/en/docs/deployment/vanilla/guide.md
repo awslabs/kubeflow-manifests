@@ -24,14 +24,10 @@ Install all Kubeflow official components (residing under `apps`) and all common 
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=kustomize
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=helm
-make deploy-kubeflow
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -62,14 +58,10 @@ Uninstall Kubeflow on AWS with a single command.
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=kustomize
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-export DEPLOYMENT_OPTION=vanilla
-export INSTALLATION_OPTION=helm
-make delete-kubeflow
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=vanilla
 {{< /tab >}}
 {{< /tabpane >}}
 
