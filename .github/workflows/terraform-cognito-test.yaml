@@ -9,6 +9,10 @@ on:
       # TODO: Add relevant helm chart path
     branches:
       - main
+      
+  # Run on schedule (every 4 hours)
+  schedule:
+    - cron: '0 0/4 * * *'
 
   workflow_dispatch:
 
@@ -29,6 +33,8 @@ jobs:
       TF_VAR_cognito_user_pool_name: ${{ github.run_id }}-${{ github.run_attempt }}-testpool
       TF_VAR_aws_route53_root_zone_name: ${{ secrets.ROOT_HOSTED_ZONE_NAME }}
       TF_VAR_aws_route53_subdomain_zone_name: ${{ github.run_id }}-${{ github.run_attempt }}.${{ secrets.ROOT_HOSTED_ZONE_NAME }}
+      TF_VAR_cluster_name: cognito-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -39,9 +45,12 @@ jobs:
         role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
         role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
         aws-region: ${{ secrets.AWS_REGION }}
+        role-duration-seconds: 14400
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.2.7
     
     - name: Plan and apply terraform
       run: |
