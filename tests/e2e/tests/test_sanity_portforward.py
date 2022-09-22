@@ -282,3 +282,6 @@ class TestSanity:
         wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
 
         kfp_client.delete_experiment(experiment.id)
+        
+        cmd = "kubectl delete trainingjobs --all -n kubeflow-user-example-com".split()
+        subprocess.Popen(cmd)
