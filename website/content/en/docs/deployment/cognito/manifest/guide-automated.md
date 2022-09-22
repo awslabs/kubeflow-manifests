@@ -12,9 +12,9 @@ This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity
 
 This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}).
 
-## Create required resources and deploy Kubeflow
+## 1.0 Create required resources
 
-1. The following steps automate [section 1.0(Custom domain and certificates)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0(Cognito user pool)]({{< ref "/docs/deployment/cognito/manifest/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0(Configure Ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
+1. The following steps automate [section 1.0 (Custom domain and certificates)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0 (Cognito user pool)]({{< ref "/docs/deployment/cognito/manifest/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0 (Configure Ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
         ```sh
         pip install -r tests/e2e/requirements.txt
@@ -74,6 +74,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
+## 2.0 Install Kubeflow
 1. Install Kubeflow using the following command:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}

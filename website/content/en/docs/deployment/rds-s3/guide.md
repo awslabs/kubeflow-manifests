@@ -386,16 +386,6 @@ make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
 {{< /tab >}}
 {{< /tabpane >}}
 
-The following cleanup steps may also be required:
-
-```sh
-kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io webhook.eventing.knative.dev webhook.istio.networking.internal.knative.dev webhook.serving.knative.dev
-
-kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io config.webhook.eventing.knative.dev config.webhook.istio.networking.internal.knative.dev config.webhook.serving.knative.dev
-
-kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
-```
-
 To uninstall AWS resources created by the automated setup, run the cleanup script:
 1. Navigate to the `tests/e2e` directory.
 ```bash
