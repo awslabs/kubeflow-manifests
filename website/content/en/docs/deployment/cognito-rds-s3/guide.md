@@ -21,7 +21,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) in order to:
+1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -41,3 +41,77 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
+
+## Uninstall Kubeflow
+> Note: Delete all the resources you might have created in your profile namespaces before running these steps.
+1. Run the following commands to delete the profiles, ingress and corresponding ingress managed load balancer
+   ```bash
+    kubectl delete profiles --all
+    ```
+
+1. Delete the kubeflow deployment
+> Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation.
+ 
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
+{{< /tab >}}
+{{< /tabpane >}}
+
+1. To delete the rest of resources(subdomain, certificates etc.), run the following commands from the root of your repository:
+    > Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/cognito_bootstrap/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in a yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
+    - Sample config file:
+    ```yaml
+    cognitoUserpool:
+        ARN: arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_yasI9dbxF
+        appClientId: 5jmk7ljl2a74jk3n0a0fvj3l31
+        domainAliasTarget: xxxxxxxxxx.cloudfront.net
+        domain: auth.platform.example.com
+        name: kubeflow-users
+    kubeflow:
+        alb:
+            serviceAccount:
+                name: alb-ingress-controller
+                namespace: kubeflow
+                policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+    cluster:  
+        name: kube-eks-cluster
+        region: us-west-2
+    route53:
+        rootDomain:
+            certARN: arn:aws:acm:us-east-1:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af
+            hostedZoneId: XXXXX
+            name: example.com
+        subDomain:
+            us-west-2-certARN: arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726
+            hostedZoneId: XXXXX
+            name: platform.example.com
+            us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
+    ```
+    - Run the following command to install the script dependencies and delete the resources:
+    > Note: You can rerun the script incase some resources fail to delete
+    ```bash
+    cd tests/e2e
+    pip install -r requirements.txt
+    PYTHONPATH=.. python utils/cognito_bootstrap/cognito_resources_cleanup.py
+    cd -
+    ```
+
+1. To delete the rest of RDS-S3 resources:
+The following cleanup steps may also be required:
+```sh
+kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io webhook.eventing.knative.dev webhook.istio.networking.internal.knative.dev webhook.serving.knative.dev
+
+kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io config.webhook.eventing.knative.dev config.webhook.istio.networking.internal.knative.dev config.webhook.serving.knative.dev
+
+kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
+```
+
+ Make sure that you have the configuration file created by the script in `tests/e2e/utils/rds-s3/metadata.yaml`.
+```bash
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py
+```  
+

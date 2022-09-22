@@ -118,7 +118,6 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 1. Run the following commands to delete the profiles, ingress and corresponding ingress managed load balancer
    ```bash
     kubectl delete profiles --all
-    kubectl delete ingress -n istio-system istio-ingress
     ```
 
 1. Delete the kubeflow deployment

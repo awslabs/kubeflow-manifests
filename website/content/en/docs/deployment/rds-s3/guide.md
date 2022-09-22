@@ -80,13 +80,18 @@ pip install -r requirements.txt
 3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
 4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `MINIO_AWS_ACCESS_KEY_ID`, and `MINIO_AWS_SECRET_ACCESS_KEY`. Then, run the `auto-rds-s3-setup.py` script.
 ```bash
-export CLUSTER_REGION=
-export CLUSTER_NAME=
-export S3_BUCKET=
-export MINIO_AWS_ACCESS_KEY_ID=
-export MINIO_AWS_SECRET_ACCESS_KEY=
+export CLUSTER_REGION=<>
+export CLUSTER_NAME=<>
+export S3_BUCKET=<>
+export DB_INSTANCE_NAME=<>
+export DB_SUBNET_GROUP_NAME=<>
+export MINIO_AWS_ACCESS_KEY_ID=<>
+export MINIO_AWS_SECRET_ACCESS_KEY=<>
+export RDS_SECRET_NAME=<>
+export S3_SECRET_NAME=<>
 
-PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py
+--region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
 ```  
 
 ### Advanced customization
