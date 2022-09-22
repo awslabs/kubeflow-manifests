@@ -8,11 +8,11 @@ weight = 10
 
 This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB's public DNS names are not supported.
 
-## Prerequisites
+## 1.0 Prerequisites
 
 This guide assumes you have Python 3.8 installed and that you have completed the [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}).
 
-## 1.0 Create required resources
+## 2.0 Create required resources
 
 1. The following steps automate [section 1.0 (Custom domain and certificates)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) (creating a custom domain to host Kubeflow and TLS certificates for the domain), [section 2.0 (Cognito user pool)]({{< ref "/docs/deployment/cognito/manifest/guide.md#20-cognito-user-pool" >}}) (creating a Cognito Userpool used for user authentication) and[section 3.0 (Configure Ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) (configuring ingress and load balancer controller manifests) of the cognito guide.
     1. Install dependencies for the scripts
@@ -74,7 +74,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                     us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
             ```
 
-## 2.0 Install Kubeflow
+## 3.0 Install Kubeflow
 1. Install Kubeflow using the following command:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
@@ -85,7 +85,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< /tabpane >}}
 
-1. Updating the domain with ALB address
+## 4.0 Updating the domain with ALB address
     1. Check if ALB is provisioned. It takes around 3-5 minutes
         1. ```sh
             kubectl get ingress -n istio-system
@@ -109,7 +109,8 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
             PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
             cd -
             ```
-1. Follow the rest of the cognito guide from [section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
+## 5.0 Connect to central dashboard 
+[section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
     1. Create a user in Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard

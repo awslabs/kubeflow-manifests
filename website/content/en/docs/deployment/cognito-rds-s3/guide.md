@@ -21,7 +21,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md" >}}) in order to:
+1. Follow the Section 2.0 of [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated/#20-create-required-resources" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
