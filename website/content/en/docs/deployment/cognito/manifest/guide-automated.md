@@ -86,29 +86,29 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tabpane >}}
 
 ## 4.0 Updating the domain with ALB address
-    1. Check if ALB is provisioned. It takes around 3-5 minutes
-        1. ```sh
-            kubectl get ingress -n istio-system
-            Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-            NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
-            istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
-            ```
-        2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide]({{< ref "/docs/troubleshooting-aws.md#alb-fails-to-provision" >}})
-    1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
-        1. ```yaml
-            kubeflow:
-                alb:
-                    dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
-                    serviceAccount:
-                        name: alb-ingress-controller
-                        policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
-            ```
-    1. Run the following script to update the subdomain with ALB address
-        1. ```sh
-            cd tests/e2e
-            PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
-            cd -
-            ```
+1. Check if ALB is provisioned. It takes around 3-5 minutes
+    1. ```sh
+        kubectl get ingress -n istio-system
+        Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+        NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+        istio-ingress   <none>   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   80      15d
+        ```
+    2. If `ADDRESS` is empty after a few minutes, check the logs of alb-ingress-controller by following [this guide]({{< ref "/docs/troubleshooting-aws.md#alb-fails-to-provision" >}})
+1. Substitute the ALB address under `kubeflow.alb.dns` in `tests/e2e/utils/cognito_bootstrap/config.yaml`. The kubeflow section of the config file will look like:
+    1. ```yaml
+        kubeflow:
+            alb:
+                dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+                serviceAccount:
+                    name: alb-ingress-controller
+                    policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx
+        ```
+1. Run the following script to update the subdomain with ALB address
+    1. ```sh
+        cd tests/e2e
+        PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
+        cd -
+        ```
 ## 5.0 Connect to central dashboard 
 [section 6.0(Connecting to central dashboard)]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
     1. Create a user in Cognito user pool
