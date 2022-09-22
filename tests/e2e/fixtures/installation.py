@@ -15,12 +15,17 @@ from e2e.utils.utils import wait_for,kubectl_delete, kubectl_delete_crd, kubectl
 from e2e.utils.kubeflow_installation import install_kubeflow
 from e2e.utils.kubeflow_uninstallation import uninstall_kubeflow
 
-
+from e2e.fixtures.cluster import (
+    associate_iam_oidc_provider,
+)
 
 @pytest.fixture(scope="class")
 def configure_manifests(region, cluster):
     os.environ["CLUSTER_REGION"] = region
     os.environ["CLUSTER_NAME"] = cluster
+
+    associate_iam_oidc_provider(cluster, region)
+    
     apply_retcode = subprocess.call(f"make bootstrap-ack".split(), cwd='../..')
     assert apply_retcode == 0
 
