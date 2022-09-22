@@ -20,17 +20,28 @@ kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
 
 **Before deploying Kubeflow:** 
 
-You can deactivate usage tracking by skipping the telemetry component installation in one of two ways:
+You can deactivate usage tracking by skipping the telemetry component installation:
 
-1. For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/kustomization.yaml#L59) in the `kustomization.yaml` file of your choosing:
+- For single line installation, comment out the [`aws-telemetry` line](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/kustomization.yaml#L59) in the `kustomization.yaml` file of your choosing:
     ```bash
     # ../../aws-telemetry
     ```
-2. For individual component installation, **do not** install the `aws-telemetry` component: 
+- For make command installation, comment out the `aws-telemetry` lines depending on your deployment: 
+    - The installation configs can be found [here](https://github.com/awslabs/kubeflow-manifests/tree/main/tests/e2e/resources/installation_config)
+    - Example for the [vanilla installation config] [here](https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/installation_config/vanilla.yaml)
+        ```bash
+        #AWS Telemetry (Optional)
+        # aws-telemetry:
+        #     installation_options:
+        #     kustomize: 
+        #         - "../../awsconfigs/common/aws-telemetry"
+        #     helm: "../../charts/common/aws-telemetry"
+        ```
+- For Terraform installation export the following variable:
     ```bash
-    # AWS Telemetry - This is an optional component. 
-    kustomize build awsconfigs/common/aws-telemetry | kubectl apply -f -
+    export TF_VAR_enable_aws_telemetry="false"
     ```
+
 **After deploying Kubeflow:**
 
 To deactivate usage tracking on an existing deployment, delete the `aws-kubeflow-telemetry` cronjob with the following command:
