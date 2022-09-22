@@ -10,9 +10,9 @@ on:
     branches:
       - main
 
-  # Run on schedule (every 6 hours)
+  # Run on schedule (every 4 hours)
   schedule:
-    - cron: '0 0/6 * * *'
+    - cron: '0 0/4 * * *'
 
   workflow_dispatch:
 
@@ -42,9 +42,12 @@ jobs:
         role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
         role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
         aws-region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
+        role-duration-seconds: 14400
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.2.7
     
     - name: Plan and apply terraform
       run: |
