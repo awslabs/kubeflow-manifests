@@ -67,8 +67,13 @@ Install the necessary tools with the following command:
 ```sh
 make install-tools
 ```
+```sh
+# NOTE: If you have other versions of python installed 
+# then make sure the default is set to python3.8
+alias python=python3.8
+```
 
-The command above installs the following tools: 
+The `make` command above installs the following tools: 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
 - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
 - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.

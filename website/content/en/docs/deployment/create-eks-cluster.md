@@ -41,6 +41,6 @@ eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
 --region ${CLUSTER_REGION} --approve
 ```
 
-## **Important:** If you are using an EKS version `>= 1.23` install the Amazon EBS CSI driver by following the instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html).
+#### **Important:** If you are using an EKS version `>= 1.23` install the Amazon EBS CSI driver by following the instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html).
 
 More details about cluster creation via `eksctl` can be found in the [Creating and managing clusters](https://eksctl.io/usage/creating-and-managing-clusters/) guide.
