@@ -41,26 +41,14 @@ Then, open the AWS Cloud9 browser and go to [http://localhost:8080/](http://loca
 
 ## Port-forward (Terraform deployment)
 
-First, update the `kubeconfig`:
-```sh
-$(terraform output -raw configure_kubectl)
-```
+1. Update the `kubeconfig`:
+    ```sh
+    $(terraform output -raw configure_kubectl)
+    ```
 
-### Activate portforwarding for the Kubeflow dashboard
+2. Choose your port forward option from [here](#port-forward-manifest-deployment)
 
-Run the following command:
-```sh
-kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-```
-
-### (Amazon EC2 only) Activate portfowarding from your EC2 instance
-
-If you are running `kubectl` on an EC2 instance, then you must run the following command on your local machine.
-```sh
-ssh -i <path-to-your-key-pem> -L 8080:localhost:8080 -N ubuntu@ec2-<Public-IPv4-DNS>.compute-1.amazonaws.com -o ExitOnForwardFailure=yes
-```
-
-### Open the browser
+## Open the browser
 
 You can then open the browser and go to [http://localhost:8080/](http://localhost:8080/).
 
