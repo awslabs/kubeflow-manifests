@@ -24,6 +24,10 @@ def configure_manifests(region, cluster):
     apply_retcode = subprocess.call(f"make bootstrap-ack".split(), cwd='../..')
     assert apply_retcode == 0
 
+    yield
+    subprocess.call(f"make cleanup-ack-req".split(), cwd='../..')
+
+
 @pytest.fixture(scope="class")
 def clone_upstream():
     upstream_path = "../../upstream"
@@ -54,6 +58,7 @@ def installation(
         install_kubeflow(installation_option, deployment_option, cluster)
         
     def on_delete():
+        
         uninstall_kubeflow(installation_option, deployment_option)
 
 
