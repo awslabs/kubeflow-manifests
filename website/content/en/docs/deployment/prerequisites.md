@@ -81,16 +81,15 @@ The command above installs the following tools:
 - [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - An infrastructure as code tool that lets you develop cloud and on-prem resources.
 - [helm](https://helm.sh/docs/intro/install/) - A package manager for Kubernetes
 
-## Configure AWS CLI
+## Configure AWS Credentials and Region for Deployment
 
-To access AWS services with the AWS CLI, you need an AWS account, IAM credentials, and an IAM access key pair. When running AWS CLI commands, the AWS CLI needs to have access to those AWS credentials. 
+To access AWS services, you need an AWS account and setup IAM credentials. Follow [AWS CLI Configure Quickstart documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) to setup your IAM credentials.
 
-Note that your account must have **administrative privileges**. 
+Your IAM user/role must have **Administrative Privileges**. 
 
 Run the following command to configure AWS CLI:
 
-> Warning [Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html) users: To prevent Cloud9 from overwriting the IAM roles with temporary credentials, disable the temporary credential management within Cloud9 before running the aws configure command below. In `AWSCloud9 Console`, go to `AWS Settings` then disable `AWS Managed temporary credentials`.
-
+> Warning [Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html) users: When configuring your IAM credentials on Cloud9, we recommend using a [profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles). Click `Cancel` when a pop up "Could not update credentials" opens, then choose `Permanently disable` for the "Unable to update credentials" pop up.
 ```bash
 aws configure --profile=kubeflow
 AWS Access Key ID [None]: <enter access key id>
@@ -102,7 +101,7 @@ Default output format [None]: json
 export AWS_PROFILE=kubeflow
 ```
 
-For more information on how to configure AWS CLI, see the [AWS Command Line Interface documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-prereqs.html).
+Once your configuration is complete, run `aws sts get-caller-identity` to verify that AWS CLI has access to your IAM credentials.
 
 ## Installation options
 Kubeflow on AWS can be installed completely using terraform or using manifests(kustomize, helm). If you are looking to install using terraform, navigate directly to one of the Terraform deployment guides. To deploy using manifests, proceed to [Create an EKS Cluster guide]({{< ref "/docs/deployment/create-eks-cluster.md" >}})
