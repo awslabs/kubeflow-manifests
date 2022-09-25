@@ -1,6 +1,6 @@
 locals {
   name = "nvidia-device-plugin"
-  namespace = "nvidia-device-plugin"
+  namespace = "kube-system"
 
   default_helm_config = {
     name        = local.name

@@ -21,12 +21,6 @@ variable "node_instance_type" {
   default     = "m5.xlarge"
 }
 
-variable "install_nvidia_device_plugin" {
-  description = "Installs the nvidia device plugin. Required for GPU training"
-  type = bool
-  default = false
-}
-
 variable "cognito_user_pool_name" {
   description = "Cognito User Pool name"
   type        = string

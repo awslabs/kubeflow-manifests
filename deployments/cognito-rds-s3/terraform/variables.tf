@@ -21,12 +21,6 @@ variable "node_instance_type" {
   default     = "m5.xlarge"
 }
 
-variable "install_nvidia_device_plugin" {
-  description = "Installs the nvidia device plugin. Required for GPU training"
-  type = bool
-  default = false
-}
-
 variable "kf_helm_repo_path" {
   description = "Full path to the location of the helm repo for KF"
   type        = string
