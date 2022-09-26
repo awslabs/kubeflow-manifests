@@ -64,8 +64,6 @@ data "aws_ec2_instance_type_offerings" "availability_zones" {
   }
 
   location_type = "availability-zone"
-
-  depends_on = [module.nvidia_device_plugin]
 }
 
 #---------------------------------------------------------------
