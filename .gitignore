@@ -5,3 +5,6 @@
 __pycache__
 
 upstream
+
+.terraform*
+terraform.tfstate*

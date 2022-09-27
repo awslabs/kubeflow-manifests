@@ -1,14 +1,14 @@
 +++
 title = "Troubleshooting"
 description = "Diagnose and fix issues you may encounter in your Kubeflow deployment"
-weight = 30
+weight = 50
 +++
 
 For general errors related to Kubernetes and Amazon EKS, please refer to the [Amazon EKS User Guide](https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting.html) troubleshooting section. For issues with cluster creation or modification with `eksctl`, see the [`eksctl` troubleshooting](https://eksctl.io/usage/troubleshooting/) page.
 
 ### Validate prerequisites
 
-You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites]({{< ref "/docs/deployment/prerequisites.md" >}}) installed. 
+You may experience issues due to version incompatibility. Before diving into more specific issues, check to make sure that you have the correct [prerequisites]({{< ref "/docs/deployment/prerequisites/_index.md" >}}) installed. 
 
 ### ALB fails to provision
 

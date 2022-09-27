@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  default-br-config: |
+    clusterDefault:
+      brokerClass: MTChannelBasedBroker
+      apiVersion: v1
+      kind: ConfigMap
+      name: config-br-default-channel
+      namespace: knative-eventing
+      delivery:
+        retry: 10
+        backoffPolicy: exponential
+        backoffDelay: PT0.2S
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: knative-eventing
+    app.kubernetes.io/name: knative-eventing
+    app.kubernetes.io/version: 1.2.4
+    eventing.knative.dev/release: v1.2.4
+    kustomize.component: knative
+  name: config-br-defaults
+  namespace: knative-eventing

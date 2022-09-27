@@ -1,8 +1,10 @@
 +++
-title = "RDS and S3"
-description = "Deploying Kubeflow with RDS and S3"
-weight = 40
+title = "Manifest Deployment Guide"
+description = "Deploying Kubeflow with RDS and S3 using Kustomize or Helm"
+weight = 20
 +++
+
+> Note: Helm installation option is still in preview.
 
 This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.
 
@@ -78,13 +80,18 @@ pip install -r requirements.txt
 3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
 4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `MINIO_AWS_ACCESS_KEY_ID`, and `MINIO_AWS_SECRET_ACCESS_KEY`. Then, run the `auto-rds-s3-setup.py` script.
 ```bash
-export CLUSTER_REGION=
-export CLUSTER_NAME=
-export S3_BUCKET=
-export MINIO_AWS_ACCESS_KEY_ID=
-export MINIO_AWS_SECRET_ACCESS_KEY=
+export CLUSTER_REGION=<>
+export CLUSTER_NAME=<>
+export S3_BUCKET=<>
+export DB_INSTANCE_NAME=<>
+export DB_SUBNET_GROUP_NAME=<>
+export MINIO_AWS_ACCESS_KEY_ID=<>
+export MINIO_AWS_SECRET_ACCESS_KEY=<>
+export RDS_SECRET_NAME=<>
+export S3_SECRET_NAME=<>
 
-PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py
+--region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
 ```  
 
 ### Advanced customization
@@ -241,24 +248,39 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 #### [RDS and S3] Deploy both RDS and S3
 
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3 | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
+{{< /tab >}}
+{{< /tabpane >}}
 
 #### [RDS] Deploy RDS only
+
 Use the following command to deploy the Kubeflow manifests for RDS only:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/rds-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-only
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only
+{{< /tab >}}
+{{< /tabpane >}}
+
 
 #### [S3] Deploy S3 only
+
 Use the following command to deploy the Kubeflow manifests for S3 only:
-```sh
-cd $REPO_ROOT  # exported in 1.1 Prerequisites
-while ! kustomize build deployments/rds-s3/s3-only | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=s3-only
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only
+{{< /tab >}}
+{{< /tabpane >}}
 
 Once everything is installed successfully, you can access the Kubeflow Central Dashboard [by logging in to your cluster]({{< ref "/docs/deployment/vanilla/guide.md#connect-to-your-kubeflow-cluster" >}}).
 
@@ -351,19 +373,18 @@ mysql> select * from observation_logs;
 ## 5.0 Uninstall Kubeflow
 
 Run the following command to uninstall your Kubeflow deployment:
-```sh
-kustomize build deployments/rds-s3 | kubectl delete -f -
-```
 
-The following cleanup steps may also be required:
+> Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation
 
-```sh
-kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io webhook.eventing.knative.dev webhook.istio.networking.internal.knative.dev webhook.serving.knative.dev
 
-kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io config.webhook.eventing.knative.dev config.webhook.istio.networking.internal.knative.dev config.webhook.serving.knative.dev
-
-kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
-```
+{{< tabpane persistLang=false >}}
+{{< tab header="Kustomize" lang="toml" >}}
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
+{{< /tab >}}
+{{< tab header="Helm" lang="yaml" >}}
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
+{{< /tab >}}
+{{< /tabpane >}}
 
 To uninstall AWS resources created by the automated setup, run the cleanup script:
 1. Navigate to the `tests/e2e` directory.

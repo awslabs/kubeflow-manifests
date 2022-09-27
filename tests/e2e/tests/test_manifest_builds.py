@@ -6,7 +6,7 @@ Todo: These scenarios should be tested by our unit tests.
 import pytest
 import subprocess
 
-from e2e.fixtures.kustomize import clone_upstream
+from e2e.fixtures.installation import clone_upstream
 
 def kustomize_build(manifest_path):
     return subprocess.call(f"kustomize build {manifest_path}".split())

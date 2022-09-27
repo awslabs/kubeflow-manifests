@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    app: cache-server-cert-manager
+    application-crd-id: kubeflow-pipelines
+  name: kfp-cache-selfsigned-issuer
+  namespace: kubeflow
+spec:
+  selfSigned: {}

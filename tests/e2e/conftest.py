@@ -18,6 +18,12 @@ def pytest_addoption(parser):
         help="Keep successfully created resources on delete.",
     )
     parser.addoption(
+        "--deletecluster",
+        action="store_true",
+        default=False,
+        help="Delete EKS cluster",
+    )
+    parser.addoption(
         "--region",
         action="store",
         help="Region to run the tests in. Will be overriden if metadata is provided and region is present.",
@@ -42,15 +48,27 @@ def pytest_addoption(parser):
         action="store",
         help="AWS account secretkey",
     )
+    parser.addoption(
+        "--installation_option",
+        action="store",
+        help="helm or kustomize, default is set to kustomize"
+    )
+    parser.addoption(
+        "--deployment_option",
+        action="store",
+        help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla"
+    )
+
 
 
 def keep_successfully_created_resource(request):
     return request.config.getoption("--keepsuccess")
 
+def clean_up_eks_cluster(request):
+    return request.config.getoption("--deletecluster")
 
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
-
 
 def get_accesskey(request):
     access_key = request.config.getoption("--accesskey")
@@ -64,6 +82,19 @@ def get_secretkey(request):
     if not secret_key:
         pytest.fail("--secretkey is required")
     return secret_key
+
+def get_installation_option(request):
+    installation_option = request.config.getoption("--installation_option")
+    if not installation_option:
+        installation_option = "kustomize"
+    return installation_option
+
+def get_deployment_option(request):
+    deployment_option = request.config.getoption("--deployment_option")
+    if not deployment_option:
+        deployment_option = "vanilla"
+    return deployment_option
+
 
 
 @pytest.fixture(scope="class")
@@ -80,6 +111,36 @@ def region(metadata, request):
         pytest.fail("--region is required")
     metadata.insert("region", region)
     return region
+
+@pytest.fixture(scope="class")
+def installation_option(metadata, request):
+    """
+    Test installation option.
+    """
+    if metadata.get("installation_option"):
+        return metadata.get("installation_option")
+
+    installation_option = request.config.getoption("--installation_option")
+    if not installation_option:
+        installation_option = 'kustomize'
+    metadata.insert("installation_option", installation_option)
+    
+    return installation_option
+
+@pytest.fixture(scope="class")
+def deployment_option(metadata, request):
+    """
+    Test deployment option.
+    """
+    if metadata.get("deployment_option"):
+        return metadata.get("deployment_option")
+
+    deployment_option = request.config.getoption("--deployment_option")
+    if not deployment_option:
+        deployment_option = 'vanilla'
+    metadata.insert("deployment_option", deployment_option)
+    
+    return deployment_option
 
 
 @pytest.fixture(scope="class")

@@ -1,0 +1,11 @@
++++
+title = "Deployment Add-ons"
+description = "Add-on installation guides for Kubeflow on AWS"
+weight = 25
++++
+Kubeflow on AWS offers add-ons for additional service integrations, which can be used with any of the available deployment options. 
+- If you want to expose your Kubeflow dashboard to external traffic, then use [AWS Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) (ALB) for secure traffic management by following the [Load Balancer add-on guide]({{< ref "/docs/add-ons/load-balancer/guide.md" >}}).
+- Use [Amazon Elastic File System](https://aws.amazon.com/efs/) (EFS) backed persistent volumes with Kubeflow Notebooks or your training and inference workloads (Jupyter, model training, model tuning) to create a persistent, scalable, and shareable workspace that automatically grows and shrinks as you add and remove files with no need for management. See the [EFS add-on guide]({{< ref "/docs/add-ons/storage/efs/guide.md" >}}) for more information.
+- Use [Amazon FSx for Lustre](https://aws.amazon.com/fsx/lustre/) (Amazon FSx) volumes to cache training data with direct connectivity to Amazon S3 as the backing store. These volumes can support Jupyter notebook servers or distributed training. FSx for Lustre provides consistent submillisecond latencies and high concurrency, and can scale to TB/s of throughput and millions of IOPS. Refer to the [FSx add-on guide]({{< ref "/docs/add-ons/storage/fsx-for-lustre/guide.md" >}}) for more information. 
+- Integrate with [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) for persistent log management, which addresses the default K8s log limits and improves your log availability and monitoring capabilities. For more information, see the [CloudWatch add-on guide]({{< ref "/docs/add-ons/cloudwatch/guide.md" >}}). 
+- Integrate with [Amazon Managed Prometheus](https://aws.amazon.com/prometheus/) and [Amazon Managed Grafana](https://aws.amazon.com/grafana/) to monitor Kubeflow and cluster metrics on a scalable and secure managed platform. For further information, see the [Amazon Managed Prometheus and Grafana addon-guide]({{< ref "/docs/add-ons/prometheus/guide.md" >}}). 
