@@ -6,7 +6,7 @@ import unittest
 from numpy import character
 
 import yaml
-from e2e.utils.utils import print_banner, load_yaml_file, load_multiple_yaml_files, write_yaml_file
+from e2e.utils.utils import print_banner, load_yaml_file, load_multiple_yaml_files, write_yaml_file, exec_shell
 from e2e.helmify import common
 
 logging.basicConfig(level=logging.INFO)
@@ -48,6 +48,8 @@ def kustomize_build(kustomized_path: str, helm_chart_name: str, output_path: str
     #move to output path
     source=f"{curdir}/{helm_chart_name}-kustomized.yaml"
     dest=f"{output_path}/{helm_chart_name}-kustomized.yaml"
+    if os.path.isdir(output_path) == False:
+        exec_shell(f"mkdir -p {output_path}")
     shutil.move(source,dest)
 
 
@@ -65,7 +67,7 @@ def split_yaml(kustomized_output_path: str ,helm_chart_name: str):
         if kind not in kind_set:
             kind_set.add(kind)
             if os.path.isdir(f"{kustomized_output_path}/output/{kind}") == False:
-                os.mkdir(f"{kustomized_output_path}/output/{kind}")
+                exec_shell(f"mkdir -p {kustomized_output_path}/output/{kind}")
         if 'namespace' in data['metadata']:
             namespace = data['metadata']['namespace']
             name = data['metadata']['name']
@@ -86,10 +88,11 @@ def split_yaml(kustomized_output_path: str ,helm_chart_name: str):
                     
 
 def create_helm_chart(helm_chart_path: str, helm_chart_name: str, curdir: str):
-    print(helm_chart_path)
+    #make directory for helm chart location if it doesn't exist
     if os.path.isdir(f"{helm_chart_path}") == False:
-        os.mkdir(f"{helm_chart_path}")
+        exec_shell(f"mkdir -p {helm_chart_path}")
     os.chdir(f"{helm_chart_path}")
+    #if helm chart has been created already, return
     if os.path.isdir(f"{helm_chart_name}"):
         os.chdir(curdir)
         return
@@ -108,7 +111,8 @@ def create_helm_chart(helm_chart_path: str, helm_chart_name: str, curdir: str):
         os.remove(os.path.join(dir, f))
     #delete NOTES.txt
     os.remove(f"{dir}/NOTES.txt")
-
+    #delete .helmignore
+    os.remove(f"{helm_chart_name}/.helmignore")
     logger.info(f"empty out value.yaml file.")
     #empty values.yaml
     value_file = f"{helm_chart_name}/values.yaml"
@@ -121,7 +125,7 @@ def move_yaml_files_to_helm_template(kustomized_output_path: str, helm_chart_pat
     helm_dir = f"{helm_chart_path}/{helm_chart_name}"
     #move crds
     if os.path.isdir(f"{helm_dir}/crds") == False:
-        os.mkdir(f"{helm_dir}/crds")
+        exec_shell(f"mkdir -p {helm_dir}/crds")
         logger.info(f"created crds folder inside helm chart for Custom Resource Definition yaml files.")
     if os.path.isdir(f"{output_path}/CustomResourceDefinition"):
         logger.info(f"moving Custom Resource Definition yaml files into crds folder.")
@@ -139,7 +143,7 @@ def move_yaml_files_to_helm_template(kustomized_output_path: str, helm_chart_pat
             #move files to template
             if (entry.name != 'CustomResourceDefinition'):
                 if os.path.isdir(f"{helm_dir}/templates/{entry.name}") == False:
-                    os.mkdir(f"{helm_dir}/templates/{entry.name}")
+                    exec_shell(f"mkdir -p {helm_dir}/templates/{entry.name}")
                 filelist = [ file for file in os.listdir(f"{output_path}/{entry.name}") if file.endswith(".yaml") ]
                 for file in filelist:
                     source = f"{output_path}/{entry.name}/{file}"
@@ -164,7 +168,7 @@ def find_failed_yaml_files (helm_chart_path: str, helm_chart_name: str):
             
             if problem_filelist:
                 if os.path.isdir(f"{helm_chart_path}/{helm_chart_name}/failed_helm_conversions") == False:
-                    os.mkdir(f"{helm_chart_path}/{helm_chart_name}/failed_helm_conversions")
+                    exec_shell(f"mkdir -p {helm_chart_path}/{helm_chart_name}/failed_helm_conversions")
                 logger.info(f"Some Yaml files in {file_type} folder are conflicted with helm template formatting. Please check on files inside failed_helm_conversions folder. Replace all backticks with double quotes, then all {{ with {{`{{ and all }} with }}`}}")
                 for file in problem_filelist:
                     source = f"{helm_chart_path}/{helm_chart_name}/templates/{file_type}/{file}"
