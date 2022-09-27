@@ -11,8 +11,8 @@ from e2e.utils.aws.acm import AcmCertificate
 from e2e.utils.aws.elbv2 import ElasticLoadBalancingV2
 from e2e.utils.aws.iam import IAMPolicy
 from e2e.utils.aws.route53 import Route53HostedZone
-from e2e.fixtures.kustomize import apply_kustomize
 from e2e.utils.utils import (
+    apply_kustomize,
     kubectl_apply_kustomize,
     load_json_file,
     get_eks_client,
@@ -197,7 +197,7 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
 
 def create_ingress():
     def callback():
-        apply_kustomize(path=common.LB_KUSTOMIZE_PATH)
+        apply_kustomize(path=common.LB_KUSTOMIZE_PATH, crd_required = "ingressclassparams.elbv2.k8s.aws")
 
     wait_for(callback)
 

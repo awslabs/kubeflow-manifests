@@ -7,7 +7,7 @@ from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, clone_upstream, configure_manifests
+from e2e.fixtures.installation import installation, clone_upstream, configure_manifests
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -23,40 +23,40 @@ TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 NOTEBOOK_IMAGES = [
-    "public.ecr.aws/j1r0q0g6/notebooks/notebook-servers/jupyter-scipy:v1.5.0",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-gpu-py38-cu112-ubuntu20.04-v1.8",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1",
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-cpu-py38-ubuntu20.04-e3-v1.1",
+    "kubeflownotebookswg/jupyter-scipy:v1.6.0",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20",
 ]
 
 testdata = [
     ("scipy", NOTEBOOK_IMAGES[0], "sanity_check.ipynb", "Hello World!"),
-    ("tf-gpu", NOTEBOOK_IMAGES[1], "verify_tensorflow_installation.ipynb", "2.6.3"),
-    ("tf-cpu", NOTEBOOK_IMAGES[2], "verify_tensorflow_installation.ipynb", "2.6.3"),
+    ("tf-gpu", NOTEBOOK_IMAGES[1], "verify_tensorflow_installation.ipynb", "2.9.1"),
+    ("tf-cpu", NOTEBOOK_IMAGES[2], "verify_tensorflow_installation.ipynb", "2.9.1"),
     (
         "pytorch-gpu",
         NOTEBOOK_IMAGES[3],
         "verify_pytorch_installation.ipynb",
-        "1.11.0+cu115",
+        "1.12.0+cu116",
     ),
     (
         "pytorch-cpu",
         NOTEBOOK_IMAGES[4],
         "verify_pytorch_installation.ipynb",
-        "1.11.0+cpu",
+        "1.12.0+cpu",
     ),
 ]
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 class TestNotebookImages:
     @pytest.fixture(scope="function")
-    def setup(self, metadata, configure_manifests, kustomize):
+    def setup(self, metadata, configure_manifests, installation):
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
         print("Created metadata file for TestNotebookImages", metadata_file)

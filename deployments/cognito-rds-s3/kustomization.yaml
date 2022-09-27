@@ -21,7 +21,7 @@ resources:
   - ../../upstream/common/istio-1-14/kubeflow-istio-resources/base
 
   # Central Dashboard
-  - ../../upstream/apps/centraldashboard/upstream/overlays/kserve
+  - ../../awsconfigs/apps/centraldashboard
   # Notebooks
   - ../../awsconfigs/apps/jupyter-web-app
   - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow

@@ -6,7 +6,7 @@ import stat
 import sys
 
 from e2e.utils.config import metadata
-from e2e.fixtures.kustomize import kustomize, configure_manifests
+from e2e.fixtures.installation import installation, configure_manifests
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster
 from e2e.utils.utils import rand_name
@@ -97,7 +97,7 @@ def wait_on_mount_target_status(desired_status, efs_client, file_system_id):
 
 
 @pytest.fixture(scope="class")
-def install_efs_csi_driver(metadata, region, request, cluster, kustomize):
+def install_efs_csi_driver(metadata, region, request, cluster, installation):
     efs_driver = {}
     EFS_DRIVER_VERSION = "v1.3.4"
     EFS_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{EFS_DRIVER_VERSION}"

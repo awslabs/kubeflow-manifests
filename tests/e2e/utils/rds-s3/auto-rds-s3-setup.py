@@ -18,11 +18,18 @@ from e2e.utils.utils import (
     write_yaml_file,
     load_yaml_file,
     wait_for,
-    WaitForCircuitBreakerError
+    WaitForCircuitBreakerError,
+    write_env_to_yaml
 )
 
 from shutil import which
 
+INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
+INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
+INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
+path_dic_rds_only = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
+path_dic_s3_only = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
 
 def main():
     verify_prerequisites()
@@ -37,7 +44,6 @@ def main():
     setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client)
     setup_cluster_secrets()
     setup_kubeflow_pipeline()
-
     print_banner("RDS S3 Setup Complete")
     script_metadata = [
         f"bucket_name={S3_BUCKET_NAME}",
@@ -232,7 +238,7 @@ def get_cluster_private_subnet_ids(eks_client, ec2_client):
     private_subnets = []
     for subnet in subnets:
         for tags in subnet["Tags"]:
-            # eksctl generated clusters
+            # eksctl generated clusters       
             if "SubnetPrivate" in tags["Value"]:
                 private_subnets.append(subnet)
             # cdk generated clusters
@@ -410,13 +416,35 @@ def install_secrets_store_csi_driver():
         "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml"
     )
 
-
+#TO DO: decouple kustomize params.env and helm values.yaml write up in future
 def setup_kubeflow_pipeline():
     print("Setting up Kubeflow Pipeline...")
 
     print("Retrieving DB instance info...")
     db_instance_info = get_db_instance_info()
+    
+    #helm
+    #pipelines helm path
+    pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
+    pipeline_rds_only_helm_path = path_dic_rds_only["kubeflow-pipelines"]["installation_options"]["helm"]
+    pipeline_s3_only_helm_path = path_dic_s3_only["kubeflow-pipelines"]["installation_options"]["helm"]
+    
+    #secrets-manager helm path
+    secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
+    secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"]["installation_options"]["helm"]
+    secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"]["installation_options"]["helm"]
 
+    #pipelines values file
+    pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
+    pipeline_rds_only_values_file = f"{pipeline_rds_only_helm_path}/values.yaml" 
+    pipeline_s3_only_values_file = f"{pipeline_s3_only_helm_path}/values.yaml" 
+    
+    #secrets-manager values file
+    secrets_manager_rds_s3_values_file = f"{secrets_manager_rds_s3_helm_path}/values.yaml" 
+    secrets_manager_rds_only_values_file = f"{secrets_manager_rds_only_helm_path}/values.yaml" 
+    secrets_manager_s3_only_values_file = f"{secrets_manager_s3_only_helm_path}/values.yaml" 
+    
+    #kustomize params
     pipeline_rds_params_env_file = "../../awsconfigs/apps/pipeline/rds/params.env"
     pipeline_rds_secret_provider_class_file = (
         "../../awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
@@ -426,8 +454,14 @@ def setup_kubeflow_pipeline():
         "dbHost": db_instance_info["Endpoint"]["Address"],
         "mlmdDb": "metadb",
     }
+    rds_secret_params = {
+        "secretName": RDS_SECRET_NAME
+    }
     edit_pipeline_params_env_file(rds_params, pipeline_rds_params_env_file)
-
+    write_env_to_yaml(rds_params, pipeline_rds_s3_values_file, module="rds")
+    write_env_to_yaml(rds_params, pipeline_rds_only_values_file, module="rds")
+    write_env_to_yaml(rds_secret_params, secrets_manager_rds_s3_values_file, module="rds")
+    write_env_to_yaml(rds_secret_params, secrets_manager_rds_only_values_file, module="rds")
     update_secret_provider_class(
         pipeline_rds_secret_provider_class_file, RDS_SECRET_NAME
     )
@@ -442,8 +476,14 @@ def setup_kubeflow_pipeline():
         "minioServiceRegion": CLUSTER_REGION,
         "minioServiceHost": "s3.amazonaws.com",
     }
+    s3_secret_params = {
+        "secretName": S3_SECRET_NAME
+    }
     edit_pipeline_params_env_file(s3_params, pipeline_s3_params_env_file)
-
+    write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
+    write_env_to_yaml(s3_params, pipeline_s3_only_values_file, module="s3")
+    write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
+    write_env_to_yaml(s3_secret_params, secrets_manager_s3_only_values_file, module="s3")
     update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
 
     print("Kubeflow pipeline setup done!")

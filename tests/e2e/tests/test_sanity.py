@@ -7,7 +7,7 @@ Installs the vanilla distribution of kubeflow and validates the installation by:
 
 import os
 import subprocess
-
+import time
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
@@ -17,7 +17,7 @@ from e2e.utils.config import configure_resource_fixture, metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.kustomize import kustomize, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
@@ -39,13 +39,13 @@ from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 
 PIPELINE_NAME = "[Tutorial] Data passing in python components"
@@ -60,10 +60,10 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
         assert resp.pipeline_spec.pipeline_id == pipeline_id
         assert resp.status == "Succeeded"
 
-    wait_for(callback)
+    wait_for(callback, timeout=600)
 
 @pytest.fixture(scope="class")
-def setup_load_balancer(metadata, region, request, cluster, kustomize, root_domain_name, root_domain_hosted_zone_id):
+def setup_load_balancer(metadata, region, request, cluster, installation, root_domain_name, root_domain_hosted_zone_id):
     
     lb_deps = {}
     env_value = os.environ.copy()
@@ -115,11 +115,14 @@ def setup_load_balancer(metadata, region, request, cluster, kustomize, root_doma
 @pytest.fixture(scope="class")
 def host(setup_load_balancer):
     print(setup_load_balancer["config"]["route53"]["subDomain"]["name"])
+    print("wait for 60s for website to be available...")
+    time.sleep(60)
     host = "https://kubeflow." + setup_load_balancer["config"]["route53"]["subDomain"]["name"]
+    print(f"accessing {host}...")
     return host
 
 @pytest.fixture(scope="class")
-def port_forward(kustomize):
+def port_forward(installation):
     pass
 
 class TestSanity:

@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  APP_PREFIX: /kserve-endpoints
+  USERID_HEADER: kubeflow-userid
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app: kserve
+    app.kubernetes.io/component: kserve-models-web-app
+    app.kubernetes.io/name: kserve
+    kustomize.component: kserve-models-web-app
+  name: kserve-models-web-app-config-gfh88m49k6
+  namespace: kubeflow

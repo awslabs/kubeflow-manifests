@@ -5,12 +5,12 @@ The AWS Distribution of Kubeflow comes with four ready-to-use container images p
 ## The AWS Images
 This directory contains the source code for these jupyter images which is based on the Kubeflow guidelines on building custom images [here](https://v1-4-branch.kubeflow.org/docs/components/notebooks/custom-notebook/) as well as the existing sample Dockerfiles [here](https://github.com/kubeflow/kubeflow/tree/v1.5.0/components/example-notebook-servers). 
 
-The following AWS Optimized container images are available from the [Amazon Elastic Container Registry](https://gallery.ecr.aws/c9e4w0g3/) (Amazon ECR).
+The following AWS Optimized container images are available from the [Amazon Elastic Container Registry](https://gallery.ecr.aws/kubeflow-on-aws/) (Amazon ECR).
 ```
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-gpu-py38-cu112-ubuntu20.04-v1.8
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-gpu-py38-cu115-ubuntu20.04-e3-v1.1
-public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-pytorch:1.11.0-cpu-py38-ubuntu20.04-e3-v1.1
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20
 ```
 These images are based on AWS Deep Learning Containers which provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Deep Learning Container Docs](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html).
 

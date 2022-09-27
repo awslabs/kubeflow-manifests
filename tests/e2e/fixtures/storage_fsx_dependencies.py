@@ -5,7 +5,7 @@ import boto3
 import os, stat, sys
 
 from e2e.utils.config import metadata
-from e2e.fixtures.kustomize import kustomize, configure_manifests
+from e2e.fixtures.installation import installation, configure_manifests
 from e2e.conftest import region
 from e2e.fixtures.cluster import cluster, associate_iam_oidc_provider
 from e2e.fixtures.clients import account_id

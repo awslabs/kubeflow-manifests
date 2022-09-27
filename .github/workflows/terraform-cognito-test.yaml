@@ -1,0 +1,64 @@
+name: Terraform Cognito Test
+on:
+  # Run on PR configuration
+  push:
+    paths:
+      - deployments/cognito/terraform/**
+      - iaac/terraform/aws-infra/cognito/**
+      - iaac/terraform/aws-infra/subdomain/**
+      # TODO: Add relevant helm chart path
+    branches:
+      - main
+      
+  # Run on schedule (every 4 hours)
+  schedule:
+    - cron: '0 0/4 * * *'
+
+  workflow_dispatch:
+
+# Ensure that only a single workflow which deploy cognito related stack will be run at a time. TODO: enable parallel runs by creating separate hosted zones
+concurrency: cognito
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # environment enables protection rules (e.g. need approval to run the workflow)
+    environment: gh-actions-test
+    permissions:
+      # needed to interact with GitHub's OIDC Token endpoint
+      id-token: write
+      # needed to checkout repository
+      contents: read
+    env:
+      TF_VAR_cognito_user_pool_name: ${{ github.run_id }}-${{ github.run_attempt }}-testpool
+      TF_VAR_aws_route53_root_zone_name: ${{ secrets.ROOT_HOSTED_ZONE_NAME }}
+      TF_VAR_aws_route53_subdomain_zone_name: ${{ github.run_id }}-${{ github.run_attempt }}.${{ secrets.ROOT_HOSTED_ZONE_NAME }}
+      TF_VAR_cluster_name: cognito-${{ github.run_id }}-${{ github.run_attempt }}
+      TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.PR_BUILD_ROLE }}
+        role-session-name: prrolesession-${{ github.run_id }}-${{ github.run_attempt }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-duration-seconds: 14400
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.2.7
+    
+    - name: Plan and apply terraform
+      run: |
+        cd deployments/cognito/terraform
+        make deploy
+    - name: Clean up terraform
+      if: success() || failure()
+      # retry delete if flakiness present
+      run: |
+        cd deployments/cognito/terraform
+        make delete || make delete || make delete

@@ -25,8 +25,8 @@ from e2e.utils.k8s_core_api import (
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster # Needed for kustomize.
-from e2e.fixtures.kustomize import (
-    kustomize, # Needed for port_forward.
+from e2e.fixtures.installation import (
+    installation, # Needed for port_forward.
     clone_upstream, # Needed for kustomize.
     configure_manifests, # Needed for kustomize.
 )
@@ -42,7 +42,7 @@ from e2e.fixtures.clients import (
 
 from kfp_server_api.exceptions import ApiException as KFPApiException
 
-GENERIC_KUSTOMIZE_MANIFEST_PATH = "../../deployments/vanilla"
+INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 TO_ROOT_PATH = "../../"
@@ -51,11 +51,11 @@ istio_central_dashboard_request_count_query = 'istio_requests_total'\
 '\\{destination_app="centraldashboard",response_code="200"\\}'
 
 @pytest.fixture(scope="class")
-def kustomize_path():
-    return GENERIC_KUSTOMIZE_MANIFEST_PATH
+def installation_path():
+    return INSTALLATION_PATH_FILE
 
 @pytest.fixture(scope="class")
-def prometheus_amp(request, metadata, region, kustomize):
+def prometheus_amp(request, metadata, region, installation):
     metadata_key = "prometheus-amp"
     resource_details = {}
 
