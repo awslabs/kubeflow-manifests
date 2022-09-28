@@ -20,7 +20,6 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 8. Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines
 
 ## Configure Custom Domain and Cognito
-
 1. Follow the Section 2.0 of [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md#20-create-required-resources" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
