@@ -21,7 +21,8 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 
 ## Configure Custom Domain and Cognito
 
-1. Follow the [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md" >}}) from [Section 1.0 (Custom domain)]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) up to [Section 3.0 (Configure ingress)]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}) in order to:
+
+1. Follow the Section 2.0 of [Cognito setup guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md#20-create-required-resources" >}}) in order to:
     1. Create a custom domain
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
@@ -101,15 +102,6 @@ make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
     ```
 
 1. To delete the rest of RDS-S3 resources:
-The following cleanup steps may also be required:
-```sh
-kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io webhook.eventing.knative.dev webhook.istio.networking.internal.knative.dev webhook.serving.knative.dev
-
-kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io config.webhook.eventing.knative.dev config.webhook.istio.networking.internal.knative.dev config.webhook.serving.knative.dev
-
-kubectl delete endpoints -n default mxnet-operator pytorch-operator tf-operator
-```
-
  Make sure that you have the configuration file created by the script in `tests/e2e/utils/rds-s3/metadata.yaml`.
 ```bash
 PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-cleanup.py

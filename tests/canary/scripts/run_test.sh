@@ -19,6 +19,8 @@ export E2E_TEST_DIR=${REPO_PATH}/tests/e2e
 
 # Connect to eks cluster 
 aws eks update-kubeconfig --name $CLUSTER_NAME --region $CLUSTER_REGION
+cd ${REPO_PATH}
+make cleanup-ack-req 1>/dev/null 2>&1 || true 
 
 # Modify metadeta file
 cd $CANARY_TEST_DIR

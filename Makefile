@@ -56,6 +56,7 @@ install-helm:
 install-python:
 	sudo apt install -q python3.8 -y 
 	sudo apt install -q python3-pip -y
+	python3.8 -m pip install --upgrade pip
 
 install-python-packages:
 	python3.8 -m pip install -r tests/e2e/requirements.txt

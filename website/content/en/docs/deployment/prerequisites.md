@@ -67,8 +67,13 @@ Install the necessary tools with the following command:
 ```sh
 make install-tools
 ```
+```sh
+# NOTE: If you have other versions of python installed 
+# then make sure the default is set to python3.8
+alias python=python3.8
+```
 
-The command above installs the following tools: 
+The `make` command above installs the following tools: 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - A command line tool for interacting with AWS services.
 - [eksctl](https://eksctl.io/introduction/#installation) - A command line tool for working with EKS clusters.
 - [kubectl](https://kubernetes.io/docs/tasks/tools) - A command line tool for working with Kubernetes clusters.
@@ -80,6 +85,29 @@ The command above installs the following tools:
 - [pip](https://pip.pypa.io/en/stable/installation/) - A package installer for python.
 - [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) - An infrastructure as code tool that lets you develop cloud and on-prem resources.
 - [helm](https://helm.sh/docs/intro/install/) - A package manager for Kubernetes
+
+## Configure AWS Credentials and Region for Deployment
+
+To access AWS services, you need an AWS account and setup IAM credentials. Follow [AWS CLI Configure Quickstart documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) to setup your IAM credentials.
+
+Your IAM user/role needs the necessary privileges to create and manage your cluster and dependencies.
+You might want to grant `Administrative Privileges` as it will require access to multiple services.
+
+Run the following command to configure AWS CLI:
+
+> Warning [Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html) users: When configuring your IAM credentials on Cloud9, we recommend using a [profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles). Click `Cancel` when a pop up "Could not update credentials" opens, then choose `Permanently disable` for the "Unable to update credentials" pop up.
+```bash
+aws configure --profile=kubeflow
+AWS Access Key ID [None]: <enter access key id>
+AWS Secret Access Key [None]: <enter secret access key>
+Default region name [None]: <AWS region>
+Default output format [None]: json
+
+# Set the AWS_PROFILE variable with the profile above
+export AWS_PROFILE=kubeflow
+```
+
+Once your configuration is complete, run `aws sts get-caller-identity` to verify that AWS CLI has access to your IAM credentials.
 
 ## Installation options
 Kubeflow on AWS can be installed completely using terraform or using manifests(kustomize, helm). If you are looking to install using terraform, navigate directly to one of the Terraform deployment guides. To deploy using manifests, proceed to [Create an EKS Cluster guide]({{< ref "/docs/deployment/create-eks-cluster.md" >}})

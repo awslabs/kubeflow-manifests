@@ -10,6 +10,9 @@ import subprocess
 import json
 import time
 import pytest
+import boto3
+
+from e2e.utils.utils import get_s3_client
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
 from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file
@@ -46,6 +49,7 @@ from e2e.fixtures.notebook_dependencies import notebook_server
 
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
+RANDOM_PREFIX = rand_name("kfp-")
 
 
 @pytest.fixture(scope="class")
@@ -102,13 +106,14 @@ def create_execution_role(
         policy_document=json.dumps(trust_policy)
     )
 
-
-def create_s3_bucket_with_data(
-    bucket_name, region,
-):
-
-    bucket = S3BucketWithTrainingData(name=bucket_name, region=region)
+@pytest.fixture(scope="class")
+def s3_bucket_with_data():
+    bucket_name = "s3-" + RANDOM_PREFIX
+    bucket = S3BucketWithTrainingData(name=bucket_name)
     bucket.create()
+
+    yield
+    bucket.delete()
 
 
 class TestSanity:
@@ -242,21 +247,19 @@ class TestSanity:
         assert expected_output in output or "training-job-" in output
     
     def test_run_kfp_sagemaker_pipeline(
-        self, region, metadata, kfp_client,
+        self, region, metadata, s3_bucket_with_data, kfp_client,
     ):
 
-        random_prefix = rand_name("kfp-")
-        experiment_name = "experiment-" + random_prefix
-        experiment_description = "description-" + random_prefix
-        sagemaker_execution_role_name = "role-" + random_prefix
-        bucket_name = "s3-" + random_prefix
-        job_name = "kfp-run-" + random_prefix
+        experiment_name = "experiment-" + RANDOM_PREFIX
+        experiment_description = "description-" + RANDOM_PREFIX
+        sagemaker_execution_role_name = "role-" + RANDOM_PREFIX
+        bucket_name = "s3-" + RANDOM_PREFIX
+        
+        job_name = "kfp-run-" + RANDOM_PREFIX
 
         sagemaker_execution_role_arn = create_execution_role(
             sagemaker_execution_role_name, region
         )
-        create_s3_bucket_with_data(bucket_name, "us-east-1")
-        time.sleep(120)
 
         experiment = kfp_client.create_experiment(
             experiment_name,
@@ -282,3 +285,6 @@ class TestSanity:
         wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
 
         kfp_client.delete_experiment(experiment.id)
+        
+        cmd = "kubectl delete trainingjobs --all -n kubeflow-user-example-com".split()
+        subprocess.Popen(cmd)
