@@ -30,7 +30,7 @@ RUN wget "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomi
  && cp ./kustomize_kustomize.v3.2.1_linux_amd64 /bin/kustomize
 
 #Install helm
-RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 \ 
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
  && chmod +x get_helm.sh \
  && ./get_helm.sh
 
