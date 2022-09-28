@@ -205,10 +205,12 @@ def build_ack_controller():
     LABEL_STRING='rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"'
     
     exec_shell(f"mkdir -p {CHART_EXPORT_PATH}")
+    exec_shell(f"aws ecr-public get-login-password --region us-east-1 | " +
+        "helm registry login --username AWS --password-stdin public.ecr.aws")
     exec_shell(f"helm pull oci://{CHART_REPO} --version {RELEASE_VERSION} -d {CHART_EXPORT_PATH}")
     exec_shell(f"tar xvf {CHART_EXPORT_PATH}/{CHART_PACKAGE} -C {CHART_EXPORT_PATH}")
-    exec_shell(f"yq e .aws.region=\"{ACK_AWS_REGION}\" -i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
-    exec_shell(f"yq e .serviceAccount.annotations.\"eks.amazonaws.com/role-arn\"=\"{IAM_ROLE_ARN_FOR_IRSA}\" " +
+    exec_shell(f"yq e '.aws.region=\"{ACK_AWS_REGION}\"' -i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
+    exec_shell(f"yq e '.serviceAccount.annotations.\"eks.amazonaws.com/role-arn\"=\"{IAM_ROLE_ARN_FOR_IRSA}\"' " +
         f"-i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
     find_and_replace_in_file(f"{CHART_EXPORT_PATH}/{SERVICE}-chart/templates/cluster-role-controller.yaml",
         "metadata:", f"metadata:\n  labels:\n    {LABEL_STRING}")

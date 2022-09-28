@@ -362,8 +362,8 @@ def write_env_to_yaml(env_dict, yaml_file_path, module=None):
 
 
 def exec_shell(cmd):
-    retcode = subprocess.call(cmd.split())
-    if retcode != 0:
+    completedProcess = subprocess.run(cmd, shell=True)
+    if completedProcess.returncode != 0:
         raise Exception(f"ERROR: Failed to execute shell command \n{cmd}")
 
 def get_variable_from_params(path, var_name):
