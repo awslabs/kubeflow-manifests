@@ -38,7 +38,7 @@ spec:
           value: 'false'
         - name: DASHBOARD_LINKS_CONFIGMAP
           value: centraldashboard-config
-        image: docker.io/kubeflownotebookswg/centraldashboard:v1.6.0
+        image: docker.io/kubeflownotebookswg/centraldashboard:v1.6.1-rc.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

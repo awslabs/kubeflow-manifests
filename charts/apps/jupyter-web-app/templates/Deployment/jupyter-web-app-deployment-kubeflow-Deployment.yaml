@@ -32,7 +32,7 @@ spec:
           value: ''
         - name: APP_SECURE_COOKIES
           value: $(JWA_APP_SECURE_COOKIES)
-        image: docker.io/kubeflownotebookswg/jupyter-web-app:v1.6.0
+        image: docker.io/kubeflownotebookswg/jupyter-web-app:v1.6.1-rc.0
         name: jupyter-web-app
         ports:
         - containerPort: 5000
