@@ -3,7 +3,7 @@ cluster:
   region:
 route53:
   rootDomain:
-    hostedZoneId:
-    name:
+    hostedZoneId: Z1P2I67ISCONVG
+    name: hack-lyftdev.lyft.net
   subDomain:
-    name:
+    name: kubeflow

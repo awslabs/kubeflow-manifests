@@ -61,7 +61,7 @@ install-python:
 install-python-packages:
 	python3.8 -m pip install -r tests/e2e/requirements.txt
 
-install-tools: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-jq install-terraform install-helm install-python install-python-packages
+install-tools: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-terraform install-helm install-python install-python-packages
 
 verify-cluster-variables:
 	test $(CLUSTER_NAME) || (echo Please export CLUSTER_NAME variable ; exit 1)
@@ -107,3 +107,13 @@ delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
+
+bootstrap-alb: verify-cluster-variables connect-to-eks-cluster
+	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/load_balancer/config.yaml
+	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/load_balancer/config.yaml
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/load_balancer/setup_load_balancer.py
+
+cleanup-alb: verify-cluster-variables
+	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/load_balancer/config.yaml
+	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/load_balancer/config.yaml
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/load_balancer/lb_resources_cleanup.py

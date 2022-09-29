@@ -6,3 +6,32 @@ spec:
   owner:
     kind: User
     name: user@example.com
+---
+apiVersion: kubeflow.org/v1alpha1
+kind: PodDefault
+metadata:
+  name: access-ml-pipeline
+  namespace: kubeflow-user-example-com
+spec:
+  desc: Allow access to Kubeflow Pipelines
+  selector:
+    matchLabels:
+      access-ml-pipeline: "true"
+  env:
+    - ## this environment variable is automatically read by `kfp.Client()`
+      ## this is the default value, but we show it here for clarity
+      name: KF_PIPELINES_SA_TOKEN_PATH
+      value: /var/run/secrets/kubeflow/pipelines/token
+  volumes:
+    - name: volume-kf-pipeline-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 7200
+              ## defined by the `TOKEN_REVIEW_AUDIENCE` environment variable on the `ml-pipeline` deployment
+              audience: pipelines.kubeflow.org
+  volumeMounts:
+    - mountPath: /var/run/secrets/kubeflow/pipelines
+      name: volume-kf-pipeline-token
+      readOnly: true
