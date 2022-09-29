@@ -5,10 +5,13 @@ locals {
 
   vpc_cidr = "10.0.0.0/16"
 
-  # the ordering of the aws_ec2_instance_type_offerings result changes for each query
-  # since we take the first few elements of the result, this causes new AZs to be 
-  # chosen for each terraform apply, which is not desirable
-  available_azs = tolist(setintersection(data.aws_availability_zones.available.names, data.aws_ec2_instance_type_offerings.availability_zones.locations))
+  using_gpu = var.node_instance_type_gpu != null
+
+  # fix ordering using toset
+  available_azs_non_gpu = toset(data.aws_ec2_instance_type_offerings.availability_zones.locations)
+  available_azs_gpu = toset(try(data.aws_ec2_instance_type_offerings.availability_zones_gpu[0].locations, []))
+
+  available_azs = local.using_gpu ? tolist(setintersection(local.available_azs_non_gpu, local.available_azs_gpu)) : tolist(local.available_azs_non_gpu)
 
   az_count = min(length(local.available_azs), 3)
   azs      = slice(local.available_azs, 0, local.az_count)
@@ -22,7 +25,32 @@ locals {
 
   kf_helm_repo_path = var.kf_helm_repo_path
 
-  using_gpu = length(regexall("^[pg]", var.node_instance_type)) == 1
+
+  managed_node_group = {
+    node_group_name = "managed-ondemand"
+    instance_types  = [var.node_instance_type]
+    min_size        = 5
+    desired_size    = 5
+    max_size        = 10
+    subnet_ids      = module.vpc.private_subnets
+  }
+
+  managed_node_group_gpu = local.using_gpu ? {
+    node_group_name = "managed-ondemand-gpu"
+    instance_types  = [var.node_instance_type_gpu]
+    min_size        = 3
+    desired_size    = 3
+    max_size        = 5
+    ami_type        = "AL2_x86_64_GPU"
+    subnet_ids      = module.vpc.private_subnets
+  } : null
+
+  potential_managed_node_groups = {
+    mg_5 = local.managed_node_group,
+    mg_5_gpu = local.managed_node_group_gpu
+  }
+
+  managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null}
 }
 
 provider "aws" {
@@ -62,8 +90,6 @@ provider "helm" {
   }
 }
 
-data "aws_availability_zones" "available" {}
-
 data "aws_ec2_instance_type_offerings" "availability_zones" {
   filter {
     name   = "instance-type"
@@ -71,8 +97,17 @@ data "aws_ec2_instance_type_offerings" "availability_zones" {
   }
 
   location_type = "availability-zone"
+}
 
-  depends_on = [module.nvidia_device_plugin]
+data "aws_ec2_instance_type_offerings" "availability_zones_gpu" {
+  count = local.using_gpu ? 1 : 0
+
+  filter {
+    name   = "instance-type"
+    values = [var.node_instance_type_gpu]
+  }
+
+  location_type = "availability-zone"
 }
 
 #---------------------------------------------------------------
@@ -87,16 +122,8 @@ module "eks_blueprints" {
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnets
 
-  managed_node_groups = {
-    mg_5 = {
-      node_group_name = "managed-ondemand"
-      instance_types  = ["m5.large"]
-      min_size        = 5
-      desired_size    = 5
-      max_size        = 10
-      subnet_ids      = module.vpc.private_subnets
-    }
-  }
+  # configuration settings: https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/modules/aws-eks-managed-node-groups/locals.tf
+  managed_node_groups = local.managed_node_groups
 
   tags = local.tags
 }

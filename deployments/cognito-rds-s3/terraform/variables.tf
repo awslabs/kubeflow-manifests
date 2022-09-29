@@ -21,6 +21,12 @@ variable "node_instance_type" {
   default     = "m5.xlarge"
 }
 
+variable "node_instance_type_gpu" {
+  description = "The instance type of a gpu EKS node. Will result in the creation of a separate gpu node group when not null"
+  type        = string
+  default     = null
+}
+
 variable "kf_helm_repo_path" {
   description = "Full path to the location of the helm repo for KF"
   type        = string

@@ -1,3 +1,5 @@
+# todo: replace with https://github.com/aws-ia/terraform-aws-eks-blueprints/pull/995 when it is present in the latest release
+
 locals {
   name = "nvidia-device-plugin"
   namespace = "kube-system"
