@@ -48,7 +48,6 @@ output "configure_kubectl" {
   value       = module.eks_blueprints.configure_kubectl
 }
 
-# Region used for Terratest
 output "region" {
   value       = local.region
   description = "AWS region"
@@ -56,4 +55,14 @@ output "region" {
 
 output "kubelow_platform_domain" {
     value = module.kubeflow_components.kubelow_platform_domain
+}
+
+output "rds_endpoint" {
+  value       = try(module.kubeflow_components.rds_endpoint, null)
+  description = "The address of the RDS endpoint"
+}
+
+output "s3_bucket_name" {
+  value       = try(module.kubeflow_components.s3_bucket_name, null)
+  description = "The name of the created S3 bucket"
 }

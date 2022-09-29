@@ -34,6 +34,8 @@ module "helm_addon" {
   ]
 
   addon_context     = var.addon_context
+
+  depends_on = [module.irsa]
 }
 
 resource "kubernetes_labels" "cluster_role_rbac_auth" {

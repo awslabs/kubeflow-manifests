@@ -1,7 +1,3 @@
-output "kubelow_platform_domain" {
-    value = module.ingress_cognito[0].kubelow_platform_domain
-}
-
 output "rds_endpoint" {
   value       = try(module.rds[0].rds_endpoint, null)
   description = "The address of the RDS endpoint"

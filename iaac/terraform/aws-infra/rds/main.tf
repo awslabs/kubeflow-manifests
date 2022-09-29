@@ -1,3 +1,27 @@
+resource "aws_security_group" "public_access" {
+  count = var.publicly_accessible ? 1 : 0
+
+  name        = "rds-public-access"
+  description = "Allow external access to MySQL on RDS"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port        = 3306
+    to_port          = 3306
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
 resource "aws_db_subnet_group" "rds_db_subnet_group" {
   subnet_ids = var.subnet_ids
 }
@@ -24,7 +48,7 @@ resource "aws_db_instance" "kubeflow_db" {
   password = var.db_password
   multi_az = var.multi_az
   db_subnet_group_name = aws_db_subnet_group.rds_db_subnet_group.id
-  vpc_security_group_ids = [var.security_group_id]
+  vpc_security_group_ids = var.publicly_accessible ? [aws_security_group.public_access[0].id, var.security_group_id] : [var.security_group_id]
   backup_retention_period = var.backup_retention_period
   storage_type = var.storage_type
   deletion_protection = var.deletion_protection

@@ -200,12 +200,13 @@ module "kubeflow_components" {
   # rds
   use_rds = var.use_rds
   vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  subnet_ids = var.publicly_accessible ? module.vpc.public_subnets : module.vpc.private_subnets
   security_group_id = module.eks_blueprints.cluster_primary_security_group_id
   db_name = var.db_name
   db_username = var.db_username
   db_password = var.db_password
   db_class = var.db_class
+  mlmdb_name = var.mlmdb_name
   db_allocated_storage = var.db_allocated_storage
   mysql_engine_version = var.mysql_engine_version
   backup_retention_period = var.backup_retention_period
