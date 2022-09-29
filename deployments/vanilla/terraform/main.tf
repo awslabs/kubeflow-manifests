@@ -8,10 +8,10 @@ locals {
   using_gpu = var.node_instance_type_gpu != null
 
   # fix ordering using toset
-  available_azs_non_gpu = toset(data.aws_ec2_instance_type_offerings.availability_zones.locations)
+  available_azs_cpu = toset(data.aws_ec2_instance_type_offerings.availability_zones_cpu.locations)
   available_azs_gpu = toset(try(data.aws_ec2_instance_type_offerings.availability_zones_gpu[0].locations, []))
 
-  available_azs = local.using_gpu ? tolist(setintersection(local.available_azs_non_gpu, local.available_azs_gpu)) : tolist(local.available_azs_non_gpu)
+  available_azs = local.using_gpu ? tolist(setintersection(local.available_azs_cpu, local.available_azs_gpu)) : tolist(local.available_azs_cpu)
 
   az_count = min(length(local.available_azs), 3)
   azs      = slice(local.available_azs, 0, local.az_count)
@@ -26,8 +26,8 @@ locals {
   kf_helm_repo_path = var.kf_helm_repo_path
 
 
-  managed_node_group = {
-    node_group_name = "managed-ondemand"
+  managed_node_group_cpu = {
+    node_group_name = "managed-ondemand-cpu"
     instance_types  = [var.node_instance_type]
     min_size        = 5
     desired_size    = 5
@@ -46,8 +46,8 @@ locals {
   } : null
 
   potential_managed_node_groups = {
-    mg_5 = local.managed_node_group,
-    mg_5_gpu = local.managed_node_group_gpu
+    mg_cpu = local.managed_node_group_cpu,
+    mg_gpu = local.managed_node_group_gpu
   }
 
   managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null}
@@ -83,7 +83,7 @@ provider "helm" {
   }
 }
 
-data "aws_ec2_instance_type_offerings" "availability_zones" {
+data "aws_ec2_instance_type_offerings" "availability_zones_cpu" {
   filter {
     name   = "instance-type"
     values = [var.node_instance_type]
