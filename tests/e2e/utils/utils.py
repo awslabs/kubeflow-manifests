@@ -209,16 +209,16 @@ def install_helm(chart_name, path, namespace=None):
     """
     Equivalent to:
 
-    helm install <chart_name> <path>
+    helm upgrade --install <chart_name> <path>
 
     """
 
     if namespace:
         install_retcode = subprocess.call(
-            f"helm install {chart_name} {path} -n {namespace}".split()
+            f"helm upgrade --install {chart_name} {path} -n {namespace}".split()
         )
     else:
-        install_retcode = subprocess.call(f"helm install {chart_name} {path}".split())
+        install_retcode = subprocess.call(f"helm upgrade --install {chart_name} {path}".split())
     assert install_retcode == 0
 
 

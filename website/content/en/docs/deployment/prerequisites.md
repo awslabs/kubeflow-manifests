@@ -90,7 +90,8 @@ The `make` command above installs the following tools:
 
 To access AWS services, you need an AWS account and setup IAM credentials. Follow [AWS CLI Configure Quickstart documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) to setup your IAM credentials.
 
-Your IAM user/role must have **Administrative Privileges**. 
+Your IAM user/role needs the necessary privileges to create and manage your cluster and dependencies.
+You might want to grant `Administrative Privileges` as it will require access to multiple services.
 
 Run the following command to configure AWS CLI:
 

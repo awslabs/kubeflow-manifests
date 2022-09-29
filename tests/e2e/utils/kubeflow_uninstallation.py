@@ -49,6 +49,7 @@ Uninstall_Sequence = [
     "dex",
     "istio-1-14",
     "cert-manager",
+    "aws-telemetry"
 ]
 
 
