@@ -168,7 +168,7 @@ def build_certmanager():
     assert retcode == 0
     retcode = subprocess.call(f"helm repo update".split())
     assert retcode == 0
-    cmd = f"helm install cert-manager jetstack/cert-manager \
+    cmd = f"helm upgrade --install cert-manager jetstack/cert-manager \
                         --namespace cert-manager \
                         --create-namespace \
                         --version v1.5.0 \
@@ -183,7 +183,7 @@ def build_alb_controller(cluster_name):
     assert retcode == 0
     retcode = subprocess.call(f"helm repo update".split())
     assert retcode == 0
-    cmd = f"helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+    cmd = f"helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
             -n kube-system \
             --set clusterName={cluster_name} \
             --set serviceAccount.create=false \
@@ -212,7 +212,7 @@ def build_ack_controller():
         f"-i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml")
     find_and_replace_in_file(f"{CHART_EXPORT_PATH}/{SERVICE}-chart/templates/cluster-role-controller.yaml",
         "metadata:", f"metadata:\n  labels:\n    {LABEL_STRING}")
-    exec_shell(f"helm install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "
+    exec_shell(f"helm upgrade --install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "
         f"{CHART_EXPORT_PATH}/{SERVICE}-chart")
 
 if __name__ == "__main__":
