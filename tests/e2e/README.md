@@ -35,6 +35,31 @@ Resume from a previous run using the resources that were previous created
 pytest --metadata .metadata/metadata-1638939746471968000.json --keepsuccess ...<other arguments>...
 ```
 
+## Test specific commands
+
+### Terraform
+
+Vanilla
+```
+pytest tests/terraform/test_vanilla.py -s -q --region <aws region>
+```
+
+RDS-S3
+```
+pytest tests/terraform/test_rds_s3.py -s -q --region <aws region> --accesskey <accesskey> --secretkey <secretkey>
+```
+
+Cognito
+```
+pytest tests/terraform/test_cognito.py -s -q --region <aws region> --root-domain-name <root domain, e.g. example.com>
+```
+
+Cognito-RDS-S3
+```
+pytest tests/terraform/test_cognito_rds_s3.py -s -q --region <aws region> --root-domain-name <root domain, e.g. example.com> --accesskey <accesskey> --secretkey <secretkey>
+```
+
+
 ### About metadata
 When using the helper method `configure_resource_fixture` a metadata file is generated with the following output:
 ```
