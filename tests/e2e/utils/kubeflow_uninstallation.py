@@ -49,6 +49,7 @@ Uninstall_Sequence = [
     "dex",
     "istio-1-14",
     "cert-manager",
+    "aws-telemetry"
 ]
 
 
@@ -84,6 +85,7 @@ def uninstall_kubeflow(installation_option, deployment_option):
         delete_component(
             installation_option, deployment_option, path_dic, component, namespace
         )
+    
 
 
 
