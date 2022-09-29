@@ -5,15 +5,8 @@ data:
     defaultConfig:
       discoveryAddress: istiod.istio-system.svc:15012
       proxyMetadata: {}
-      tracing:
-        zipkin:
-          address: zipkin.istio-system:9411
+      tracing: {}
     enablePrometheusMerge: true
-    extensionProviders:
-    - envoyOtelAls:
-        port: 4317
-        service: otel-collector.istio-system.svc.cluster.local
-      name: otel
     rootNamespace: istio-system
     tcpKeepalive:
       interval: 5s
