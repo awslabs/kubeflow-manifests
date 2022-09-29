@@ -80,20 +80,35 @@ From this point onwards, we will be creating/updating the DNS records **only in 
           export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
           ```
 1. Substitute values for setting up Ingress.
-    1. ```bash
-        printf '
-        CognitoUserPoolArn='$CognitoUserPoolArn'
-        CognitoAppClientId='$CognitoAppClientId'
-        CognitoUserPoolDomain='$CognitoUserPoolDomain'
-        certArn='$certArn'
-        ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
-        ```
+    1. Kustomize
+        1. ```bash
+            printf '
+            CognitoUserPoolArn='$CognitoUserPoolArn'
+            CognitoAppClientId='$CognitoAppClientId'
+            CognitoUserPoolDomain='$CognitoUserPoolDomain'
+            certArn='$certArn'
+            ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
+            ```
+    1. Helm
+        1. ```bash
+            yq e '.alb.certArn = env(certArn)' -i charts/common/ingress/cognito/values.yaml
+            yq e '.alb.cognito.UserPoolArn = env(CognitoUserPoolArn)' -i charts/common/ingress/cognito/values.yaml
+            yq e '.alb.cognito.UserPoolDomain = env(CognitoUserPoolDomain)' -i charts/common/ingress/cognito/values.yaml
+            yq e '.alb.cognito.appClientId = env(CognitoAppClientId)' -i charts/common/ingress/cognito/values.yaml
+            ```
+
+
 1. Substitute values for setting up AWS authservice.
-    1. ```bash
-        printf '
-        LOGOUT_URL='$CognitoLogoutURL'
-        ' > awsconfigs/common/aws-authservice/base/params.env
-        ```
+     1. Kustomize    
+        1. ```bash
+            printf '
+            LOGOUT_URL='$CognitoLogoutURL'
+            ' > awsconfigs/common/aws-authservice/base/params.env
+            ```
+    1. Helm
+        1.  ```bash
+            yq e '.LOGOUT_URL = env(CognitoLogoutURL)' -i charts/common/aws-authservice/values.yaml
+            ```
 1. Follow the [Configure Load Balancer Controller]({{< ref "/docs/add-ons/load-balancer/guide.md#configure-load-balancer-controller" >}}) section of the load balancer guide to setup the resources required the load balancer controller.
 
 ## 4.0 Building manifests and deploying Kubeflow
