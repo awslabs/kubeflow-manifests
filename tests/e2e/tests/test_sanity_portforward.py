@@ -15,7 +15,7 @@ import boto3
 from e2e.utils.utils import get_s3_client
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
-from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file
+from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file, WaitForCircuitBreakerError
 from e2e.utils.config import configure_resource_fixture, metadata
 
 from e2e.conftest import region
@@ -76,13 +76,20 @@ KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
-        resp = kfp_client.get_run(run.id).run
+        resp = kfp_client.get_run(run.id)
 
-        assert resp.name == job_name
-        assert resp.pipeline_spec.pipeline_id == pipeline_id
-        assert resp.status == "Succeeded"
+        assert resp.run.name == job_name
+        assert resp.run.pipeline_spec.pipeline_id == pipeline_id
 
-    wait_for(callback, 600)
+        if "Failed" == resp.run.status:
+            print(resp.run)
+            raise WaitForCircuitBreakerError("Pipeline run Failed")
+
+        assert resp.run.status == "Succeeded"
+
+        return resp
+
+    return wait_for(callback, timeout=600)
 
 def create_execution_role(
     role_name, region,
