@@ -3,6 +3,11 @@ kind: Kustomization
 namespace: kubeflow
 bases:
 - ../../../../upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+configMapGenerator:
+- name: kubeflow-pipelines-profile-controller-code
+  behavior: replace
+  files:
+  - sync.py
 
 images:
   - name: gcr.io/ml-pipeline/api-server
