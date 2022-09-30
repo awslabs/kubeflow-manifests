@@ -113,7 +113,7 @@ class IAMRole:
         try:
             for policy in self.policies:
                 self.iam_client.detach_role_policy(
-                PolicyArn=policy, RoleName=self.name,
+                PolicyArn=f"arn:aws:iam::aws:policy/{policy}", RoleName=self.name,
                 )
             self.iam_client.delete_role(RoleName=self.name)
             logger.info(f"deleted iam role {self.arn}")
