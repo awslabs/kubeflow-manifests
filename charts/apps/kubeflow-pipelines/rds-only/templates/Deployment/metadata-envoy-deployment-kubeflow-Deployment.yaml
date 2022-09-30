@@ -21,7 +21,7 @@ spec:
         component: metadata-envoy
     spec:
       containers:
-      - image: gcr.io/ml-pipeline/metadata-envoy:2.0.0-alpha.3
+      - image: gcr.io/ml-pipeline/metadata-envoy:2.0.0-alpha.5
         name: container
         ports:
         - containerPort: 9090
