@@ -33,7 +33,14 @@ spec:
           value: '86400'
         - name: NUM_WORKERS
           value: '2'
-        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.3
+        - name: KUBEFLOW_USERID_HEADER
+          value: kubeflow-userid
+        - name: KUBEFLOW_USERID_PREFIX
+          value: ''
+        envFrom:
+        - configMapRef:
+            name: persistenceagent-config-56mkmd426t
+        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.5
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
         resources:

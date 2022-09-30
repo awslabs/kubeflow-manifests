@@ -29,7 +29,7 @@ spec:
         envFrom:
         - configMapRef:
             name: profiles-config-2g29dd2mbd
-        image: docker.io/kubeflownotebookswg/kfam:v1.6.0
+        image: docker.io/kubeflownotebookswg/kfam:v1.6.1-rc.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -53,7 +53,7 @@ spec:
         envFrom:
         - configMapRef:
             name: profiles-config-2g29dd2mbd
-        image: docker.io/kubeflownotebookswg/profile-controller:v1.6.0
+        image: docker.io/kubeflownotebookswg/profile-controller:v1.6.1-rc.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

@@ -31,7 +31,7 @@ istio-1-14:
     kustomize: 
         - "../../upstream/common/istio-1-14/istio-crds/base"
         - "../../upstream/common/istio-1-14/istio-namespace/base"
-        - "../../awsconfigs/common/istio"
+        - "../../upstream/common/istio-1-14/istio-install/base"
     helm: "../../charts/common/istio-1-14"
   validations: 
     identifier: 'app'
