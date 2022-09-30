@@ -1,4 +1,4 @@
 s3:
-  bucketName: 
+  bucketName: mlp-mlops-kubeflow
   minioServiceHost: s3.amazonaws.com
-  minioServiceRegion: 
+  minioServiceRegion: us-west-1

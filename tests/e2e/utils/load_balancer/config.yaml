@@ -1,9 +1,9 @@
 cluster:
-  name:
-  region:
+  name: mlp-eks
+  region: us-west-1
 route53:
   rootDomain:
     hostedZoneId: Z1P2I67ISCONVG
     name: hack-lyftdev.lyft.net
   subDomain:
-    name: kubeflow
+    name: mlp

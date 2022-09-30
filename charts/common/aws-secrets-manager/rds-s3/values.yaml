@@ -1,4 +1,4 @@
 rds:
-  secretName: 
+  secretName: mlp-mlops-rds-secret-3
 s3:
-  secretName: 
+  secretName: mlp-mlops-s3-secret-3

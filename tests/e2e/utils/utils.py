@@ -215,7 +215,7 @@ def install_helm(chart_name, path, namespace=None):
 
     if namespace:
         install_retcode = subprocess.call(
-            f"helm install {chart_name} {path} -n {namespace}".split()
+            f"helm install --upgrade  {chart_name} {path} -n {namespace}".split()
         )
     else:
         install_retcode = subprocess.call(f"helm install {chart_name} {path}".split())

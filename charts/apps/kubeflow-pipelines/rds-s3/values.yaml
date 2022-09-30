@@ -1,7 +1,7 @@
 rds:
-  dbHost: 
-  mlmdDb: 
+  dbHost: mlp-mlops-mysql.chxovxdnsdiz.us-west-1.rds.amazonaws.com
+  mlmdDb: metadb
 s3:
-  bucketName: 
+  bucketName: mlp-mlops-kubeflow
   minioServiceHost: s3.amazonaws.com
-  minioServiceRegion: 
+  minioServiceRegion: us-west-1

@@ -1,10 +1,10 @@
-RDS:
-  instanceName: 
-  secretName: 
-  subnetGroupName:
-S3:
-  bucket: 
-  secretName: 
 CLUSTER:
-  region:
-  name:
+  name: mlp-eks
+  region: us-west-1
+RDS:
+  instanceName: mlp-mlops-mysql
+  secretName: mlp-mlops-rds-secret-3
+  subnetGroupName: kubeflow-db-subnet-group
+S3:
+  bucket: mlp-mlops-kubeflow
+  secretName: mlp-mlops-s3-secret-3

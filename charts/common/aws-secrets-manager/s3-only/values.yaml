@@ -1,2 +1,2 @@
 s3:
-  secretName: 
+  secretName: mlp-mlops-s3-secret-3

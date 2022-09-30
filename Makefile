@@ -1,5 +1,17 @@
 SHELL := /bin/bash # Use bash syntax
 
+export CLUSTER_REGION=us-west-1
+export CLUSTER_NAME=mlp-eks
+export KUBECONFIG=~/.kube/eksctl.cfg
+export S3_BUCKET=mlp-mlops-kubeflow
+export DB_INSTANCE_NAME=mlp-mlops-mysql
+export AWS_ACCESS_KEY_ID=AKIAQMTCWG66V43QMVGQ
+export AWS_SECRET_ACCESS_KEY=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
+export MINIO_AWS_ACCESS_KEY_ID=AKIAQMTCWG66V43QMVGQ
+export MINIO_AWS_SECRET_ACCESS_KEY=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
+export RDS_SECRET_NAME=mlp-mlops-rds-secret-4
+export S3_SECRET_NAME=mlp-mlops-s3-secret-4
+
 install-awscli:
 	curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 	unzip -o -q awscliv2.zip
@@ -30,7 +42,7 @@ install-kustomize:
 
 install-yq:
 	$(eval YQ_VERSION:=v4.26.1)
-	wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz -O - | tar xz 
+	wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz -O - | tar xz
 	sudo mv yq_linux_amd64 /usr/bin/yq
 	rm install-man-page.sh
 	rm yq.1
@@ -49,19 +61,19 @@ install-terraform:
 	rm terraform
 	terraform --version
 
-install-helm: 
+install-helm:
 	curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 	helm version
 
 install-python:
-	sudo apt install -q python3.8 -y 
+	sudo apt install -q python3.8 -y
 	sudo apt install -q python3-pip -y
 	python3.8 -m pip install --upgrade pip
 
 install-python-packages:
 	python3.8 -m pip install -r tests/e2e/requirements.txt
 
-install-tools: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-terraform install-helm install-python install-python-packages
+install-tools: install-awscli install-eksctl install-kubectl install-kustomize install-yq install-jq install-terraform install-helm install-python install-python-packages
 
 verify-cluster-variables:
 	test $(CLUSTER_NAME) || (echo Please export CLUSTER_NAME variable ; exit 1)
@@ -79,6 +91,25 @@ create-eks-cluster: verify-cluster-variables
 	--nodes-max 10 \
 	--managed \
 	--with-oidc
+
+delete-eks-cluster: verify-cluster-variables
+	eksctl delete cluster \
+	--name $(CLUSTER_NAME) \
+	--region $(CLUSTER_REGION)
+
+create-rds-s3: verify-cluster-variables
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/rds-s3/auto-rds-s3-setup.py \
+	--cluster $(CLUSTER_NAME) \
+	--region $(CLUSTER_REGION) \
+	--bucket $(S3_BUCKET) \
+	--s3_aws_access_key_id $(MINIO_AWS_ACCESS_KEY_ID) \
+	--s3_aws_secret_access_key $(MINIO_AWS_SECRET_ACCESS_KEY) \
+	--db_instance_name $(DB_INSTANCE_NAME) \
+	--s3_secret_name $(S3_SECRET_NAME) \
+	--rds_secret_name $(RDS_SECRET_NAME)
+
+delete-rds-s3: verify-cluster-variables
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/rds-s3/auto-rds-s3-cleanup.py
 
 connect-to-eks-cluster: verify-cluster-variables
 	aws eks update-kubeconfig --name $(CLUSTER_NAME) --region $(CLUSTER_REGION)
@@ -99,13 +130,13 @@ cleanup-ack-req: verify-cluster-variables
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
 deploy-kubeflow: bootstrap-ack
-	$(eval DEPLOYMENT_OPTION:=vanilla)
-	$(eval INSTALLATION_OPTION:=kustomize)
+	$(eval DEPLOYMENT_OPTION:=rds-s3)
+	$(eval INSTALLATION_OPTION:=helm)
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
-	$(eval DEPLOYMENT_OPTION:=vanilla)
-	$(eval INSTALLATION_OPTION:=kustomize)
+	$(eval DEPLOYMENT_OPTION:=rds-s3)
+	$(eval INSTALLATION_OPTION:=helm)
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
 
 bootstrap-alb: verify-cluster-variables connect-to-eks-cluster
@@ -117,3 +148,6 @@ cleanup-alb: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/load_balancer/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/load_balancer/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/load_balancer/lb_resources_cleanup.py
+
+test:
+	echo $(MINIO_AWS_ACCESS_KEY_ID)
