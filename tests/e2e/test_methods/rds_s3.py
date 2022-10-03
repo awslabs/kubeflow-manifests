@@ -1,11 +1,18 @@
-
 import os
 import json
 
 import pytest
 
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE, TO_ROOT, CUSTOM_RESOURCE_TEMPLATES_FOLDER, DISABLE_PIPELINE_CACHING_PATCH_FILE, KATIB_EXPERIMENT_FILE, PIPELINE_XG_BOOST, ALTERNATE_MLMDB_NAME
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    TO_ROOT,
+    CUSTOM_RESOURCE_TEMPLATES_FOLDER,
+    DISABLE_PIPELINE_CACHING_PATCH_FILE,
+    KATIB_EXPERIMENT_FILE,
+    PIPELINE_XG_BOOST,
+    ALTERNATE_MLMDB_NAME,
+)
 from e2e.utils.utils import (
     wait_for,
     rand_name,
@@ -34,6 +41,7 @@ from e2e.utils.custom_resources import (
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
+
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
         resp = kfp_client.get_run(run.id)
@@ -50,6 +58,7 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
         return resp
 
     return wait_for(callback, timeout=600)
+
 
 def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):
     def callback():
@@ -72,6 +81,7 @@ def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):
 
     wait_for(callback)
 
+
 # Disable caching in KFP
 # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
 # This prevents artifacts from being uploaded to s3 for subsequent runs
@@ -84,7 +94,14 @@ def disable_kfp_caching(cluster, region):
         "cache-webhook-kubeflow", patch_body
     )
 
-def test_kfp_experiment(kfp_client, db_username, db_password, rds_endpoint, user_namespace=DEFAULT_USER_NAMESPACE):
+
+def test_kfp_experiment(
+    kfp_client,
+    db_username,
+    db_password,
+    rds_endpoint,
+    user_namespace=DEFAULT_USER_NAMESPACE,
+):
     name = rand_name("experiment-")
     description = rand_name("description-")
     experiment = kfp_client.create_experiment(
@@ -126,16 +143,24 @@ def test_kfp_experiment(kfp_client, db_username, db_password, rds_endpoint, user
     assert len(resp) == 0
 
     try:
-        kfp_client.get_experiment(
-            experiment_id=experiment.id, namespace=user_namespace
-        )
+        kfp_client.get_experiment(experiment_id=experiment.id, namespace=user_namespace)
         raise AssertionError("Expected KFPApiException Not Found")
     except KFPApiException as e:
         assert "Not Found" == e.reason
 
     mysql_client.close()
 
-def test_run_pipeline(kfp_client, s3_bucket_name, db_username, db_password, rds_endpoint, region, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_XG_BOOST):
+
+def test_run_pipeline(
+    kfp_client,
+    s3_bucket_name,
+    db_username,
+    db_password,
+    rds_endpoint,
+    region,
+    user_namespace=DEFAULT_USER_NAMESPACE,
+    pipeline_name=PIPELINE_XG_BOOST,
+):
     s3_client = get_s3_client(region)
 
     experiment_name = rand_name("experiment-")
@@ -198,7 +223,17 @@ def test_run_pipeline(kfp_client, s3_bucket_name, db_username, db_password, rds_
 
     kfp_client.delete_experiment(experiment.id)
 
-def test_katib_experiment(cluster, region, db_username, db_password, rds_endpoint, custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER, katib_experiment_file=KATIB_EXPERIMENT_FILE, user_namespace=DEFAULT_USER_NAMESPACE):
+
+def test_katib_experiment(
+    cluster,
+    region,
+    db_username,
+    db_password,
+    rds_endpoint,
+    custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER,
+    katib_experiment_file=KATIB_EXPERIMENT_FILE,
+    user_namespace=DEFAULT_USER_NAMESPACE,
+):
     filepath = os.path.abspath(
         os.path.join(custom_resource_templates_folder, katib_experiment_file)
     )
@@ -242,7 +277,8 @@ def test_katib_experiment(cluster, region, db_username, db_password, rds_endpoin
         raise AssertionError("Expected K8sApiException Not Found")
     except K8sApiException as e:
         assert "Not Found" == e.reason
-    
+
+
 def test_database_exists(db_username, db_password, rds_endpoint, database_name):
     # will throw exception on connection error (e.g. if DB doesn't exist)
     return get_mysql_client(
@@ -251,36 +287,67 @@ def test_database_exists(db_username, db_password, rds_endpoint, database_name):
         host=rds_endpoint,
         database=database_name,
     )
-    
-def test_verify_kubeflow_db(db_username, db_password, rds_endpoint):
-    mysql_client = test_database_exists(db_username, db_password, rds_endpoint, "kubeflow")
 
-    resp = mysql_utils.query(
-        mysql_client, f"show tables"
+
+def test_verify_kubeflow_db(db_username, db_password, rds_endpoint):
+    mysql_client = test_database_exists(
+        db_username, db_password, rds_endpoint, "kubeflow"
     )
-    tables_in_kubeflow_db = {t['Tables_in_kubeflow'] for t in resp}
-    expected_tables_in_kubeflow_db = {'observation_logs'}
+
+    resp = mysql_utils.query(mysql_client, f"show tables")
+    tables_in_kubeflow_db = {t["Tables_in_kubeflow"] for t in resp}
+    expected_tables_in_kubeflow_db = {"observation_logs"}
     assert expected_tables_in_kubeflow_db == tables_in_kubeflow_db
 
-def test_verify_mlpipeline_db(db_username, db_password, rds_endpoint):
-    mysql_client = test_database_exists(db_username, db_password, rds_endpoint, "mlpipeline")
 
-    resp = mysql_utils.query(
-        mysql_client, f"show tables"
+def test_verify_mlpipeline_db(db_username, db_password, rds_endpoint):
+    mysql_client = test_database_exists(
+        db_username, db_password, rds_endpoint, "mlpipeline"
     )
-    tables_in_mlpipeline = {t['Tables_in_mlpipeline'] for t in resp}
-    expected_tables_in_mlpipeline = {'pipelines', 'resource_references', 'db_statuses', 'default_experiments', 'jobs', 'tasks', 'experiments', 'run_details', 'run_metrics', 'pipeline_versions'}
+
+    resp = mysql_utils.query(mysql_client, f"show tables")
+    tables_in_mlpipeline = {t["Tables_in_mlpipeline"] for t in resp}
+    expected_tables_in_mlpipeline = {
+        "pipelines",
+        "resource_references",
+        "db_statuses",
+        "default_experiments",
+        "jobs",
+        "tasks",
+        "experiments",
+        "run_details",
+        "run_metrics",
+        "pipeline_versions",
+    }
     assert expected_tables_in_mlpipeline == tables_in_mlpipeline
 
-def test_verify_mlmdb(db_username, db_password, rds_endpoint, mlmdb_name):
-    mysql_client = test_database_exists(db_username, db_password, rds_endpoint, mlmdb_name)
 
-    resp = mysql_utils.query(
-        mysql_client, f"show tables"
+def test_verify_mlmdb(db_username, db_password, rds_endpoint, mlmdb_name):
+    mysql_client = test_database_exists(
+        db_username, db_password, rds_endpoint, mlmdb_name
     )
+
+    resp = mysql_utils.query(mysql_client, f"show tables")
     tables_in_mlmdb = {t[f"Tables_in_{mlmdb_name}"] for t in resp}
-    expected_tables_in_mlmdb = {'ContextProperty', 'Execution', 'ParentType', 'Type', 'ParentContext', 'ArtifactProperty', 'Event', 'ExecutionProperty', 'Context', 'EventPath', 'Artifact', 'MLMDEnv', 'Association', 'TypeProperty', 'Attribution'}
+    expected_tables_in_mlmdb = {
+        "ContextProperty",
+        "Execution",
+        "ParentType",
+        "Type",
+        "ParentContext",
+        "ArtifactProperty",
+        "Event",
+        "ExecutionProperty",
+        "Context",
+        "EventPath",
+        "Artifact",
+        "MLMDEnv",
+        "Association",
+        "TypeProperty",
+        "Attribution",
+    }
     assert expected_tables_in_mlmdb == tables_in_mlmdb
+
 
 def test_s3_bucket_is_being_used_as_metadata_store(s3_bucket_name, region):
     s3_client = get_s3_client(region)
@@ -294,4 +361,3 @@ def test_s3_bucket_is_being_used_as_metadata_store(s3_bucket_name, region):
             found_uploaded_pipelines = True
 
     assert found_uploaded_pipelines == True
-

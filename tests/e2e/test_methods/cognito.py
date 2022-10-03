@@ -1,11 +1,12 @@
 import requests
 import time
 
+
 def test_url_is_up(subdomain_name):
     kubeflow_endpoint = "https://kubeflow." + subdomain_name
     print("kubeflow_endpoint:")
     print(kubeflow_endpoint)
-    #wait a bit till website is accessible
+    # wait a bit till website is accessible
     print("Wait for 60s for website to be available...")
     time.sleep(60)
     response = requests.get(kubeflow_endpoint)
@@ -14,6 +15,7 @@ def test_url_is_up(subdomain_name):
     assert len(response.history) > 0
     # redirection was to cognito domain
     assert "auth." + subdomain_name in response.url
+
 
 # Kubeflow sdk client need cookies provided by ALB. Currently it is not possible to programmatically fetch these cookies using tokens provided by cognito
 # See - https://stackoverflow.com/questions/62572327/how-to-pass-cookies-when-calling-authentication-enabled-aws-application-loadbala

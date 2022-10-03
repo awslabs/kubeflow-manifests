@@ -13,9 +13,13 @@ KUBEFLOW_VERSION = "v1.6.1-rc.0"
 ALTERNATE_MLMDB_NAME = "metadata_db"
 
 TO_ROOT = "../../"  # As of this commit, tests are run from the tests/e2e folder
-CUSTOM_RESOURCE_TEMPLATES_FOLDER = TO_ROOT + "tests/e2e/resources/custom-resource-templates/"
+CUSTOM_RESOURCE_TEMPLATES_FOLDER = (
+    TO_ROOT + "tests/e2e/resources/custom-resource-templates/"
+)
 
-DISABLE_PIPELINE_CACHING_PATCH_FILE = CUSTOM_RESOURCE_TEMPLATES_FOLDER + "patch-disable-pipeline-caching.yaml"
+DISABLE_PIPELINE_CACHING_PATCH_FILE = (
+    CUSTOM_RESOURCE_TEMPLATES_FOLDER + "patch-disable-pipeline-caching.yaml"
+)
 
 # Katib experiment file names
 KATIB_EXPERIMENT_RANDOM_FILE = "katib-experiment-random.yaml"

@@ -3,7 +3,15 @@ import subprocess
 import os
 import json
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE, TO_ROOT, CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE, PIPELINE_DATA_PASSING, PIPELINE_SAGEMAKER_TRAINING, NOTEBOOK_IMAGE_TF_CPU
+from e2e.utils.constants import (
+    DEFAULT_USER_NAMESPACE,
+    TO_ROOT,
+    CUSTOM_RESOURCE_TEMPLATES_FOLDER,
+    KATIB_EXPERIMENT_FILE,
+    PIPELINE_DATA_PASSING,
+    PIPELINE_SAGEMAKER_TRAINING,
+    NOTEBOOK_IMAGE_TF_CPU,
+)
 
 from e2e.utils.utils import (
     wait_for,
@@ -32,6 +40,7 @@ TEST_ACK_CRDS_PARAMS = [
     ),
 ]
 
+
 @pytest.fixture(scope="class")
 def sagemaker_execution_role(region):
     role_name = rand_name("sm-exec-role-")
@@ -47,16 +56,18 @@ def sagemaker_execution_role(region):
         ],
     }
 
-    managed_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess", "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"]
+    managed_policies = [
+        "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+        "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
+    ]
 
     role = IAMRole(name=role_name, region=region, policies=managed_policies)
-    role.create(
-        policy_document=json.dumps(trust_policy)
-    )
+    role.create(policy_document=json.dumps(trust_policy))
 
     yield role
 
     role.delete()
+
 
 @pytest.fixture(scope="class")
 def s3_bucket_with_data():
@@ -68,6 +79,7 @@ def s3_bucket_with_data():
     yield bucket
 
     bucket.delete()
+
 
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
@@ -102,14 +114,17 @@ def test_kfp_experiment(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE):
     kfp_client.delete_experiment(experiment.id)
 
     try:
-        kfp_client.get_experiment(
-            experiment_id=experiment.id, namespace=user_namespace
-        )
+        kfp_client.get_experiment(experiment_id=experiment.id, namespace=user_namespace)
         raise AssertionError("Expected KFPApiException Not Found")
     except KFPApiException as e:
         assert "Not Found" == e.reason
 
-def test_run_pipeline(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_DATA_PASSING):
+
+def test_run_pipeline(
+    kfp_client,
+    user_namespace=DEFAULT_USER_NAMESPACE,
+    pipeline_name=PIPELINE_DATA_PASSING,
+):
     experiment_name = rand_name("experiment-")
     experiment_description = rand_name("description-")
     experiment = kfp_client.create_experiment(
@@ -133,7 +148,14 @@ def test_run_pipeline(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE, pipelin
 
     kfp_client.delete_experiment(experiment.id)
 
-def test_katib_experiment(cluster, region, custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER, katib_experiment_file=KATIB_EXPERIMENT_FILE, user_namespace=DEFAULT_USER_NAMESPACE):
+
+def test_katib_experiment(
+    cluster,
+    region,
+    custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER,
+    katib_experiment_file=KATIB_EXPERIMENT_FILE,
+    user_namespace=DEFAULT_USER_NAMESPACE,
+):
     filepath = os.path.abspath(
         os.path.join(custom_resource_templates_folder, katib_experiment_file)
     )
@@ -168,6 +190,7 @@ def test_katib_experiment(cluster, region, custom_resource_templates_folder=CUST
     except K8sApiException as e:
         assert "Not Found" == e.reason
 
+
 def test_ack_crds(
     notebook_server,
     framework_name,
@@ -176,7 +199,7 @@ def test_ack_crds(
     user_namespace=DEFAULT_USER_NAMESPACE,
 ):
     """
-    Spins up a DLC Notebook and checks that the basic ACK CRD is installed. 
+    Spins up a DLC Notebook and checks that the basic ACK CRD is installed.
     """
     nb_list = subprocess.check_output(
         f"kubectl get notebooks -n {user_namespace}".split()
@@ -196,16 +219,20 @@ def test_ack_crds(
     print(output)
     # The second condition is now required in case the kfp test runs before this one.
     assert expected_output in output or "training-job-" in output
-    
+
+
 def test_run_kfp_sagemaker_pipeline(
-    kfp_client, s3_bucket_with_data, sagemaker_execution_role_arn, user_namespace=DEFAULT_USER_NAMESPACE
+    kfp_client,
+    s3_bucket_with_data,
+    sagemaker_execution_role_arn,
+    user_namespace=DEFAULT_USER_NAMESPACE,
 ):
     random_prefix = rand_name("kfp-")
 
     experiment_name = "experiment-" + random_prefix
     experiment_description = "description-" + random_prefix
     bucket_name = s3_bucket_with_data
-        
+
     job_name = "kfp-run-" + random_prefix
 
     experiment = kfp_client.create_experiment(
@@ -232,6 +259,6 @@ def test_run_kfp_sagemaker_pipeline(
     wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
 
     kfp_client.delete_experiment(experiment.id)
-        
+
     cmd = "kubectl delete trainingjobs --all -n kubeflow-user-example-com".split()
     subprocess.Popen(cmd)
