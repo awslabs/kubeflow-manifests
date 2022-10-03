@@ -107,7 +107,7 @@ data "aws_ec2_instance_type_offerings" "availability_zones_gpu" {
 # EKS Blueprints
 #---------------------------------------------------------------
 module "eks_blueprints" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.9.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.12.0"
 
   cluster_name    = local.cluster_name
   cluster_version = local.eks_version
@@ -140,9 +140,6 @@ module "eks_blueprints_kubernetes_addons" {
   enable_aws_efs_csi_driver = true
   enable_aws_fsx_csi_driver = true
 
-  nvidia_device_plugin_helm_config = {
-    namespace = "kube-system"
-  }
   enable_nvidia_device_plugin = local.using_gpu
 
   tags = local.tags
