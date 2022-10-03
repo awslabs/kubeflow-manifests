@@ -32,19 +32,19 @@ aws cloudwatch list-metrics --namespace ContainerInsights --region $CLUSTER_REGI
 
 An example of the logs that will be available after installation are the logs of the Pods on your cluster. This way, the Pod logs can still be accessed past their default storage time. This also allows for an easy way to view logs for all Pods on your cluster without having to directly connect to your EKS cluster. 
 
-The logs can be accessed by through CloudWatch log groups ![cloudwatch](../../../../images/cloudwatch/cloudwatch-logs.png)
+The logs can be accessed by through CloudWatch log groups ![cloudwatch](../../../images/cloudwatch/cloudwatch-logs.png)
 
-To view individual Pod logs, select `/aws/containerinsights/YOUR_CLUSTER_NAME/application`. ![application](../../../../images/cloudwatch/cloudwatch-application-logs.png)
+To view individual Pod logs, select `/aws/containerinsights/YOUR_CLUSTER_NAME/application`. ![application](../../../images/cloudwatch/cloudwatch-application-logs.png)
 
-The following image is an example of the `jupyter-web-app` Pod logs available through CloudWatch. ![jupyter-logs](../../../../images/cloudwatch/cloudwatch-pod-logs.png)
+The following image is an example of the `jupyter-web-app` Pod logs available through CloudWatch. ![jupyter-logs](../../../images/cloudwatch/cloudwatch-pod-logs.png)
 
 For a full list of metrics that are provided by default, see [Amazon EKS and Kubernetes Container Insights metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-EKS.html).
 
 The metrics are grouped by varying parameters such as Cluster, Namespace, or PodName.
-![cloudwatch-metrics](../../../../images/cloudwatch/cloudwatch-metrics.png)
+![cloudwatch-metrics](../../../images/cloudwatch/cloudwatch-metrics.png)
 
 The following image is an example of the graphed metrics for the `istio-system` namespace that deals with internet traffic.
-![cloudwatch-namespace-metrics](../../../../images/cloudwatch/cloudwatch-namespace-metrics.png)
+![cloudwatch-namespace-metrics](../../../images/cloudwatch/cloudwatch-namespace-metrics.png)
 
 See [Viewing available metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html) for more information on CloudWatch metrics. Select the ContainerInsights metric namespace.
 
