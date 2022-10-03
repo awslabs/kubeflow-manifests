@@ -1,5 +1,6 @@
 import pytest
 
+from e2e.utils.constants import TO_ROOT
 from e2e.utils.config import metadata
 from e2e.utils.utils import rand_name
 from e2e.conftest import region, get_root_domain_name
@@ -8,7 +9,6 @@ from e2e.utils.terraform_utils import terraform_installation
 from e2e.test_methods import cognito
 
 TEST_SUITE_NAME = "tf-cognito"
-TO_ROOT = "../../"
 TF_FOLDER = TO_ROOT + "deployments/cognito/terraform/"
 
 

@@ -1,5 +1,6 @@
 import pytest
 
+from e2e.utils.constants import TO_ROOT
 from e2e.utils.config import metadata
 from e2e.utils.utils import rand_name
 from e2e.conftest import region
@@ -21,7 +22,6 @@ from e2e.test_methods import vanilla
 from e2e.test_methods.vanilla import sagemaker_execution_role, s3_bucket_with_data
 
 TEST_SUITE_NAME = "tf-vanilla"
-TO_ROOT = "../../"
 TF_FOLDER = TO_ROOT + "deployments/vanilla/terraform/"
 
 

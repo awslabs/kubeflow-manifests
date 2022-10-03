@@ -5,7 +5,7 @@ import json
 import pytest
 
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE
+from e2e.utils.constants import DEFAULT_USER_NAMESPACE, TO_ROOT, CUSTOM_RESOURCE_TEMPLATES_FOLDER, DISABLE_PIPELINE_CACHING_PATCH_FILE, KATIB_EXPERIMENT_FILE, PIPELINE_XG_BOOST, ALTERNATE_MLMDB_NAME
 from e2e.utils.utils import (
     wait_for,
     rand_name,
@@ -33,14 +33,6 @@ from e2e.utils.custom_resources import (
 
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
-
-TO_ROOT = "../../"
-CUSTOM_RESOURCE_TEMPLATES_FOLDER = TO_ROOT + "tests/e2e/resources/custom-resource-templates/"
-DISABLE_PIPELINE_CACHING_PATCH_FILE = CUSTOM_RESOURCE_TEMPLATES_FOLDER + "patch-disable-pipeline-caching.yaml"
-
-KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
-PIPELINE_NAME = "[Demo] XGBoost - Iterative model training"
-MLMDB_NAME = "metadata_db"
 
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():
@@ -143,7 +135,7 @@ def test_kfp_experiment(kfp_client, db_username, db_password, rds_endpoint, user
 
     mysql_client.close()
 
-def test_run_pipeline(kfp_client, s3_bucket_name, db_username, db_password, rds_endpoint, region, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_NAME):
+def test_run_pipeline(kfp_client, s3_bucket_name, db_username, db_password, rds_endpoint, region, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_XG_BOOST):
     s3_client = get_s3_client(region)
 
     experiment_name = rand_name("experiment-")

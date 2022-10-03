@@ -3,7 +3,7 @@ import subprocess
 import os
 import json
 
-from e2e.utils.constants import DEFAULT_USER_NAMESPACE
+from e2e.utils.constants import DEFAULT_USER_NAMESPACE, TO_ROOT, CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE, PIPELINE_DATA_PASSING, PIPELINE_SAGEMAKER_TRAINING, NOTEBOOK_IMAGE_TF_CPU
 
 from e2e.utils.utils import (
     wait_for,
@@ -23,21 +23,10 @@ from kubernetes.client.exceptions import ApiException as K8sApiException
 from e2e.utils.aws.iam import IAMRole
 from e2e.utils.s3_for_training.data_bucket import S3BucketWithTrainingData
 
-TO_ROOT = "../../"
-CUSTOM_RESOURCE_TEMPLATES_FOLDER = TO_ROOT + "tests/e2e/resources/custom-resource-templates"
-KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
-
-PIPELINE_NAME_KFP = "[Tutorial] SageMaker Training"
-PIPELINE_NAME = "[Tutorial] Data passing in python components"
-
-NOTEBOOK_IMAGES = [
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8",
-]
-
 TEST_ACK_CRDS_PARAMS = [
     (
         "ack",
-        NOTEBOOK_IMAGES[0],
+        NOTEBOOK_IMAGE_TF_CPU,
         "verify_ack_integration.ipynb",
         "No resources found in kubeflow-user-example-com namespace",
     ),
@@ -120,7 +109,7 @@ def test_kfp_experiment(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE):
     except KFPApiException as e:
         assert "Not Found" == e.reason
 
-def test_run_pipeline(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_NAME):
+def test_run_pipeline(kfp_client, user_namespace=DEFAULT_USER_NAMESPACE, pipeline_name=PIPELINE_DATA_PASSING):
     experiment_name = rand_name("experiment-")
     experiment_description = rand_name("description-")
     experiment = kfp_client.create_experiment(
@@ -225,7 +214,7 @@ def test_run_kfp_sagemaker_pipeline(
         namespace=user_namespace,
     )
 
-    pipeline_id = kfp_client.get_pipeline_id(PIPELINE_NAME_KFP)
+    pipeline_id = kfp_client.get_pipeline_id(PIPELINE_SAGEMAKER_TRAINING)
 
     params = {
         "sagemaker_role_arn": sagemaker_execution_role_arn,

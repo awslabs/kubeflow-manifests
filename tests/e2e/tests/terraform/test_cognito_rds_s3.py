@@ -1,5 +1,6 @@
 import pytest
 
+from e2e.utils.constants import TO_ROOT, ALTERNATE_MLMDB_NAME
 from e2e.utils.config import metadata
 from e2e.utils.utils import rand_name
 from e2e.conftest import region, get_accesskey, get_secretkey, get_root_domain_name
@@ -8,7 +9,6 @@ from e2e.utils.terraform_utils import terraform_installation, get_stack_output
 from e2e.test_methods import cognito, rds_s3
 
 TEST_SUITE_NAME = "tf-cgo-rds-s3"
-TO_ROOT = "../../"
 TF_FOLDER = TO_ROOT + "deployments/cognito-rds-s3/terraform/"
 
 
@@ -27,7 +27,7 @@ def installation(region, metadata, request):
         "db_password": db_password,
         "minio_aws_access_key_id": get_accesskey(request),
         "minio_aws_secret_access_key": get_secretkey(request),
-        "mlmdb_name": rds_s3.MLMDB_NAME,
+        "mlmdb_name": ALTERNATE_MLMDB_NAME,
         "publicly_accessible": "true",
         "deletion_protection": "false",
         "secret_recovery_window_in_days": "0",
