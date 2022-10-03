@@ -95,8 +95,8 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 @pytest.fixture(scope="class")
 def sagemaker_execution_role(region, metadata, request):
     sagemaker_execution_role_name = "role-" + RANDOM_PREFIX
-    managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
-    role = IAMRole(name=sagemaker_execution_role_name, region=region, policies=managed_policies)
+    managed_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess", "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"]
+    role = IAMRole(name=sagemaker_execution_role_name, region=region, policy_arns=managed_policies)
     metadata_key = "sagemaker_execution_role"
 
     resource_details = {}
