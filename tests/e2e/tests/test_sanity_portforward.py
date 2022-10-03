@@ -91,26 +91,45 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 
     return wait_for(callback, timeout=600)
 
-def create_execution_role(
-    role_name, region,
-):
 
-    trust_policy = {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {"Service": "sagemaker.amazonaws.com"},
-                "Action": "sts:AssumeRole",
-            }
-        ],
-    }
+@pytest.fixture(scope="class")
+def sagemaker_execution_role(region, metadata, request):
+    sagemaker_execution_role_name = "role-" + RANDOM_PREFIX
+    managed_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess", "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"]
+    role = IAMRole(name=sagemaker_execution_role_name, region=region, policy_arns=managed_policies)
+    metadata_key = "sagemaker_execution_role"
 
-    managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
+    resource_details = {}
 
-    role = IAMRole(name=role_name, region=region, policies=managed_policies)
-    return role.create(
-        policy_document=json.dumps(trust_policy)
+    def on_create():
+        trust_policy = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {"Service": "sagemaker.amazonaws.com"},
+                    "Action": "sts:AssumeRole",
+                }
+            ],
+        }
+
+        sagemaker_execution_role_arn = role.create(
+            policy_document=json.dumps(trust_policy)
+        )
+
+        resource_details["name"] = sagemaker_execution_role_name
+        resource_details["arn"] = sagemaker_execution_role_arn
+
+    def on_delete():
+        role.delete()
+
+    return configure_resource_fixture(
+        metadata=metadata,
+        request=request,
+        resource_details=resource_details,
+        metadata_key=metadata_key,
+        on_create=on_create,
+        on_delete=on_delete,
     )
 
 @pytest.fixture(scope="class")
@@ -254,20 +273,19 @@ class TestSanity:
         assert expected_output in output or "training-job-" in output
     
     def test_run_kfp_sagemaker_pipeline(
-        self, region, metadata, s3_bucket_with_data, kfp_client,
+        self, region, metadata, s3_bucket_with_data, sagemaker_execution_role, kfp_client,
     ):
 
         experiment_name = "experiment-" + RANDOM_PREFIX
         experiment_description = "description-" + RANDOM_PREFIX
         sagemaker_execution_role_name = "role-" + RANDOM_PREFIX
         bucket_name = "s3-" + RANDOM_PREFIX
-        
         job_name = "kfp-run-" + RANDOM_PREFIX
 
-        sagemaker_execution_role_arn = create_execution_role(
-            sagemaker_execution_role_name, region
-        )
+        sagemaker_execution_role_details = metadata.get("sagemaker_execution_role")
+        sagemaker_execution_role_arn = sagemaker_execution_role_details["arn"]
 
+        
         experiment = kfp_client.create_experiment(
             experiment_name,
             description=experiment_description,
