@@ -47,7 +47,7 @@ def sagemaker_execution_role(region):
         ],
     }
 
-    managed_policies = ["AmazonS3FullAccess", "AmazonSageMakerFullAccess"]
+    managed_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess", "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"]
 
     role = IAMRole(name=role_name, region=region, policies=managed_policies)
     role.create(
