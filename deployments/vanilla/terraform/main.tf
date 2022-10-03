@@ -121,7 +121,7 @@ module "eks_blueprints" {
 }
 
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.9.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.12.0"
 
   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
@@ -140,6 +140,11 @@ module "eks_blueprints_kubernetes_addons" {
   enable_aws_efs_csi_driver = true
   enable_aws_fsx_csi_driver = true
 
+  nvidia_device_plugin_helm_config = {
+    namespace = "kube-system"
+  }
+  enable_nvidia_device_plugin = local.using_gpu
+
   tags = local.tags
 
 }
@@ -156,13 +161,6 @@ module "eks_blueprints_outputs" {
   tags = local.tags
 }
 
-module "nvidia_device_plugin" {
-  count = local.using_gpu ? 1 : 0
-  source = "../../../iaac/terraform/common/nvidia-device-plugin"
-
-  addon_context = module.eks_blueprints_outputs.addon_context
-}
-
 module "kubeflow_components" {
   source = "./vanilla-components"
 
@@ -170,7 +168,6 @@ module "kubeflow_components" {
   addon_context = module.eks_blueprints_outputs.addon_context
   enable_aws_telemetry = var.enable_aws_telemetry
 
-  depends_on = [module.nvidia_device_plugin]
 }
 
 #---------------------------------------------------------------

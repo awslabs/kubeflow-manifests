@@ -148,6 +148,11 @@ module "eks_blueprints_kubernetes_addons" {
   enable_aws_efs_csi_driver = true
   enable_aws_fsx_csi_driver = true
 
+  nvidia_device_plugin_helm_config = {
+    namespace = "kube-system"
+  }
+  enable_nvidia_device_plugin = local.using_gpu
+
   secrets_store_csi_driver_helm_config = {
     namespace   = "kube-system"
     set = [
@@ -185,13 +190,6 @@ module "eks_blueprints_outputs" {
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
   tags = local.tags
-}
-
-module "nvidia_device_plugin" {
-  count = local.using_gpu ? 1 : 0
-  source = "../../../iaac/terraform/common/nvidia-device-plugin"
-
-  addon_context = module.eks_blueprints_outputs.addon_context
 }
 
 module "kubeflow_components" {
@@ -242,7 +240,6 @@ module "kubeflow_components" {
     aws.virginia = aws.virginia
   }
 
-  depends_on = [module.nvidia_device_plugin]
 }
 
 #---------------------------------------------------------------
