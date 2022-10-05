@@ -15,6 +15,18 @@ variable "eks_version" {
   default     = "1.22"
 }
 
+variable "node_instance_type" {
+  description = "The instance type of an EKS node"
+  type        = string
+  default     = "m5.xlarge"
+}
+
+variable "node_instance_type_gpu" {
+  description = "The instance type of a gpu EKS node. Will result in the creation of a separate gpu node group when not null"
+  type        = string
+  default     = null
+}
+
 variable "use_rds" {
   type = bool
   default = true
