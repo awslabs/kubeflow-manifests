@@ -2,285 +2,389 @@
 #cert-manager
 cert-manager: 
   installation_options:  
-    kustomize: 
-      - "../../upstream/common/cert-manager/cert-manager/base"
-    helm: "../../charts/common/cert-manager"
+    kustomize:
+      paths:  
+        - ../../upstream/common/cert-manager/cert-manager/base
+    helm: 
+      repo: remote
   validations:
-    namespace: 'cert-manager'
-    identifier: 'app.kubernetes.io/instance'
-    common_label: 'cert-manager'
+    pods: 
+      namespace: cert-manager
+      labels:
+        - key: app.kubernetes.io/instance
+          value: cert-manager
 
 #kubeflow-roles
 kubeflow-roles:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/kubeflow-roles/base"
-    helm: "../../charts/common/kubeflow-roles"
+    kustomize:
+      paths: 
+        - ../../upstream/common/kubeflow-roles/base
+    helm: 
+      paths: ../../charts/common/kubeflow-roles
   
 #level 2
 #kubeflow-issuer
 kubeflow-issuer:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/cert-manager/kubeflow-issuer/base"
-    helm: "../../charts/common/kubeflow-issuer"
+    kustomize:
+      paths:
+        - ../../upstream/common/cert-manager/kubeflow-issuer/base
+    helm: 
+      paths: ../../charts/common/kubeflow-issuer
 
 #istio
 istio-1-14:
   installation_options:
-    kustomize: 
-        - "../../upstream/common/istio-1-14/istio-crds/base"
-        - "../../upstream/common/istio-1-14/istio-namespace/base"
-        - "../../upstream/common/istio-1-14/istio-install/base"
-    helm: "../../charts/common/istio-1-14"
+    kustomize:
+      paths: 
+        - ../../upstream/common/istio-1-14/istio-crds/base
+        - ../../upstream/common/istio-1-14/istio-namespace/base
+        - ../../upstream/common/istio-1-14/istio-install/base
+    helm: 
+      paths: ../../charts/common/istio-1-14
   validations: 
-    namespace: 'istio-system'
-    identifier: 'app'
-    common_label: 'istio-ingressgateway, istiod'
+    pods: 
+      namespace: istio-system
+      labels:
+        - key: app
+          value: istio-ingressgateway, istiod
 
 #dex
 dex:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/dex/overlays/istio"
-    helm: "../../charts/common/dex"
+    kustomize:
+      paths: 
+        - ../../upstream/common/dex/overlays/istio
+    helm: 
+      paths: ../../charts/common/dex
   validations:
-    namespace: 'auth'
-    identifier: 'app'
-    common_label: 'dex'
+    pods:  
+      namespace: auth
+      labels:
+        - key: app
+          value: dex
 
 #kubeflow-namespace
 kubeflow-namespace:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/kubeflow-namespace/base"
-    helm: "../../charts/common/kubeflow-namespace"
+    kustomize:
+      paths: 
+        - ../../upstream/common/kubeflow-namespace/base
+    helm: 
+      paths: ../../charts/common/kubeflow-namespace
 
 #cluster-local-gateway
 cluster-local-gateway:
   installation_options:
     kustomize:
-      - "../../upstream/common/istio-1-14/cluster-local-gateway/base"
-    helm: "../../charts/common/cluster-local-gateway"
-  validations: 
-    namespace: 'istio-system'
-    identifier: 'app'
-    common_label: 'cluster-local-gateway'
+      paths:
+        - ../../upstream/common/istio-1-14/cluster-local-gateway/base
+    helm: 
+      paths: ../../charts/common/cluster-local-gateway
+  validations:
+    pods: 
+      namespace: istio-system
+      labels: 
+        - key: app
+          value: cluster-local-gateway
 
-#knative
+#knative-serving
 knative-serving:
   installation_options:
     kustomize: 
-      - "../../upstream/common/knative/knative-serving/overlays/gateways"
-    helm: "../../charts/common/knative-serving"
-  crd_required: 'images.caching.internal.knative.dev'
-  validations: 
-    namespace: 'knative-serving'
-    identifier: 'app.kubernetes.io/name'
-    common_label: 'knative-serving'
+      paths:
+        - ../../upstream/common/knative/knative-serving/overlays/gateways
+    helm: 
+      paths: ../../charts/common/knative-serving
+  validations:
+    crds: 
+      - images.caching.internal.knative.dev
+    pods:
+      namespace: knative-serving
+      labels: 
+        - key: app.kubernetes.io/name
+          value: knative-serving
 
+#knative-eventing
 knative-eventing:
   installation_options:
     kustomize:
-      - "../../upstream/common/knative/knative-eventing/base"
-    helm: "../../charts/common/knative-eventing"
+      paths:
+        - ../../upstream/common/knative/knative-eventing/base
+    helm: 
+      paths: ../../charts/common/knative-eventing
   validations:
-    namespace: 'knative-eventing'
-    identifier: 'app.kubernetes.io/name'
-    common_label: 'knative-eventing'
+    pods: 
+      namespace: knative-eventing
+      labels:
+        - key: app.kubernetes.io/name
+          value: knative-eventing
 
 #level 4
 #oidc-authservice
 oidc-authservice:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/oidc-authservice/base"
-    helm: "../../charts/common/oidc-authservice"
+    kustomize:
+      paths: 
+        - ../../upstream/common/oidc-authservice/base
+    helm: 
+      paths: ../../charts/common/oidc-authservice
   validations:
-    namespace: 'istio-system'
-    identifier: 'app'
-    common_label: 'authservice'
+    pods: 
+      namespace: istio-system
+      labels:
+        - key: app
+          value: authservice
 
 #kubeflow-istio-resources
 kubeflow-istio-resources:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/istio-1-14/kubeflow-istio-resources/base"
-    helm: "../../charts/common/kubeflow-istio-resources"
+    kustomize:
+      paths: 
+        - ../../upstream/common/istio-1-14/kubeflow-istio-resources/base
+    helm: 
+      paths: ../../charts/common/kubeflow-istio-resources
 
 #kserve
 kserve:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/apps/kserve"
-    helm: "../../charts/common/kserve"
-  crd_required: 'clusterservingruntimes.serving.kserve.io'
+    kustomize:
+      paths: 
+        - ../../awsconfigs/apps/kserve
+    helm: 
+      paths: ../../charts/common/kserve
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'kserve'
+    crds: 
+      - clusterservingruntimes.serving.kserve.io
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: kserve
 
 #models-web-app
 models-web-app:
   installation_options:
     kustomize:
-      - "../../upstream/contrib/kserve/models-web-app/overlays/kubeflow"
-    helm: "../../charts/apps/models-web-app"
+      paths:
+        - ../../upstream/contrib/kserve/models-web-app/overlays/kubeflow
+    helm: 
+      paths: ../../charts/apps/models-web-app
   validations:
-    namespace: 'kubeflow'
-    identifier: 'kustomize.component'
-    common_label: 'kserve-models-web-app'
+    pods:  
+      namespace: kubeflow
+      labels:
+        - key: kustomize.component
+          value: kserve-models-web-app
 
 #level 5
 #central-dashboard
 central-dashboard:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/apps/centraldashboard"
-    helm: "../../charts/apps/central-dashboard"
+    kustomize:
+      paths: 
+        - ../../awsconfigs/apps/centraldashboard
+    helm: 
+      paths: ../../charts/apps/central-dashboard
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'centraldashboard'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: centraldashboard
 
 #pipelines
 kubeflow-pipelines:
   installation_options:
     kustomize: 
-      - "../../awsconfigs/apps/pipeline"
-    helm: "../../charts/apps/kubeflow-pipelines/rds-s3"
-  crd_required: 'compositecontrollers.metacontroller.k8s.io'
+      paths:
+        - ../../awsconfigs/apps/pipeline
+    helm:
+      paths: ../../charts/apps/kubeflow-pipelines/rds-s3
   validations:
-    namespace: 'kubeflow'
-    identifier: 'application-crd-id'
-    common_label: 'kubeflow-pipelines'
+    crds: 
+      - compositecontrollers.metacontroller.k8s.io
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: application-crd-id
+          value: kubeflow-pipelines
 
 #notebook
 #admission-webhook
 admission-webhook:
   installation_options:
     kustomize:
-      - "../../upstream/apps/admission-webhook/upstream/overlays/cert-manager"
-    helm: "../../charts/apps/admission-webhook"
+      paths:
+        - ../../upstream/apps/admission-webhook/upstream/overlays/cert-manager
+    helm: 
+      paths: ../../charts/apps/admission-webhook
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'poddefaults'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: poddefaults
 
 #jupyter-web-app
 jupyter-web-app:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/apps/jupyter-web-app"
-    helm: "../../charts/apps/jupyter-web-app"
+    kustomize:
+      paths: 
+        - ../../awsconfigs/apps/jupyter-web-app
+    helm: 
+      paths: ../../charts/apps/jupyter-web-app
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'jupyter-web-app'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: jupyter-web-app
 
 #notebook-controller
 notebook-controller:
   installation_options:
-    kustomize: 
-      - "../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow"
-    helm: "../../charts/apps/notebook-controller"
+    kustomize:
+      paths: 
+        - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+    helm: 
+      paths: ../../charts/apps/notebook-controller
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'notebook-controller'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: notebook-controller
 
 #volume-web-app
 volumes-web-app:
   installation_options:
-    kustomize: 
-      - "../../upstream/apps/volumes-web-app/upstream/overlays/istio"
-    helm: "../../charts/apps/volumes-web-app"
+    kustomize:
+      paths: 
+        - ../../upstream/apps/volumes-web-app/upstream/overlays/istio
+    helm: 
+      paths: ../../charts/apps/volumes-web-app
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'volumes-web-app'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: volumes-web-app
 
 #training-operator
 training-operator:
   installation_options:
-    kustomize: 
-      - "../../upstream/apps/training-operator/upstream/overlays/kubeflow"
-    helm: "../../charts/apps/training-operator"
+    kustomize:
+      paths: 
+        - ../../upstream/apps/training-operator/upstream/overlays/kubeflow
+    helm: 
+      paths: ../../charts/apps/training-operator
   validations:
-    namespace: 'kubeflow'
-    identifier: 'control-plane'
-    common_label: 'kubeflow-training-operator'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: control-plane
+          value: kubeflow-training-operator
 
 #katib
 katib:
   installation_options:
     kustomize: 
-      - "../../awsconfigs/apps/katib-external-db-with-kubeflow"
-    helm: "../../charts/apps/katib/katib-external-db-with-kubeflow"
+      paths:
+        - ../../awsconfigs/apps/katib-external-db-with-kubeflow
+    helm:
+      paths: ../../charts/apps/katib/katib-external-db-with-kubeflow
   validations:
-    namespace: 'kubeflow'
-    identifier: 'katib.kubeflow.org/component'
-    common_label: 'controller, db-manager, ui'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: katib.kubeflow.org/component
+          value: controller, db-manager, ui
 
 #tensorboard
 tensorboard-controller:
   installation_options:
     kustomize: 
-      - "../../upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow"
-    helm: "../../charts/apps/tensorboard-controller"
+      paths:
+        - ../../upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+    helm:
+      paths: ../../charts/apps/tensorboard-controller
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'tensorboard-controller'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: tensorboard-controller
 
+#tensorboards-web-app
 tensorboards-web-app:
   installation_options:
-    kustomize:  
-      - "../../upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio"
-    helm: "../../charts/apps/tensorboards-web-app"
+    kustomize:
+      paths:  
+        - ../../upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+    helm: 
+      paths: ../../charts/apps/tensorboards-web-app
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'tensorboards-web-app'
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: tensorboards-web-app
 
 #profiles and kfam
 profiles-and-kfam:
   installation_options:
-    kustomize: 
-      - "../../upstream/apps/profiles/upstream/overlays/kubeflow"
-    helm: "../../charts/apps/profiles-and-kfam"
-  validations:
-    namespace: 'kubeflow'
-    identifier: 'kustomize.component'
-    common_label: 'profiles'
+    kustomize:
+      paths: 
+        - ../../upstream/apps/profiles/upstream/overlays/kubeflow
+    helm: 
+      paths: ../../charts/apps/profiles-and-kfam
+  validations: 
+    pods: 
+      namespace: kubeflow
+      labels:
+        - key: kustomize.component
+          value: profiles
 
 #user namespace
 user-namespace:
   installation_options:
-    kustomize: 
-      - "../../upstream/common/user-namespace/base"
-    helm: "../../charts/common/user-namespace"
+    kustomize:
+      paths: 
+        - ../../upstream/common/user-namespace/base
+    helm: 
+      paths: ../../charts/common/user-namespace
 
 #AWS Secrets Manager
 aws-secrets-manager:
   installation_options:
     kustomize: 
-      - "../../awsconfigs/common/aws-secrets-manager"
-    helm: "../../charts/common/aws-secrets-manager/rds-s3"
+      paths:
+        - ../../awsconfigs/common/aws-secrets-manager
+    helm:
+      paths: ../../charts/common/aws-secrets-manager/rds-s3
   validations:
-    namespace: 'kubeflow'
-    identifier: 'app'
-    common_label: 'aws-secrets-sync'
+    pods:
+      namespace: kubeflow
+      labels:
+        - key: app
+          value: aws-secrets-sync
+
 
 ack-sagemaker-controller:
   installation_options:
     kustomize: 
-      - "../../awsconfigs/common/ack-sagemaker-controller"
-    helm: "../../charts/common/ack-controller/sagemaker-chart"
+      paths:
+        - ../../awsconfigs/common/ack-sagemaker-controller
+    helm: 
+      paths: ../../charts/common/ack-controller/sagemaker-chart
 
 #AWS Telemetry (Optional)
 aws-telemetry:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/common/aws-telemetry"
-    helm: "../../charts/common/aws-telemetry"
+    kustomize:
+      paths: 
+        - ../../awsconfigs/common/aws-telemetry
+    helm: 
+      paths: ../../charts/common/aws-telemetry
