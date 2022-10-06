@@ -9,7 +9,7 @@ from e2e.utils.constants import (
     TO_ROOT,
     CUSTOM_RESOURCE_TEMPLATES_FOLDER,
     DISABLE_PIPELINE_CACHING_PATCH_FILE,
-    KATIB_EXPERIMENT_FILE,
+    KATIB_EXPERIMENT_RANDOM_FILE,
     PIPELINE_XG_BOOST,
     ALTERNATE_MLMDB_NAME,
 )
@@ -231,7 +231,7 @@ def test_katib_experiment(
     db_password,
     rds_endpoint,
     custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER,
-    katib_experiment_file=KATIB_EXPERIMENT_FILE,
+    katib_experiment_file=KATIB_EXPERIMENT_RANDOM_FILE,
     user_namespace=DEFAULT_USER_NAMESPACE,
 ):
     filepath = os.path.abspath(

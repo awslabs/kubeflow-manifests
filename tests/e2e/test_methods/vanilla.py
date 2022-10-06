@@ -7,7 +7,7 @@ from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
     TO_ROOT,
     CUSTOM_RESOURCE_TEMPLATES_FOLDER,
-    KATIB_EXPERIMENT_FILE,
+    KATIB_EXPERIMENT_RANDOM_FILE,
     PIPELINE_DATA_PASSING,
     PIPELINE_SAGEMAKER_TRAINING,
     NOTEBOOK_IMAGE_TF_CPU,
@@ -61,7 +61,7 @@ def sagemaker_execution_role(region):
         "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
     ]
 
-    role = IAMRole(name=role_name, region=region, policies=managed_policies)
+    role = IAMRole(name=role_name, region=region, policy_arns=managed_policies)
     role.create(policy_document=json.dumps(trust_policy))
 
     yield role
@@ -153,7 +153,7 @@ def test_katib_experiment(
     cluster,
     region,
     custom_resource_templates_folder=CUSTOM_RESOURCE_TEMPLATES_FOLDER,
-    katib_experiment_file=KATIB_EXPERIMENT_FILE,
+    katib_experiment_file=KATIB_EXPERIMENT_RANDOM_FILE,
     user_namespace=DEFAULT_USER_NAMESPACE,
 ):
     filepath = os.path.abspath(

@@ -41,10 +41,10 @@ def terraform_installation(
         os.chdir(initial_dir)
         os.chdir(tf_folder)
         retcode = subprocess.call("make delete".split())
+        os.chdir(initial_dir)
         if retcode == 0:
             # keep tfvars file to retry delete manually
             delete_test_tfvars_file(tf_folder)
-        os.chdir(initial_dir)
         assert retcode == 0
 
     return configure_resource_fixture(
@@ -66,3 +66,4 @@ def get_stack_output(output_name, tf_folder):
     os.chdir(initial_dir)
 
     return output
+

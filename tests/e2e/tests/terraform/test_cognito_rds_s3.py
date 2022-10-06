@@ -44,7 +44,7 @@ def installation(region, metadata, request):
 
 class TestCognitoRDSS3Terraform:
     @pytest.fixture(scope="class")
-    def setup(self, installation):
+    def setup(self, metadata, installation):
         rds_s3.disable_kfp_caching(
             installation["cluster_name"], installation["cluster_region"]
         )
@@ -53,26 +53,26 @@ class TestCognitoRDSS3Terraform:
         print(metadata.params)
         print("Created metadata file for TestCognitoRDSS3Terraform", metadata_file)
 
-    def test_url_is_up(self, installation):
+    def test_url_is_up(self, setup, installation):
         subdomain_name = installation["aws_route53_subdomain_zone_name"]
 
         cognito.test_url_is_up(subdomain_name)
 
-    def test_verify_kubeflow_db(self, installation):
+    def test_verify_kubeflow_db(self, setup, installation):
         db_username = installation["db_username"]
         db_password = installation["db_password"]
         rds_endpoint = get_stack_output("rds_endpoint", TF_FOLDER)
 
         rds_s3.test_verify_kubeflow_db(db_username, db_password, rds_endpoint)
 
-    def test_verify_mlpipeline_db(self, installation):
+    def test_verify_mlpipeline_db(self, setup, installation):
         db_username = installation["db_username"]
         db_password = installation["db_password"]
         rds_endpoint = get_stack_output("rds_endpoint", TF_FOLDER)
 
         rds_s3.test_verify_mlpipeline_db(db_username, db_password, rds_endpoint)
 
-    def test_verify_mlmdb(self, installation):
+    def test_verify_mlmdb(self, setup, installation):
         db_username = installation["db_username"]
         db_password = installation["db_password"]
         rds_endpoint = get_stack_output("rds_endpoint", TF_FOLDER)
@@ -80,13 +80,13 @@ class TestCognitoRDSS3Terraform:
 
         rds_s3.test_verify_mlmdb(db_username, db_password, rds_endpoint, mlmdb_name)
 
-    def test_s3_bucket_is_being_used_as_metadata_store(self, installation):
+    def test_s3_bucket_is_being_used_as_metadata_store(self, setup, installation):
         region = installation["cluster_region"]
         s3_bucket_name = get_stack_output("s3_bucket_name", TF_FOLDER)
 
         rds_s3.test_s3_bucket_is_being_used_as_metadata_store(s3_bucket_name, region)
 
-    def test_katib_experiment(self, installation):
+    def test_katib_experiment(self, setup, installation):
         db_username = installation["db_username"]
         db_password = installation["db_password"]
         rds_endpoint = get_stack_output("rds_endpoint", TF_FOLDER)

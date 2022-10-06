@@ -33,12 +33,12 @@ def installation(region, metadata, request):
 
 class TestCognitoTerraform:
     @pytest.fixture(scope="class")
-    def setup(self, installation):
+    def setup(self, metadata, installation):
         metadata_file = metadata.to_file()
         print(metadata.params)
         print("Created metadata file for TestCognitoTerraform", metadata_file)
 
-    def test_url_is_up(self, installation):
+    def test_url_is_up(self, setup, installation):
         subdomain_name = installation["aws_route53_subdomain_zone_name"]
 
         cognito.test_url_is_up(subdomain_name)

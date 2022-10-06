@@ -41,18 +41,18 @@ def installation(region, metadata, request):
 
 class TestVanillaTerraform:
     @pytest.fixture(scope="class")
-    def setup(self, installation):
+    def setup(self, metadata, installation):
         metadata_file = metadata.to_file()
         print(metadata.params)
         print("Created metadata file for TestVanillaTerraform", metadata_file)
 
-    def test_kfp_experiment(self, kfp_client):
+    def test_kfp_experiment(self, setup, kfp_client):
         vanilla.test_kfp_experiment(kfp_client)
 
-    def test_run_pipeline(self, kfp_client):
+    def test_run_pipeline(self, setup, kfp_client):
         vanilla.test_run_pipeline(kfp_client)
 
-    def test_katib_experiment(self, installation):
+    def test_katib_experiment(self, setup, installation):
         cluster = installation["cluster_name"]
         region = installation["cluster_region"]
 
@@ -64,6 +64,7 @@ class TestVanillaTerraform:
     )
     def test_ack_crds(
         self,
+        setup,
         region,
         metadata,
         notebook_server,
@@ -77,7 +78,7 @@ class TestVanillaTerraform:
         )
 
     def test_run_kfp_sagemaker_pipeline(
-        self, kfp_client, sagemaker_execution_role, s3_bucket_with_data
+        self, setup, kfp_client, sagemaker_execution_role, s3_bucket_with_data
     ):
         vanilla.test_run_kfp_sagemaker_pipeline(
             kfp_client, s3_bucket_with_data.name, sagemaker_execution_role.arn
