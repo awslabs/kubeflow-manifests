@@ -212,6 +212,7 @@ def test_run_pipeline(
         database="mlpipeline",
     )
 
+    # todo: also add assert for other tables, https://github.com/awslabs/kubeflow-manifests/issues/327
     resp = mysql_utils.query(
         mysql_client, f"select * from run_details where UUID='{run.id}'"
     )
