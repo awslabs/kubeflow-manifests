@@ -141,6 +141,12 @@ def s3_bucket_with_data():
     yield
     bucket.delete()
 
+@pytest.fixture(scope="class")
+def clean_up_training_jobs_in_user_ns():
+    yield 
+
+    cmd = f"kubectl delete trainingjobs --all -n {DEFAULT_USER_NAMESPACE}".split()
+    subprocess.Popen(cmd)
 
 class TestSanity:
     @pytest.fixture(scope="class")
@@ -273,7 +279,7 @@ class TestSanity:
         assert expected_output in output or "training-job-" in output
     
     def test_run_kfp_sagemaker_pipeline(
-        self, region, metadata, s3_bucket_with_data, sagemaker_execution_role, kfp_client,
+        self, region, metadata, s3_bucket_with_data, sagemaker_execution_role, kfp_client, clean_up_training_jobs_in_user_ns
     ):
 
         experiment_name = "experiment-" + RANDOM_PREFIX
