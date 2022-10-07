@@ -185,7 +185,7 @@ def curl_file_to_path(file, path):
     subprocess.call(cmd)
 
 
-def apply_kustomize(path, crd_required=None):
+def apply_kustomize(path, crds=None):
     """
     Equivalent to:
 
@@ -198,9 +198,10 @@ def apply_kustomize(path, crd_required=None):
         assert build_retcode == 0
         apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
         # to deal with runtime crds
-        if apply_retcode == 1 and crd_required is not None:
-            retcode = kubectl_wait_crd(crd=crd_required)
-            assert retcode == 0
+        if crds is not None:
+            for crd in crds:
+                retcode = kubectl_wait_crd(crd)
+                assert retcode == 0
             apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
         assert apply_retcode == 0
 
@@ -215,7 +216,7 @@ def install_helm(chart_name, path, namespace=None):
 
     if namespace:
         install_retcode = subprocess.call(
-            f"helm upgrade --install {chart_name} {path} -n {namespace}".split()
+            f"helm upgrade --install {chart_name} {path} --namespace {namespace}".split()
         )
     else:
         install_retcode = subprocess.call(f"helm upgrade --install {chart_name} {path}".split())
@@ -262,7 +263,7 @@ def kubectl_wait_pods(
     else:
         cmd = f"kubectl wait --for=condition={condition} pod -l '{identifier} in ({pods})' --timeout={timeout}s"
     print(f"running command: {cmd}")
-    return os.system(cmd)
+    assert os.system(cmd) == 0
 
 
 def kubectl_wait_crd(crd, timeout=60, condition="established"):
@@ -378,3 +379,15 @@ def find_and_replace_in_file(path, old_val, new_val):
     filedata = filedata.replace(old_val, new_val)
     with open(path, 'w') as file:
         file.write(filedata)
+
+def check_helm_chart_exists(chart_name, namespace):
+    if namespace:
+        retcode = subprocess.call(
+            f"helm status {chart_name} -n {namespace}".split()
+        )
+    else:
+        retcode = subprocess.call(f"helm status {chart_name}".split())
+
+    if retcode == 0:
+        return True
+    return False

@@ -301,7 +301,7 @@ For example, use the following command to retrieve the value of a Secret named `
 ```bash
 aws secretsmanager get-secret-value \
     --region $CLUSTER_REGION \
-    --secret-id rds-secret \
+    --secret-id $RDS_SECRET_NAME \
     --query 'SecretString' \
     --output text
 ```
@@ -313,11 +313,14 @@ mysql> show databases;
 +--------------------+
 | Database           |
 +--------------------+
+| cachedb            |
 | information_schema |
 | kubeflow           |
+| metadb             |
 | mlpipeline         |
 | mysql              |
 | performance_schema |
+| sys                |
 +--------------------+
 ```
 
@@ -337,6 +340,7 @@ mysql> use mlpipeline; show tables;
 | resource_references  |
 | run_details          |
 | run_metrics          |
+| tasks                |
 +----------------------+
 ```
 
