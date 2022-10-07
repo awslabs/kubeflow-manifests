@@ -379,7 +379,7 @@ ack-sagemaker-controller:
       paths:
         - ../../awsconfigs/common/ack-sagemaker-controller
     helm: 
-      paths: ../../charts/common/ack-controller/sagemaker-chart
+      repo: remote
 
 #AWS Telemetry (Optional)
 aws-telemetry:

@@ -30,23 +30,14 @@ module "helm_addon" {
     {
       name = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
       value = module.irsa.irsa_iam_role_arn
-    }
+    },
+    {
+      name = "role.labels.rbac\\.authorization\\.kubeflow\\.org/aggregate-to-kubeflow-edit"
+      value = "true"
+    },
   ]
 
   addon_context     = var.addon_context
 
   depends_on = [module.irsa]
-}
-
-resource "kubernetes_labels" "cluster_role_rbac_auth" {
-  api_version = "rbac.authorization.k8s.io/v1"
-  kind        = "ClusterRole"
-  metadata {
-    name = "ack-sagemaker-controller"
-  }
-  labels = {
-    "rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit" = "true"
-  }
-
-  depends_on = [module.helm_addon]
 }

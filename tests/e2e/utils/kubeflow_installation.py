@@ -7,7 +7,6 @@ from e2e.utils.utils import (
     install_helm,
     exec_shell,
     get_variable_from_params,
-    find_and_replace_in_file,
 )
 import subprocess
 import os
@@ -195,7 +194,7 @@ def install_alb_controller(cluster_name):
 
 def install_ack_controller():
     SERVICE = "sagemaker"
-    RELEASE_VERSION = "v0.4.4"
+    RELEASE_VERSION = "v0.4.5"
     CHART_EXPORT_PATH = "../../charts/common/ack-controller"
     CHART_REF = f"{SERVICE}-chart"
     CHART_REPO = f"public.ecr.aws/aws-controllers-k8s/{CHART_REF}"
@@ -206,7 +205,6 @@ def install_ack_controller():
         PARAMS_PATH, "ACK_SAGEMAKER_OIDC_ROLE"
     )
     ACK_AWS_REGION = get_variable_from_params(PARAMS_PATH, "ACK_AWS_REGION")
-    LABEL_STRING = 'rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"'
 
     exec_shell(f"mkdir -p {CHART_EXPORT_PATH}")
     exec_shell(
@@ -224,10 +222,9 @@ def install_ack_controller():
         f'yq e \'.serviceAccount.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
         + f"-i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml"
     )
-    find_and_replace_in_file(
-        f"{CHART_EXPORT_PATH}/{SERVICE}-chart/templates/cluster-role-controller.yaml",
-        "metadata:",
-        f"metadata:\n  labels:\n    {LABEL_STRING}",
+    exec_shell(
+        f'yq e \'.role.labels."rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit"="true"\' '
+        + f"-i {CHART_EXPORT_PATH}/{SERVICE}-chart/values.yaml"
     )
     exec_shell(
         f"helm upgrade --install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "

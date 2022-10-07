@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
+    controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
   name: apps.sagemaker.services.k8s.aws
 spec:
@@ -51,8 +50,13 @@ spec:
                 description: The domain ID.
                 type: string
               resourceSpec:
-                description: The instance type and the Amazon Resource Name (ARN)
-                  of the SageMaker image created on the instance.
+                description: "The instance type and the Amazon Resource Name (ARN)
+                  of the SageMaker image created on the instance. \n The value of
+                  InstanceType passed as part of the ResourceSpec in the CreateApp
+                  call overrides the value passed as part of the ResourceSpec configured
+                  for the user profile or the domain. If InstanceType is not specified
+                  in any of those three ResourceSpec values for a KernelGateway app,
+                  the CreateApp call fails with a request validation error."
                 properties:
                   instanceType:
                     type: string
@@ -168,9 +172,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
