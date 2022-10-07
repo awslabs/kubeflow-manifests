@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeflow-pipelines-profile-controller
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: profile-controller
+        env:
+        - name: MINIO_SERVICE_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: minioServiceRegion
