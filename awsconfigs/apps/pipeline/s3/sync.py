@@ -27,7 +27,7 @@ def main():
 def get_settings_from_env(controller_port=None,
                           visualization_server_image=None, frontend_image=None,
                           visualization_server_tag=None, frontend_tag=None, disable_istio_sidecar=None,
-                          minio_access_key=None, minio_secret_key=None, kfp_default_pipeline_root=None):
+                          minio_access_key=None, minio_secret_key=None, minio_service_region=None, kfp_default_pipeline_root=None):
     """
     Returns a dict of settings from environment variables relevant to the controller
 
@@ -82,6 +82,10 @@ def get_settings_from_env(controller_port=None,
         minio_secret_key or \
         base64.b64encode(bytes(os.environ.get("MINIO_SECRET_KEY"), 'utf-8')).decode('utf-8')
 
+    settings["minio_service_region"] = \
+        minio_service_region or \
+        os.environ.get("MINIO_SERVICE_REGION", "us-east-1")
+
 
     # KFP_DEFAULT_PIPELINE_ROOT is optional
     settings["kfp_default_pipeline_root"] = \
@@ -94,7 +98,7 @@ def get_settings_from_env(controller_port=None,
 def server_factory(visualization_server_image,
                    visualization_server_tag, frontend_image, frontend_tag,
                    disable_istio_sidecar, minio_access_key,
-                   minio_secret_key, kfp_default_pipeline_root=None,
+                   minio_secret_key, minio_service_region, kfp_default_pipeline_root=None,
                    url="", controller_port=8080):
     """
     Returns an HTTPServer populated with Handler with customized settings
@@ -323,8 +327,8 @@ def server_factory(visualization_server_image,
                                             "name": "AWS_ACCESS_KEY_ID",
                                             "valueFrom": {
                                                 "secretKeyRef": {
-                                                    "key": "AWS_ACCESS_KEY_ID",
-                                                    "name": "aws-secret"
+                                                    "key": "accesskey",
+                                                    "name": "mlpipeline-minio-artifact"
                                                 }
                                             }
                                         },
@@ -332,19 +336,14 @@ def server_factory(visualization_server_image,
                                             "name": "AWS_SECRET_ACCESS_KEY",
                                             "valueFrom": {
                                                 "secretKeyRef": {
-                                                    "key": "AWS_SECRET_ACCESS_KEY",
-                                                    "name": "aws-secret"
+                                                    "key": "secretkey",
+                                                    "name": "mlpipeline-minio-artifact"
                                                 }
                                             }
                                         },
                                         {
                                             "name": "AWS_REGION",
-                                            "valueFrom": {
-                                                "secretKeyRef": {
-                                                    "key": "AWS_REGION",
-                                                    "name": "aws-secret"
-                                                }
-                                            }
+                                            "value": f"{minio_service_region}"
                                         },
                                     ],
                                     "resources": {
