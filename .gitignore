@@ -8,3 +8,4 @@ upstream
 
 .terraform*
 terraform.tfstate*
+test-generated.auto.tfvars

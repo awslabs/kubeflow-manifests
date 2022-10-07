@@ -118,5 +118,5 @@ class IAMRole:
             self.iam_client.delete_role(RoleName=self.name)
             logger.info(f"deleted iam role {self.arn}")
         except ClientError:
-            logger.exception(f"failed to delete iam policy {self.arn}")
+            logger.exception(f"failed to delete iam role {self.arn}")
             raise

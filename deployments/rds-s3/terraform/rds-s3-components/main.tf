@@ -42,7 +42,7 @@ resource "kubernetes_namespace" "kubeflow" {
 
 module "kubeflow_secrets_manager_irsa" {
   source            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.0"
-  kubernetes_namespace = "kubeflow"
+  kubernetes_namespace = kubernetes_namespace.kubeflow.metadata[0].name
   create_kubernetes_namespace = false
   create_kubernetes_service_account = true
   kubernetes_service_account        = "kubeflow-secrets-manager-sa"
@@ -69,7 +69,7 @@ module "rds" {
   security_group_id = var.security_group_id
   db_name = var.db_name
   db_username = var.db_username
-  db_password = coalesce(var.db_password, random_password.db_password[0].result)
+  db_password = coalesce(var.db_password, try(random_password.db_password[0].result, null))
   db_class = var.db_class
   db_allocated_storage = var.db_allocated_storage
   backup_retention_period = var.backup_retention_period
