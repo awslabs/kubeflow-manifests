@@ -373,8 +373,8 @@ aws-secrets-manager:
     pods:
       namespace: kubeflow
       labels:
-        key: app
-        value: aws-secrets-sync
+        - key: app
+          value: aws-secrets-sync
 
 ack-sagemaker-controller:
   installation_options:
