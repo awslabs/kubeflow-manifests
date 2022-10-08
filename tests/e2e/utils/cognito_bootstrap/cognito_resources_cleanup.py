@@ -66,7 +66,11 @@ def delete_cognito_dependency_resources(cfg: dict):
             )
             root_cert_arn = cfg["route53"]["rootDomain"].get("certARN", None)
             if root_cert_arn:
-                delete_cert(acm_certificate=AcmCertificate(arn=root_cert_arn, region=deployment_region))
+                delete_cert(
+                    acm_certificate=AcmCertificate(
+                        arn=root_cert_arn, region=deployment_region
+                    )
+                )
 
         subdomain_cert_deployment_region = subdomain_cert_n_virginia = None
         subdomain_cert_deployment_region_arn = cfg["route53"]["subDomain"].get(
@@ -103,10 +107,15 @@ def delete_cognito_dependency_resources(cfg: dict):
                 alb_sa = alb.get("serviceAccount", None)
                 if alb_sa:
                     cluster.delete_iam_service_account(
-                        alb_sa["name"], alb_sa["namespace"], cluster_name, deployment_region
+                        alb_sa["name"],
+                        alb_sa["namespace"],
+                        cluster_name,
+                        deployment_region,
                     )
                     alb_controller_policy_arn = alb_sa["policyArn"]
-                    delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
+                    delete_policy(
+                        arn=alb_controller_policy_arn, region=deployment_region
+                    )
 
         # delete subdomain certs
         if deployment_region != "us-east-1":

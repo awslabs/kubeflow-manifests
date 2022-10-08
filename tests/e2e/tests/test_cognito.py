@@ -16,6 +16,7 @@ from e2e.fixtures.cognito_dependencies import (
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/cognito.yaml"
 
+
 @pytest.fixture(scope="class")
 def installation_path():
     return INSTALLATION_PATH_FILE
@@ -40,7 +41,7 @@ class TestCognito:
         kubeflow_endpoint = "https://kubeflow." + subdomain_name
         print("kubeflow_endpoint:")
         print(kubeflow_endpoint)
-        #wait a bit till website is accessible
+        # wait a bit till website is accessible
         print("Wait for 60s for website to be available...")
         time.sleep(60)
         response = requests.get(kubeflow_endpoint)

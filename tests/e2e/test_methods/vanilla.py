@@ -44,6 +44,7 @@ TEST_KFP_SM_PARAMS = [
     DEFAULT_USER_NAMESPACE,
 ]
 
+
 @pytest.fixture(scope="class")
 def sagemaker_execution_role(region):
     role_name = rand_name("sm-exec-role-")
@@ -83,12 +84,14 @@ def s3_bucket_with_data():
 
     bucket.delete()
 
+
 @pytest.fixture(scope="function")
 def clean_up_training_jobs_in_user_ns(user_namespace):
-    yield 
+    yield
 
     cmd = f"kubectl delete trainingjobs --all -n {user_namespace}".split()
     subprocess.Popen(cmd)
+
 
 def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
     def callback():

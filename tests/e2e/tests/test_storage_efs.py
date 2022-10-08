@@ -31,7 +31,11 @@ from e2e.fixtures.clients import (
     password,
     patch_kfp_to_disable_cache,
 )
-from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
+from e2e.utils.custom_resources import (
+    get_pvc_status,
+    get_service_account,
+    get_pod_from_label,
+)
 
 from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 
@@ -92,14 +96,16 @@ class TestEFS_Static:
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "efs.csi.aws.com" in driver_list
 
-        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","efs-csi-controller")
+        name, status = get_pod_from_label(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app", "efs-csi-controller"
+        )
         assert "efs-csi-controller" in name
         assert status == "Running"
 
         sa_account = get_service_account(
             cluster, region, DEFAULT_SYSTEM_NAMESPACE, "efs-csi-controller-sa"
         )
-        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role"
 
         fs_id = create_efs_volume["file_system_id"]
         assert "fs-" in fs_id
@@ -144,10 +150,19 @@ class TestEFS_Static:
         print(f"read_pipeline run id is {read_run_id}")
         wait_for_kfp_run_succeeded_from_run_id(kfp_client, read_run_id)
 
-        write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
-        read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
+        write_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", write_run_id
+        )
+        read_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", read_run_id
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split()
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split()
+        )
+
 
 class TestEFS_Dynamic:
     @pytest.fixture(scope="class")
@@ -176,7 +191,9 @@ class TestEFS_Dynamic:
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "efs.csi.aws.com" in driver_list
 
-        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","efs-csi-controller")
+        name, status = get_pod_from_label(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app", "efs-csi-controller"
+        )
         assert "efs-csi-controller" in name
         assert status == "Running"
 
@@ -184,13 +201,13 @@ class TestEFS_Dynamic:
         sa_account = get_service_account(
             cluster, region, DEFAULT_SYSTEM_NAMESPACE, "efs-csi-controller-sa"
         )
-        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role"
 
         fs_id = dynamic_provisioning["file_system_id"]
         assert "fs-" in fs_id
 
-        # There are some differences in the static and dynamic volume names. 
-        # For dynamic provisioning the volume name is not the same as the claim_name unless I specify it in the spec file. 
+        # There are some differences in the static and dynamic volume names.
+        # For dynamic provisioning the volume name is not the same as the claim_name unless I specify it in the spec file.
         CLAIM_NAME = dynamic_provisioning["efs_claim_dyn"]
         _, claim_status = get_pvc_status(
             cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
@@ -235,7 +252,15 @@ class TestEFS_Dynamic:
         )
         assert claim_status == "Bound"
 
-        write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
-        read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
+        write_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", write_run_id
+        )
+        read_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", read_run_id
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split()
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split()
+        )

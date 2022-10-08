@@ -62,9 +62,15 @@ def verify_oidc_provider_prerequisite():
 def is_oidc_provider_present() -> bool:
     eks_client = get_eks_client(CLUSTER_REGION)
     try:
-        https_oidc_provider = eks_client.describe_cluster(
-            name=CLUSTER_NAME,
-        ).get('cluster').get('identity').get('oidc').get('issuer')
+        https_oidc_provider = (
+            eks_client.describe_cluster(
+                name=CLUSTER_NAME,
+            )
+            .get("cluster")
+            .get("identity")
+            .get("oidc")
+            .get("issuer")
+        )
         return True if "oidc" in https_oidc_provider else False
     except:
         print("returning False")
@@ -140,7 +146,9 @@ def create_fsx_iam_policy():
 
 
 def get_fsx_iam_policy_document():
-    FSx_POLICY_DOCUMENT = "../../deployments/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    FSx_POLICY_DOCUMENT = (
+        "../../deployments/add-ons/storage/fsx-for-lustre/fsx-csi-driver-policy.json"
+    )
     with open(FSx_POLICY_DOCUMENT, "r") as myfile:
         policy = myfile.read()
 

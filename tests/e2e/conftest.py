@@ -51,24 +51,26 @@ def pytest_addoption(parser):
     parser.addoption(
         "--installation_option",
         action="store",
-        help="helm or kustomize, default is set to kustomize"
+        help="helm or kustomize, default is set to kustomize",
     )
     parser.addoption(
         "--deployment_option",
         action="store",
-        help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla"
+        help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla",
     )
-
 
 
 def keep_successfully_created_resource(request):
     return request.config.getoption("--keepsuccess")
 
+
 def clean_up_eks_cluster(request):
     return request.config.getoption("--deletecluster")
 
+
 def load_metadata_file(request):
     return request.config.getoption("--metadata")
+
 
 def get_accesskey(request):
     access_key = request.config.getoption("--accesskey")
@@ -83,17 +85,20 @@ def get_secretkey(request):
         pytest.fail("--secretkey is required")
     return secret_key
 
+
 def get_installation_option(request):
     installation_option = request.config.getoption("--installation_option")
     if not installation_option:
         installation_option = "kustomize"
     return installation_option
 
+
 def get_deployment_option(request):
     deployment_option = request.config.getoption("--deployment_option")
     if not deployment_option:
         deployment_option = "vanilla"
     return deployment_option
+
 
 def get_root_domain_name(request):
     return request.config.getoption("--root-domain-name")
@@ -114,6 +119,7 @@ def region(metadata, request):
     metadata.insert("region", region)
     return region
 
+
 @pytest.fixture(scope="class")
 def installation_option(metadata, request):
     """
@@ -124,10 +130,11 @@ def installation_option(metadata, request):
 
     installation_option = request.config.getoption("--installation_option")
     if not installation_option:
-        installation_option = 'kustomize'
+        installation_option = "kustomize"
     metadata.insert("installation_option", installation_option)
-    
+
     return installation_option
+
 
 @pytest.fixture(scope="class")
 def deployment_option(metadata, request):
@@ -139,9 +146,9 @@ def deployment_option(metadata, request):
 
     deployment_option = request.config.getoption("--deployment_option")
     if not deployment_option:
-        deployment_option = 'vanilla'
+        deployment_option = "vanilla"
     metadata.insert("deployment_option", deployment_option)
-    
+
     return deployment_option
 
 

@@ -189,6 +189,7 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
     logger.info(f" {alb_dns} waiting for ALB status = {expected_status} ...")
 
     alb = ElasticLoadBalancingV2(dns=alb_dns, region=region)
+
     def callback():
         assert alb.describe()["State"]["Code"] == expected_status
 
@@ -197,7 +198,10 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
 
 def create_ingress():
     def callback():
-        apply_kustomize(path=common.LB_KUSTOMIZE_PATH, crd_required = "ingressclassparams.elbv2.k8s.aws")
+        apply_kustomize(
+            path=common.LB_KUSTOMIZE_PATH,
+            crd_required="ingressclassparams.elbv2.k8s.aws",
+        )
 
     wait_for(callback)
 

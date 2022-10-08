@@ -50,9 +50,11 @@ testdata = [
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 
+
 @pytest.fixture(scope="class")
 def installation_path():
     return INSTALLATION_PATH_FILE
+
 
 class TestNotebookImages:
     @pytest.fixture(scope="function")
@@ -66,7 +68,7 @@ class TestNotebookImages:
     )
     def test_notebook_container(
         self,
-        setup, 
+        setup,
         region,
         metadata,
         notebook_server,

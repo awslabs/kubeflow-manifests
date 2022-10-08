@@ -62,6 +62,7 @@ class Metadata:
     def log(self):
         print(json.dumps(self.params, indent=4))
 
+
 @pytest.fixture(scope="class")
 def metadata(request):
     """

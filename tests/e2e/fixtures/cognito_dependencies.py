@@ -1,7 +1,6 @@
 import pytest
 
 from e2e.utils.cognito_bootstrap.cognito_pre_deployment import (
-    
     create_certificates_cognito,
     create_cognito_userpool,
     configure_ingress,
@@ -124,7 +123,7 @@ def post_deployment_dns_update(
     wait_for_alb_dns(cluster, region)
     ingress = get_ingress(cluster, region)
     alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
-    print ("running command: kubectl get ingress -n istio-system")
+    print("running command: kubectl get ingress -n istio-system")
     print(alb_dns)
     update_hosted_zone_with_alb(
         subdomain_name=cognito_bootstrap["route53"]["subDomain"]["name"],

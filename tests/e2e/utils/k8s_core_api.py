@@ -18,13 +18,16 @@ def create_namespace(cluster, region, namespace_name):
         if "Conflict" != e.reason:
             raise e
 
+
 def upload_file_as_configmap(namespace, configmap_name, file_path):
     subprocess.call(
         f"kubectl create configmap -n {namespace} {configmap_name} --from-file {file_path}".split()
     )
 
+
 def delete_configmap(namespace, configmap_name):
     subprocess.call(f"kubectl delete configmap -n {namespace} {configmap_name}".split())
+
 
 def patch_configmap(namespace, configmap_name, patch_file_path):
     subprocess.call(

@@ -15,7 +15,13 @@ import boto3
 from e2e.utils.utils import get_s3_client
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
-from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file, WaitForCircuitBreakerError
+from e2e.utils.utils import (
+    load_yaml_file,
+    wait_for,
+    rand_name,
+    write_yaml_file,
+    WaitForCircuitBreakerError,
+)
 from e2e.utils.config import configure_resource_fixture, metadata
 
 from e2e.conftest import region
@@ -30,7 +36,7 @@ from e2e.fixtures.clients import (
     login,
     password,
     client_namespace,
-    account_id
+    account_id,
 )
 
 from e2e.utils.custom_resources import (
@@ -55,6 +61,7 @@ RANDOM_PREFIX = rand_name("kfp-")
 @pytest.fixture(scope="class")
 def installation_path():
     return INSTALLATION_PATH_FILE
+
 
 NOTEBOOK_IMAGES = [
     "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8",
@@ -95,8 +102,13 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 @pytest.fixture(scope="class")
 def sagemaker_execution_role(region, metadata, request):
     sagemaker_execution_role_name = "role-" + RANDOM_PREFIX
-    managed_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess", "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"]
-    role = IAMRole(name=sagemaker_execution_role_name, region=region, policy_arns=managed_policies)
+    managed_policies = [
+        "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+        "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
+    ]
+    role = IAMRole(
+        name=sagemaker_execution_role_name, region=region, policy_arns=managed_policies
+    )
     metadata_key = "sagemaker_execution_role"
 
     resource_details = {}
@@ -132,6 +144,7 @@ def sagemaker_execution_role(region, metadata, request):
         on_delete=on_delete,
     )
 
+
 @pytest.fixture(scope="class")
 def s3_bucket_with_data():
     bucket_name = "s3-" + RANDOM_PREFIX
@@ -141,12 +154,14 @@ def s3_bucket_with_data():
     yield
     bucket.delete()
 
+
 @pytest.fixture(scope="class")
 def clean_up_training_jobs_in_user_ns():
-    yield 
+    yield
 
     cmd = f"kubectl delete trainingjobs --all -n {DEFAULT_USER_NAMESPACE}".split()
     subprocess.Popen(cmd)
+
 
 class TestSanity:
     @pytest.fixture(scope="class")
@@ -257,7 +272,7 @@ class TestSanity:
         expected_output,
     ):
         """
-        Spins up a DLC Notebook and checks that the basic ACK CRD is installed. 
+        Spins up a DLC Notebook and checks that the basic ACK CRD is installed.
         """
         nb_list = subprocess.check_output(
             f"kubectl get notebooks -n {DEFAULT_USER_NAMESPACE}".split()
@@ -277,9 +292,15 @@ class TestSanity:
         print(output)
         # The second condition is now required in case the kfp test runs before this one.
         assert expected_output in output or "training-job-" in output
-    
+
     def test_run_kfp_sagemaker_pipeline(
-        self, region, metadata, s3_bucket_with_data, sagemaker_execution_role, kfp_client, clean_up_training_jobs_in_user_ns
+        self,
+        region,
+        metadata,
+        s3_bucket_with_data,
+        sagemaker_execution_role,
+        kfp_client,
+        clean_up_training_jobs_in_user_ns,
     ):
 
         experiment_name = "experiment-" + RANDOM_PREFIX
@@ -291,7 +312,6 @@ class TestSanity:
         sagemaker_execution_role_details = metadata.get("sagemaker_execution_role")
         sagemaker_execution_role_arn = sagemaker_execution_role_details["arn"]
 
-        
         experiment = kfp_client.create_experiment(
             experiment_name,
             description=experiment_description,
@@ -316,6 +336,6 @@ class TestSanity:
         wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id)
 
         kfp_client.delete_experiment(experiment.id)
-        
+
         cmd = "kubectl delete trainingjobs --all -n kubeflow-user-example-com".split()
         subprocess.Popen(cmd)

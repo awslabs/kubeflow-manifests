@@ -14,7 +14,12 @@ from e2e.utils.load_balancer.setup_load_balancer import (
     create_certificates,
     configure_load_balancer_controller,
 )
-from e2e.utils.utils import print_banner, load_yaml_file, write_yaml_file, write_env_to_yaml
+from e2e.utils.utils import (
+    print_banner,
+    load_yaml_file,
+    write_yaml_file,
+    write_env_to_yaml,
+)
 
 from typing import Tuple
 
@@ -98,21 +103,21 @@ def create_cognito_userpool(
 
 
 # Step 3: Configure Ingress
-#TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.  
+# TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.
 def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str):
     ingress_helm_path = path_dic["ingress"]["installation_options"]["helm"]["paths"]
     ingress_values_file = f"{ingress_helm_path}/values.yaml"
     cognito_dict = {
-            "CognitoUserPoolArn": cognito_userpool.arn,
-            "CognitoAppClientId": cognito_userpool.client_id,
-            "CognitoUserPoolDomain": cognito_userpool.userpool_domain,
-            "certArn": tls_cert_arn,
+        "CognitoUserPoolArn": cognito_userpool.arn,
+        "CognitoAppClientId": cognito_userpool.client_id,
+        "CognitoUserPoolDomain": cognito_userpool.userpool_domain,
+        "certArn": tls_cert_arn,
     }
 
     # annotate the ingress with ALB listener rule parameters
     configure_env_file(
         env_file_path="../../awsconfigs/common/istio-ingress/overlays/cognito/params.env",
-        env_dict = cognito_dict
+        env_dict=cognito_dict,
     )
 
     cognito_helm_dict = {
@@ -126,11 +131,14 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
 
     write_env_to_yaml(cognito_helm_dict, ingress_values_file, "alb")
 
-#TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.
+
+# TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.
 def configure_aws_authservice(
     cognito_userpool: CustomDomainCognitoUserPool, subdomain_name: str
 ):
-    aws_auth_service_helm_path = path_dic["aws-authservice"]["installation_options"]["helm"]["paths"]
+    aws_auth_service_helm_path = path_dic["aws-authservice"]["installation_options"][
+        "helm"
+    ]["paths"]
     aws_auth_service_values_file = f"{aws_auth_service_helm_path}/values.yaml"
     logout_url_dict = {
         "LOGOUT_URL": f"https://{cognito_userpool.userpool_domain}/logout?client_id={cognito_userpool.client_id}&logout_uri=https://kubeflow.{subdomain_name}"
@@ -138,11 +146,12 @@ def configure_aws_authservice(
     # substitute the LOGOUT_URL for the AWS AuthService to redirect to
     configure_env_file(
         env_file_path="../../awsconfigs/common/aws-authservice/base/params.env",
-        env_dict = logout_url_dict
+        env_dict=logout_url_dict,
     )
 
     write_env_to_yaml(logout_url_dict, aws_auth_service_values_file)
-    
+
+
 if __name__ == "__main__":
     config_file_path = common.CONFIG_FILE
     print_banner("Reading Config")

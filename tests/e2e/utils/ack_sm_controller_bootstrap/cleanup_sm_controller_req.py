@@ -26,18 +26,19 @@ logger = logging.getLogger(__name__)
 def get_account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
 
+
 def delete_iam_role(role_name, policy_name, region):
     iam_client = get_iam_client(region=region)
     iam_client.detach_role_policy(
-        RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+        RoleName=role_name,
+        PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
     )
     acc_id = get_account_id()
     custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
-    iam_client.detach_role_policy(
-        RoleName=role_name, PolicyArn=custom_policy_arn
-    )
+    iam_client.detach_role_policy(RoleName=role_name, PolicyArn=custom_policy_arn)
     iam_client.delete_role(RoleName=role_name)
     print(f"Deleted IAM Role : {role_name}")
+
 
 def delete_iam_policy(policy_name, region):
     acc_id = get_account_id()
@@ -45,6 +46,7 @@ def delete_iam_policy(policy_name, region):
     iam_client = get_iam_client(region=region)
     iam_client.delete_policy(PolicyArn=custom_policy_arn)
     print(f"Deleted IAM Policy : {policy_name}")
+
 
 if __name__ == "__main__":
     print_banner("Reading Config")
@@ -60,5 +62,3 @@ if __name__ == "__main__":
     delete_iam_policy(policy_name, cluster_region)
 
     print_banner("CLEANUP SUCCESSFUL")
-
-

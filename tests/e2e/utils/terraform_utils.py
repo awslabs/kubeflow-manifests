@@ -66,4 +66,3 @@ def get_stack_output(output_name, tf_folder):
     os.chdir(initial_dir)
 
     return output
-

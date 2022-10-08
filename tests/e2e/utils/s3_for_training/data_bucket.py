@@ -15,6 +15,7 @@ from e2e.utils.utils import wait_for
 
 logger = logging.getLogger(__name__)
 
+
 def delete_s3_bucket(bucket_name, s3_client):
     s3_resource = boto3.resource("s3")
 

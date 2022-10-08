@@ -19,7 +19,11 @@ from e2e.fixtures.notebook_dependencies import notebook_server
 
 from e2e.utils.terraform_utils import terraform_installation
 from e2e.test_methods import vanilla
-from e2e.test_methods.vanilla import sagemaker_execution_role, s3_bucket_with_data, clean_up_training_jobs_in_user_ns
+from e2e.test_methods.vanilla import (
+    sagemaker_execution_role,
+    s3_bucket_with_data,
+    clean_up_training_jobs_in_user_ns,
+)
 
 TEST_SUITE_NAME = "tf-vanilla"
 TF_FOLDER = TO_ROOT + "deployments/vanilla/terraform/"
@@ -78,12 +82,22 @@ class TestVanillaTerraform:
         )
 
     @pytest.mark.parametrize(
-        "user_namespace", 
+        "user_namespace",
         vanilla.TEST_KFP_SM_PARAMS,
     )
     def test_run_kfp_sagemaker_pipeline(
-        self, setup, kfp_client, sagemaker_execution_role, s3_bucket_with_data, clean_up_training_jobs_in_user_ns, user_namespace
+        self,
+        setup,
+        kfp_client,
+        sagemaker_execution_role,
+        s3_bucket_with_data,
+        clean_up_training_jobs_in_user_ns,
+        user_namespace,
     ):
         vanilla.test_run_kfp_sagemaker_pipeline(
-            kfp_client, s3_bucket_with_data.name, sagemaker_execution_role.arn, clean_up_training_jobs_in_user_ns, user_namespace
+            kfp_client,
+            s3_bucket_with_data.name,
+            sagemaker_execution_role.arn,
+            clean_up_training_jobs_in_user_ns,
+            user_namespace,
         )

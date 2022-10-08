@@ -17,7 +17,6 @@ SEARCH_DIRS = [
     # TODO(https://github.com/kubeflow/manifests/issues/1052): Remove this
     # after the move to v3 is done.
     # "tests/legacy_kustomizations",
-
     "awsconfigs/common"
 ]
 
@@ -37,8 +36,7 @@ def generate_test_path(repo_root, kustomize_rpath):
       kustomize_rpath: The relative path (relative to repo root) of the
         kustomize package to generate the test for.
     """
-    test_path = os.path.join(repo_root, "tests/unit-tests", kustomize_rpath,
-                             TEST_NAME)
+    test_path = os.path.join(repo_root, "tests/unit-tests", kustomize_rpath, TEST_NAME)
     return test_path
 
 
@@ -48,7 +46,8 @@ def run_kustomize_build(repo_root, package_dir):
     rpath = os.path.relpath(package_dir, repo_root)
 
     output_dir = os.path.join(
-        repo_root, "tests/unit-tests", rpath, KUSTOMIZE_OUTPUT_DIR)
+        repo_root, "tests/unit-tests", rpath, KUSTOMIZE_OUTPUT_DIR
+    )
 
     if os.path.exists(output_dir):
         # Remove any previous version of the directory so that we ensure
@@ -60,9 +59,17 @@ def run_kustomize_build(repo_root, package_dir):
     logging.info("Creating directory %s", output_dir)
     os.makedirs(output_dir)
 
-    subprocess.check_call([os.environ.get("KUSTOMIZE_BIN", "kustomize"), "build", "--load_restrictor", "none",
-                           "-o", output_dir], cwd=os.path.join(repo_root,
-                                                               package_dir))
+    subprocess.check_call(
+        [
+            os.environ.get("KUSTOMIZE_BIN", "kustomize"),
+            "build",
+            "--load_restrictor",
+            "none",
+            "-o",
+            output_dir,
+        ],
+        cwd=os.path.join(repo_root, package_dir),
+    )
 
 
 def find_kustomize_dirs(search_dirs):
@@ -95,8 +102,9 @@ def write_go_test(test_path, package_name, package_dir):
       package_dir: The path to the kustomize package being tested; this
         should be the relative path to the kustomize directory.
     """
-    test_contents = template.render({"package": package_name,
-                                     "package_dir": package_dir})
+    test_contents = template.render(
+        {"package": package_name, "package_dir": package_dir}
+    )
 
     logging.info("Writing file: %s", test_path)
     with open(test_path, "w") as test_file:
@@ -107,9 +115,8 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         level=logging.INFO,
-        format=('%(levelname)s|%(asctime)s'
-                '|%(pathname)s|%(lineno)d| %(message)s'),
-        datefmt='%Y-%m-%dT%H:%M:%S',
+        format=("%(levelname)s|%(asctime)s" "|%(pathname)s|%(lineno)d| %(message)s"),
+        datefmt="%Y-%m-%dT%H:%M:%S",
     )
     logging.getLogger().setLevel(logging.INFO)
 
@@ -119,14 +126,14 @@ if __name__ == "__main__":
         "--all",
         dest="all_tests",
         action="store_true",
-        help="(Deprecated) this parameter has no effect")
+        help="(Deprecated) this parameter has no effect",
+    )
 
     parser.set_defaults(all_tests=False)
 
     args = parser.parse_args()
 
-    repo_root = subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"])
+    repo_root = subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
     repo_root = repo_root.decode()
     repo_root = repo_root.strip()
     # Get a list of package directories
@@ -136,8 +143,7 @@ if __name__ == "__main__":
     changed_dirs = package_dirs
 
     this_dir = os.path.dirname(__file__)
-    loader = jinja2.FileSystemLoader(searchpath=os.path.join(
-        this_dir, "templates"))
+    loader = jinja2.FileSystemLoader(searchpath=os.path.join(this_dir, "templates"))
     env = jinja2.Environment(loader=loader)
     template = env.get_template("kustomize_test.go.template")
 

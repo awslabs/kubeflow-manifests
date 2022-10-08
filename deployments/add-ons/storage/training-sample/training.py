@@ -11,41 +11,49 @@ IMG_HEIGHT = 180
 IMG_WIDTH = 180
 BATCH_SIZE = 32
 
-def create_model(num_classes):
-    model = Sequential([
-    layers.Rescaling(1./255, input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)),
-    layers.Conv2D(16, 3, padding='same', activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Conv2D(32, 3, padding='same', activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Conv2D(64, 3, padding='same', activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Flatten(),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(num_classes)
-    ])
 
-    model.compile(optimizer='adam',
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                metrics=['accuracy'])
+def create_model(num_classes):
+    model = Sequential(
+        [
+            layers.Rescaling(1.0 / 255, input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)),
+            layers.Conv2D(16, 3, padding="same", activation="relu"),
+            layers.MaxPooling2D(),
+            layers.Conv2D(32, 3, padding="same", activation="relu"),
+            layers.MaxPooling2D(),
+            layers.Conv2D(64, 3, padding="same", activation="relu"),
+            layers.MaxPooling2D(),
+            layers.Flatten(),
+            layers.Dense(128, activation="relu"),
+            layers.Dense(num_classes),
+        ]
+    )
+
+    model.compile(
+        optimizer="adam",
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        metrics=["accuracy"],
+    )
 
     # Print the model details
     model.summary()
 
     return model
 
+
 def get_data_split(subset_type):
     ds = tf.keras.utils.image_dataset_from_directory(
-    DATA_DIR,
-    validation_split=0.2,
-    subset=subset_type,
-    seed=123,
-    image_size=(IMG_HEIGHT, IMG_WIDTH),
-    batch_size=BATCH_SIZE)
+        DATA_DIR,
+        validation_split=0.2,
+        subset=subset_type,
+        seed=123,
+        image_size=(IMG_HEIGHT, IMG_WIDTH),
+        batch_size=BATCH_SIZE,
+    )
 
     return ds
 
-def main():    
+
+def main():
     # Define the datasets based on images already loaded onto the EFS Volume
     train_ds = get_data_split("training")
     val_ds = get_data_split("validation")
@@ -63,11 +71,8 @@ def main():
 
     # Training
     epochs = 2
-    history = model.fit(
-    train_ds,
-    validation_data=val_ds,
-    epochs=epochs
-    )
+    history = model.fit(train_ds, validation_data=val_ds, epochs=epochs)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

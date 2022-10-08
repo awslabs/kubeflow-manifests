@@ -49,16 +49,30 @@ def associate_iam_oidc_provider(cluster_name, region):
 
     subprocess.call(cmd)
 
+
 def get_oidc_provider(cluster_name, region):
     eks_client = get_eks_client(region)
-    https_oidc_provider = eks_client.describe_cluster(
-        name=cluster_name,
-    ).get('cluster').get('identity').get('oidc').get('issuer')
+    https_oidc_provider = (
+        eks_client.describe_cluster(
+            name=cluster_name,
+        )
+        .get("cluster")
+        .get("identity")
+        .get("oidc")
+        .get("issuer")
+    )
     oidc_provider = https_oidc_provider.replace("https://", "", 1)
     return oidc_provider
 
+
 def create_iam_service_account(
-    service_account_name, namespace, cluster_name, region, iam_policy_arns=[], iam_role_arn=None, iam_role_name=None,
+    service_account_name,
+    namespace,
+    cluster_name,
+    region,
+    iam_policy_arns=[],
+    iam_role_arn=None,
+    iam_role_name=None,
 ):
     cmd = []
     cmd += "eksctl create iamserviceaccount".split()
@@ -75,13 +89,14 @@ def create_iam_service_account(
 
     if iam_role_name != None:
         cmd += f"--role-name {iam_role_name}".split()
-        
+
     cmd += "--override-existing-serviceaccounts".split()
     cmd += "--approve".split()
 
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
+
 def delete_iam_service_account(service_account_name, namespace, cluster_name, region):
     cmd = []
     cmd += "eksctl delete iamserviceaccount".split()
@@ -93,6 +108,7 @@ def delete_iam_service_account(service_account_name, namespace, cluster_name, re
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
+
 def delete_iam_service_account(service_account_name, namespace, cluster_name, region):
     cmd = []
     cmd += "eksctl delete iamserviceaccount".split()
@@ -103,10 +119,12 @@ def delete_iam_service_account(service_account_name, namespace, cluster_name, re
 
     subprocess.call(cmd)
 
+
 def update_kubeconfig(cluster_name, region):
     cmd = f"aws eks update-kubeconfig --name {cluster_name}  --region {region}".split()
 
     subprocess.call(cmd)
+
 
 @pytest.fixture(scope="class")
 def cluster(metadata, region, request):

@@ -127,10 +127,15 @@ def delete_lb_resources(cfg: dict):
                 alb_sa = alb.get("serviceAccount", None)
                 if alb_sa:
                     cluster.delete_iam_service_account(
-                        alb_sa["name"], alb_sa["namespace"], cluster_name, deployment_region
+                        alb_sa["name"],
+                        alb_sa["namespace"],
+                        cluster_name,
+                        deployment_region,
                     )
                     alb_controller_policy_arn = alb_sa["policyArn"]
-                    delete_policy(arn=alb_controller_policy_arn, region=deployment_region)
+                    delete_policy(
+                        arn=alb_controller_policy_arn, region=deployment_region
+                    )
 
         # delete subdomain certs
         delete_cert(acm_certificate=subdomain_cert_deployment_region)

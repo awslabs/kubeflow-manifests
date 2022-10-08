@@ -42,7 +42,11 @@ from e2e.utils.utils import (
     rand_name,
     wait_for_kfp_run_succeeded_from_run_id,
 )
-from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
+from e2e.utils.custom_resources import (
+    get_pvc_status,
+    get_service_account,
+    get_pod_from_label,
+)
 from e2e.resources.pipelines.pipeline_read_from_volume import read_from_volume_pipeline
 from e2e.resources.pipelines.pipeline_write_to_volume import write_to_volume_pipeline
 
@@ -60,7 +64,14 @@ def installation_path():
 
 class TestFSx:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, installation, patch_kfp_to_disable_cache, port_forward, static_provisioning):
+    def setup(
+        self,
+        metadata,
+        installation,
+        patch_kfp_to_disable_cache,
+        port_forward,
+        static_provisioning,
+    ):
 
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
@@ -77,14 +88,16 @@ class TestFSx:
         driver_list = subprocess.check_output("kubectl get csidriver".split()).decode()
         assert "fsx.csi.aws.com" in driver_list
 
-        name, status = get_pod_from_label(cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app","fsx-csi-controller")
+        name, status = get_pod_from_label(
+            cluster, region, DEFAULT_SYSTEM_NAMESPACE, "app", "fsx-csi-controller"
+        )
         assert "fsx-csi-controller" in name
         assert status == "Running"
 
         sa_account = get_service_account(
             cluster, region, DEFAULT_SYSTEM_NAMESPACE, "fsx-csi-controller-sa"
         )
-        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role" 
+        assert sa_account.split("/")[0] == f"arn:aws:iam::{account_id}:role"
 
         fs_id = static_provisioning["file_system_id"]
         assert "fs-" in fs_id
@@ -138,7 +151,15 @@ class TestFSx:
         time.sleep(60)
         assert claim_status == "Bound"
 
-        write_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",write_run_id)
-        read_pod_name, _ = get_pod_from_label(cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid",read_run_id)
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split())
-        subprocess.run(f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split())
+        write_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", write_run_id
+        )
+        read_pod_name, _ = get_pod_from_label(
+            cluster, region, DEFAULT_USER_NAMESPACE, "pipeline/runid", read_run_id
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {write_pod_name}".split()
+        )
+        subprocess.run(
+            f"kubectl delete pod -n {DEFAULT_USER_NAMESPACE} {read_pod_name}".split()
+        )

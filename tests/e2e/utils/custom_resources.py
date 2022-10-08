@@ -2,11 +2,7 @@
 Module for helper methods to create and delete kubernetes custom resources (e.g. katib experiments, etc.)
 """
 
-from e2e.utils.utils import (
-    unmarshal_yaml,
-    wait_for,
-    WaitForCircuitBreakerError
-)
+from e2e.utils.utils import unmarshal_yaml, wait_for, WaitForCircuitBreakerError
 from e2e.fixtures.clients import (
     create_k8s_custom_objects_api_client,
     create_k8s_core_api_client,
@@ -124,6 +120,7 @@ def get_pod_from_label(cluster, region, namespace, label_key, label_value):
     status = pod.items[0].status.phase
 
     return name, status
+
 
 def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):
     def callback():

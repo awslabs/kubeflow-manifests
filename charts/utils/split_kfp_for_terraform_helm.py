@@ -3,9 +3,15 @@ import os
 import subprocess
 import shutil
 
-parser = argparse.ArgumentParser(description='Split KFP helm charts since terraform fails with helm charts of a certain size.')
-parser.add_argument('--helm-chart-folder', dest='helm_chart_folder', help='helm chart folder')
-parser.add_argument('--overwrite', default=False, help='recreates the folders if they already exist')
+parser = argparse.ArgumentParser(
+    description="Split KFP helm charts since terraform fails with helm charts of a certain size."
+)
+parser.add_argument(
+    "--helm-chart-folder", dest="helm_chart_folder", help="helm chart folder"
+)
+parser.add_argument(
+    "--overwrite", default=False, help="recreates the folders if they already exist"
+)
 
 args = parser.parse_args()
 
@@ -25,15 +31,38 @@ elif os.path.exists(split_1_path) or os.path.exists(split_2_path):
     print("Skipping creation, a folder already exists and overwrite is false.")
     raise Exception("Folder(s) already exists")
 
-split_1_desired = ['Role', 'Certificate', 'PriorityClass', 'ClusterRoleBinding', 'ClusterRole', 'RoleBinding', 'MutatingWebhookConfiguration', 'ServiceAccount', 'Secret', 'ConfigMap', 'Service', 'VirtualService', 'Issuer']
+split_1_desired = [
+    "Role",
+    "Certificate",
+    "PriorityClass",
+    "ClusterRoleBinding",
+    "ClusterRole",
+    "RoleBinding",
+    "MutatingWebhookConfiguration",
+    "ServiceAccount",
+    "Secret",
+    "ConfigMap",
+    "Service",
+    "VirtualService",
+    "Issuer",
+]
 
-split_2_desired = ['CompositeController', 'StatefulSet', 'PersistentVolumeClaim', 'DestinationRule', 'AuthorizationPolicy', 'Deployment']
+split_2_desired = [
+    "CompositeController",
+    "StatefulSet",
+    "PersistentVolumeClaim",
+    "DestinationRule",
+    "AuthorizationPolicy",
+    "Deployment",
+]
+
 
 def keep_folders(path, desired):
     for root, dirs, _ in os.walk(os.path.join(path, "templates")):
         for dir in dirs:
             if dir not in desired:
                 shutil.rmtree(os.path.join(root, dir))
+
 
 shutil.copytree(kfp_chart_path, split_1_path)
 shutil.copytree(kfp_chart_path, split_2_path)

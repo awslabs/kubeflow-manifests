@@ -23,9 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def profile_trust_policy(
-    cluster, region, account_id
-):
+def profile_trust_policy(cluster, region, account_id):
     eks_client = get_eks_client(region=region)
 
     resp = eks_client.describe_cluster(name=cluster)
@@ -43,16 +41,17 @@ def profile_trust_policy(
                 "Condition": {
                     "StringEquals": {
                         f"{oidc_url}:aud": "sts.amazonaws.com",
-                        f"{oidc_url}:sub": [ 
+                        f"{oidc_url}:sub": [
                             "system:serviceaccount:ack-system:ack-sagemaker-controller",
-                            "system:serviceaccount:ack-system:ack-applicationautoscaling-controller"
-                        ]
+                            "system:serviceaccount:ack-system:ack-applicationautoscaling-controller",
+                        ],
                     }
                 },
             }
         ],
     }
     return json.dumps(trust_policy)
+
 
 def create_ack_oidc_role(cluster_name, region):
     iam_client = get_iam_client(region=region)
@@ -61,14 +60,16 @@ def create_ack_oidc_role(cluster_name, region):
     policy_name = f"{common.SM_STUDIO_POLICY_NAME_PREFIX}-{cluster_name}"
 
     resp = iam_client.create_role(
-        RoleName=role_name, AssumeRolePolicyDocument=profile_trust_policy(cluster_name, region, acc_id)
+        RoleName=role_name,
+        AssumeRolePolicyDocument=profile_trust_policy(cluster_name, region, acc_id),
     )
     oidc_role_arn = resp["Role"]["Arn"]
 
     print(f"Created IAM Role : {oidc_role_arn}")
 
     iam_client.attach_role_policy(
-        RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+        RoleName=role_name,
+        PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
     )
     policy = IAMPolicy(name=policy_name, region=region)
     policy.create(
@@ -77,9 +78,7 @@ def create_ack_oidc_role(cluster_name, region):
         )
     )
     custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
-    iam_client.attach_role_policy(
-        RoleName=role_name, PolicyArn=custom_policy_arn
-    )
+    iam_client.attach_role_policy(RoleName=role_name, PolicyArn=custom_policy_arn)
 
 
 def get_role_arn(role_name, region):
@@ -88,18 +87,18 @@ def get_role_arn(role_name, region):
     oidc_role_arn = resp["Role"]["Arn"]
     return oidc_role_arn
 
+
 def get_account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
+
 
 def write_params(oidc_role_arn, region, file_path):
     configure_env_file(
         env_file_path=file_path,
-        env_dict={
-            "ACK_SAGEMAKER_OIDC_ROLE": oidc_role_arn,
-            "ACK_AWS_REGION": region
-        }
+        env_dict={"ACK_SAGEMAKER_OIDC_ROLE": oidc_role_arn, "ACK_AWS_REGION": region},
     )
     print(f"File written to : {file_path}")
+
 
 if __name__ == "__main__":
     print_banner("Reading Config")
@@ -107,14 +106,14 @@ if __name__ == "__main__":
     cfg = load_yaml_file(file_path=config_file_path)
     cluster_region = cfg["cluster"]["region"]
     cluster_name = cfg["cluster"]["name"]
-    
+
     print_banner("Create OIDC IAM role for ACK SageMaker Controller")
     try:
         create_ack_oidc_role(cluster_name, cluster_region)
     except Exception as e:
         print(e)
         print("Try running cleanup_sm_controller_req.py")
-    
+
     ack_oidc_role_name = f"{common.ACK_OIDC_ROLE_NAME_PREFIX}-{cluster_name}"
     oidc_role_arn = get_role_arn(ack_oidc_role_name, cluster_region)
 
@@ -123,5 +122,3 @@ if __name__ == "__main__":
     write_params(oidc_role_arn, cluster_region, output_params_file_path)
 
     print_banner("SUCCESS")
-
-

@@ -8,11 +8,14 @@ import subprocess
 
 from e2e.fixtures.installation import clone_upstream
 
+
 def kustomize_build(manifest_path):
     return subprocess.call(f"kustomize build {manifest_path}".split())
 
+
 TO_ROOT = "../../"
 DEPLOYMENTS_FOLDER = TO_ROOT + "deployments/"
+
 
 class TestManifestBuilds:
     @pytest.fixture(scope="class")

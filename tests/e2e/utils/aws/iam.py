@@ -98,9 +98,7 @@ class IAMRole:
             )
 
             for policy in self.policy_arns:
-                self.iam_client.attach_role_policy(
-                    RoleName=self.name, PolicyArn=policy
-                )
+                self.iam_client.attach_role_policy(RoleName=self.name, PolicyArn=policy)
         except ClientError:
             logger.exception(f"failed to create IAM Role {self.name}")
             raise
@@ -113,7 +111,8 @@ class IAMRole:
         try:
             for policy in self.policy_arns:
                 self.iam_client.detach_role_policy(
-                PolicyArn=policy, RoleName=self.name,
+                    PolicyArn=policy,
+                    RoleName=self.name,
                 )
             self.iam_client.delete_role(RoleName=self.name)
             logger.info(f"deleted iam role {self.arn}")

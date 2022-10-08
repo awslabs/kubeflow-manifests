@@ -27,6 +27,7 @@ from e2e.utils.constants import (
     DEFAULT_USER_NAMESPACE,
 )
 
+
 def get_fsx_dns_name(fsx_client, file_system_id):
     response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["DNSName"]
@@ -36,6 +37,7 @@ def get_fsx_mount_name(fsx_client, file_system_id):
     response = fsx_client.describe_file_systems(FileSystemIds=[file_system_id])
     return response["FileSystems"][0]["LustreConfiguration"]["MountName"]
 
+
 def wait_on_fsx_deletion(fsx_client, file_system_id):
     def callback():
         try:
@@ -43,8 +45,10 @@ def wait_on_fsx_deletion(fsx_client, file_system_id):
                 FileSystemIds=[file_system_id],
             )
             number_of_file_systems_with_id = len(response["FileSystems"])
-            print(f"{file_system_id} has {number_of_file_systems_with_id} results .... waiting")
-            assert number_of_file_systems_with_id == 0 
+            print(
+                f"{file_system_id} has {number_of_file_systems_with_id} results .... waiting"
+            )
+            assert number_of_file_systems_with_id == 0
         except fsx_client.exceptions.FileSystemNotFound:
             return True
 
@@ -55,8 +59,12 @@ def wait_on_fsx_deletion(fsx_client, file_system_id):
 def static_provisioning(metadata, region, request, cluster):
     associate_iam_oidc_provider(cluster, region)
     claim_name = rand_name("fsx-claim-")
-    fsx_pv_filepath = "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
-    fsx_pvc_filepath = "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    fsx_pv_filepath = (
+        "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pv.yaml"
+    )
+    fsx_pvc_filepath = (
+        "../../deployments/add-ons/storage/fsx-for-lustre/static-provisioning/pvc.yaml"
+    )
     fsx_auto_script_filepath = "utils/auto-fsx-setup.py"
     fsx_client = get_fsx_client(region)
     ec2_client = get_ec2_client(region)
