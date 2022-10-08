@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
+    controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
   name: models.sagemaker.services.k8s.aws
 spec:
@@ -69,6 +68,8 @@ spec:
                               type: string
                           type: object
                       type: object
+                    inferenceSpecificationName:
+                      type: string
                     mode:
                       type: string
                     modelDataURL:
@@ -90,12 +91,12 @@ spec:
                 type: boolean
               executionRoleARN:
                 description: "The Amazon Resource Name (ARN) of the IAM role that
-                  Amazon SageMaker can assume to access model artifacts and docker
-                  image for deployment on ML compute instances or for batch transform
-                  jobs. Deploying on ML compute instances is part of model hosting.
-                  For more information, see Amazon SageMaker Roles (https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).
-                  \n To be able to pass this role to Amazon SageMaker, the caller
-                  of this API must have the iam:PassRole permission."
+                  SageMaker can assume to access model artifacts and docker image
+                  for deployment on ML compute instances or for batch transform jobs.
+                  Deploying on ML compute instances is part of model hosting. For
+                  more information, see SageMaker Roles (https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).
+                  \n To be able to pass this role to SageMaker, the caller of this
+                  API must have the iam:PassRole permission."
                 type: string
               inferenceExecutionConfig:
                 description: Specifies details of how containers in a multi-container
@@ -140,6 +141,8 @@ spec:
                             type: string
                         type: object
                     type: object
+                  inferenceSpecificationName:
+                    type: string
                   mode:
                     type: string
                   modelDataURL:
@@ -271,9 +274,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

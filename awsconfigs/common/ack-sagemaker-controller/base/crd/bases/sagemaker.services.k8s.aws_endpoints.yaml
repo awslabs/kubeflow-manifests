@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
+    controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
   name: endpoints.sagemaker.services.k8s.aws
 spec:
@@ -153,26 +152,26 @@ spec:
                 format: date-time
                 type: string
               endpointStatus:
-                description: "The status of the endpoint. \n    * OutOfService: Endpoint
-                  is not available to take incoming requests. \n    * Creating: CreateEndpoint
-                  is executing. \n    * Updating: UpdateEndpoint or UpdateEndpointWeightsAndCapacities
-                  is executing. \n    * SystemUpdating: Endpoint is undergoing maintenance
-                  and cannot be updated    or deleted or re-scaled until it has completed.
-                  This maintenance operation    does not change any customer-specified
-                  values such as VPC config, KMS    encryption, model, instance type,
-                  or instance count. \n    * RollingBack: Endpoint fails to scale
-                  up or down or change its variant    weight and is in the process
-                  of rolling back to its previous configuration.    Once the rollback
-                  completes, endpoint returns to an InService status.    This transitional
-                  status only applies to an endpoint that has autoscaling    enabled
-                  and is undergoing variant weight or capacity changes as part of
-                  \   an UpdateEndpointWeightsAndCapacities call or when the UpdateEndpointWeightsAndCapacities
-                  \   operation is called explicitly. \n    * InService: Endpoint
-                  is available to process incoming requests. \n    * Deleting: DeleteEndpoint
-                  is executing. \n    * Failed: Endpoint could not be created, updated,
-                  or re-scaled. Use DescribeEndpointOutput$FailureReason    for information
-                  about the failure. DeleteEndpoint is the only operation    that
-                  can be performed on a failed endpoint."
+                description: "The status of the endpoint. \n * OutOfService: Endpoint
+                  is not available to take incoming requests. \n * Creating: CreateEndpoint
+                  is executing. \n * Updating: UpdateEndpoint or UpdateEndpointWeightsAndCapacities
+                  is executing. \n * SystemUpdating: Endpoint is undergoing maintenance
+                  and cannot be updated or deleted or re-scaled until it has completed.
+                  This maintenance operation does not change any customer-specified
+                  values such as VPC config, KMS encryption, model, instance type,
+                  or instance count. \n * RollingBack: Endpoint fails to scale up
+                  or down or change its variant weight and is in the process of rolling
+                  back to its previous configuration. Once the rollback completes,
+                  endpoint returns to an InService status. This transitional status
+                  only applies to an endpoint that has autoscaling enabled and is
+                  undergoing variant weight or capacity changes as part of an UpdateEndpointWeightsAndCapacities
+                  call or when the UpdateEndpointWeightsAndCapacities operation is
+                  called explicitly. \n * InService: Endpoint is available to process
+                  incoming requests. \n * Deleting: DeleteEndpoint is executing. \n
+                  * Failed: Endpoint could not be created, updated, or re-scaled.
+                  Use DescribeEndpointOutput$FailureReason for information about the
+                  failure. DeleteEndpoint is the only operation that can be performed
+                  on a failed endpoint."
                 type: string
               failureReason:
                 description: If the status of the endpoint is Failed, the reason why
@@ -246,9 +245,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

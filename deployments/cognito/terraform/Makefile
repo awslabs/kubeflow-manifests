@@ -21,6 +21,7 @@ create-vpc:
 
 create-eks-cluster:
 	terraform apply -target="module.eks_blueprints" -auto-approve
+	terraform output -raw configure_kubectl | bash
 
 deploy-eks-blueprints-k8s-addons:
 	terraform apply -target="module.eks_blueprints_kubernetes_addons" -auto-approve

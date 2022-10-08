@@ -95,6 +95,8 @@ def get_deployment_option(request):
         deployment_option = "vanilla"
     return deployment_option
 
+def get_root_domain_name(request):
+    return request.config.getoption("--root-domain-name")
 
 
 @pytest.fixture(scope="class")
@@ -149,7 +151,7 @@ def root_domain_name(metadata, request):
     if cognito_deps:
         return cognito_deps["route53"]["rootDomain"]["name"]
 
-    return request.config.getoption("--root-domain-name")
+    return get_root_domain_name(request)
 
 
 @pytest.fixture(scope="class")

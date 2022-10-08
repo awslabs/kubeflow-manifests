@@ -6,17 +6,20 @@ from e2e.utils.utils import (
     uninstall_helm,
     delete_kustomize,
     load_yaml_file,
+    exec_shell,
+    check_helm_chart_exists
 )
 import os
 import subprocess
 
 
-INSTALLATION_PATH_FILE_VANILLA = "./resources/installation_config/vanilla.yaml"
-INSTALLATION_PATH_FILE_COGNITO = "./resources/installation_config/cognito.yaml"
-INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
-INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
-INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
-INSTALLATION_PATH_FILE_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rds-s3.yaml"
+INSTALLATION_CONFIG_VANILLA = "./resources/installation_config/vanilla.yaml"
+INSTALLATION_CONFIG_COGNITO = "./resources/installation_config/cognito.yaml"
+INSTALLATION_CONFIG_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
+INSTALLATION_CONFIG_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
+INSTALLATION_CONFIG_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+INSTALLATION_CONFIG_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rds-s3.yaml"
+
 
 Uninstall_Sequence = [
     "aws-authservice",
@@ -57,17 +60,17 @@ def uninstall_kubeflow(installation_option, deployment_option):
     
 
     if deployment_option == "vanilla":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_VANILLA)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_VANILLA)
     elif deployment_option == "cognito":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_COGNITO)
     elif deployment_option == "rds-s3":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_RDS_S3)
     elif deployment_option == "rds-only":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_RDS_ONLY)
     elif deployment_option == "s3-only":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY)
     elif deployment_option == "cognito-rds-s3":
-        path_dic = load_yaml_file(INSTALLATION_PATH_FILE_COGNITO_RDS_S3)
+        path_dic = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3)
 
     print_banner(
         f"You are uninstalling kubeflow {deployment_option} deployment with {installation_option}"
@@ -83,64 +86,74 @@ def uninstall_kubeflow(installation_option, deployment_option):
         else:
             namespace = None
         delete_component(
-            installation_option, deployment_option, path_dic, component, namespace
+            installation_option, path_dic, component, namespace
         )
 
 
 
 def delete_component(
-    installation_option, deployment_option, path_dic, component_name, namespace
+    installation_option, installation_config, component_name, namespace
 ):
-    print(f"==========uninstallating {component_name}...==========")
-    if component_name not in path_dic:
-        print(
-            f"component {component_name} is not applicable for deployment option: {deployment_option}"
-        )
+    if component_name not in installation_config:
         return
     else:
-        installation_path = path_dic[component_name]["installation_options"][
-            installation_option
-        ]
+        print(f"==========uninstallating {component_name}...==========")
+        #remote
+        if "repo" in installation_config[component_name]["installation_options"][installation_option]:
+            uninstall_remote_component(component_name, namespace)
+        #local
+        else:
+            installation_path = installation_config[component_name]["installation_options"][installation_option]["paths"]
+            
+            if installation_option == "helm":
+                if component_name == "kubeflow-namespace":
+                    for kustomize_path in installation_config[component_name]["installation_options"]["kustomize"]["paths"]:
+                        delete_kustomize(kustomize_path)
 
-        if installation_option == "helm":
-            if component_name == "kubeflow-namespace":
-                for kustomize_path in path_dic[component_name]["installation_options"]["kustomize"]:
+                elif component_name == "ingress":
+                    uninstall_helm(component_name, namespace)
+                    #Helm doesn't seem to delete ingress during uninstall
+                    exec_shell(f"kubectl delete ingress -n istio-system istio-ingress")
+                else:
+                    if check_helm_chart_exists(component_name, namespace):
+                        uninstall_helm(component_name, namespace)
+                    print(installation_path)
+                    if os.path.isdir(f"{installation_path}/crds"):
+                        print(f"deleting {component_name} crds ...")
+                        kubectl_delete(f"{installation_path}/crds")
+                    # delete aws-load-balancer-controller crds for official helm chart
+                    if component_name == "aws-load-balancer-controller":
+                        kubectl_delete(
+                            "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/6d3e976e3f60dc4588c01bad036d77c127a68e71/helm/aws-load-balancer-controller/crds/crds.yaml"
+                        )
+            # kustomize
+            else:
+                installation_path.reverse()
+                for kustomize_path in installation_path:
                     delete_kustomize(kustomize_path)
 
-            elif component_name == "ingress":
-                uninstall_helm(component_name, namespace)
-                #Helm doesn't seem to delete ingress during uninstall
-                retcode = subprocess.call(f"kubectl delete ingress -n istio-system istio-ingress".split())
-                assert retcode == 0
-            else:
-                uninstall_helm(component_name, namespace)
-                if os.path.isdir(f"{installation_path}/crds"):
-                    print(f"deleting {component_name} crds ...")
-                    kubectl_delete(f"{installation_path}/crds")
-                # delete aws-load-balancer-controller crds for official helm chart
-                if component_name == "aws-load-balancer-controller":
-                    kubectl_delete(
-                        "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/6d3e976e3f60dc4588c01bad036d77c127a68e71/helm/aws-load-balancer-controller/crds/crds.yaml"
-                    )
-        # kustomize
-        else:
-            installation_path.reverse()
-            for kustomize_path in installation_path:
-                delete_kustomize(kustomize_path)
+        # clear up implicit crd resources for Dex
+        if component_name == "dex":
+            kubectl_delete_crd("authrequests.dex.coreos.com")
+            kubectl_delete_crd("connectors.dex.coreos.com")
+            kubectl_delete_crd("devicerequests.dex.coreos.com")
+            kubectl_delete_crd("devicetokens.dex.coreos.com")
+            kubectl_delete_crd("oauth2clients.dex.coreos.com")
+            kubectl_delete_crd("offlinesessionses.dex.coreos.com")
+            kubectl_delete_crd("passwords.dex.coreos.com")
+            kubectl_delete_crd("refreshtokens.dex.coreos.com")
+            kubectl_delete_crd("signingkeies.dex.coreos.com")
 
-    # clear up implicit crd resources for Dex
-    if component_name == "dex":
-        kubectl_delete_crd("authrequests.dex.coreos.com")
-        kubectl_delete_crd("connectors.dex.coreos.com")
-        kubectl_delete_crd("devicerequests.dex.coreos.com")
-        kubectl_delete_crd("devicetokens.dex.coreos.com")
-        kubectl_delete_crd("oauth2clients.dex.coreos.com")
-        kubectl_delete_crd("offlinesessionses.dex.coreos.com")
-        kubectl_delete_crd("passwords.dex.coreos.com")
-        kubectl_delete_crd("refreshtokens.dex.coreos.com")
-        kubectl_delete_crd("signingkeies.dex.coreos.com")
+        print(f"All {component_name} resources are cleared!")
 
-    print(f"All {component_name} resources are cleared!")
+def uninstall_remote_component(component_name, namespace):
+    if check_helm_chart_exists(component_name, namespace):
+        uninstall_helm(component_name, namespace)
+    if component_name == "aws-load-balancer-controller":
+        kubectl_delete(
+                            "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/6d3e976e3f60dc4588c01bad036d77c127a68e71/helm/aws-load-balancer-controller/crds/crds.yaml"
+                        )
+
 
 
 if __name__ == "__main__":

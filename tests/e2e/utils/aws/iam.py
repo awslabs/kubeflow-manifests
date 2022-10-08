@@ -80,13 +80,13 @@ class IAMRole:
         name: str = None,
         region: str = "us-east-1",
         iam_client: Any = None,
-        policies: list = None,
+        policy_arns: list = None,
         arn: str = None,
     ):
         self.region = region
         self.iam_client = iam_client or boto3.client("iam", region_name=region)
         self.name = name
-        self.policies = policies
+        self.policy_arns = policy_arns
         self.arn = arn
         if not name and not arn:
             raise ValueError("Either role name or arn should be defined")
@@ -97,9 +97,9 @@ class IAMRole:
                 RoleName=self.name, AssumeRolePolicyDocument=policy_document
             )
 
-            for policy in self.policies:
+            for policy in self.policy_arns:
                 self.iam_client.attach_role_policy(
-                    RoleName=self.name, PolicyArn=f"arn:aws:iam::aws:policy/{policy}"
+                    RoleName=self.name, PolicyArn=policy
                 )
         except ClientError:
             logger.exception(f"failed to create IAM Role {self.name}")
@@ -111,12 +111,12 @@ class IAMRole:
 
     def delete(self):
         try:
-            for policy in self.policies:
+            for policy in self.policy_arns:
                 self.iam_client.detach_role_policy(
                 PolicyArn=policy, RoleName=self.name,
                 )
             self.iam_client.delete_role(RoleName=self.name)
             logger.info(f"deleted iam role {self.arn}")
         except ClientError:
-            logger.exception(f"failed to delete iam policy {self.arn}")
+            logger.exception(f"failed to delete iam role {self.arn}")
             raise

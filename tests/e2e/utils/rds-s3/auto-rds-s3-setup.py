@@ -425,14 +425,14 @@ def setup_kubeflow_pipeline():
     
     #helm
     #pipelines helm path
-    pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
-    pipeline_rds_only_helm_path = path_dic_rds_only["kubeflow-pipelines"]["installation_options"]["helm"]
-    pipeline_s3_only_helm_path = path_dic_s3_only["kubeflow-pipelines"]["installation_options"]["helm"]
+    pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
+    pipeline_rds_only_helm_path = path_dic_rds_only["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
+    pipeline_s3_only_helm_path = path_dic_s3_only["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
     
     #secrets-manager helm path
-    secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
-    secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"]["installation_options"]["helm"]
-    secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"]["installation_options"]["helm"]
+    secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
+    secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
+    secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
 
     #pipelines values file
     pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 

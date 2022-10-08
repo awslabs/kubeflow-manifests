@@ -66,6 +66,10 @@ spec:
                 description: FieldExportTarget provides the values necessary to identify
                   the output path for a field export.
                 properties:
+                  key:
+                    description: Key overrides the default value (`<namespace>.<FieldExport-resource-name>`)
+                      for the FieldExport target
+                    type: string
                   kind:
                     description: FieldExportOutputType represents all types that can
                       be produced by a field export operation

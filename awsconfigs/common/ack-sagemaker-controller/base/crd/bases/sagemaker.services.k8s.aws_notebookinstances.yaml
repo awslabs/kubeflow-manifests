@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
+    controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
   name: notebookinstances.sagemaker.services.k8s.aws
 spec:
@@ -59,8 +58,8 @@ spec:
                   Git repositories in Amazon Web Services CodeCommit (https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html)
                   or in any other Git repository. These repositories are cloned at
                   the same level as the default repository of your notebook instance.
-                  For more information, see Associating Git Repositories with Amazon
-                  SageMaker Notebook Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).
+                  For more information, see Associating Git Repositories with SageMaker
+                  Notebook Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).
                 items:
                   type: string
                 type: array
@@ -71,16 +70,16 @@ spec:
                   of a Git repository in Amazon Web Services CodeCommit (https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html)
                   or in any other Git repository. When you open a notebook instance,
                   it opens in the directory that contains this repository. For more
-                  information, see Associating Git Repositories with Amazon SageMaker
-                  Notebook Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).
+                  information, see Associating Git Repositories with SageMaker Notebook
+                  Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).
                 type: string
               directInternetAccess:
-                description: "Sets whether Amazon SageMaker provides internet access
-                  to the notebook instance. If you set this to Disabled this notebook
-                  instance is able to access resources only in your VPC, and is not
-                  be able to connect to Amazon SageMaker training and endpoint services
-                  unless you configure a NAT Gateway in your VPC. \n For more information,
-                  see Notebook Instances Are Internet-Enabled by Default (https://docs.aws.amazon.com/sagemaker/latest/dg/appendix-additional-considerations.html#appendix-notebook-and-internet-access).
+                description: "Sets whether SageMaker provides internet access to the
+                  notebook instance. If you set this to Disabled this notebook instance
+                  is able to access resources only in your VPC, and is not be able
+                  to connect to SageMaker training and endpoint services unless you
+                  configure a NAT Gateway in your VPC. \n For more information, see
+                  Notebook Instances Are Internet-Enabled by Default (https://docs.aws.amazon.com/sagemaker/latest/dg/appendix-additional-considerations.html#appendix-notebook-and-internet-access).
                   You can set the value of this parameter to Disabled only if you
                   set a value for the SubnetId parameter."
                 type: string
@@ -90,10 +89,10 @@ spec:
                 type: string
               kmsKeyID:
                 description: The Amazon Resource Name (ARN) of a Amazon Web Services
-                  Key Management Service key that Amazon SageMaker uses to encrypt
-                  data on the storage volume attached to your notebook instance. The
-                  KMS key you provide must be enabled. For information, see Enabling
-                  and Disabling Keys (https://docs.aws.amazon.com/kms/latest/developerguide/enabling-keys.html)
+                  Key Management Service key that SageMaker uses to encrypt data on
+                  the storage volume attached to your notebook instance. The KMS key
+                  you provide must be enabled. For information, see Enabling and Disabling
+                  Keys (https://docs.aws.amazon.com/kms/latest/developerguide/enabling-keys.html)
                   in the Amazon Web Services Key Management Service Developer Guide.
                 type: string
               lifecycleConfigName:
@@ -110,14 +109,13 @@ spec:
                 type: string
               roleARN:
                 description: "When you send any requests to Amazon Web Services resources
-                  from the notebook instance, Amazon SageMaker assumes this role to
-                  perform tasks on your behalf. You must grant this role necessary
-                  permissions so Amazon SageMaker can perform these tasks. The policy
-                  must allow the Amazon SageMaker service principal (sagemaker.amazonaws.com)
-                  permissions to assume this role. For more information, see Amazon
-                  SageMaker Roles (https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).
-                  \n To be able to pass this role to Amazon SageMaker, the caller
-                  of this API must have the iam:PassRole permission."
+                  from the notebook instance, SageMaker assumes this role to perform
+                  tasks on your behalf. You must grant this role necessary permissions
+                  so SageMaker can perform these tasks. The policy must allow the
+                  SageMaker service principal (sagemaker.amazonaws.com) permissions
+                  to assume this role. For more information, see SageMaker Roles (https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).
+                  \n To be able to pass this role to SageMaker, the caller of this
+                  API must have the iam:PassRole permission."
                 type: string
               rootAccess:
                 description: "Whether root access is enabled or disabled for users
@@ -257,9 +255,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

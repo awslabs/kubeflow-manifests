@@ -18,11 +18,16 @@ configMapGenerator:
   behavior: replace
   files:
   - ./s3/viewer-pod-template.json
+- name: kubeflow-pipelines-profile-controller-code
+  behavior: replace
+  files:
+  - ./s3/sync.py
 generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - ./rds/disable-mysql-pv-claim.yaml
 - ./rds/disable-default-secret.yaml
+- ./s3/deployment_patch.yaml
 - ./s3/disable-default-secret.yaml
 - ./s3/aws-configuration-patch.yaml
 # Identifier for application manager to apply ownerReference.
