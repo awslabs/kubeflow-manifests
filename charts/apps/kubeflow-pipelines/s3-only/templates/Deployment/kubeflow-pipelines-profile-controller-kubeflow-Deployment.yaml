@@ -66,3 +66,4 @@ spec:
       - configMap:
           name: kubeflow-pipelines-profile-controller-code-btcch948fc
         name: hooks
+        
