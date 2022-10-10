@@ -64,5 +64,5 @@ jobs:
       if: failure()
       # retry delete if flakiness present
       run: |
-        cd ../../deployments/vanilla/terraform
+        cd deployments/vanilla/terraform
         make delete || make delete || make delete
