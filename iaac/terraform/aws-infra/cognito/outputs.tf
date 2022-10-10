@@ -15,5 +15,5 @@ output "user_pool_domain" {
 
 output "logout_url" {
   description = "Logout URL"
-  value       = "${aws_cognito_user_pool_domain.platform.domain}/logout?client_id=${aws_cognito_user_pool_client.platform.id}&logout_uri=https://kubeflow.${data.aws_route53_zone.platform.name}"
+  value       = "https://${aws_cognito_user_pool_domain.platform.domain}/logout?client_id=${aws_cognito_user_pool_client.platform.id}&logout_uri=https://kubeflow.${data.aws_route53_zone.platform.name}"
 }
