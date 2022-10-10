@@ -113,7 +113,9 @@ Check also `Enabled Identity Providers`.
     export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
     ```
 
-1. Set up your Ingress:
+1. The following commands will inject those values in a configuration file for setting up Ingress:
+
+    Select the package manager of your choice.
     {{< tabpane persistLang=false >}}
     {{< tab header="Kustomize" lang="toml" >}}
 printf '
@@ -131,7 +133,9 @@ yq e '.alb.cognito.appClientId = env(CognitoAppClientId)' -i charts/common/ingre
     {{< /tab >}}
     {{< /tabpane >}}
 
-1. Set up AWS authservice:
+1. The following commands will inject those values in a configuration file for setting up AWS authservice:
+
+    Select the package manager of your choice.
     {{< tabpane persistLang=false >}}
     {{< tab header="Kustomize" lang="toml" >}}
 printf '

@@ -96,7 +96,7 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
             us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
     ```
 
-## 3.0 Install Kubeflow
+## 2.0 Install Kubeflow
 
 Install Kubeflow using the following command:
 {{< tabpane persistLang=false >}}
@@ -108,7 +108,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 {{< /tab >}}
 {{< /tabpane >}}
 
-## 4.0 Update the domain with ALB address
+## 3.0 Update the domain with ALB address
 1. Check if ALB is provisioned. It takes about 3-5 minutes.
     ```shell
     kubectl get ingress -n istio-system
@@ -134,7 +134,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
     PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
     cd -
         ```
-## 5.0 Connect to Kubeflow central dashboard 
+## 4.0 Connect to Kubeflow central dashboard 
 Follow the instructions in the `Connecting to Kubeflow central dashboard` section of the [Manual Deployment Guide]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
 
 * Create a user in Cognito user pool.
