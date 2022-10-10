@@ -31,11 +31,6 @@ spec:
         - python
         - /hooks/sync.py
         env:
-        - name: MINIO_SERVICE_REGION
-          valueFrom:
-            configMapKeyRef:
-              key: minioServiceRegion
-              name: pipeline-install-config
         - name: KFP_VERSION
           valueFrom:
             configMapKeyRef:
@@ -69,5 +64,5 @@ spec:
           name: hooks
       volumes:
       - configMap:
-          name: kubeflow-pipelines-profile-controller-code-dhffkh7f55
+          name: kubeflow-pipelines-profile-controller-code-btcch948fc
         name: hooks
