@@ -231,4 +231,3 @@ metadata:
     application-crd-id: kubeflow-pipelines
   name: kubeflow-pipelines-profile-controller-code-btcch948fc
   namespace: kubeflow
-  
