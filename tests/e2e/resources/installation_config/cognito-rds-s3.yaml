@@ -218,7 +218,7 @@ notebook-controller:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+        - ../../awsconfigs/apps/notebook-controller
     helm: 
       paths: ../../charts/apps/notebook-controller
   validations:

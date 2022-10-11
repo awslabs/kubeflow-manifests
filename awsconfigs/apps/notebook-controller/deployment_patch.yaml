@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notebook-controller-deployment
+  namespace: kubeflow
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /manager
+        env:
+        - name: ENABLE_CULLING
+          valueFrom:
+            configMapKeyRef:
+              key: ENABLE_CULLING
+              name: config
+        - name: CULL_IDLE_TIME
+          valueFrom:
+            configMapKeyRef:
+              key: CULL_IDLE_TIME
+              name: config
+        - name: IDLENESS_CHECK_PERIOD
+          valueFrom:
+            configMapKeyRef:
+              key: IDLENESS_CHECK_PERIOD
+              name: config
+        name: manager

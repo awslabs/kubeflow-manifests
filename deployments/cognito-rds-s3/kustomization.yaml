@@ -24,7 +24,7 @@ resources:
   - ../../awsconfigs/apps/centraldashboard
   # Notebooks
   - ../../awsconfigs/apps/jupyter-web-app
-  - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+  - ../../awsconfigs/apps/notebook-controller
   # Admission Webhook
   - ../../upstream/apps/admission-webhook/upstream/overlays/cert-manager
   # Profiles + KFAM
