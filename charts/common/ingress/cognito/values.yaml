@@ -4,4 +4,4 @@ alb:
     UserPoolArn: 
     UserPoolDomain: 
     appClientId: 
-  scheme: internet-facing
+  scheme:

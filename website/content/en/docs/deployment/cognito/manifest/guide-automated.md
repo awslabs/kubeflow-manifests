@@ -25,6 +25,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
         1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section]({{< ref "/docs/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) to understand why we use a subdomain.
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
+        1. Load balancer scheme (e.g. `internet-facing` or `internal`)
         1. The config file will look something like:
             1. ```yaml
                 cognitoUserpool:
@@ -32,6 +33,9 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                 cluster:
                     name: kube-eks-cluster
                     region: us-west-2
+                kubeflow:
+                    alb:
+                        scheme: internet-facing
                 route53:
                     rootDomain:
                         hostedZoneId: XXXX
@@ -55,6 +59,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
                 name: kubeflow-users
             kubeflow:
                 alb:
+                    scheme: internet-facing
                     serviceAccount:
                         name: alb-ingress-controller
                         namespace: kubeflow
@@ -99,6 +104,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
         kubeflow:
             alb:
                 dns: ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com
+                schema: internet-facing
                 serviceAccount:
                     name: alb-ingress-controller
                     policyArn: arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx

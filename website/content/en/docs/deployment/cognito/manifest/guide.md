@@ -78,6 +78,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
           export certArn="<YOUR_ACM_CERTIFICATE_ARN>"
           export signOutURL="<YOUR_SIGN_OUT_URL>"
           export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
+          export loadBalancerScheme="<YOUR_Load_Balancer_Scheme>"
           ```
 1. Substitute values for setting up Ingress.
 
@@ -89,12 +90,16 @@ CognitoAppClientId='$CognitoAppClientId'
 CognitoUserPoolDomain='$CognitoUserPoolDomain'
 certArn='$certArn'
 ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
+printf '
+loadBalancerScheme='$loadBalancerScheme'
+' > awsconfigs/common/istio-ingress/base/params.env
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
 yq e '.alb.certArn = env(certArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolArn = env(CognitoUserPoolArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolDomain = env(CognitoUserPoolDomain)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.appClientId = env(CognitoAppClientId)' -i charts/common/ingress/cognito/values.yaml
+yq e '.alb.scheme = env(loadBalancerScheme) -i charts/common/ingress/cognito/values.yaml
 {{< /tab >}}
 {{< /tabpane >}}
 

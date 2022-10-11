@@ -3,6 +3,9 @@ cluster:
   region:
 cognitoUserpool:
   name:
+kubeflow:
+  alb:
+    scheme:
 route53:
   rootDomain:
     hostedZoneId:

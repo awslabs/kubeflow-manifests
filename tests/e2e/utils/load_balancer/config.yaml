@@ -1,6 +1,9 @@
 cluster:
   name:
   region:
+kubeflow:
+  alb:
+    scheme:
 route53:
   rootDomain:
     hostedZoneId:

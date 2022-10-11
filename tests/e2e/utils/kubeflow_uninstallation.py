@@ -121,11 +121,6 @@ def delete_component(
                     if os.path.isdir(f"{installation_path}/crds"):
                         print(f"deleting {component_name} crds ...")
                         kubectl_delete(f"{installation_path}/crds")
-                    # delete aws-load-balancer-controller crds for official helm chart
-                    if component_name == "aws-load-balancer-controller":
-                        kubectl_delete(
-                            "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/6d3e976e3f60dc4588c01bad036d77c127a68e71/helm/aws-load-balancer-controller/crds/crds.yaml"
-                        )
             # kustomize
             else:
                 installation_path.reverse()
@@ -149,10 +144,12 @@ def delete_component(
 def uninstall_remote_component(component_name, namespace):
     if check_helm_chart_exists(component_name, namespace):
         uninstall_helm(component_name, namespace)
-    if component_name == "aws-load-balancer-controller":
-        kubectl_delete(
+        if component_name == "aws-load-balancer-controller":
+            kubectl_delete(
                             "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/6d3e976e3f60dc4588c01bad036d77c127a68e71/helm/aws-load-balancer-controller/crds/crds.yaml"
-                        )
+                          )
+        elif component_name == "ack-sagemaker-controller":
+            kubectl_delete(f"../../charts/common/ack-controller/sagemaker-chart/crds")
 
 
 

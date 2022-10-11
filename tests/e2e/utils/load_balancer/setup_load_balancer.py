@@ -117,6 +117,14 @@ def configure_ingress_manifest(tls_cert_arn: str):
         },
     )
 
+    #annotate loadBalancerScheme
+    configure_env_file(
+        env_file_path="../../awsconfigs/common/istio-ingress/base/params.env",
+        env_dict={
+            "loadBalancerScheme": load_balancer_scheme
+        },
+    )
+
 
 # Step 4: Configure load balancer controller manifests and create an IAM role for controller service account
 def configure_load_balancer_controller(
@@ -197,7 +205,7 @@ def wait_for_alb_status(alb_dns: str, region: str, expected_status: str = "activ
 
 def create_ingress():
     def callback():
-        apply_kustomize(path=common.LB_KUSTOMIZE_PATH, crd_required = "ingressclassparams.elbv2.k8s.aws")
+        apply_kustomize(path=common.LB_KUSTOMIZE_PATH, crds = ["ingressclassparams.elbv2.k8s.aws"])
 
     wait_for(callback)
 
@@ -231,6 +239,7 @@ if __name__ == "__main__":
     subdomain_name = cfg["route53"]["subDomain"]["name"]
     root_domain_name = cfg["route53"]["rootDomain"]["name"]
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
+    load_balancer_scheme = cfg["kubeflow"]["alb"]["scheme"]
 
     print_banner("Creating Subdomain in Route 53")
     root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -263,4 +272,5 @@ if __name__ == "__main__":
     create_ingress()
     alb_dns = dns_update(deployment_region, cluster_name, subdomain_hosted_zone)
     cfg["kubeflow"]["alb"]["dns"] = alb_dns
+    cfg["kubeflow"]["alb"]["scheme"] = load_balancer_scheme
     write_yaml_file(yaml_content=cfg, file_path=config_file_path)
