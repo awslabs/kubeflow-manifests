@@ -113,8 +113,8 @@ def delete_component(
                 elif component_name == "ingress":
                     if check_helm_chart_exists(component_name, namespace):
                         uninstall_helm(component_name, namespace)
-                    #Helm doesn't seem to delete ingress during uninstall
-                    exec_shell(f"kubectl delete ingress -n istio-system istio-ingress")
+                        #Helm doesn't seem to delete ingress during uninstall
+                        exec_shell(f"kubectl delete ingress -n istio-system istio-ingress")
                 else:
                     if check_helm_chart_exists(component_name, namespace):
                         uninstall_helm(component_name, namespace)
