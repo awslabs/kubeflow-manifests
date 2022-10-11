@@ -48,6 +48,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.2.7
+        terraform_wrapper: false
     
     - name: Install Python
       uses: actions/setup-python@v4
@@ -64,5 +65,5 @@ jobs:
       if: failure()
       # retry delete if flakiness present
       run: |
-        cd ../../deployments/cognito/terraform
+        cd deployments/cognito/terraform
         make delete || make delete || make delete
