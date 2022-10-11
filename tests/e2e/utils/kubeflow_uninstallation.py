@@ -111,13 +111,13 @@ def delete_component(
                         delete_kustomize(kustomize_path)
 
                 elif component_name == "ingress":
-                    uninstall_helm(component_name, namespace)
+                    if check_helm_chart_exists(component_name, namespace):
+                        uninstall_helm(component_name, namespace)
                     #Helm doesn't seem to delete ingress during uninstall
                     exec_shell(f"kubectl delete ingress -n istio-system istio-ingress")
                 else:
                     if check_helm_chart_exists(component_name, namespace):
                         uninstall_helm(component_name, namespace)
-                    print(installation_path)
                     if os.path.isdir(f"{installation_path}/crds"):
                         print(f"deleting {component_name} crds ...")
                         kubectl_delete(f"{installation_path}/crds")
