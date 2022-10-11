@@ -1,2 +1,3 @@
-null
-...
+cullIdleTime: 30
+enableCulling: false
+idlenessCheckPeriod: 5
