@@ -17,13 +17,11 @@ This guide will walk you through using Terraform to:
 - Create an RDS DB instance
 - Deploy Kubeflow with Cognito as an identity provider, RDS as a KFP and Katib persistence layer, and S3 as an artifact store
 
-Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
-
-Terraform documentation can be found [here](https://www.terraform.io/docs).
+Find additional information on [using Cognito with the AWS Distribution for Kubeflow]({{< ref "./guide/#background" >}}) in this guide. You can also check [Terraform documentation](https://www.terraform.io/docs).
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites" >}}) before working through this guide.
 
 Specifially, you must:
 - [Create a Ubuntu environment]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
@@ -99,9 +97,9 @@ pwd
     EOF
     ```
 
-### All Configurations
+### View all Configurations
 
-A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf).
+View all possible configuration options in this [full list of inputs for the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf).
 
 ### Preview
 

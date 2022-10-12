@@ -13,7 +13,7 @@ Run the following command on your EC2 instance:
 make port-forward
 ```
 
-Then,on your local machine, run the following:
+Then, on your local machine, run the following:
 
 ```sh
 ssh -i <path-to-your-key-pem> -L 8080:localhost:8080 -N ubuntu@ec2-<Public-IPv4-DNS>.compute-1.amazonaws.com -o ExitOnForwardFailure=yes
@@ -46,7 +46,7 @@ Then, open the AWS Cloud9 browser and go to [http://localhost:8080/](http://loca
     $(terraform output -raw configure_kubectl)
     ```
 
-2. Choose your port forward option from [here](#port-forward-manifest-deployment)
+2. [Choose your port forward option](#port-forward-manifest-deployment)
 
 ## Open the browser
 
