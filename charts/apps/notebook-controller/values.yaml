@@ -1,3 +1,4 @@
-cullIdleTime: 30
-enableCulling: false
-idlenessCheckPeriod: 5
+cullingPolicy:
+  enableCulling: false
+  cullIdleTime: 30
+  idlenessCheckPeriod: 5

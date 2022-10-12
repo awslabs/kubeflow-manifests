@@ -24,28 +24,28 @@ spec:
         - name: ENABLE_CULLING
           valueFrom:
             configMapKeyRef:
-              key: ENABLE_CULLING
-              name: notebook-controller-config-68dbfcddhk
+              key: enableCulling
+              name: notebook-controller-config-9675dd2fhk
         - name: CULL_IDLE_TIME
           valueFrom:
             configMapKeyRef:
-              key: CULL_IDLE_TIME
-              name: notebook-controller-config-68dbfcddhk
+              key: cullIdleTime
+              name: notebook-controller-config-9675dd2fhk
         - name: IDLENESS_CHECK_PERIOD
           valueFrom:
             configMapKeyRef:
-              key: IDLENESS_CHECK_PERIOD
-              name: notebook-controller-config-68dbfcddhk
+              key: idlenessCheckPeriod
+              name: notebook-controller-config-9675dd2fhk
         - name: USE_ISTIO
           valueFrom:
             configMapKeyRef:
               key: USE_ISTIO
-              name: notebook-controller-config-68dbfcddhk
+              name: notebook-controller-config-9675dd2fhk
         - name: ISTIO_GATEWAY
           valueFrom:
             configMapKeyRef:
               key: ISTIO_GATEWAY
-              name: notebook-controller-config-68dbfcddhk
+              name: notebook-controller-config-9675dd2fhk
         image: docker.io/kubeflownotebookswg/notebook-controller:v1.6.1
         imagePullPolicy: Always
         livenessProbe:
