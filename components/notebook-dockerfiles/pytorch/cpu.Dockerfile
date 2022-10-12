@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.12.0-cpu-py38-ubuntu20.04-ec2
+ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.12.1-cpu-py38-ubuntu20.04-ec2-v1.2
 FROM $BASE_IMAGE
 
 ARG NB_USER=jovyan
