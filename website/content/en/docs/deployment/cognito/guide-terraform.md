@@ -75,8 +75,9 @@ pwd
     EOF
     ```
 
-### List all configurations
-Check the [full list of inputs for the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf).
+### View all configurations
+
+View all possible configuration options in this [full list of inputs for the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf).
 
 ### Preview
 To check the configuration you are about to apply, run:
@@ -91,7 +92,7 @@ make deploy
 ```
 
 ## Connect to your Kubeflow dashboard
-1.  Go to the Cognito console and [create some users]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connect-to-the-central-dashboard" >}})  in `Users and groups` using their email `user@example.com`.
+1. Go to the Cognito console and [create some users]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connect-to-the-central-dashboard" >}})  in `Users and groups` using their email `user@example.com`.
 1. Get the link to the central dashboard:
     ```sh
     terraform output -raw kubelow_platform_domain
@@ -100,7 +101,7 @@ make deploy
 
 ## Cleanup
 
-Uninstall Kubeflow on AWS with a single command. 
+Uninstall Kubeflow on AWS. 
 ```sh
 make delete
 ```

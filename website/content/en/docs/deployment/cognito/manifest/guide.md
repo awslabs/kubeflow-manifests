@@ -65,7 +65,7 @@ Check also `Enabled Identity Providers`.
 
         ![subdomain-initial-A-record](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png)
 
-    * If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for `*.platform.example.com` by following the steps in [section 2.0]({{< ref "/docs/add-ons/load-balancer/guide.md#create-certificates-for-domain" >}}). That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
+    * If your cluster is not in N.Virginia (us-east-1), [create an ACM certificate]({{< ref "/docs/add-ons/load-balancer/guide#create-certificates-for-domain" >}}) in us-east-1 for `*.platform.example.com`. That is because [Cognito requires](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html) a certificate in N.Virginia in order to have a custom domain for a user pool.
 
     * In the `Domain name`:
         
@@ -149,9 +149,7 @@ yq e '.LOGOUT_URL = env(CognitoLogoutURL)' -i charts/common/aws-authservice/valu
 
 1. Follow the [Configure Load Balancer Controller]({{< ref "/docs/add-ons/load-balancer/guide.md#configure-load-balancer-controller" >}}) section of the load balancer guide to setup the resources required by the load balancer controller.
 
-## 4.0 Build the manifest and deploy Kubeflow
-
-Install Cognito with a single command.
+## 4.0 Build the manifests and deploy Kubeflow
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
@@ -189,7 +187,8 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
 ## 6.0 Connect to the central dashboard
 
 1. The central dashboard should now be available at `https://kubeflow.platform.example.com`. 
-Before connecting to the dashboard:
+
+    Before connecting to the dashboard:
 
     * Go to the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
         ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
@@ -211,11 +210,11 @@ Before connecting to the dashboard:
         ```
 
 1. Open the central dashboard at `https://kubeflow.platform.example.com`. 
-It will redirect to Cognito for login. Use the credentials of the user you just created a Profile for in the previous steps.
+It will redirect to Cognito for login. Use the credentials of a user you just created in the previous steps.
 
 > Note: It might take a few minutes for the DNS changes to propagate and for your URL to work. 
 Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/).
 
 ## 7.0 Uninstall Kubeflow
 
-To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md#uninstall-kubeflow" >}}).
+To delete the resources created in this guide, refer to the [Uninstall section in Automated Cognito deployment guide]({{< ref "/docs/deployment/cognito/manifest/guide-automated.md#50-uninstall-kubeflow" >}}).

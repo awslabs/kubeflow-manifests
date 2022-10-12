@@ -21,8 +21,8 @@ This guide assumes you have Python 3.8 installed and that you have completed the
 
 The following steps automate:
 
-- the creation of a [custom domain and certificates]({{< ref "/docs/deployment/cognito/manifest/guide.md#10-custom-domain-and-certificates" >}}) to host Kubeflow and TLS certificates for the domain.
-- the creation of a [Cognito Userpool]({{< ref "/docs/deployment/cognito/manifest/guide.md#20-cognito-user-pool" >}}) for user authentication.
+- the creation of a [custom domain and certificates]({{< ref "/docs/deployment/cognito/manifest/guide#10-create-a-custom-domain-and-certificates" >}}) as in section 1.0 of the Manual Deployment Guide to host Kubeflow and TLS certificates for the domain.
+- the creation of a [Cognito Userpool]({{< ref "/docs/deployment/cognito/manifest/guide#20-create-a-cognito-user-pool" >}}) for user authentication.
 - the [configuration of an ingress and load balancer controller manifests]({{< ref "/docs/deployment/cognito/manifest/guide.md#30-configure-ingress" >}}).
 
 Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/deployment/cognito/manifest/guide.md" >}}).
@@ -135,24 +135,24 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
     cd -
         ```
 ## 4.0 Connect to Kubeflow central dashboard 
-Follow the instructions in the `Connecting to Kubeflow central dashboard` section of the [Manual Deployment Guide]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connecting-to-central-dashboard" >}}) to:
+Follow the instructions in the [`Connecting to Kubeflow central dashboard`]({{< ref "/docs/deployment/cognito/manifest/guide#60-connect-to-the-central-dashboard" >}}) section of the Manual Deployment Guide to:
 
 * Create a user in Cognito user pool.
 * Create a profile for the user from the user pool.
 * Connect to the central dashboard.
 
-## Uninstall Kubeflow
+## 5.0 Uninstall Kubeflow
 
 > Note: Delete all the resources you might have created in your profile namespaces before running these steps.
 
-1. Run the following commands to delete the profiles, ingress and corresponding ingress managed load balancer
+1. Run the following commands to delete the profiles:
+
    ```bash
     kubectl delete profiles --all
     ```
 
-1. Delete the kubeflow deployment
+1. Delete the kubeflow deployment:
 
-    > Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation.
     {{< tabpane persistLang=false >}}
     {{< tab header="Kustomize" lang="toml" >}}
 make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito
@@ -164,7 +164,7 @@ make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
  
 1. To delete the rest of the resources (subdomain, certificates etc.), run the following commands from the root of your repository:
 
-    * Find the configuration file `tests/e2e/utils/cognito_bootstrap/config.yaml` updated by the `cognito_post_deployment.py` script. If you did not use the script, update the name, ARN, or ID of the resources that you created in a separate yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
+    * Ensure you have the configuration file `tests/e2e/utils/cognito_bootstrap/config.yaml` updated by the `cognito_post_deployment.py` script. If you did not use the script, update the name, ARN, or ID of the resources that you created in a separate yaml file in `tests/e2e/utils/cognito_bootstrap/config.yaml` by referring to the following sample:
 
         ```yaml
         # Sample config file
@@ -195,11 +195,12 @@ make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
                 us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
         ```
     * Run the following command to install the script dependencies and delete the resources:
-    
-    > Note: You can rerun the script in case some resources fail to delete.
-    ```bash
-    cd tests/e2e
-    pip install -r requirements.txt
-    PYTHONPATH=.. python utils/cognito_bootstrap/cognito_resources_cleanup.py
-    cd -
-    ```
+
+        ```bash
+        cd tests/e2e
+        pip install -r requirements.txt
+        PYTHONPATH=.. python utils/cognito_bootstrap/cognito_resources_cleanup.py
+        cd -
+        ```
+        You can rerun the script in case some resources fail to delete.
+
