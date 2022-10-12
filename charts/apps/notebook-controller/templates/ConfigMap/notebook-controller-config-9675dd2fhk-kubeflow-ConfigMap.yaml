@@ -11,5 +11,5 @@ metadata:
   labels:
     app: notebook-controller
     kustomize.component: notebook-controller
-  name: notebook-controller-config-68dbfcddhk
+  name: notebook-controller-config-9675dd2fhk
   namespace: kubeflow
