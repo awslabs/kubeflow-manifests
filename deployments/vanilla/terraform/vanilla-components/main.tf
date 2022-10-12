@@ -148,8 +148,26 @@ module "kubeflow_admission_webhook" {
 module "kubeflow_notebook_controller" {
   source            = "../../../../iaac/terraform/apps/notebook-controller"
   helm_config = {
-    chart = "${var.kf_helm_repo_path}/charts/apps/notebook-controller"
-  }  
+    chart = "${var.kf_helm_repo_path}/charts/apps/notebook-controller" 
+    set = [
+      {
+        name = "cullingPolicy.cullIdleTime" 
+        value = var.notebook_cull_idle_time
+      }
+    ]
+    set = [
+      {
+        name = "cullingPolicy.enableCulling" 
+        value = var.notebook_enable_culling
+      }
+    ] 
+    set = [
+      {  
+        name = "cullingPolicy.idlenessCheckPeriod" 
+        value= var.notebook_idleness_check_period
+      }
+    ]
+  }
   addon_context = var.addon_context
   depends_on = [module.kubeflow_admission_webhook]
 }
