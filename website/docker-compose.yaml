@@ -4,8 +4,6 @@ services:
 
   site:
     image: docsy/docsy-example
-    build:
-      context: .
     command: server
     ports:
       - "1313:1313"
@@ -13,3 +11,18 @@ services:
     volumes:
       - ..:/src
 
+  build:
+    image: docsy/docsy-example
+    environment: 
+      - HUGO_ENV="production"
+    command: --gc
+    working_dir: /src/website
+    volumes:
+      - ..:/src
+
+  linkcheck:
+    image: ghcr.io/linkchecker/linkchecker
+    command: --check-extern  --ignore-url="http://localhost:8080/"|"sitemap.xml" index.html 
+    working_dir: /kubeflow-manifests/main
+    volumes:
+      - ./public:/kubeflow-manifests/main
