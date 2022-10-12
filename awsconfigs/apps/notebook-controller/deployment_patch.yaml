@@ -13,16 +13,16 @@ spec:
         - name: ENABLE_CULLING
           valueFrom:
             configMapKeyRef:
-              key: ENABLE_CULLING
+              key: enableCulling
               name: config
         - name: CULL_IDLE_TIME
           valueFrom:
             configMapKeyRef:
-              key: CULL_IDLE_TIME
+              key: cullIdleTime
               name: config
         - name: IDLENESS_CHECK_PERIOD
           valueFrom:
             configMapKeyRef:
-              key: IDLENESS_CHECK_PERIOD
+              key: idlenessCheckPeriod
               name: config
         name: manager
