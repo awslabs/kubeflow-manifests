@@ -31,7 +31,7 @@ resources:
   # Jupyter Web App
   - ../../../awsconfigs/apps/jupyter-web-app
   # Notebook Controller
-  - ../../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+  - ../../../awsconfigs/apps/notebook-controller
   # Profiles + KFAM
   - ../../../upstream/apps/profiles/upstream/overlays/kubeflow
   # Volumes Web App

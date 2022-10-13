@@ -41,7 +41,7 @@ spec:
               \    \"ap-northeast-2\"\n    \"ap-northeast-3\"\n    \"ca-central-1\"\
               \n    \"eu-central-1\"\n    \"eu-north-1\"\n    \"eu-west-1\"\n    \"\
               eu-west-2\"\n    \"eu-west-3\"\n    \"eu-south-1\"\n    \"me-south-1\"\
-              \n    \"sa-east-1\"\n    \"us-gov-west-1\"\n  )\n  REGION=$(curl -s\
+              \n    \"sa-east-1\"\n    \"cn-north-1\"\n    \"cn-northwest-1\"\n    \"eu-south-2\"\n    \"me-central-1\"\n    \"us-gov-west-1\"\n  )\n  REGION=$(curl -s\
               \ --retry 3 \"${IMDSV2_HEADER[@]}\" http://169.254.169.254/latest/meta-data/placement/availability-zone\
               \ | awk '{print substr($1, 1, length($1)-1)}')\n\n  if [[ -z ${REGION+x}\
               \ || ! ${_valid_regions[${REGION}]+x} ]]; then\n    exit 0\n  fi\n}\n\

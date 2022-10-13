@@ -7,10 +7,10 @@ This directory contains the source code for these jupyter images which is based 
 
 The following AWS Optimized container images are available from the [Amazon Elastic Container Registry](https://gallery.ecr.aws/kubeflow-on-aws/) (Amazon ECR).
 ```
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-gpu-py39-cu112-ubuntu20.04-ec2-v1.1
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-cpu-py38-ubuntu20.04-ec2-v1.2
 ```
 These images are based on AWS Deep Learning Containers which provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Deep Learning Container Docs](https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html).
 

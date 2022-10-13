@@ -23,28 +23,28 @@ TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 NOTEBOOK_IMAGES = [
-    "kubeflownotebookswg/jupyter-scipy:v1.6.1-rc.0",
-    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20",
-    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20",
-    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20",
-    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20",
+    "kubeflownotebookswg/jupyter-scipy:v1.6.1",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-gpu-py39-cu112-ubuntu20.04-ec2-v1.1",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-cpu-py38-ubuntu20.04-ec2-v1.2",
 ]
 
 testdata = [
     ("scipy", NOTEBOOK_IMAGES[0], "sanity_check.ipynb", "Hello World!"),
-    ("tf-gpu", NOTEBOOK_IMAGES[1], "verify_tensorflow_installation.ipynb", "2.9.1"),
-    ("tf-cpu", NOTEBOOK_IMAGES[2], "verify_tensorflow_installation.ipynb", "2.9.1"),
+    ("tf-gpu", NOTEBOOK_IMAGES[1], "verify_tensorflow_installation.ipynb", "2.10.0"),
+    ("tf-cpu", NOTEBOOK_IMAGES[2], "verify_tensorflow_installation.ipynb", "2.10.0"),
     (
         "pytorch-gpu",
         NOTEBOOK_IMAGES[3],
         "verify_pytorch_installation.ipynb",
-        "1.12.0+cu116",
+        "1.12.1+cu116",
     ),
     (
         "pytorch-cpu",
         NOTEBOOK_IMAGES[4],
         "verify_pytorch_installation.ipynb",
-        "1.12.0+cpu",
+        "1.12.1+cpu",
     ),
 ]
 
