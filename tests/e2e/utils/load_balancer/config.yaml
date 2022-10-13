@@ -3,7 +3,7 @@ cluster:
   region:
 kubeflow:
   alb:
-    scheme:
+    scheme: internet-facing
 route53:
   rootDomain:
     hostedZoneId:
