@@ -150,7 +150,7 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
         - If your domain is managed in Route53, enter the Hosted zone ID found under Hosted zone details in `route53.rootDomain.hostedZoneId`. Skip this step if your domain is managed by other domain provider.
     - Name of the sudomain that you want to use to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`.
     - Cluster name and region where Kubeflow is deployed in `cluster.name` and `cluster.region` (e.g. `us-west-2`), respectively.
-    -  Load balancer scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer schema if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
+    -  Load balancer scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
     - The Config file will look something like:
         ```yaml
         cluster:

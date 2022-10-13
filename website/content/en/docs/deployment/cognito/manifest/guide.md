@@ -69,7 +69,7 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) is running.
     1. signOutURL is the domain that you provided as the Sign out URL(s).
     1. CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain that you provided as the Sign out URL(s).
-    1. LoadBalancerScheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer schema if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
+    1. LoadBalancerScheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
     1. Export the values:
         1. ```bash
             export CognitoUserPoolArn="<YOUR_USER_POOL_ARN>"

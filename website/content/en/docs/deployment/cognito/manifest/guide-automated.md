@@ -25,7 +25,7 @@ This guide assumes you have Python 3.8 installed and that you have completed the
         1. Name of the sudomain you want to host Kubeflow (e.g. `platform.example.com`) in `route53.subDomain.name`. Please read [this section]({{< ref "/docs/add-ons/load-balancer/guide.md#create-domain-and-certificates" >}}) to understand why we use a subdomain.
         1. Cluster name and region where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. us-west-2) respectively.
         1. Name of cognito userpool in `cognitoUserpool.name` e.g. kubeflow-users.
-        1. LoadBalancerScheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer schema if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
+        1. LoadBalancerScheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
         1. The config file will look something like:
             1. ```yaml
                 cognitoUserpool:

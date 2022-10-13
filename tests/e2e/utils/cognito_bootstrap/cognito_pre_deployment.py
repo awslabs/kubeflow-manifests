@@ -99,7 +99,7 @@ def create_cognito_userpool(
 
 # Step 3: Configure Ingress
 #TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.  
-def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str, load_balancer_scheme: str):
+def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str, load_balancer_scheme="internet-facing"):
     ingress_helm_path = path_dic["ingress"]["installation_options"]["helm"]["paths"]
     ingress_values_file = f"{ingress_helm_path}/values.yaml"
     cognito_dict = {

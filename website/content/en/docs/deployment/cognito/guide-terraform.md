@@ -47,10 +47,7 @@ pwd
             ```sh
             export TF_VAR_create_subdomain="false"
             ```
-1. Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer schema if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
-    ```sh
-    export loadBalancerScheme=internet-facing
-    ```
+
 1. Define the following environment variables:
 
     ```sh
@@ -64,7 +61,11 @@ pwd
     export SUBDOMAIN=
     # Name of the cognito user pool to create
     export USER_POOL_NAME=
+    # Load balancer scheme
+    export loadBalancerScheme=internet-facing
+    
     ```
+    > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
 
 1. Save the variables to a `.tfvars` file:
 
