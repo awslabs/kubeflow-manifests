@@ -218,7 +218,7 @@ notebook-controller:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+        - ../../awsconfigs/apps/notebook-controller
     helm: 
       paths: ../../charts/apps/notebook-controller
   validations:
@@ -373,19 +373,23 @@ aws-secrets-manager:
     pods:
       namespace: kubeflow
       labels:
-        key: app
-        value: aws-secrets-sync
+        - key: app
+          value: aws-secrets-sync
 
+#ack-controller
 ack-sagemaker-controller:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/common/ack-sagemaker-controller"
+    kustomize:
+      paths: 
+        - ../../awsconfigs/common/ack-sagemaker-controller
     helm: 
       repo: remote
 
 #AWS Telemetry (Optional)
 aws-telemetry:
   installation_options:
-    kustomize: 
-      - "../../awsconfigs/common/aws-telemetry"
-    helm: "../../charts/common/aws-telemetry"
+    kustomize:
+      paths: 
+        - ../../awsconfigs/common/aws-telemetry
+    helm: 
+      paths: ../../charts/common/aws-telemetry

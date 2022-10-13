@@ -68,6 +68,10 @@ spec:
                     "eu-south-1"
                     "me-south-1"
                     "sa-east-1"
+                    "cn-north-1"
+                    "cn-northwest-1"
+                    "eu-south-2"
+                    "me-central-1"
                     "us-gov-west-1"
                   )
                   REGION=$(curl -s --retry 3 "${IMDSV2_HEADER[@]}" http://169.254.169.254/latest/meta-data/placement/availability-zone | awk '{print substr($1, 1, length($1)-1)}')

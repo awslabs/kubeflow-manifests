@@ -10,7 +10,7 @@ resources:
 - prometheus-service.yaml
 
 # Notebook Controller
-- ../../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
+- ../../../awsconfigs/apps/notebook-controller
 patchesStrategicMerge:
 - notebook-controller-service-patch.yaml
 - notebook-controller-deployment-patch.yaml
