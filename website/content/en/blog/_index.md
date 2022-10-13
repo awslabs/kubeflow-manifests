@@ -36,7 +36,7 @@ This section curates a list of recorded virtual workshops, demos, and general pr
 
 1. **[ AWS Online Tech Talks ]**: [AWS Virtual Workshop "Distributed Training using PyTorch with Kubeflow on AWS and AWS DLC"](http://youtu.be/qctwfYZKK8M) - Demonstrates how Kubeflow on AWS integration with AWS Deep Learning Containers and Amazon Elastic File System (Amazon EFS) allows building and training PyTorch based deep learning models on both Amazon SageMaker and Amazon Elastic Kubernetes Service (EKS) with flexibility and scale in a hybrid architecture. Attended by over 50 customers. Aug 23rd, 2022
 
-1. **[ AWS On Air ]**: [re:Inforce Session "Hybrid distributed training architecture using Kubeflow and SageMaker"](https://www.youtube.com/watch?v=sPJXFXq6woA) - Attended by over 900 customers. July 27, 2022
+<!--1. **[ AWS On Air ]**: [re:Inforce Session "Hybrid distributed training architecture using Kubeflow and SageMaker"](https://www.youtube.com/watch?v=sPJXFXq6woA) - Attended by over 900 customers. July 27, 2022-->
 
 1. **[ AWS On Air ]**: [Live at re:Mars Session "Deploy and scale your ML workflow on Kubernetes with Kubeflow on AWS"](https://www.linkedin.com/video/live/urn:li:ugcPost:6945501585447804929/). You will be prompted to log into LinkedIn.
 
