@@ -71,16 +71,15 @@ From this point onwards, we will be creating/updating the DNS records **only in 
     1. CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain that you provided as the Sign out URL(s).
     1. LoadBalancerScheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer schema if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
     1. Export the values:
-        1. 
-          ```bash
-          export CognitoUserPoolArn="<YOUR_USER_POOL_ARN>"
-          export CognitoAppClientId="<YOUR_APP_CLIENT_ID>"
-          export CognitoUserPoolDomain="<YOUR_USER_POOL_DOMAIN>"
-          export certArn="<YOUR_ACM_CERTIFICATE_ARN>"
-          export signOutURL="<YOUR_SIGN_OUT_URL>"
-          export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
-          export loadBalancerScheme=internet-facing
-          ```
+        1. ```bash
+            export CognitoUserPoolArn="<YOUR_USER_POOL_ARN>"
+            export CognitoAppClientId="<YOUR_APP_CLIENT_ID>"
+            export CognitoUserPoolDomain="<YOUR_USER_POOL_DOMAIN>"
+            export certArn="<YOUR_ACM_CERTIFICATE_ARN>"
+            export signOutURL="<YOUR_SIGN_OUT_URL>"
+            export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
+            export loadBalancerScheme=internet-facing
+            ```
 1. Substitute values for setting up Ingress.
 
 {{< tabpane persistLang=false >}}
