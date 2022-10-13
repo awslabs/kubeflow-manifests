@@ -77,7 +77,7 @@ pwd
 
 ### View all configurations
 
-View all possible configuration options in this [full list of inputs for the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf).
+View [all possible configuration options of the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf) in the `variables.tf` file.
 
 ### Preview
 To check the configuration you are about to apply, run:

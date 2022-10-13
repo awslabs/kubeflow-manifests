@@ -133,7 +133,7 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
     cd tests/e2e
     PYTHONPATH=.. python utils/cognito_bootstrap/cognito_post_deployment.py
     cd -
-        ```
+    ```
 ## 4.0 Connect to Kubeflow central dashboard 
 Follow the instructions in the [`Connecting to Kubeflow central dashboard`]({{< ref "/docs/deployment/cognito/manifest/guide#60-connect-to-the-central-dashboard" >}}) section of the Manual Deployment Guide to:
 
