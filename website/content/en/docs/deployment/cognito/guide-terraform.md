@@ -4,7 +4,7 @@ description = "Deploy Kubeflow with AWS Cognito as an identity provider using Te
 weight = 30
 +++
 
-> Note: Terraform deployment options are still in preview.
+> Note: Terraform deployment option is still in preview.
 
 ## Background
 
@@ -15,9 +15,7 @@ This guide will walk you through using Terraform to:
 - Create a Cognito user pool
 - Deploy Kubeflow with Cognito as an identity provider
 
-Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./manifest/guide/#background" >}}).
-
-Terraform documentation can be found [here](https://www.terraform.io/docs).
+Find additional information on [using Cognito with the AWS Distribution for Kubeflow]({{< ref "./manifest/guide/#background" >}}) in this guide. You can also check [Terraform documentation](https://www.terraform.io/docs).
 
 ## Prerequisites
 
@@ -30,7 +28,7 @@ Specifially, you must:
 
 Additionally, ensure you are in the `REPO_ROOT/deployments/cognito/terraform` folder.
 
-If you are in repository's root folder, run:
+From the repository's root folder, run:
 ```sh
 cd deployments/cognito/terraform
 pwd
@@ -40,15 +38,17 @@ pwd
 
 ### Configure
 
-1. Register a domain using [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html). When you register a domain with Route 53, it automatically creates a hosted zone for the domain. 
-    - The provided Terraform stack will create and delegate a subdomain for the Kubeflow platform automatically.
-    - If you do not use Route53 for your top level domain, you can follow the steps in [create a subdomain section]({{< ref "../../add-ons/load-balancer/guide/#create-a-subdomain" >}}) of load balancer guide to create a subdomain manually and provide the route 53 subdomain hosted zone name as input to the terraform stack. 
-        - Additionally you have to set the Terraform variable `create_subdomain=false`:
-            ```sh
-            export TF_VAR_create_subdomain="false"
-            ```
+1. Register a domain using [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html). 
+    When you register a domain with Route 53, it automatically creates a hosted zone for the domain. 
 
-1. Define the following environment variables:
+    - The provided Terraform stack will create and delegate a subdomain for the Kubeflow platform automatically.
+    - If you do not use Route53 for your top level domain, you can follow the steps in [create a subdomain section]({{< ref "../../add-ons/load-balancer/guide/#create-a-subdomain" >}}) of the load balancer guide to create a subdomain manually and provide the route 53 subdomain hosted zone name as input to the terraform stack. 
+    Additionally you have to set the Terraform variable `create_subdomain=false`:
+        ```sh
+        export TF_VAR_create_subdomain="false"
+        ```
+
+1. Set the following environment variables:
 
     ```sh
     # Region to create the cluster in
@@ -61,7 +61,11 @@ pwd
     export SUBDOMAIN=
     # Name of the cognito user pool to create
     export USER_POOL_NAME=
+    # Load balancer scheme
+    export LOAD_BALANCER_SCHEME=internet-facing
+    
     ```
+    > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
 
 1. Save the variables to a `.tfvars` file:
 
@@ -72,30 +76,28 @@ pwd
     aws_route53_root_zone_name="${ROOT_DOMAIN}"
     aws_route53_subdomain_zone_name="${SUBDOMAIN}"
     cognito_user_pool_name="${USER_POOL_NAME}"
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
     EOF
     ```
 
-### All Configurations
+### View all configurations
 
-A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf).
+View [all possible configuration options of the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf) in the `variables.tf` file.
 
 ### Preview
-
-View a preview of the configuration you are about apply:
+To check the configuration you are about to apply, run:
 ```sh
 terraform init && terraform plan
 ```
 
 ### Apply
-
-Run the following command:
+Deploy Kubeflow with Cognito:
 ```sh
 make deploy
 ```
 
 ## Connect to your Kubeflow dashboard
-
-1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
+1. Go to the Cognito console and [create some users]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connect-to-the-central-dashboard" >}})  in `Users and groups` using their email `user@example.com`.
 1. Get the link to the central dashboard:
     ```sh
     terraform output -raw kubelow_platform_domain
@@ -104,7 +106,7 @@ make deploy
 
 ## Cleanup
 
-Uninstall Kubeflow on AWS with a single command. 
+Uninstall Kubeflow on AWS. 
 ```sh
 make delete
 ```

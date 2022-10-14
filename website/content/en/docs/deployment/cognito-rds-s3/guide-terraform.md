@@ -17,13 +17,11 @@ This guide will walk you through using Terraform to:
 - Create an RDS DB instance
 - Deploy Kubeflow with Cognito as an identity provider, RDS as a KFP and Katib persistence layer, and S3 as an artifact store
 
-Additional background on using Cognito with the AWS Distribution for Kubeflow can be found [here]({{< ref "./guide/#background" >}}).
-
-Terraform documentation can be found [here](https://www.terraform.io/docs).
+Find additional information on [using Cognito with the AWS Distribution for Kubeflow]({{< ref "./guide/#background" >}}) in this guide. You can also check [Terraform documentation](https://www.terraform.io/docs).
 
 ## Prerequisites
 
-Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites.md" >}}) before working through this guide.
+Be sure that you have satisfied the [installation prerequisites]({{< ref "../prerequisites" >}}) before working through this guide.
 
 Specifially, you must:
 - [Create a Ubuntu environment]({{< ref "../prerequisites/#create-ubuntu-environment" >}})
@@ -77,7 +75,11 @@ pwd
     export USE_S3="true"
     # true/false flag to configure and deploy with Cognito
     export USE_COGNITO="true"
+    # Load Balancer Scheme
+    export LOAD_BALANCER_SCHEME=internet-facing
     ```
+
+    > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
 
 1. Save the variables to a `.tfvars` file:
     ```sh
@@ -91,6 +93,7 @@ pwd
     use_rds="${USE_RDS}"
     use_s3="${USE_S3}"
     use_cognito="${USE_COGNITO}"
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
 
     # The below values are set to make cleanup easier but are not recommended for production
     deletion_protection="false"
@@ -99,9 +102,9 @@ pwd
     EOF
     ```
 
-### All Configurations
+### View all Configurations
 
-A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf).
+View [all possible configuration options of the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf) in the `variables.tf` file.
 
 ### Preview
 

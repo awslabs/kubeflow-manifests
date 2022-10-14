@@ -20,6 +20,9 @@ html.smooth-scroll {
   $navbar-dark-color: rgba($white, 1);
   $navbar-dark-hover-color: rgba($white, 0.75);
   $navbar-dark-active-color: $navbar-dark-color;
+
+  // Button
+  $btn-disabled-opacity: 0;
   
   // Fonts
   $google_font_family: "Open+Sans:300,300i,400,400i,600,600i,700,700i&display=swap" !default;

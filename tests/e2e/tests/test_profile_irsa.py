@@ -227,13 +227,12 @@ def configure_manifests(profile_role, region, installation_path):
     oidc_role_arn = resp["Role"]["Arn"]
 
     filename = installation_path + "/profile_iam.yaml"
-
     profile_yaml_original = unmarshal_yaml(yaml_file=filename)
     profile_yaml = unmarshal_yaml(
         yaml_file=filename,
         replacements={"IAM_ROLE": oidc_role_arn, "NAMESPACE": "profile-aws-iam"},
     )
-
+    print("modifying profile yaml...")
     with open(filename, "w") as file:
         file.write(str(yaml.dump(profile_yaml)))
     yield
@@ -244,7 +243,7 @@ def configure_manifests(profile_role, region, installation_path):
 
 class TestProfileIRSA:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, configure_manifests, installation):
+    def setup(self, metadata, configure_manifests, installation_path, installation):
         print("applying profile_iam.yaml...")
         kubectl_apply(f"{installation_path}/profile_iam.yaml")
         metadata_file = metadata.to_file()
