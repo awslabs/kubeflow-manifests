@@ -99,7 +99,7 @@ def create_cognito_userpool(
 
 # Step 3: Configure Ingress
 #TO DO: The current script fills in Helm values and Kustomize params.env files at the same time. Need to decouple the two in future.  
-def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str):
+def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_arn: str, load_balancer_scheme="internet-facing"):
     ingress_helm_path = path_dic["ingress"]["installation_options"]["helm"]["paths"]
     ingress_values_file = f"{ingress_helm_path}/values.yaml"
     cognito_dict = {
@@ -115,6 +115,14 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
         env_dict = cognito_dict
     )
 
+    #annotate loadBalancerScheme
+    configure_env_file(
+        env_file_path="../../awsconfigs/common/istio-ingress/base/params.env",
+        env_dict={
+            "loadBalancerScheme": load_balancer_scheme
+        },
+    )
+
     cognito_helm_dict = {
         "cognito": {
             "appClientId": cognito_userpool.client_id,
@@ -122,6 +130,7 @@ def configure_ingress(cognito_userpool: CustomDomainCognitoUserPool, tls_cert_ar
             "UserPoolDomain": cognito_userpool.userpool_domain,
         },
         "certArn": tls_cert_arn,
+        "scheme": load_balancer_scheme
     }
 
     write_env_to_yaml(cognito_helm_dict, ingress_values_file, "alb")
@@ -153,6 +162,7 @@ if __name__ == "__main__":
     subdomain_name = cfg["route53"]["subDomain"]["name"]
     root_domain_name = cfg["route53"]["rootDomain"]["name"]
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
+    load_balancer_scheme = cfg["kubeflow"]["alb"]["scheme"]
 
     print_banner("Creating Subdomain in Route 53")
     root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -196,8 +206,9 @@ if __name__ == "__main__":
     write_yaml_file(yaml_content=cfg, file_path=config_file_path)
 
     print_banner("Configuring Ingress and load balancer controller manifests")
-    configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn)
+    configure_ingress(cognito_userpool, subdomain_cert_deployment_region.arn, load_balancer_scheme)
     configure_aws_authservice(cognito_userpool, subdomain_hosted_zone.domain)
     alb_sa_details = configure_load_balancer_controller(deployment_region, cluster_name)
     cfg["kubeflow"] = {"alb": alb_sa_details}
+    cfg["kubeflow"]["alb"]["scheme"] = load_balancer_scheme
     write_yaml_file(yaml_content=cfg, file_path=config_file_path)

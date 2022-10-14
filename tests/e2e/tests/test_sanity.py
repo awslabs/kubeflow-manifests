@@ -80,6 +80,11 @@ def setup_load_balancer(metadata, region, request, cluster, installation, root_d
                 "region": region,
                 "name": cluster
             },
+            "kubeflow": {
+                "alb": {
+                    "scheme": "internet-facing"
+                }
+            },
             "route53": {
                 "rootDomain": {
                     "name": root_domain_name,

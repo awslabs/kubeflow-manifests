@@ -45,7 +45,9 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
     * The **cluster name and region** where kubeflow will be deployed in `cluster.name` and `cluster.region` (e.g. `us-west-2`) respectively.
         
     * The **name of Cognito userpool** in `cognitoUserpool.name` (e.g. kubeflow-users).
-        
+
+    * The **load balancer scheme** (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
+
     The config file will look something like:
     ```yaml
     cognitoUserpool:
@@ -53,6 +55,9 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
     cluster:
         name: kube-eks-cluster
         region: us-west-2
+    kubeflow:
+        alb:
+            scheme: internet-facing
     route53:
         rootDomain:
             hostedZoneId: XXXX
@@ -77,6 +82,7 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
         name: kubeflow-users
     kubeflow:
         alb:
+            scheme: internet-facing
             serviceAccount:
                 name: alb-ingress-controller
                 namespace: kubeflow
@@ -176,6 +182,7 @@ make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
             name: kubeflow-users
         kubeflow:
             alb:
+                scheme: internet-facing
                 serviceAccount:
                     name: alb-ingress-controller
                     namespace: kubeflow

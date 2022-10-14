@@ -103,6 +103,9 @@ Check also `Enabled Identity Providers`.
 
     * **CognitoLogoutURL** is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and the domain that you provided as the Sign out URL(s).
 
+    * The **load balancer scheme** (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation for more details.
+
+
 1. Export those values:
     ```bash
     export CognitoUserPoolArn="<YOUR_USER_POOL_ARN>"
@@ -111,6 +114,7 @@ Check also `Enabled Identity Providers`.
     export certArn="<YOUR_ACM_CERTIFICATE_ARN>"
     export signOutURL="<YOUR_SIGN_OUT_URL>"
     export CognitoLogoutURL="https://$CognitoUserPoolDomain/logout?client_id=$CognitoAppClientId&logout_uri=$signOutURL"
+    export loadBalancerScheme=internet-facing
     ```
 
 1. The following commands will inject those values in a configuration file for setting up Ingress:
@@ -124,12 +128,16 @@ CognitoAppClientId='$CognitoAppClientId'
 CognitoUserPoolDomain='$CognitoUserPoolDomain'
 certArn='$certArn'
 ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
+printf '
+loadBalancerScheme='$loadBalancerScheme'
+' > awsconfigs/common/istio-ingress/base/params.env
     {{< /tab >}}
     {{< tab header="Helm" lang="yaml" >}}
 yq e '.alb.certArn = env(certArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolArn = env(CognitoUserPoolArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolDomain = env(CognitoUserPoolDomain)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.appClientId = env(CognitoAppClientId)' -i charts/common/ingress/cognito/values.yaml
+yq e '.alb.scheme = env(loadBalancerScheme)' -i charts/common/ingress/cognito/values.yaml
     {{< /tab >}}
     {{< /tabpane >}}
 

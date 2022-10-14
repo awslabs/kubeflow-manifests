@@ -61,7 +61,11 @@ pwd
     export SUBDOMAIN=
     # Name of the cognito user pool to create
     export USER_POOL_NAME=
+    # Load balancer scheme
+    export LOAD_BALANCER_SCHEME=internet-facing
+    
     ```
+    > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
 
 1. Save the variables to a `.tfvars` file:
 
@@ -72,6 +76,7 @@ pwd
     aws_route53_root_zone_name="${ROOT_DOMAIN}"
     aws_route53_subdomain_zone_name="${SUBDOMAIN}"
     cognito_user_pool_name="${USER_POOL_NAME}"
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
     EOF
     ```
 
