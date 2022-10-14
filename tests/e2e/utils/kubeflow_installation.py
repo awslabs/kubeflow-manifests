@@ -200,11 +200,9 @@ def install_ack_controller():
     CHART_REPO = f"public.ecr.aws/aws-controllers-k8s/{CHART_REF}"
     CHART_PACKAGE = f"{CHART_REF}-{RELEASE_VERSION}.tgz"
     ACK_K8S_NAMESPACE = "ack-system"
-    PARAMS_PATH = "../../awsconfigs/common/ack-sagemaker-controller/params.env"
-    IAM_ROLE_ARN_FOR_IRSA = get_variable_from_params(
-        PARAMS_PATH, "ACK_SAGEMAKER_OIDC_ROLE"
-    )
-    ACK_AWS_REGION = get_variable_from_params(PARAMS_PATH, "ACK_AWS_REGION")
+    cfg = load_yaml_file(file_path="./utils/ack_sm_controller_bootstrap/config.yaml")
+    IAM_ROLE_ARN_FOR_IRSA = cfg["ack_sagemaker_oidc_role"]
+    ACK_AWS_REGION = cfg["cluster"]["region"]
 
     exec_shell(f"mkdir -p {CHART_EXPORT_PATH}")
     exec_shell(
