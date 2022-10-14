@@ -93,7 +93,7 @@ pwd
     use_rds="${USE_RDS}"
     use_s3="${USE_S3}"
     use_cognito="${USE_COGNITO}"
-    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}"
 
     # The below values are set to make cleanup easier but are not recommended for production
     deletion_protection="false"

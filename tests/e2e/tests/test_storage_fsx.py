@@ -40,6 +40,7 @@ from e2e.utils.constants import (
 from e2e.utils.utils import (
     unmarshal_yaml,
     rand_name,
+    wait_for,
     wait_for_kfp_run_succeeded_from_run_id,
 )
 from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
@@ -90,13 +91,15 @@ class TestFSx:
         assert "fs-" in fs_id
 
         CLAIM_NAME = static_provisioning["claim_name"]
-        pvc_name, claim_status = get_pvc_status(
-            cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
-        )
-        assert pvc_name == CLAIM_NAME
-        print("wait 60s for FSx to be Bound...")
-        time.sleep(60)
-        assert claim_status == "Bound"
+        print("wait for FSx claim to be Bound...")
+        def pvc_status():
+            pvc_name, claim_status = get_pvc_status(
+                cluster, region, DEFAULT_USER_NAMESPACE, CLAIM_NAME
+            )
+            assert pvc_name == CLAIM_NAME
+            assert claim_status == "Bound"
+        
+        wait_for(pvc_status)
 
         # TODO: The following can be put into a method or split this into different tests
         # Create two Pipelines both mounted with the same volume claim.
