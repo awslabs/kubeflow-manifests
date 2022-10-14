@@ -128,12 +128,16 @@ CognitoAppClientId='$CognitoAppClientId'
 CognitoUserPoolDomain='$CognitoUserPoolDomain'
 certArn='$certArn'
 ' > awsconfigs/common/istio-ingress/overlays/cognito/params.env
+printf '
+loadBalancerScheme='$loadBalancerScheme'
+' > awsconfigs/common/istio-ingress/base/params.env
     {{< /tab >}}
     {{< tab header="Helm" lang="yaml" >}}
 yq e '.alb.certArn = env(certArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolArn = env(CognitoUserPoolArn)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.UserPoolDomain = env(CognitoUserPoolDomain)' -i charts/common/ingress/cognito/values.yaml
 yq e '.alb.cognito.appClientId = env(CognitoAppClientId)' -i charts/common/ingress/cognito/values.yaml
+yq e '.alb.scheme = env(loadBalancerScheme)' -i charts/common/ingress/cognito/values.yaml
     {{< /tab >}}
     {{< /tabpane >}}
 

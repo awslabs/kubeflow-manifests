@@ -76,7 +76,7 @@ pwd
     # true/false flag to configure and deploy with Cognito
     export USE_COGNITO="true"
     # Load Balancer Scheme
-    export loadBalancerScheme=internet-facing
+    export LOAD_BALANCER_SCHEME=internet-facing
     ```
 
     > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
@@ -93,7 +93,7 @@ pwd
     use_rds="${USE_RDS}"
     use_s3="${USE_S3}"
     use_cognito="${USE_COGNITO}"
-    load_balancer_scheme="${loadBalancerScheme}
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
 
     # The below values are set to make cleanup easier but are not recommended for production
     deletion_protection="false"
