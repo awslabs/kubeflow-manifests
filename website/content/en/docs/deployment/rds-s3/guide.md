@@ -70,29 +70,26 @@ The script takes care of creating the S3 bucket, creating the S3 Secrets using t
 > Note: The script will **not** delete any resource. Therefore, if a resource already exists (eg: Secret, database with the same name, or S3 bucket), **it will skip the creation of those resources and use the existing resources instead**. This is by design in order to prevent unwanted results, such as accidental deletion. For example, if a database with the same name already exists, the script will skip the database creation setup. If you forgot to change the database name used for creation, then this gives you the chance to retry the script with the proper value. See `python auto-rds-s3-setup.py --help` for the list of parameters, as well as their default values.
 
 1. Navigate to the `tests/e2e` directory.
-```bash
-cd tests/e2e
-```
-2. Install the script dependencies.
-```bash
-pip install -r requirements.txt
-```
-3. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
-4. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `MINIO_AWS_ACCESS_KEY_ID`, and `MINIO_AWS_SECRET_ACCESS_KEY`. Then, run the `auto-rds-s3-setup.py` script.
-```bash
-export CLUSTER_REGION=<>
-export CLUSTER_NAME=<>
-export S3_BUCKET=<>
-export DB_INSTANCE_NAME=<>
-export DB_SUBNET_GROUP_NAME=<>
-export MINIO_AWS_ACCESS_KEY_ID=<>
-export MINIO_AWS_SECRET_ACCESS_KEY=<>
-export RDS_SECRET_NAME=<>
-export S3_SECRET_NAME=<>
-
-PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py
---region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
-```  
+   ```bash
+   cd tests/e2e
+   ```
+1. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
+1. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `MINIO_AWS_ACCESS_KEY_ID`, and `MINIO_AWS_SECRET_ACCESS_KEY`.
+   ```bash
+   export CLUSTER_REGION=<>
+   export CLUSTER_NAME=<>
+   export S3_BUCKET=<>
+   export DB_INSTANCE_NAME=<>
+   export DB_SUBNET_GROUP_NAME=<>
+   export MINIO_AWS_ACCESS_KEY_ID=<>
+   export MINIO_AWS_SECRET_ACCESS_KEY=<>
+   export RDS_SECRET_NAME=<>
+   export S3_SECRET_NAME=<>
+   ```
+1. Run the `auto-rds-s3-setup.py` script
+   ```
+   PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
+   ```  
 
 ### Advanced customization
 
@@ -244,6 +241,12 @@ Once you have the resources ready, you can deploy the Kubeflow manifests for one
 - both RDS and S3
 - RDS only
 - S3 only
+
+Navigate to the root of repository
+
+```bash
+cd $REPO_ROOT
+```
 
 #### [RDS and S3] Deploy both RDS and S3
 

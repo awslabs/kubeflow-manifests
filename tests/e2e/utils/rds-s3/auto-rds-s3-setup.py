@@ -323,7 +323,7 @@ def wait_for_rds_db_instance_to_become_available(rds_client):
         if status == "available":
             print("RDS DB instance is available!")
 
-    wait_for(callback, 900)
+    wait_for(callback, 1500)
 
 
 def create_rds_secret(secrets_manager_client, rds_secret_name, rds_root_password):
