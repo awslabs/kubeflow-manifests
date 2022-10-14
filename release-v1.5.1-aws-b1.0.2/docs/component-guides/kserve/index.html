@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.93.0" />
+<meta name="robots" content="index, follow">
+
+<script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.5.1-aws-b1.0.2"
+      },
+      "articleSection" : "docs",
+      "name" : "KServe",
+      "headline" : "KServe",
+      "description" : "Model serving using KServe with Kubeflow on AWS",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "0001",
+      "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
+      "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.5.1-aws-b1.0.2\/docs\/component-guides\/kserve\/",
+      "wordCount" : "1358",
+      "keywords" : [ "Kubeflow" ]
+  }
+  </script>
+
+<link rel="shortcut icon" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="manifest" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/manifest.json">
+<meta name="msapplication-config" content="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/favicons/browserconfig.xml" />
+<meta name="msapplication-TileColor" content="#4279f4">
+<meta name="theme-color" content="#4279f4">
+
+<title>KServe | Kubeflow on AWS</title>
+<meta name="description" content="Model serving using KServe with Kubeflow on AWS">
+<meta property="og:title" content="KServe" />
+<meta property="og:description" content="Model serving using KServe with Kubeflow on AWS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-09-16T20:39:48-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="KServe">
+<meta itemprop="description" content="Model serving using KServe with Kubeflow on AWS">
+<meta itemprop="dateModified" content="2022-09-16T20:39:48-07:00" />
+<meta itemprop="wordCount" content="1358">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="KServe"/>
+<meta name="twitter:description" content="Model serving using KServe with Kubeflow on AWS"/>
+
+
+
+
+<link rel="preload" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/scss/main.min.cfd7574257326fddbc6f33f260c0bda4c6d74394ebf2531282625a18d0a19e75.css" as="style">
+<link href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/scss/main.min.cfd7574257326fddbc6f33f260c0bda4c6d74394ebf2531282625a18d0a19e75.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+    
+    <link href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/css/syntax.min.css" rel="stylesheet">
+
+    
+    <link href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/css/copy-code-button.min.css" rel="stylesheet">
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
+        <a class="navbar-brand" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/">
+		<span class="navbar-logo"></span><span class="text-uppercase font-weight-bold">Kubeflow on AWS</span>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/" ><i class='fas fa-book pr-2'></i><span>Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/awslabs/kubeflow-manifests" target="_blank" ><i class='fab fa-github pr-2'></i><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown mt-1 mt-lg-0 mr-2">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v151-aws-b102docs-li">
+  <a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-kubeflow-manifestsrelease-v151-aws-b102docs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabout-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabout-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsabout-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabout"><span class="">About</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutfeatures-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutfeatures-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutfeatures-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/features/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutfeatures"><span class="">AWS Features for Kubeflow</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutreleases-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutreleases-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutreleases-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/releases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutreleases"><span class="">Releases and Versioning</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabouteks-compatibility-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabouteks-compatibility-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsabouteks-compatibility-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/eks-compatibility/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsabouteks-compatibility"><span class="">Amazon EKS and Kubeflow Compatibility</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutsecurity-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutsecurity-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutsecurity-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/security/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutsecurity"><span class="">Security</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutusage-tracking-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutusage-tracking-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutusage-tracking-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/usage-tracking/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsaboutusage-tracking"><span class="">Usage Tracking</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeployment-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeployment-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeployment"><span class="">Deployment</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentprerequisites-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentprerequisites-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentvanillaguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentvanillaguide"><span class="">Vanilla Installation</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentrds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito"><span class="">Cognito</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-automated-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognitoguide"><span class="">Manual Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-rds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentcognito-rds-s3guide"><span class="">Cognito, RDS, and S3</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-ons-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-ons-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-ons"><span class="">Add-ons</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstorageefsguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstorageefsguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstorageefsguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstorageefsguide"><span class="">EFS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstoragefsx-for-lustreguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstoragefsx-for-lustreguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentuninstall-kubeflow-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentuninstall-kubeflow-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentuninstall-kubeflow-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/uninstall-kubeflow/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docsdeploymentuninstall-kubeflow"><span class="">Uninstall Kubeflow</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guides-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guides-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guides"><span class="">Component Guides</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesnotebooks-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesnotebooks-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskatib-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskatib-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskatib-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskatib"><span class="">Katib</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidespipelines-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidespipelines-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidespipelines"><span class="">Pipelines</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskserve-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskserve-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guideskserve"><span class="td-sidebar-nav-active-item">KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesprofiles-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesprofiles-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesprofiles-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/profiles/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docscomponent-guidesprofiles"><span class="">Profiles</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v151-aws-b102docstroubleshooting-aws-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v151-aws-b102docstroubleshooting-aws-check"/>
+  <label for="m-kubeflow-manifestsrelease-v151-aws-b102docstroubleshooting-aws-check"><a href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/troubleshooting-aws/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v151-aws-b102docstroubleshooting-aws"><span class="">Troubleshooting</span></a></label>
+  
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/component-guides/kserve.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/component-guides/kserve.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/component-guides/kserve.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=KServe" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+  
+</div>
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#configure-a-default-domain-with-knative-serving">Configure a default domain with KNative Serving</a></li>
+    <li><a href="#request-a-certificate">Request a certificate</a>
+      <ul>
+        <li><a href="#certificate-request-background">Certificate request background</a></li>
+        <li><a href="#create-a-certificate">Create a certificate</a></li>
+      </ul>
+    </li>
+    <li><a href="#cognito-ingress">Cognito ingress</a>
+      <ul>
+        <li><a href="#create-ingress">Create ingress</a></li>
+      </ul>
+    </li>
+    <li><a href="#dex-ingress">Dex ingress</a>
+      <ul>
+        <li><a href="#update-the-certificate-for-your-load-balancer">Update the certificate for your Load Balancer</a></li>
+      </ul>
+    </li>
+    <li><a href="#add-dns-records">Add DNS records</a></li>
+    <li><a href="#run-a-sample-inferenceservice">Run a sample InferenceService</a>
+      <ul>
+        <li><a href="#create-an-authorizationpolicy">Create an <code>AuthorizationPolicy</code></a></li>
+        <li><a href="#create-an-inferenceservice">Create an <code>InferenceService</code></a></li>
+        <li><a href="#check-inferenceservice-status">Check <code>InferenceService</code> status</a></li>
+        <li><a href="#send-an-inference-request">Send an inference request</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/">Documentation</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/">Component Guides</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/">KServe</a>
+  </li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>KServe</h1>
+	<div class="lead">Model serving using KServe with Kubeflow on AWS</div>
+	<header class="article-meta">
+		
+
+  
+    
+
+
+  
+    
+
+
+  
+
+		
+	</header>    
+	<p>This tutorial shows how to set up a load balancer endpoint for serving prediction requests over an external DNS on AWS.</p>
+<blockquote>
+<p>Note: Kubeflow on AWS v1.4 uses <a href="https://www.kubeflow.org/docs/external-add-ons/kserve/kserve/#kfserving-is-now-kservehttpskservegithubiowebsite07blogarticles2021-09-27-kfserving-transition">KFServing</a>. The KFServing project is now called KServe.</p>
+</blockquote>
+<p>Read the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/load-balancer/guide/#background">background</a> section of the Load Balancer installation guide to familiarize yourself with the requirements for creating an Application Load Balancer on AWS.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This guide assumes that you have:</p>
+<ol>
+<li>The necessary <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/prerequisites/">prerequisites</a>, including a Kubeflow deployment.</li>
+<li>The <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/">AWS Load Balancer controller</a> configured with one of the following deployment options:
+<ul>
+<li>A Cognito-integrated deployment that is configured with the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/guide/#30-configure-ingress">AWS Load Balancer controller by default</a>.</li>
+<li>A deployment that is not integrated with Cognito (for example, the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/vanilla/guide/">Vanilla deployment</a>, which uses Dex as an auth provider), but have followed the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/load-balancer/guide/">Exposing Kubeflow over Load Balancer guide</a>.</li>
+</ul>
+</li>
+<li>A subdomain for hosting Kubeflow. For this guide, we will use the domain <code>platform.example.com</code>.</li>
+<li>An existing <a href="https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation">profile namespace</a> for a user in Kubeflow. For this guide, we will use the example profile namespace <code>staging</code>.</li>
+<li>Verified that your current directory is the root of the repository by running the <code>pwd</code> command. The output should be <code>&lt;path/to/kubeflow-manifests&gt;</code> directory.</li>
+</ol>
+<h2 id="configure-a-default-domain-with-knative-serving">Configure a default domain with KNative Serving</h2>
+<p>Use <a href="https://knative.dev/docs/serving/">Knative Serving</a> to set up network routing resources.</p>
+<p>The default fully qualified domain name (FQDN) for a route in Knative Serving is <code>{route}.{namespace}.{default-domain}</code>. Knative Serving routes use <code>example.com</code> as the default domain. If you create an <code>InferenceService</code> resource called <code>sklearn-iris</code> in the <code>staging</code> namespace without changing the default domain, the resulting <code>InfererenceService</code> domain would be <code>http://sklearn-iris.staging.example.com</code>.</p>
+<p>To host an <code>InferenceService</code> on the same domain that you use to host Kubeflow (for example, <code>platform.example.com</code>), then you will need to edit the <code>config-domain</code> ConfigMap in the <code>knative-serving</code> namespace to configure <code>platform.example.com</code> to be used as the domain for the routes.</p>
+<p>Edit the ConfigMap to change the default domain as per your deployment. Remove the <code>_example</code> key and replace <code>example.com</code> with your domain (e.g. <code>platform.example.com</code>).</p>
+<pre tabindex="0"><code>apiVersion: v1
+kind: ConfigMap
+data:
+  platform.example.com: &#34;&#34;
+...
+</code></pre><p>For more detailed instructions, see the KNative Serving <a href="https://knative.dev/docs/serving/using-a-custom-domain/#procedure">Changing the default domain</a> procedure.</p>
+<h2 id="request-a-certificate">Request a certificate</h2>
+<p>Request a certificate in AWS Certificate Manager (ACM) to get TLS support from the Load Balancer.</p>
+<h3 id="certificate-request-background">Certificate request background</h3>
+<p>Knative concatenates the namespace in the FQDN for a route and the domain is delimited by a dot by default. The URLs for <code>InferenceService</code>  resources created in each namespace will be in a different <a href="https://en.wikipedia.org/wiki/Subdomain">subdomain</a>.</p>
+<ul>
+<li>For example, if you have two namespaces, <code>staging</code> and <code>prod</code>, and create an <code>InferenceService</code> resource called <code>sklearn-iris</code> in both of these namespaces, then the URLs for each resource will be <code>http://sklearn-iris.staging.platform.example.com</code> and <code>http://sklearn-iris.prod.platform.example.com</code>, respectively.</li>
+</ul>
+<p>This means that you need to specify all subdomains in which you plan to create an <code>InferenceService</code> resource while creating the SSL certificate in ACM.</p>
+<ul>
+<li>For example, for <code>staging</code> and <code>prod</code> namespaces, you will need to add <code>*.prod.platform.example.com</code>, <code>*.staging.platform.example.com</code> and <code>*.platform.example.com</code> to the certificate.</li>
+</ul>
+<p>DNS only supports wildcard placeholders in the <a href="https://en.wikipedia.org/wiki/Wildcard_DNS_record">leftmost part of the domain name</a>. When you request a wildcard certificate using ACM, the asterisk (*) must be in the leftmost position of the domain name and can protect only one subdomain level.</p>
+<ul>
+<li>For example, <code>*.platform.example.com</code> can protect <code>staging.platform.example.com</code>, and <code>prod.platform.example.com</code>, but it cannot protect <code>sklearn-iris.staging.platform.example.com</code>.</li>
+</ul>
+<h3 id="create-a-certificate">Create a certificate</h3>
+<blockquote>
+<p>Note: Both of these domains should be requested in the same certificate</p>
+</blockquote>
+<p>Create an ACM certificate for <code>*.platform.example.com</code> and <code>*.staging.platform.example.com</code> in your cluster&rsquo;s region by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">create certificates for domain</a> steps in the Load Balancer installation guide.</p>
+<p>Once the certificate status changes to <code>Issued</code>, export the ARN of the certificate created:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">certArn</span><span class="o">=</span>&lt;&gt;
+</span></span></code></pre></div><p>If you are using Cognito for user authentication, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#cognito-ingress">Cognito</a>. If you use Dex as the auth provider in your Kubeflow deployment, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#dex-ingress">Dex</a>.</p>
+<h2 id="cognito-ingress">Cognito ingress</h2>
+<p>It is not currently possible to programatically authenticate a request that uses Amazon Cognito for user authentication through Load Balancer. You cannot generate <code>AWSELBAuthSessionCookie</code> cookies by using the access tokens from Cognito.</p>
+<p>To work around this, it is necessary to create a new Load Balancer endpoint for serving traffic that authorizes based on custom strings specified in a predefined HTTP header.</p>
+<p>Use an ingress to set the <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#http-header-conditions">HTTP header conditions</a> on your Load Balancer. This creates rules that route requests based on HTTP headers. This can be used for service-to-service communication in your application.</p>
+<h3 id="create-ingress">Create ingress</h3>
+<ol>
+<li>Configure the following parameters for <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env">ingress</a>:
+<ul>
+<li><code>certArn</code>: ARN of certificate created during <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#request-a-certificate">Request a certificate</a> step.</li>
+<li>(optional) <code>httpHeaderName</code>: Custom HTTP header name that you want to configure for the rule evaluation. Defaults to <code>x-api-key</code>.</li>
+<li><code>httpHeaderValues</code>: One or more match strings that need to be compared against the header value if the request received. You only need to pass one of the tokens in the request. Pick strong values.</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>Note: The <code>httpHeaderName</code> and <code>httpHeaderValues</code> values correspond to the <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#http-header-conditions">HttpHeaderConfig</a> values</p>
+</blockquote>
+<ol start="2">
+<li>Replace the <code>token1</code> string with a token of your choice. Optionally, replace the <code>httpHeaderName</code> string as well.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">certArn=&#39;</span><span class="nv">$certArn</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">httpHeaderName=x-api-key
+</span></span></span><span class="line"><span class="cl"><span class="s1">httpHeaderValues=[&#34;token1&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt; awsconfigs/common/istio-ingress/overlays/api/params.env
+</span></span></code></pre></div></li>
+<li>Create the ingress with the following command:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/api <span class="p">|</span> kubectl apply -f -
+</span></span></code></pre></div></li>
+<li>Check if the ingress-managed Load Balancer is provisioned. This may take a few minutes to complete.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get ingress -n istio-system istio-ingress-api
+</span></span><span class="line"><span class="cl">NAME                CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl">istio-ingress-api   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      14m
+</span></span></code></pre></div></li>
+</ol>
+<p>Once your Load Balancer is ready, move on to the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#add-dns-records">Add DNS records</a> step to add a DNS record for the staging subdomain.</p>
+<h2 id="dex-ingress">Dex ingress</h2>
+<h3 id="update-the-certificate-for-your-load-balancer">Update the certificate for your Load Balancer</h3>
+<ol>
+<li>Configure the parameters for <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/istio-ingress/overlays/api/params.env">ingress</a> with the ARN of the certificate created during the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#request-a-certificate">Request a certificate</a> step.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;certArn=&#39;</span><span class="nv">$certArn</span><span class="s1">&#39;&#39;</span> &gt; awsconfigs/common/istio-ingress/overlays/https/params.env
+</span></span></code></pre></div></li>
+<li>Update the Load Balancer with the following command:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/https <span class="p">|</span> kubectl apply -f -
+</span></span></code></pre></div></li>
+<li>Get the Load Balancer address
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get ingress -n istio-system istio-ingress
+</span></span><span class="line"><span class="cl">NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl">istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span></code></pre></div></li>
+</ol>
+<p>Once your Load Balancer is ready, move on to the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#add-dns-records">Add DNS records</a> step to add a DNS record for the staging subdomain.</p>
+<h2 id="add-dns-records">Add DNS records</h2>
+<p>Once your ingress-managed Load Balancer is ready, copy the <code>ADDRESS</code> of that Load Balancer and create a <code>CNAME</code> entry to it in <a href="https://aws.amazon.com/route53/">Amazon Route 53</a> under your subdomain (e.g. <code>platform.example.com</code>) for <code>*.staging.platform.example.com</code>.</p>
+<h2 id="run-a-sample-inferenceservice">Run a sample InferenceService</h2>
+<h3 id="create-an-authorizationpolicy">Create an <code>AuthorizationPolicy</code></h3>
+<p>Namespaces created by the Kubeflow profile controller have a missing authorization policy that prevents the KFServing predictor and transformer from working.</p>
+<blockquote>
+<p>Known Issue: See <a href="https://github.com/kserve/kserve/issues/1558">kserve/kserve#1558</a> and <a href="https://github.com/kubeflow/kubeflow/issues/5965">kubeflow/kubeflow#5965</a> for more information.</p>
+</blockquote>
+<p>Create the <code>AuthorizationPolicy</code> as mentioned in <a href="https://github.com/awslabs/kubeflow-manifests/issues/82#issuecomment-1068641378">issue #82</a> as a workaround until this is resolved. Verify that the policies have been created by listing the <code>authorizationpolicies</code> in the <code>istio-system</code> namespace:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get authorizationpolicies -n istio-system
+</span></span></code></pre></div><h3 id="create-an-inferenceservice">Create an <code>InferenceService</code></h3>
+<p>Set the environment variable value for <code>PROFILE_NAMESPACE</code>(e.g. <code>staging</code>) according to your environment:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span><span class="s2">&#34;staging&#34;</span>
+</span></span></code></pre></div><p>Create a scikit-learn <code>InferenceService</code> using a <a href="https://github.com/kserve/kserve/blob/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml">sample</a> from the KFserving repository and wait for <code>READY</code> to be <code>True</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span> -f https://raw.githubusercontent.com/kserve/kserve/release-0.7/docs/samples/v1beta1/sklearn/v2/sklearn.yaml
+</span></span></code></pre></div><h3 id="check-inferenceservice-status">Check <code>InferenceService</code> status</h3>
+<p>Check the <code>InferenceService</code> status. Once it is ready, copy the URL to use for sending a prediction request.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get inferenceservices sklearn-irisv2 -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">NAME             URL                                                 READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                      AGE
+</span></span><span class="line"><span class="cl">sklearn-irisv2   http://sklearn-iris2.staging.platform.example.com   True           <span class="m">100</span>                              sklearn-irisv2-predictor-default-00001   3m31s
+</span></span></code></pre></div><h3 id="send-an-inference-request">Send an inference request</h3>
+<p>Set the environment variable values for <code>KUBEFLOW_DOMAIN</code>(e.g. <code>platform.example.com</code>) according to your environment:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_DOMAIN</span><span class="o">=</span><span class="s2">&#34;platform.example.com&#34;</span>
+</span></span></code></pre></div><p>Install dependencies for the script by running:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
+</span></span><span class="line"><span class="cl">pip install -r requirements.txt
+</span></span></code></pre></div><p>Run the sample python script to send an inference request based on your auth provider:</p>
+<h4 id="cognito-inference">Cognito inference</h4>
+<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py">inference_sample.py</a> Python script by exporting the values for <code>HTTP_HEADER_NAME</code>(e.g. <code>x-api-key</code>) and <code>HTTP_HEADER_VALUE</code>(e.g. <code>token1</code>) according to the values configured in <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/#create-ingress">ingress section</a>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AUTH_PROVIDER</span><span class="o">=</span><span class="s2">&#34;cognito&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HTTP_HEADER_NAME</span><span class="o">=</span><span class="s2">&#34;x-api-key&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HTTP_HEADER_VALUE</span><span class="o">=</span><span class="s2">&#34;token1&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/kserve/inference_sample.py
+</span></span></code></pre></div><p>The output should look similar to the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Status Code <span class="m">200</span>
+</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_name&#34;</span>: <span class="s2">&#34;sklearn-irisv2&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_version&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;e5fc40ba-5f02-42f7-aff8-34042facbe11&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;outputs&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">    <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;predict&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;shape&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;datatype&#34;</span>: <span class="s2">&#34;FP32&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;data&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        1,
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h4 id="dex-inference">Dex inference</h4>
+<p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py">inference_sample.py</a> Python script by exporting the values for <code>USERNAME</code>(e.g. <code>user@example.com</code>), <code>PASSWORD</code> according to the user profile</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AUTH_PROVIDER</span><span class="o">=</span><span class="s2">&#34;dex&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">USERNAME</span><span class="o">=</span><span class="s2">&#34;user@example.com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PASSWORD</span><span class="o">=</span><span class="s2">&#34;12341234&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/kserve/inference_sample.py
+</span></span></code></pre></div><p>The output should look similar to the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Status Code <span class="m">200</span>
+</span></span><span class="line"><span class="cl">JSON Response  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_name&#34;</span>: <span class="s2">&#34;sklearn-irisv2&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;model_version&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;e5fc40ba-5f02-42f7-aff8-34042facbe11&#34;</span>,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;outputs&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">    <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;predict&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;shape&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;datatype&#34;</span>: <span class="s2">&#34;FP32&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;parameters&#34;</span>: null,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;data&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        1,
+</span></span><span class="line"><span class="cl">        <span class="m">2</span>
+</span></span><span class="line"><span class="cl">      <span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div>
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+  Last modified September 16, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/6fd4625b23334b5818849dce9545d0a7417e6ffe">update 1.5.1-1.0.2 website branch to be latest (#378) (6fd4625)</a>
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark pt-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/js/main.min.fb3621b8083924840ef938617e1bf3abd6e2d284d6e2e34650dfe11266f86529.js" integrity="sha256-&#43;zYhuAg5JIQO&#43;Thhfhvzq9bi0oTW4uNGUN/hEmb4ZSk=" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/js/copy-code-button.min.js"></script>
+
+
+
+
+  </body>
+</html>
