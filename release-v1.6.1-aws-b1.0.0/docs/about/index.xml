@@ -1,0 +1,216 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – About</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/</link>
+    <description>Recent content in About on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: AWS Features for Kubeflow</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/features/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/features/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Running Kubeflow on AWS gives you the following feature benefits and configuration options:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Beginning with v1.3, development for Kubeflow on AWS can be found in the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests&#34;&gt;AWS Labs repository&lt;/a&gt;. Previous versions can be found in the &lt;a href=&#34;https://github.com/kubeflow/manifests&#34;&gt;Kubeflow manifests repository&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;manage-aws-compute-environments&#34;&gt;Manage AWS compute environments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Provision and manage your &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/eks/&#34;&gt;Amazon Elastic Kubernetes Service (EKS)&lt;/a&gt;&lt;/strong&gt; clusters with &lt;strong&gt;&lt;a href=&#34;https://github.com/weaveworks/eksctl&#34;&gt;eksctl&lt;/a&gt;&lt;/strong&gt; and easily configure multiple compute and GPU node configurations.&lt;/li&gt;
+&lt;li&gt;Use AWS-optimized container images, based on &lt;strong&gt;&lt;a href=&#34;https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html&#34;&gt;AWS Deep Learning Containers&lt;/a&gt;&lt;/strong&gt;, with Kubeflow Notebooks.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;cloudwatch-logs-and-metrics&#34;&gt;CloudWatch Logs and Metrics&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Integrate Kubeflow on AWS with &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/cloudwatch/&#34;&gt;Amazon CloudWatch&lt;/a&gt;&lt;/strong&gt; for persistent logging and metrics on EKS clusters and Kubeflow pods.&lt;/li&gt;
+&lt;li&gt;Use &lt;strong&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html&#34;&gt;AWS ContainerInsights&lt;/a&gt;&lt;/strong&gt; to collect, aggregate, and summarize metrics and logs from your containerized applications and microservices.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;load-balancing-certificates-and-identity-management&#34;&gt;Load balancing, certificates, and identity management&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Manage external traffic with &lt;strong&gt;&lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html&#34;&gt;AWS Application Load Balancer&lt;/a&gt;&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Get started with TLS authentication using &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/certificate-manager/&#34;&gt;AWS Certificate Manager&lt;/a&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/cognito/&#34;&gt;AWS Cognito&lt;/a&gt;&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;aws-database-and-storage-solutions&#34;&gt;AWS database and storage solutions&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Integrate Kubeflow with &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/rds/&#34;&gt;Amazon Relational Database Service (RDS)&lt;/a&gt;&lt;/strong&gt; for a highly scalable pipelines and metadata store.&lt;/li&gt;
+&lt;li&gt;Deploy Kubeflow with integrations for &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;Amazon S3&lt;/a&gt;&lt;/strong&gt; for an easy-to-use pipeline artifacts store.&lt;/li&gt;
+&lt;li&gt;Use Kubeflow with &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/efs/&#34;&gt;Amazon Elastic File System (EFS)&lt;/a&gt;&lt;/strong&gt; for a simple, scalabale, and serverless storage solution.&lt;/li&gt;
+&lt;li&gt;Leverage the &lt;strong&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;Amazon FSx CSI driver&lt;/a&gt;&lt;/strong&gt; to manage Lustre file systems which are optimized for compute-intensive workloads, such as high-performance computing and machine learning. &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/fsx/lustre/&#34;&gt;Amazon FSx for Lustre&lt;/a&gt;&lt;/strong&gt; can scale to hundreds of GBps of throughput and millions of IOPS.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;integrate-with-amazon-sagemaker&#34;&gt;Integrate with Amazon SageMaker&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Use Kubeflow on AWS with &lt;strong&gt;&lt;a href=&#34;https://aws.amazon.com/sagemaker/&#34;&gt;Amazon SageMaker&lt;/a&gt;&lt;/strong&gt; to create hybrid machine learning workflows.&lt;/li&gt;
+&lt;li&gt;Train, tune, and deploy machine learning models in Amazon SageMaker without logging into the SageMaker console using &lt;strong&gt;&lt;a href=&#34;https://github.com/aws-controllers-k8s/sagemaker-controller&#34;&gt;SageMaker Operators for Kubernetes (ACK)&lt;/a&gt;&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Create a Kubeflow Pipeline built entirely using &lt;strong&gt;&lt;a href=&#34;https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker&#34;&gt;SageMaker Components for Kubeflow Pipelines&lt;/a&gt;&lt;/strong&gt;, or integrate individual components into your workflow as needed.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Releases and Versioning</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/releases/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/releases/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Kubeflow on AWS releases are built on top of open source Kubeflow releases and therefore use the following naming convention: &lt;code&gt;{KUBEFLOW_RELEASE_VERSION}-aws-b{BUILD_NUMBER}&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ex: Kubeflow v1.3.1 on AWS version 1.0.0 will have the version &lt;code&gt;v1.3.1-aws-b1.0.0&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt; refers to &lt;a href=&#34;https://github.com/kubeflow/manifests/releases&#34;&gt;Kubeflow&amp;rsquo;s released version&lt;/a&gt; and &lt;code&gt;BUILD_NUMBER&lt;/code&gt; refers to the AWS build for that Kubeflow version. &lt;code&gt;BUILD_NUMBER&lt;/code&gt; uses &lt;a href=&#34;https://semver.org/&#34;&gt;semantic versioning&lt;/a&gt; (SemVer) to indicate whether changes included in a particular release introduce features or bug fixes and whether or not features break backwards compatibility.&lt;/p&gt;
+&lt;p&gt;When a version of Kubeflow on AWS is released, a Git tag with the naming convention &lt;code&gt;{KUBEFLOW_RELEASE_VERSION}-aws-b{BUILD_NUMBER}&lt;/code&gt; is created. These releases can be found in the Kubeflow on AWS repository &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/releases&#34;&gt;releases&lt;/a&gt; section.&lt;/p&gt;
+&lt;h2 id=&#34;v131&#34;&gt;v1.3.1&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Documentation for Kubeflow on AWS v.1.3 can be found on the &lt;a href=&#34;https://v1-3-branch.kubeflow.org/docs/distributions/aws/&#34;&gt;Kubeflow website&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Although the distribution manifests are hosted in the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests&#34;&gt;Kubeflow on AWS repository&lt;/a&gt;, many of the overlays and configuration files in this repository have a dependency on the manifests published by the Kubeflow community in the &lt;a href=&#34;https://github.com/kubeflow/manifests&#34;&gt;kubeflow/manifests&lt;/a&gt; repository. Hence, the AWS distribution of Kubeflow for v1.3.1 was developed on a &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/tree/v1.3-branch&#34;&gt;fork&lt;/a&gt; of the &lt;code&gt;v1.3-branch&lt;/code&gt; of the &lt;code&gt;kubeflow/manifests&lt;/code&gt; repository. This presented several challenges for ongoing maintenance as described in &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/issues/76&#34;&gt;Issue #76&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;v14&#34;&gt;v1.4+&lt;/h2&gt;
+&lt;p&gt;Starting with Kubeflow v1.4, the development of the AWS distribution of Kubeflow is done on the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/tree/main&#34;&gt;&lt;code&gt;main&lt;/code&gt;&lt;/a&gt; branch. The &lt;code&gt;main&lt;/code&gt; branch contains only the delta from the released manifests in the &lt;code&gt;kubeflow/manifests&lt;/code&gt; repository and additional components required for the AWS distribution.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Amazon EKS and Kubeflow Compatibility</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/eks-compatibility/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/eks-compatibility/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;compatibility&#34;&gt;Compatibility&lt;/h2&gt;
+&lt;p&gt;Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.6.&lt;/p&gt;
+&lt;div class=&#34;table-responsive&#34;&gt;
+  &lt;table class=&#34;table table-bordered&#34;&gt;
+    &lt;thead class=&#34;thead-light&#34;&gt;
+      &lt;tr&gt;
+        &lt;th&gt;EKS Versions&lt;/th&gt;
+        &lt;th&gt;Kubeflow v1.6&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+        &lt;td&gt;1.23&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.22&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.21&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.20&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Incompatible&lt;/strong&gt;: the combination is not known to work together&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Compatible&lt;/strong&gt;: all Kubeflow features have been tested and verified for the EKS Kubernetes version&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Security</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/security/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/security/</guid>
+      <description>
+        
+        
+        &lt;p&gt;We highly recommend that you follow AWS security best practices while provisioning any AWS resources.&lt;/p&gt;
+&lt;h2 id=&#34;security-resources&#34;&gt;Security resources&lt;/h2&gt;
+&lt;p&gt;Refer to the following documents for more information:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://aws.github.io/aws-eks-best-practices/security/docs/&#34;&gt;Security best practices for Amazon Elastic Kubernetes Service (EKS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html&#34;&gt;Security best practices for AWS Secrets Manager&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.Security.html&#34;&gt;Security best practices for Amazon Relational Database Service (RDS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html&#34;&gt;Security best practices for Amazon Simple Storage Service (S3)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/security.html&#34;&gt;Security in Amazon Route53&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/acm/latest/userguide/security.html&#34;&gt;Security in Amazon Certificate Manager (ACM)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/cognito/latest/developerguide/managing-security.html&#34;&gt;Security best practices for Amazon Cognito user pools&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/security.html&#34;&gt;Security in Amazon Elastic Load Balancing (ELB)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Usage Tracking</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/usage-tracking/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/about/usage-tracking/</guid>
+      <description>
+        
+        
+        &lt;p&gt;AWS uses customer feedback and usage information to improve the quality of the services and software we offer to customers. We have added usage data collection to the AWS Kubeflow distribution in order to better understand customer usage and guide future improvements. Usage tracking for Kubeflow is activated by default, but is entirely voluntary and can be deactivated at any time.&lt;/p&gt;
+&lt;p&gt;Usage tracking for Kubeflow on AWS collects the instance ID used by one of the worker nodes in a customer’s cluster. This data is sent back to AWS once per day. Usage tracking only collects the EC2 instance ID where Kubeflow is running and does not collect or export any other data to AWS. If you wish to deactivate this tracking, instructions are below.&lt;/p&gt;
+&lt;h3 id=&#34;activate-usage-tracking&#34;&gt;Activate usage tracking&lt;/h3&gt;
+&lt;p&gt;Usage tracking is activated by default. If you deactivated usage tracking for your Kubeflow deployment and would like to activate it after the fact, you can do so at any time with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build awsconfigs/common/aws-telemetry &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;deactivate-usage-tracking&#34;&gt;Deactivate usage tracking&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Before deploying Kubeflow:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You can deactivate usage tracking by skipping the telemetry component installation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For single line installation, comment out the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/kustomization.yaml#L59&#34;&gt;&lt;code&gt;aws-telemetry&lt;/code&gt; line&lt;/a&gt; in the &lt;code&gt;kustomization.yaml&lt;/code&gt; file of your choosing:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# ../../aws-telemetry&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;For make command installation, comment out the &lt;code&gt;aws-telemetry&lt;/code&gt; lines depending on your deployment:
+&lt;ul&gt;
+&lt;li&gt;The installation configs can be found &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/tree/main/tests/e2e/resources/installation_config&#34;&gt;here&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Example for the [vanilla installation config] &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/installation_config/vanilla.yaml&#34;&gt;here&lt;/a&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#AWS Telemetry (Optional)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# aws-telemetry:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#     installation_options:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#     kustomize: &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#         - &amp;#34;../../awsconfigs/common/aws-telemetry&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#     helm: &amp;#34;../../charts/common/aws-telemetry&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;For Terraform installation export the following variable:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_enable_aws_telemetry&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;false&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;After deploying Kubeflow:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;To deactivate usage tracking on an existing deployment, delete the &lt;code&gt;aws-kubeflow-telemetry&lt;/code&gt; cronjob with the following command:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;kubectl delete cronjob -n kubeflow aws-kubeflow-telemetry
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;information-collected-by-usage-tracking&#34;&gt;Information collected by usage tracking&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Instance ID&lt;/strong&gt; - We collect the instance ID used by one of the worker nodes in the customer’s EKS cluster. This collection occurs once per day.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;learn-more&#34;&gt;Learn more&lt;/h3&gt;
+&lt;p&gt;The telemetry data we collect is in accordance with AWS data privacy policies. For more information, see the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/service-terms/&#34;&gt;AWS Service Terms&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/compliance/data-privacy-faq/&#34;&gt;Data Privacy&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

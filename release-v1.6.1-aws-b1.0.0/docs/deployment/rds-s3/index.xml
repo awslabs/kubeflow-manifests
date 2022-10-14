@@ -1,0 +1,904 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – RDS and S3</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/</link>
+    <description>Recent content in RDS and S3 on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Manifest Deployment Guide</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/guide/</guid>
+      <description>
+        
+        
+        &lt;blockquote&gt;
+&lt;p&gt;Note: Helm installation option is still in preview.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.&lt;/p&gt;
+&lt;h3 id=&#34;rds&#34;&gt;RDS&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html&#34;&gt;Amazon Relational Database Service (RDS)&lt;/a&gt; is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.&lt;/p&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml&#34;&gt;KFP&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml&#34;&gt;Katib&lt;/a&gt; components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.&lt;/p&gt;
+&lt;p&gt;Compared to the MySQL setup in the default installation, using RDS provides the following advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.&lt;/li&gt;
+&lt;li&gt;Scalability: RDS can be configured to handle availability and scaling needs. The default Kubeflow installation uses an EBS-hosted Persistent Volume Claim that is AZ-bound and does not support automatic online resizing.&lt;/li&gt;
+&lt;li&gt;Persistent data: KFP and Katib data can persist beyond single Kubeflow installations. Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing multiple Kubeflow installations to reuse the same RDS instance provided that the KFP component versions store data in a format that is compatible.&lt;/li&gt;
+&lt;li&gt;Customization and management: RDS provides management features to facilitate changing database instance types, updating SQL versions, and more.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;s3&#34;&gt;S3&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html&#34;&gt;Amazon Simple Storage Service (S3)&lt;/a&gt; is an object storage service that is highly scalable, available, secure, and performant.&lt;/p&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide/&#34;&gt;default Kubeflow installation&lt;/a&gt;, the &lt;a href=&#34;https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml&#34;&gt;KFP&lt;/a&gt; component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.&lt;/p&gt;
+&lt;p&gt;Configuring MinIO to read and write to S3 provides the following advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.&lt;/li&gt;
+&lt;li&gt;Persistent artifacts: KFP artifacts can persist beyond single Kubeflow installations. Using S3 decouples the KFP artifact store from the Kubeflow deployment, allowing multiple Kubeflow installations to access the same artifacts provided that the KFP component versions store data in a format that is compatible.&lt;/li&gt;
+&lt;li&gt;Customization and management: S3 provides management features to help optimize, organize, and configure access to your data to meet your specific business, organizational, and compliance requirements.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To get started with configuring and installing your Kubeflow installation with RDS and S3 follow the &lt;a href=&#34;#install&#34;&gt;install&lt;/a&gt; steps below to configure and deploy the Kustomize manifest.&lt;/p&gt;
+&lt;h2 id=&#34;install&#34;&gt;Install&lt;/h2&gt;
+&lt;p&gt;The following steps show how to configure and deploy Kubeflow with supported AWS services.&lt;/p&gt;
+&lt;h3 id=&#34;using-only-rds-or-only-s3&#34;&gt;Using only RDS or only S3&lt;/h3&gt;
+&lt;p&gt;Steps relevant only to the RDS installation are prefixed with &lt;code&gt;[RDS]&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Steps relevant only to the S3 installation are prefixed with &lt;code&gt;[S3]&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Steps without any prefixing are necessary for all installations.&lt;/p&gt;
+&lt;p&gt;To install for only RDS or only S3, complete the steps relevant to your installation choice.&lt;/p&gt;
+&lt;p&gt;To install for both RDS and S3, complete all the steps below.&lt;/p&gt;
+&lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
+&lt;p&gt;Follow the steps in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/prerequisites/&#34;&gt;Prerequisites&lt;/a&gt; to make sure that you have everything you need to get started.&lt;/p&gt;
+&lt;p&gt;Make sure you are starting from the repository root directory.
+Export the below variable:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;REPO_ROOT&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-set-up-rds-s3-and-configure-secrets&#34;&gt;2.0 Set up RDS, S3, and configure Secrets&lt;/h2&gt;
+&lt;p&gt;There are two ways to create RDS and S3 resources before you deploy the Kubeflow manifests. Either use the &lt;a href=&#34;#21-option-1-automated-setup&#34;&gt;automated setup&lt;/a&gt; Python script that is mentioned in the following step, or follow the &lt;a href=&#34;#22-option-2-manual-setup&#34;&gt;manual setup instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 &lt;strong&gt;Option 1: Automated Setup&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;This setup performs all the manual steps in an automated fashion.&lt;/p&gt;
+&lt;p&gt;The script takes care of creating the S3 bucket, creating the S3 Secrets using the Secrets manager, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: The script will &lt;strong&gt;not&lt;/strong&gt; delete any resource. Therefore, if a resource already exists (eg: Secret, database with the same name, or S3 bucket), &lt;strong&gt;it will skip the creation of those resources and use the existing resources instead&lt;/strong&gt;. This is by design in order to prevent unwanted results, such as accidental deletion. For example, if a database with the same name already exists, the script will skip the database creation setup. If you forgot to change the database name used for creation, then this gives you the chance to retry the script with the proper value. See &lt;code&gt;python auto-rds-s3-setup.py --help&lt;/code&gt; for the list of parameters, as well as their default values.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to the &lt;code&gt;tests/e2e&lt;/code&gt; directory.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi&#34;&gt;Create an IAM user&lt;/a&gt; with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the &lt;code&gt;AWS_ACCESS_KEY_ID&lt;/code&gt; and &lt;code&gt;AWS_SECRET_ACCESS_KEY&lt;/code&gt; of the IAM user that you created to use in the following step, which will be referenced as &lt;code&gt;MINIO_AWS_ACCESS_KEY_ID&lt;/code&gt; and &lt;code&gt;MINIO_AWS_SECRET_ACCESS_KEY&lt;/code&gt; respectively.&lt;/li&gt;
+&lt;li&gt;Export values for &lt;code&gt;CLUSTER_REGION&lt;/code&gt;, &lt;code&gt;CLUSTER_NAME&lt;/code&gt;, &lt;code&gt;S3_BUCKET&lt;/code&gt;, &lt;code&gt;MINIO_AWS_ACCESS_KEY_ID&lt;/code&gt;, and &lt;code&gt;MINIO_AWS_SECRET_ACCESS_KEY&lt;/code&gt;.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_BUCKET&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;DB_INSTANCE_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;DB_SUBNET_GROUP_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;MINIO_AWS_ACCESS_KEY_ID&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;MINIO_AWS_SECRET_ACCESS_KEY&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;RDS_SECRET_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_SECRET_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Run the &lt;code&gt;auto-rds-s3-setup.py&lt;/code&gt; script
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;advanced-customization&#34;&gt;Advanced customization&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;auto-rds-s3-setup.py&lt;/code&gt; script applies default values for the user password, max storage, storage type, instance type, and more. You can customize those preferences by specifying different values.&lt;/p&gt;
+&lt;p&gt;Learn more about the different parameters with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;.. python utils/rds-s3/auto-rds-s3-setup.py --help
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 &lt;strong&gt;Option 2: Manual Setup&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Follow this step if you prefer to manually set up each component.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;[S3] Create an S3 Bucket&lt;/p&gt;
+&lt;p&gt;Refer to the &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html&#34;&gt;S3 documentation&lt;/a&gt; for steps on creating an &lt;code&gt;S3 bucket&lt;/code&gt;.
+Take note of your &lt;code&gt;S3 bucket name&lt;/code&gt; to use in the following steps.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[RDS] Create an RDS Instance&lt;/p&gt;
+&lt;p&gt;Refer to the &lt;a href=&#34;https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.MySQL.html&#34;&gt;RDS documentation&lt;/a&gt; for steps on creating an &lt;code&gt;RDS MySQL instance&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When creating the RDS instance for security and connectivity reasons, we recommend that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The RDS instance is in the same VPC as the cluster&lt;/li&gt;
+&lt;li&gt;The RDS instance subnets must belong to at least two private subnets within the VPC&lt;/li&gt;
+&lt;li&gt;The RDS instance security group is the same security group used by the EKS node instances&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To complete the following steps you will need to keep track of the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;RDS database name&lt;/code&gt; (not to be confused with the &lt;code&gt;DB identifier&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RDS database admin username&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RDS database admin password&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RDS database endpoint URL&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RDS database port&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Export values:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;RDS_SECRET&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;lt;your rds secret name&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_SECRET&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;lt;your s3 secret name&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;DB_HOST&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;lt;your rds db host&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;MLMD_DB&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;metadata_db
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_BUCKET&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;lt;your s3 bucket name&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;MINIO_SERVICE_HOST&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;s3.amazonaws.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create Secrets in AWS Secrets Manager&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;[RDS] Create the RDS Secret and configure the Secret provider:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Configure a Secret (e.g &lt;code&gt;rds-secret&lt;/code&gt;), with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when creating your RDS instance.
+&lt;ul&gt;
+&lt;li&gt;For example, if your database name is &lt;code&gt;kubeflow&lt;/code&gt;, your endpoint URL is &lt;code&gt;rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com&lt;/code&gt;, your DB port is &lt;code&gt;3306&lt;/code&gt;, your DB username is &lt;code&gt;admin&lt;/code&gt;, and your DB password is &lt;code&gt;Kubefl0w&lt;/code&gt; your secret should look similar to the following:&lt;/li&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws secretsmanager create-secret --name &lt;span class=&#34;nv&#34;&gt;$RDS_SECRET&lt;/span&gt; --secret-string &lt;span class=&#34;s1&#34;&gt;&amp;#39;{&amp;#34;username&amp;#34;:&amp;#34;admin&amp;#34;,&amp;#34;password&amp;#34;:&amp;#34;Kubefl0w&amp;#34;,&amp;#34;database&amp;#34;:&amp;#34;kubeflow&amp;#34;,&amp;#34;host&amp;#34;:&amp;#34;rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com&amp;#34;,&amp;#34;port&amp;#34;:&amp;#34;3306&amp;#34;}&amp;#39;&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Rename the &lt;code&gt;parameters.objects.objectName&lt;/code&gt; field in &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml&#34;&gt;the RDS Secret provider configuration&lt;/a&gt; to the name of the Secret.
+&lt;ul&gt;
+&lt;li&gt;Rename the field with the following command:
+Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            &lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-3&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-3-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-3-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-3-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-3-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-3-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-3-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-3-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-3-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-3-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;yq&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;e&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;-i&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.parameters.objects |= sub(&amp;#34;rds-secret&amp;#34;,env(RDS_SECRET))&amp;#39;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;awsconfigs&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;common&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;aws-secrets-manager&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;secret-provider&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;yaml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-3-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-3-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.secretName = env(RDS_SECRET)&amp;#39; -i charts/common/aws-secrets-manager/rds-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.secretName = env(RDS_SECRET)&amp;#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[S3] Create the S3 Secret and configure the Secret provider:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Configure a Secret (e.g. &lt;code&gt;s3-secret&lt;/code&gt;) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
+&lt;ul&gt;
+&lt;li&gt;For more details about configuring or finding your AWS credentials, see &lt;a href=&#34;https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html&#34;&gt;AWS security credentials&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws secretsmanager create-secret --name &lt;span class=&#34;nv&#34;&gt;$S3_SECRET&lt;/span&gt; --secret-string &lt;span class=&#34;s1&#34;&gt;&amp;#39;{&amp;#34;accesskey&amp;#34;:&amp;#34;AXXXXXXXXXXXXXXXXXX6&amp;#34;,&amp;#34;secretkey&amp;#34;:&amp;#34;eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq&amp;#34;}&amp;#39;&lt;/span&gt; --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Rename the &lt;code&gt;parameters.objects.objectName&lt;/code&gt; field in &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml&#34;&gt;the S3 Secret provider configuration&lt;/a&gt; to the name of the Secret.
+&lt;ul&gt;
+&lt;li&gt;Rename the field with the following command:
+Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            &lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-4&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-4-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-4-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-4-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-4-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-4-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-4-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-4-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-4-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;yq&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;e&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;-i&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;.spec.parameters.objects |= sub(&amp;#34;s3-secret&amp;#34;,env(S3_SECRET))&amp;#39;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;awsconfigs&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;common&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;aws-secrets-manager&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;secret-provider&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;yaml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-4-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.secretName = env(S3_SECRET)&amp;#39; -i charts/common/aws-secrets-manager/s3-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.secretName = env(S3_SECRET)&amp;#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Install AWS Secrets &amp;amp; Configuration Provider with Kubernetes Secrets Store CSI driver&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Run the following commands to enable OIDC and create an &lt;code&gt;iamserviceaccount&lt;/code&gt; with permissions to retrieve the Secrets created with AWS Secrets Manager.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl utils associate-iam-oidc-provider --region&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --cluster&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --approve
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Run the following commands to install AWS Secrets &amp;amp; Configuration Provider with Kubernetes Secrets Store CSI driver:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretproviderclass.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/csidriver.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store-csi-driver.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretprovidersyncing.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update the KFP configurations.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;[RDS] Configure the &lt;em&gt;RDS endpoint URL&lt;/em&gt; and &lt;em&gt;the metadata DB name&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Rename the field with the following command
+Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            &lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-5&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-5-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-5-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-5-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-5-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-5-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-5-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-5-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-5-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-5-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;dbHost=&amp;#39;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_HOST&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;mlmdDb=&amp;#39;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MLMD_DB&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;awsconfigs&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;apps&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;pipeline&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;env&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-5-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-5-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.dbHost = env(DB_HOST)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.dbHost = env(DB_HOST)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.mlmdDb = env(MLMD_DB)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.rds.mlmdDb = env(MLMD_DB)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[S3] Configure the &lt;em&gt;S3 bucket name&lt;/em&gt; and &lt;em&gt;S3 bucket region&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            &lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-6&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-6-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-6-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-6-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-6-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-6-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-6-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-6-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-6-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;bucketName=&amp;#39;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_BUCKET&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;minioServiceHost=&amp;#39;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MINIO_SERVICE_HOST&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;minioServiceRegion=&amp;#39;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;awsconfigs&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;apps&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;pipeline&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;env&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-6-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.bucketName = env(S3_BUCKET)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&amp;#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.bucketName = env(S3_BUCKET)&amp;#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&amp;#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;yq e &amp;#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&amp;#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;            &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;30-build-manifests-and-install-kubeflow&#34;&gt;3.0 Build Manifests and install Kubeflow&lt;/h2&gt;
+&lt;p&gt;Once you have the resources ready, you can deploy the Kubeflow manifests for one of the following deployment options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;both RDS and S3&lt;/li&gt;
+&lt;li&gt;RDS only&lt;/li&gt;
+&lt;li&gt;S3 only&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Navigate to the root of repository&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$REPO_ROOT&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;rds-and-s3-deploy-both-rds-and-s3&#34;&gt;[RDS and S3] Deploy both RDS and S3&lt;/h4&gt;
+&lt;p&gt;Use the following command to deploy the Kubeflow manifests for both RDS and S3:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-7&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-7-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-7-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-7-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-7-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-7-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-7-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-7-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-7-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-7-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deploy-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-7-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-7-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;h4 id=&#34;rds-deploy-rds-only&#34;&gt;[RDS] Deploy RDS only&lt;/h4&gt;
+&lt;p&gt;Use the following command to deploy the Kubeflow manifests for RDS only:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-8&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-8-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-8-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-8-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-8-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-8-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-8-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-8-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-8-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-8-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deploy-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-only&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-8-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-8-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;h4 id=&#34;s3-deploy-s3-only&#34;&gt;[S3] Deploy S3 only&lt;/h4&gt;
+&lt;p&gt;Use the following command to deploy the Kubeflow manifests for S3 only:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-9&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-9-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-9-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-9-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-9-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-9-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-9-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-9-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-9-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-9-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deploy-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s3-only&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-9-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-9-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;Once everything is installed successfully, you can access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can now start experimenting and running your end-to-end ML workflows with Kubeflow!&lt;/p&gt;
+&lt;h2 id=&#34;40-verify-the-installation&#34;&gt;4.0 Verify the installation&lt;/h2&gt;
+&lt;h3 id=&#34;41-verify-rds&#34;&gt;4.1 Verify RDS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Connect to your RDS instance from a pod within the cluster with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl run -it --rm --image&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;mysql:5.7 --restart&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;Never mysql-client -- mysql -h &amp;lt;YOUR RDS ENDPOINT&amp;gt; -u &amp;lt;YOUR LOGIN&amp;gt; -p&amp;lt;YOUR PASSWORD&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can find your credentials by visiting &lt;a href=&#34;https://aws.amazon.com/secrets-manager/&#34;&gt;AWS Secrets Manager&lt;/a&gt; or by using the &lt;a href=&#34;https://awscli.amazonaws.com/v2/documentation/api/latest/reference/secretsmanager/get-secret-value.html&#34;&gt;AWS CLI&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For example, use the following command to retrieve the value of a Secret named &lt;code&gt;rds-secret&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws secretsmanager get-secret-value &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --secret-id &lt;span class=&#34;nv&#34;&gt;$RDS_SECRET_NAME&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --query &lt;span class=&#34;s1&#34;&gt;&amp;#39;SecretString&amp;#39;&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --output text
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Once you are connected to your RDS instance, verify that the databases &lt;code&gt;kubeflow&lt;/code&gt; and &lt;code&gt;mlpipeline&lt;/code&gt; exist.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql&amp;gt; show databases&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+--------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; Database           &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+--------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; cachedb            &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; information_schema &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubeflow           &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; metadb             &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; mlpipeline         &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; mysql              &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; performance_schema &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sys                &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+--------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Verify that the database &lt;code&gt;mlpipeline&lt;/code&gt; has the following tables:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql&amp;gt; use mlpipeline&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; show tables&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; Tables_in_mlpipeline &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; db_statuses          &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; default_experiments  &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; experiments          &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;jobs&lt;/span&gt;                 &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; pipeline_versions    &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; pipelines            &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; resource_references  &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; run_details          &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; run_metrics          &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; tasks                &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Katib (under Experiments (AutoML)).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create an experiment using the following &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/custom-resource-templates/katib-experiment-random.yaml&#34;&gt;yaml file&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once the experiment is complete, verify that the following table exists:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql&amp;gt; use kubeflow&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; show tables&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; Tables_in_kubeflow   &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; observation_logs     &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;Describe the &lt;code&gt;observation_logs&lt;/code&gt; to verify that they are being populated.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql&amp;gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; * from observation_logs&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-verify-s3&#34;&gt;4.2 Verify S3&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Kubeflow Pipelines (under Pipelines).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create an experiment named &lt;code&gt;test&lt;/code&gt; and create a run using the sample pipeline &lt;code&gt;[Demo] XGBoost - Iterative model training&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once the run is completed, go to the S3 AWS console and open the bucket that you specified for your Kubeflow installation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Verify that the bucket is not empty and was populated by the outputs of the experiment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;50-uninstall-kubeflow&#34;&gt;5.0 Uninstall Kubeflow&lt;/h2&gt;
+&lt;p&gt;Run the following command to uninstall your Kubeflow deployment:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation&lt;/p&gt;
+&lt;/blockquote&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-13&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Kustomize&#34;
+        id=&#34;tabs-13-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-13-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-13-0&#34; aria-selected=&#34;true&#34;&gt;
+        Kustomize
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Helm&#34;
+        id=&#34;tabs-13-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-13-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-13-1&#34; aria-selected=&#34;false&#34;&gt;
+        Helm
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-13-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-13-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-13-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;delete-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-13-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-13-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+
+&lt;p&gt;To uninstall AWS resources created by the automated setup, run the cleanup script:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to the &lt;code&gt;tests/e2e&lt;/code&gt; directory.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; tests/e2e
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Install the script dependencies.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r requirements.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Make sure that you have the configuration file created by the script in &lt;code&gt;tests/e2e/utils/rds-s3/metadata.yaml&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;.. python utils/rds-s3/auto-rds-s3-cleanup.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Terraform Deployment Guide</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/guide-terraform/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/guide-terraform/</guid>
+      <description>
+        
+        
+        &lt;blockquote&gt;
+&lt;p&gt;Note: Terraform deployment options are still in preview.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;This guide will walk you through using Terraform to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a VPC&lt;/li&gt;
+&lt;li&gt;Create an EKS cluster&lt;/li&gt;
+&lt;li&gt;Create a S3 bucket&lt;/li&gt;
+&lt;li&gt;Create an RDS DB instance&lt;/li&gt;
+&lt;li&gt;Deploy Kubeflow with RDS as a KFP and Katib persistence layer and S3 as an artifact store&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Terraform documentation can be found &lt;a href=&#34;https://www.terraform.io/docs&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;Be sure that you have satisfied the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/prerequisites/&#34;&gt;installation prerequisites&lt;/a&gt; before working through this guide.&lt;/p&gt;
+&lt;p&gt;Specifially, you must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/prerequisites/#create-ubuntu-environment&#34;&gt;Create a Ubuntu environment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/prerequisites/#clone-repository&#34;&gt;Clone the repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/prerequisites/#install-necessary-tools&#34;&gt;Install the necessary tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Additionally, ensure you are in the &lt;code&gt;REPO_ROOT/deployments/rds-s3/terraform&lt;/code&gt; folder.&lt;/p&gt;
+&lt;p&gt;If you are in repository&amp;rsquo;s root folder, run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; deployments/rds-s3/terraform
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deployment-steps&#34;&gt;Deployment Steps&lt;/h2&gt;
+&lt;h3 id=&#34;configure&#34;&gt;Configure&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Create an IAM user to use with the Minio Client&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi&#34;&gt;Create an IAM user&lt;/a&gt; with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as &lt;code&gt;TF_VAR_minio_aws_access_key_id&lt;/code&gt; and &lt;code&gt;TF_VAR_minio_aws_secret_access_key&lt;/code&gt; respectively.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Define the following environment variables:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Region to create the cluster in&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the cluster to create&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS access key id of the static credentials used to authenticate the Minio Client&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_minio_aws_access_key_id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS secret access key of the static credentials used to authenticate the Minio Client&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_minio_aws_secret_access_key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# true/false flag to configure and deploy with RDS&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;USE_RDS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# true/false flag to configure and deploy with S3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;USE_S3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Save the variables to a &lt;code&gt;.tfvars&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; sample.auto.tfvars
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cluster_name=&amp;#34;${CLUSTER_NAME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cluster_region=&amp;#34;${CLUSTER_REGION}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;generate_db_password=&amp;#34;true&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;use_rds=&amp;#34;${USE_RDS}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;use_s3=&amp;#34;${USE_S3}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;# The below values are set to make cleanup easier but are not recommended for production
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;deletion_protection=&amp;#34;false&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;secret_recovery_window_in_days=&amp;#34;0&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;force_destroy_s3_bucket=&amp;#34;true&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;all-configurations&#34;&gt;All Configurations&lt;/h3&gt;
+&lt;p&gt;A full list of inputs for the terraform stack can be found &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/rds-s3/terraform/variables.tf&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;preview&#34;&gt;Preview&lt;/h3&gt;
+&lt;p&gt;View a preview of the configuration you are about apply:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;terraform init &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; terraform plan
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;apply&#34;&gt;Apply&lt;/h3&gt;
+&lt;p&gt;Run the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make deploy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;connect-to-your-kubeflow-dashboard&#34;&gt;Connect to your Kubeflow dashboard&lt;/h2&gt;
+&lt;p&gt;For information on connecting to your Kubeflow dashboard depending on your deployment environment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/#port-forward-terraform-deployment&#34;&gt;Port-forward (Terraform deployment)&lt;/a&gt;. Then, &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/#log-into-the-kubeflow-ui&#34;&gt;log into the Kubeflow UI&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;cleanup&#34;&gt;Cleanup&lt;/h2&gt;
+&lt;p&gt;Uninstall Kubeflow on AWS with a single command.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make delete
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>
