@@ -37,11 +37,3 @@ This section curates a list of recorded virtual workshops, demos, and general pr
 1. [Live at re:Mars Session "Deploy and scale your ML workflow on Kubernetes with Kubeflow on AWS"](https://www.linkedin.com/video/live/urn:li:ugcPost:6945501585447804929/). You will be prompted to log into LinkedIn. July, 2022
 
 1. [re:Mars Session “AWS Distribution of Kubeflow supporting Kubeflow v1.4”](https://www.youtube.com/watch?v=RfJcDhZ8PJY&list=PL2yQDdvlhXf8cfiry7ngFIK7hprDWGJp0&index=7) - Kubeflow on AWS value proposition and demo. July 8, 2022.
-
- 
-
- 
-
- 
-
-
