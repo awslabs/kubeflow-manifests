@@ -164,7 +164,9 @@ module "kubeflow_components" {
   kf_helm_repo_path = local.kf_helm_repo_path
   addon_context = module.eks_blueprints_outputs.addon_context
   enable_aws_telemetry = var.enable_aws_telemetry
-
+  notebook_enable_culling = var.notebook_enable_culling
+  notebook_cull_idle_time = var.notebook_cull_idle_time
+  notebook_idleness_check_period = var.notebook_idleness_check_period
 }
 
 #---------------------------------------------------------------
