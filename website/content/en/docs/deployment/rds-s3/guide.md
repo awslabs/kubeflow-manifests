@@ -123,77 +123,57 @@ Follow this step if you prefer to manually set up each component.
     - `RDS database endpoint URL`
     - `RDS database port`
 
+1. Export values:
+    ```bash
+    export RDS_SECRET="<your rds secret name>"
+    export S3_SECRET="<your s3 secret name>"
+    export DB_HOST="<your rds db host>"
+    export MLMD_DB=metadata_db
+    export S3_BUCKET="<your s3 bucket name>"
+    export MINIO_SERVICE_HOST=s3.amazonaws.com
+    ```
+
 3. Create Secrets in AWS Secrets Manager
 
    1. [RDS] Create the RDS Secret and configure the Secret provider:
       1. Configure a Secret (e.g `rds-secret`), with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when creating your RDS instance.
          - For example, if your database name is `kubeflow`, your endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com`, your DB port is `3306`, your DB username is `admin`, and your DB password is `Kubefl0w` your secret should look similar to the following:
          - ```bash
-           export RDS_SECRET=<your rds secret name>
            aws secretsmanager create-secret --name $RDS_SECRET --secret-string '{"username":"admin","password":"Kubefl0w","database":"kubeflow","host":"rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com","port":"3306"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the RDS Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml) to the name of the Secret. 
          - Rename the field with the following command:
-           ```bash
-           yq e -i '.spec.parameters.objects |= sub("rds-secret",env(RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
-           ```
-         - For example, if your Secret name is `rds-secret-new`, the configuration should look similar to the following:
-         - ```bash
-           apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
-           kind: SecretProviderClass
-           metadata:
-              name: rds-secret
+            Select the package manager of your choice.
+            {{< tabpane persistLang=false >}}
+            {{< tab header="Kustomize" lang="toml" >}}
+yq e -i '.spec.parameters.objects |= sub("rds-secret",env(RDS_SECRET))' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+            {{< /tab >}}
+            {{< tab header="Helm" lang="yaml" >}}
+yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rds-only/values.yaml
+yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rds-s3/values.yaml
+            {{< /tab >}}
+            {{< /tabpane >}} 
 
-              ...
-              
-              parameters:
-                 objects: | 
-                 - objectName: "rds-secret-new" # This line was changed
-                   objectType: "secretsmanager"
-                   jmesPath:
-                      - path: "username"
-                         objectAlias: "user"
-                      - path: "password"
-                         objectAlias: "pass"
-                      - path: "host"
-                         objectAlias: "host"
-                      - path: "database"
-                         objectAlias: "database"
-                      - path: "port"
-                         objectAlias: "port"
-           ```
          
    1. [S3] Create the S3 Secret and configure the Secret provider:
       1. Configure a Secret (e.g. `s3-secret`) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
          - For more details about configuring or finding your AWS credentials, see [AWS security credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
          - ```bash
-           export S3_SECRET=<your s3 secret name>
            aws secretsmanager create-secret --name $S3_SECRET --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the S3 Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the Secret. 
          - Rename the field with the following command:
-           ```bash
-           yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
-           ```
-         - For example, if your Secret name is `s3-secret-new`, the configuration should look similar to the following:
-         - ```bash
-           apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
-           kind: SecretProviderClass
-           metadata:
-             name: s3-secret
+            Select the package manager of your choice.
+            {{< tabpane persistLang=false >}}
+            {{< tab header="Kustomize" lang="toml" >}}
+yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
+            {{< /tab >}}
+            {{< tab header="Helm" lang="yaml" >}}
+yq e '.s3.secretName = env(S3_SECRET)' -i charts/common/aws-secrets-manager/s3-only/values.yaml
+yq e '.s3.secretName = env(S3_SECRET)' -i charts/common/aws-secrets-manager/rds-s3/values.yaml
+            {{< /tab >}}
+            {{< /tabpane >}}
 
-             ...
-             
-             parameters:
-               objects: | 
-                 - objectName: "s3-secret-new" # This line was changed
-                   objectType: "secretsmanager"
-                   jmesPath:
-                       - path: "accesskey"
-                         objectAlias: "access"
-                       - path: "secretkey"
-                         objectAlias: "secret"           
-           ```
 
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 
@@ -218,22 +198,46 @@ Follow this step if you prefer to manually set up each component.
    ```
 
 5. Update the KFP configurations.
-    1. [RDS] Configure the [RDS params file](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/apps/pipeline/rds/params.env) with the RDS endpoint URL and the metadata DB name.
+    1. [RDS] Configure the *RDS endpoint URL* and *the metadata DB name*:
+         - Rename the field with the following command
+            Select the package manager of your choice.
+            {{< tabpane persistLang=false >}}
+            {{< tab header="Kustomize" lang="toml" >}}
+printf '
+dbHost='$DB_HOST'
+mlmdDb='$MLMD_DB'
+' > awsconfigs/apps/pipeline/rds/params.env
+            {{< /tab >}}
+            {{< tab header="Helm" lang="yaml" >}}
+yq e '.rds.dbHost = env(DB_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.rds.dbHost = env(DB_HOST)' -i charts/apps/kubeflow-pipelines/rds-only/values.yaml
+yq e '.rds.mlmdDb = env(MLMD_DB)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.rds.mlmdDb = env(MLMD_DB)' -i charts/apps/kubeflow-pipelines/rds-only/values.yaml
+            {{< /tab >}}
+            {{< /tabpane >}}
+       
 
-       For example, if your RDS endpoint URL is `rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com` and your metadata DB name is `metadata_db`, then your `params.env` file should look similar to the following:
-       ```bash
-        dbHost=rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com
-        mlmdDb=metadata_db
-        ```
+    2. [S3] Configure the *S3 bucket name* and *S3 bucket region*: 
 
-    2. [S3] Configure the [S3 params file](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/apps/pipeline/s3/params.env) with the `S3 bucket name` and `S3 bucket region`.
+         Select the package manager of your choice.
+            {{< tabpane persistLang=false >}}
+            {{< tab header="Kustomize" lang="toml" >}}
+printf '
+bucketName='$S3_BUCKET'
+minioServiceHost='$MINIO_SERVICE_HOST'
+minioServiceRegion='$CLUSTER_REGION'
+' > awsconfigs/apps/pipeline/s3/params.env
+            {{< /tab >}}
+            {{< tab header="Helm" lang="yaml" >}}
+yq e '.s3.bucketName = env(S3_BUCKET)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.s3.minioServiceHost = env(MINIO_SERVICE_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.s3.bucketName = env(S3_BUCKET)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
+yq e '.s3.minioServiceHost = env(MINIO_SERVICE_HOST)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
+yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
+            {{< /tab >}}
+            {{< /tabpane >}}
 
-         For example, if your S3 bucket name is `kf-aws-demo-bucket` and your S3 bucket region is `us-west-2`, then your `params.env` file should look similar to the following:
-         ```bash
-          bucketName=kf-aws-demo-bucket
-          minioServiceHost=s3.amazonaws.com
-          minioServiceRegion=us-west-2
-          ```
 
 ## 3.0 Build Manifests and install Kubeflow
 
