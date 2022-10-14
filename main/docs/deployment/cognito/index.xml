@@ -1,0 +1,131 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – Cognito</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/</link>
+    <description>Recent content in Cognito on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Manifest Deployment Guides</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/manifest/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/manifest/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Terraform Deployment Guide</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-terraform/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-terraform/</guid>
+      <description>
+        
+        
+        &lt;blockquote&gt;
+&lt;p&gt;Note: Terraform deployment option is still in preview.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;This guide will walk you through using Terraform to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a VPC&lt;/li&gt;
+&lt;li&gt;Create an EKS cluster&lt;/li&gt;
+&lt;li&gt;Create a Route53 subdomain&lt;/li&gt;
+&lt;li&gt;Create a Cognito user pool&lt;/li&gt;
+&lt;li&gt;Deploy Kubeflow with Cognito as an identity provider&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Find additional information on &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/manifest/guide/#background&#34;&gt;using Cognito with the AWS Distribution for Kubeflow&lt;/a&gt; in this guide. You can also check &lt;a href=&#34;https://www.terraform.io/docs&#34;&gt;Terraform documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;Be sure that you have satisfied the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/&#34;&gt;installation prerequisites&lt;/a&gt; before working through this guide.&lt;/p&gt;
+&lt;p&gt;Specifially, you must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/#create-ubuntu-environment&#34;&gt;Create a Ubuntu environment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/#clone-repository&#34;&gt;Clone the repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/#install-necessary-tools&#34;&gt;Install the necessary tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Additionally, ensure you are in the &lt;code&gt;REPO_ROOT/deployments/cognito/terraform&lt;/code&gt; folder.&lt;/p&gt;
+&lt;p&gt;From the repository&amp;rsquo;s root folder, run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; deployments/cognito/terraform
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;pwd&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deployment-steps&#34;&gt;Deployment Steps&lt;/h2&gt;
+&lt;h3 id=&#34;configure&#34;&gt;Configure&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Register a domain using &lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html&#34;&gt;Route 53&lt;/a&gt;.
+When you register a domain with Route 53, it automatically creates a hosted zone for the domain.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The provided Terraform stack will create and delegate a subdomain for the Kubeflow platform automatically.&lt;/li&gt;
+&lt;li&gt;If you do not use Route53 for your top level domain, you can follow the steps in &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/load-balancer/guide/#create-a-subdomain&#34;&gt;create a subdomain section&lt;/a&gt; of the load balancer guide to create a subdomain manually and provide the route 53 subdomain hosted zone name as input to the terraform stack.
+Additionally you have to set the Terraform variable &lt;code&gt;create_subdomain=false&lt;/code&gt;:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_create_subdomain&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;false&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Set the following environment variables:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Region to create the cluster in&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the cluster to create&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of an existing Route53 root domain (e.g. example.com)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;ROOT_DOMAIN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the subdomain to create (e.g. platform.example.com)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;SUBDOMAIN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the cognito user pool to create&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;USER_POOL_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Load balancer scheme&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;LOAD_BALANCER_SCHEME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;internet-facing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;NOTE: Configure Load Balancer Scheme (e.g. &lt;code&gt;internet-facing&lt;/code&gt; or &lt;code&gt;internal&lt;/code&gt;). Default is set to &lt;code&gt;internet-facing&lt;/code&gt;. Use &lt;code&gt;internal&lt;/code&gt; as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme&#34;&gt;Load balancer scheme&lt;/a&gt; in the AWS documentation&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Save the variables to a &lt;code&gt;.tfvars&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; sample.auto.tfvars
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cluster_name=&amp;#34;${CLUSTER_NAME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cluster_region=&amp;#34;${CLUSTER_REGION}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;aws_route53_root_zone_name=&amp;#34;${ROOT_DOMAIN}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;aws_route53_subdomain_zone_name=&amp;#34;${SUBDOMAIN}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cognito_user_pool_name=&amp;#34;${USER_POOL_NAME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;load_balancer_scheme=&amp;#34;${LOAD_BALANCER_SCHEME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;view-all-configurations&#34;&gt;View all configurations&lt;/h3&gt;
+&lt;p&gt;View &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf&#34;&gt;all possible configuration options of the terraform stack&lt;/a&gt; in the &lt;code&gt;variables.tf&lt;/code&gt; file.&lt;/p&gt;
+&lt;h3 id=&#34;preview&#34;&gt;Preview&lt;/h3&gt;
+&lt;p&gt;To check the configuration you are about to apply, run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;terraform init &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; terraform plan
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;apply&#34;&gt;Apply&lt;/h3&gt;
+&lt;p&gt;Deploy Kubeflow with Cognito:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make deploy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;connect-to-your-kubeflow-dashboard&#34;&gt;Connect to your Kubeflow dashboard&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to the Cognito console and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/manifest/guide/#60-connect-to-the-central-dashboard&#34;&gt;create some users&lt;/a&gt;  in &lt;code&gt;Users and groups&lt;/code&gt; using their email &lt;code&gt;user@example.com&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Get the link to the central dashboard:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;terraform output -raw kubelow_platform_domain
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Open the link in the browser and connect via the user credentials that were just configured.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;cleanup&#34;&gt;Cleanup&lt;/h2&gt;
+&lt;p&gt;Uninstall Kubeflow on AWS.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make delete
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>
