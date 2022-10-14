@@ -1,0 +1,268 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubeflow on AWS – Deployment Options</title>
+    <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/</link>
+    <description>Recent content in Deployment Options on Kubeflow on AWS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Prerequisites</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/</guid>
+      <description>
+        
+        
+        &lt;p&gt;For all Kubeflow on AWS deployment options, you need to &lt;a href=&#34;#create-ubuntu-environment&#34;&gt;create a Ubuntu environment&lt;/a&gt;, &lt;a href=&#34;#clone-repository&#34;&gt;clone the necessary repositories&lt;/a&gt;, and &lt;a href=&#34;#install-necessary-tools&#34;&gt;install the necessary tools&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;create-ubuntu-environment&#34;&gt;Create Ubuntu environment&lt;/h2&gt;
+&lt;p&gt;To get started with automated deployment, you must have a Ubuntu environment using one of the following methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#amazon-ec2&#34;&gt;Option 1: Amazon EC2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#docker&#34;&gt;Option 2: Docker&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#aws-cloud9&#34;&gt;Option 3: AWS Cloud9&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;option-1-amazon-ec2&#34;&gt;Option 1: Amazon EC2&lt;/h3&gt;
+&lt;p&gt;Launch a Ubuntu-based Amazon EC2 instance. We recommend using a Ubuntu AWS Deep Learning AMI (DLAMI), such as the &lt;a href=&#34;https://aws.amazon.com/releasenotes/aws-deep-learning-base-ami-ubuntu-18-04/&#34;&gt;AWS Deep Learning Base AMI (Ubuntu 18.04)&lt;/a&gt; for your EC2 instance. To quickly get started with a DLAMI on Amazon EC2, see &lt;a href=&#34;https://aws.amazon.com/getting-started/hands-on/get-started-dlami/&#34;&gt;Launch an AWS Deep Learning AMI&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For more information about DLAMI options, see &lt;a href=&#34;https://docs.aws.amazon.com/dlami/latest/devguide/appendix-ami-release-notes.html&#34;&gt;Release Notes for DLAMI&lt;/a&gt;. For information on instance type selection, see &lt;a href=&#34;https://docs.aws.amazon.com/dlami/latest/devguide/instance-select.html&#34;&gt;Selecting the Instance Type for DLAMI&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;option-2-docker&#34;&gt;Option 2: Docker&lt;/h3&gt;
+&lt;p&gt;Create a Ubuntu environment using Docker. Pull the latest version of the Ubuntu image of your choice.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker pull ubuntu:18.04
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Connect to localhost from your container:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker container run -it -p 127.0.0.1:8080:8080 ubuntu:18.04
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Download the latest package information:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;apt update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install the necessary tools:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;apt install git curl unzip tar make sudo vim wget -y
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;option-3-aws-cloud9&#34;&gt;Option 3: AWS Cloud9&lt;/h3&gt;
+&lt;p&gt;Launch a Ubuntu instance using Cloud9:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Launch Ubuntu 18.04 cloud9 instance 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;clone-repository&#34;&gt;Clone repository&lt;/h2&gt;
+&lt;p&gt;Clone the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests&#34;&gt;&lt;code&gt;awslabs/kubeflow-manifests&lt;/code&gt;&lt;/a&gt; and the &lt;a href=&#34;https://github.com/kubeflow/manifests&#34;&gt;&lt;code&gt;kubeflow/manifests&lt;/code&gt;&lt;/a&gt; repositories and check out the release branches of your choosing.&lt;/p&gt;
+&lt;p&gt;Substitute the value for &lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt;(e.g. v1.6.1) and &lt;code&gt;AWS_RELEASE_VERSION&lt;/code&gt;(e.g. v1.6.0-aws-b1.0.0) with the tag or branch you want to use below. Read more about &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/releases/&#34;&gt;releases and versioning&lt;/a&gt; if you are unsure about what these values should be.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.6.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;main
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone https://github.com/awslabs/kubeflow-manifests.git &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; kubeflow-manifests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git checkout &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone --branch &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; https://github.com/kubeflow/manifests.git upstream
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;install-necessary-tools&#34;&gt;Install necessary tools&lt;/h2&gt;
+&lt;p&gt;Install the necessary tools with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make install-tools
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# NOTE: If you have other versions of python installed &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# then make sure the default is set to python3.8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;alias&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;python&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;python3.8
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;make&lt;/code&gt; command above installs the following tools:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html&#34;&gt;AWS CLI&lt;/a&gt; - A command line tool for interacting with AWS services.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://eksctl.io/introduction/#installation&#34;&gt;eksctl&lt;/a&gt; - A command line tool for working with EKS clusters.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/tasks/tools&#34;&gt;kubectl&lt;/a&gt; - A command line tool for working with Kubernetes clusters.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mikefarah.gitbook.io/yq&#34;&gt;yq&lt;/a&gt; - A command line tool for YAML processing. (For Linux environments, use the &lt;a href=&#34;https://github.com/mikefarah/yq/#install&#34;&gt;wget plain binary installation&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://stedolan.github.io/jq/download/&#34;&gt;jq&lt;/a&gt; - A command line tool for processing JSON.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0&#34;&gt;kustomize version 3.2.0&lt;/a&gt; - A command line tool to customize Kubernetes objects through a kustomization file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see &lt;a href=&#34;https://github.com/kubernetes-sigs/kustomize/issues/3794&#34;&gt;kubernetes-sigs/kustomize#3794&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/manifests/issues/1797&#34;&gt;kubeflow/manifests#1797&lt;/a&gt;. We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.python.org/downloads/&#34;&gt;python 3.8+&lt;/a&gt; - A programming language used for automated installation scripts.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pip.pypa.io/en/stable/installation/&#34;&gt;pip&lt;/a&gt; - A package installer for python.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://learn.hashicorp.com/tutorials/terraform/install-cli&#34;&gt;terraform&lt;/a&gt; - An infrastructure as code tool that lets you develop cloud and on-prem resources.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://helm.sh/docs/intro/install/&#34;&gt;helm&lt;/a&gt; - A package manager for Kubernetes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;configure-aws-credentials-and-region-for-deployment&#34;&gt;Configure AWS Credentials and Region for Deployment&lt;/h2&gt;
+&lt;p&gt;To access AWS services, you need an AWS account and setup IAM credentials. Follow &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html&#34;&gt;AWS CLI Configure Quickstart documentation&lt;/a&gt; to setup your IAM credentials.&lt;/p&gt;
+&lt;p&gt;Your IAM user/role needs the necessary privileges to create and manage your cluster and dependencies.
+You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it will require access to multiple services.&lt;/p&gt;
+&lt;p&gt;Run the following command to configure AWS CLI:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Warning &lt;a href=&#34;https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html&#34;&gt;Cloud9&lt;/a&gt; users: When configuring your IAM credentials on Cloud9, we recommend using a &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles&#34;&gt;profile&lt;/a&gt;. Click &lt;code&gt;Cancel&lt;/code&gt; when a pop up &amp;ldquo;Could not update credentials&amp;rdquo; opens, then choose &lt;code&gt;Permanently disable&lt;/code&gt; for the &amp;ldquo;Unable to update credentials&amp;rdquo; pop up.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws configure --profile&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;AWS Access Key ID &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;enter access key id&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;AWS Secret Access Key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;enter secret access key&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Default region name &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;AWS region&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Default output format &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: json
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Set the AWS_PROFILE variable with the profile above&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_PROFILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once your configuration is complete, run &lt;code&gt;aws sts get-caller-identity&lt;/code&gt; to verify that AWS CLI has access to your IAM credentials.&lt;/p&gt;
+&lt;h2 id=&#34;installation-options&#34;&gt;Installation options&lt;/h2&gt;
+&lt;p&gt;Kubeflow on AWS can be installed completely using terraform or using manifests(kustomize, helm). If you are looking to install using terraform, navigate directly to one of the Terraform deployment guides. To deploy using manifests, proceed to &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-eks-cluster/&#34;&gt;Create an EKS Cluster guide&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Create an EKS Cluster</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-eks-cluster/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-eks-cluster/</guid>
+      <description>
+        
+        
+        &lt;blockquote&gt;
+&lt;p&gt;Note : You do not need to create an EKS cluster if you are using Terraform&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;create-eks-cluster-using-eksctl&#34;&gt;Create EKS Cluster using &lt;code&gt;eksctl&lt;/code&gt;&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Be sure to check &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/&#34;&gt;Amazon EKS and Kubeflow Compatibility&lt;/a&gt; when creating your cluster with specific EKS versions.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can create a customized EKS cluster with the following steps.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Various controllers use IAM roles for service accounts (IRSA). An &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; must exist for your cluster to use IRSA.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Change the values for the &lt;code&gt;CLUSTER_NAME&lt;/code&gt; and &lt;code&gt;CLUSTER_REGION&lt;/code&gt; environment variables:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the following command to create an EKS cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create cluster &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--name &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--version 1.22 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--nodegroup-name linux-nodes &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--node-type m5.xlarge &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--nodes &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--nodes-min &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--nodes-max &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--managed &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--with-oidc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you are using an existing EKS cluster, create an &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html&#34;&gt;OIDC provider&lt;/a&gt; and associate it with for your EKS cluster with the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl utils associate-iam-oidc-provider --cluster &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --approve
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;important-if-you-are-using-an-eks-version--123-install-the-amazon-ebs-csi-driver-by-following-the-instructions-herehttpsdocsawsamazoncomekslatestuserguideebs-csihtml&#34;&gt;&lt;strong&gt;Important:&lt;/strong&gt; If you are using an EKS version &lt;code&gt;&amp;gt;= 1.23&lt;/code&gt; install the Amazon EBS CSI driver by following the instructions &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html&#34;&gt;here&lt;/a&gt;.&lt;/h4&gt;
+&lt;p&gt;More details about cluster creation via &lt;code&gt;eksctl&lt;/code&gt; can be found in the &lt;a href=&#34;https://eksctl.io/usage/creating-and-managing-clusters/&#34;&gt;Creating and managing clusters&lt;/a&gt; guide.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Vanilla Installation</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: RDS and S3</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Cognito</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Cognito, RDS, and S3</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Connect to your Kubeflow Dashboard</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;port-forward-manifest-deployment&#34;&gt;Port-forward (Manifest deployment)&lt;/h2&gt;
+&lt;h3 id=&#34;option-1-amazon-ec2&#34;&gt;Option 1: Amazon EC2&lt;/h3&gt;
+&lt;p&gt;Run the following command on your EC2 instance:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, on your local machine, run the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ssh -i &amp;lt;path-to-your-key-pem&amp;gt; -L 8080:localhost:8080 -N ubuntu@ec2-&amp;lt;Public-IPv4-DNS&amp;gt;.compute-1.amazonaws.com -o &lt;span class=&#34;nv&#34;&gt;ExitOnForwardFailure&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;yes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can then open the browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;option-2-docker&#34;&gt;Option 2: Docker&lt;/h3&gt;
+&lt;p&gt;Run the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward &lt;span class=&#34;nv&#34;&gt;IP_ADDRESS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0.0.0.0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can then open the browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;option-3-aws-cloud9&#34;&gt;Option 3: AWS Cloud9&lt;/h3&gt;
+&lt;p&gt;Connect to your Kubeflow dashboard with a single command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, open the AWS Cloud9 browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;port-forward-terraform-deployment&#34;&gt;Port-forward (Terraform deployment)&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Update the &lt;code&gt;kubeconfig&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;terraform output -raw configure_kubectl&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;#port-forward-manifest-deployment&#34;&gt;Choose your port forward option&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;open-the-browser&#34;&gt;Open the browser&lt;/h2&gt;
+&lt;p&gt;You can then open the browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;log-into-the-kubeflow-ui&#34;&gt;Log into the Kubeflow UI&lt;/h2&gt;
+&lt;p&gt;Use the following default credentials to log into the Kubeflow UI:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: If you changed the default password using the steps in &lt;a href=&#34;#change-the-default-user-password-kustomize&#34;&gt;Change the default user password&lt;/a&gt;, then use the password that you created.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;email : &lt;a href=&#34;mailto:user@example.com&#34;&gt;user@example.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;password : 12341234&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Congratulations! 🎉 Your Kubeflow on AWS setup is complete&lt;/p&gt;
+&lt;h2 id=&#34;exposing-kubeflow-over-load-balancer-optional&#34;&gt;Exposing Kubeflow over Load Balancer (Optional)&lt;/h2&gt;
+&lt;p&gt;In order to expose Kubeflow over an external address, you can set up AWS Application Load Balancer. Please take a look at the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/add-ons/load-balancer/guide/&#34;&gt;Load Balancer guide&lt;/a&gt; to set it up.&lt;/p&gt;
+&lt;h2 id=&#34;change-the-default-user-password-kustomize&#34;&gt;Change the default user password (Kustomize)&lt;/h2&gt;
+&lt;p&gt;For security reasons, we do not recommend using the default password for the default Kubeflow user when installing in security-sensitive environments.&lt;/p&gt;
+&lt;p&gt;Define your own password before deploying. To define a password for the default user:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Pick a password for the default user, with email &lt;code&gt;user@example.com&lt;/code&gt;, and hash it using &lt;code&gt;bcrypt&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python3 -c &lt;span class=&#34;s1&#34;&gt;&amp;#39;from passlib.hash import bcrypt; import getpass; print(bcrypt.using(rounds=12, ident=&amp;#34;2y&amp;#34;).hash(getpass.getpass()))&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Edit &lt;code&gt;upstream/common/dex/base/config-map.yaml&lt;/code&gt; and fill the relevant field with the hash of the password you chose:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nn&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;staticPasswords&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;email&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;user@example.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;&amp;lt;enter the generated hash here&amp;gt;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>
