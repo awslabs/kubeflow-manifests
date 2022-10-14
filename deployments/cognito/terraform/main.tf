@@ -174,6 +174,10 @@ module "kubeflow_components" {
   addon_context = module.eks_blueprints_outputs.addon_context
   enable_aws_telemetry = var.enable_aws_telemetry
 
+  notebook_enable_culling = var.notebook_enable_culling
+  notebook_cull_idle_time = var.notebook_cull_idle_time
+  notebook_idleness_check_period = var.notebook_idleness_check_period
+
   aws_route53_root_zone_name = var.aws_route53_root_zone_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
   create_subdomain = var.create_subdomain
