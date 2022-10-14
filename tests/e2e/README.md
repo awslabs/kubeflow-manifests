@@ -15,7 +15,8 @@ pip install -r requirements.txt
 ```
 
 Run a specific test.
-Region is a required parameter for all tests. Each test suite/test class may require additional set of parameters. e.g. test_sanity needs only `--region` but cognito test needs `--root-domain-name` and `--root-domain-hosted-zone-id` and rds-s3 tests need `--accesskey` and `--secretkey` in addition to region. `--installation_option`(default=kustomize) and `--deployment_option`(default=vanilla) need to be specified depending on test to run. 
+Region is a required parameter for all tests. Each test suite/test class may require additional set of parameters. e.g. test_sanity needs only `--region` but cognito test needs `--root-domain-name` and `--root-domain-hosted-zone-id` and rds-s3 tests need `--accesskey` and `--secretkey` in addition to region. 
+`--installation_option`(default=kustomize) and `--deployment_option`(default=vanilla) need to be specified depending on test to run. 
 ```
 pytest <tests/test_file.py> -k <test_name(s)> --region <REGION_NAME> --installation_option <helm/kustomize> --deployment_option <vanilla/cognito/rds-s3>
 ```
