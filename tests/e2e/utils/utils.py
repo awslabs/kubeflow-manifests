@@ -254,7 +254,7 @@ def uninstall_helm(chart_name, namespace=None):
     assert uninstall_retcode == 0
 
 def kubectl_wait_pods(
-    pods, namespace=None, identifier="app", timeout=240, condition="ready"
+    pods, namespace=None, identifier="app", timeout=600, condition="ready"
 ):
     if namespace:
 
