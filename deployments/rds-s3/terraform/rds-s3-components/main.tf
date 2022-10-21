@@ -197,7 +197,7 @@ module "filter_kfp_set_values" {
   set_values = {
     "rds.dbHost" = try(module.rds[0].rds_endpoint, null),
     "s3.bucketName" = try(module.s3[0].s3_bucket_name ,null),
-    "s3.minioServiceRegion" = try(var.minio_service_region, var.addon_context.aws_region_name)
+    "s3.minioServiceRegion" = coalesce(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb" = var.mlmdb_name,
     "s3.minioServiceHost" = var.minio_service_host
   }

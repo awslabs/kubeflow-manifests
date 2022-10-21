@@ -145,10 +145,10 @@ S3_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/s3/secre
 
 path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE)
 #pipelines helm path
-pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
+pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
 
 #secrets-manager helm path
-secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
+secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
 
 #pipelines values file
 pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
@@ -213,18 +213,6 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
         env_dict=s3_params
         
     )
-
-    #pipelines helm path
-    pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]
-
-    #secrets-manager helm path
-    secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]
-
-    #pipelines values file
-    pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
-
-    #secrets-manager values file
-    secrets_manager_rds_s3_values_file = f"{secrets_manager_rds_s3_helm_path}/values.yaml" 
 
     write_env_to_yaml(rds_params, pipeline_rds_s3_values_file, module="rds")
     write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")

@@ -76,7 +76,7 @@ pwd
     aws_route53_root_zone_name="${ROOT_DOMAIN}"
     aws_route53_subdomain_zone_name="${SUBDOMAIN}"
     cognito_user_pool_name="${USER_POOL_NAME}"
-    load_balancer_scheme="${LOAD_BALANCER_SCHEME}
+    load_balancer_scheme="${LOAD_BALANCER_SCHEME}"
     EOF
     ```
 

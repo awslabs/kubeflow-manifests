@@ -16,7 +16,7 @@ from e2e.fixtures.cluster import (
 from e2e.utils.aws.iam import IAMPolicy
 from e2e.utils.ack_sm_controller_bootstrap import common
 from e2e.utils.config import configure_env_file
-from e2e.utils.utils import print_banner, load_yaml_file
+from e2e.utils.utils import print_banner, load_yaml_file, write_env_to_yaml
 
 
 logging.basicConfig(level=logging.INFO)
@@ -91,15 +91,16 @@ def get_role_arn(role_name, region):
 def get_account_id():
     return boto3.client("sts").get_caller_identity().get("Account")
 
-def write_params(oidc_role_arn, region, file_path):
-    configure_env_file(
-        env_file_path=file_path,
-        env_dict={
-            "ACK_SAGEMAKER_OIDC_ROLE": oidc_role_arn,
-            "ACK_AWS_REGION": region
-        }
-    )
-    print(f"File written to : {file_path}")
+def write_params(oidc_role_arn, region, env_file_path, config_file_path):
+    output_dict = {
+        "ACK_SAGEMAKER_OIDC_ROLE": oidc_role_arn,
+        "ACK_AWS_REGION": region
+    }
+    configure_env_file(env_file_path, output_dict)
+    print(f"Params file written to : {env_file_path}")
+
+    write_env_to_yaml({"ack_sagemaker_oidc_role": oidc_role_arn}, config_file_path)
+    print(f"Config file written to : {config_file_path}")
 
 if __name__ == "__main__":
     print_banner("Reading Config")
@@ -120,7 +121,7 @@ if __name__ == "__main__":
 
     print_banner("Writing params.env for ACK SageMaker Controller")
     output_params_file_path = common.OUTPUT_FILE_PATH
-    write_params(oidc_role_arn, cluster_region, output_params_file_path)
+    write_params(oidc_role_arn, cluster_region, output_params_file_path, config_file_path)
 
     print_banner("SUCCESS")
 
