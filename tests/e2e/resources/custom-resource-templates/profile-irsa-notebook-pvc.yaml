@@ -9,5 +9,5 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: gp2
+  storageClassName: gp3
   volumeMode: Filesystem

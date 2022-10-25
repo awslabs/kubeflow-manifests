@@ -95,8 +95,8 @@ variable "backup_retention_period" {
 
 variable "storage_type" {
   type        = string
-  description = "Instance storage type: standard, gp2, or io1"
-  default = "gp2"
+  description = "Instance storage type: standard, gp3, or io1"
+  default = "gp3"
 }
 
 variable "deletion_protection" {
