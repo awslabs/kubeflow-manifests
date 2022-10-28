@@ -89,7 +89,7 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
 
         return resp
 
-    return wait_for(callback, timeout=1500)
+    return wait_for(callback, timeout=1800)
 
 
 @pytest.fixture(scope="class")
