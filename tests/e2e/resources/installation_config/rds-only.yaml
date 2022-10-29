@@ -380,6 +380,12 @@ ack-sagemaker-controller:
         - ../../awsconfigs/common/ack-sagemaker-controller
     helm: 
       repo: remote
+  validations: 
+    pods: 
+      namespace: ack-system
+      labels:
+        - key: app.kubernetes.io/instance
+          value: ack-sagemaker-controller
 
 #AWS Telemetry (Optional)
 aws-telemetry:
