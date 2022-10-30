@@ -144,7 +144,7 @@ def install_component(
         print(f"All {component_name} pods are running!")
 
 
-@retry(stop_max_attempt_number=3, wait_fixed=15000)
+@retry(stop_max_attempt_number=3, wait_fixed=30000)
 def validate_component_installation(installation_config, component_name):
     labels = installation_config[component_name]["validations"]["pods"]["labels"]
     namespace = installation_config[component_name]["validations"]["pods"]["namespace"]
