@@ -382,9 +382,6 @@ ack-sagemaker-controller:
   validations: 
     pods: 
       namespace: ack-system
-      labels:
-        - key: app.kubernetes.io/instance
-          value: ack-sagemaker-controller
 
 #AWS Telemetry (Optional)
 aws-telemetry:

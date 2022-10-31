@@ -144,16 +144,14 @@ def install_component(
         print(f"All {component_name} pods are running!")
 
 
-@retry(stop_max_attempt_number=3, wait_fixed=60000)
+@retry(stop_max_attempt_number=3, wait_fixed=15000)
 def validate_component_installation(installation_config, component_name):
     labels = installation_config[component_name]["validations"]["pods"]["labels"]
     namespace = installation_config[component_name]["validations"]["pods"]["namespace"]
-    if component_name == "ack-sagemaker-controller":
-        for i in range(4):
-            print("running command: kubectl get pods -n ack-system -o yaml")
-            exec_shell(f"kubectl get pods -n ack-system -o yaml")
-            time.sleep(60)
-    else:    
+  
+    if "labels" in installation_config[component_name]["validations"]["pods"]:
+        kubectl_wait_pods(namespace)
+    else:
         for label in labels:
             key = label["key"]
             value = label["value"]

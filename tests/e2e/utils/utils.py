@@ -254,16 +254,21 @@ def uninstall_helm(chart_name, namespace=None):
     assert uninstall_retcode == 0
 
 def kubectl_wait_pods(
-    pods, namespace=None, identifier="app", timeout=480, condition="ready"
+    value=None, namespace=None, key="app", timeout=240, condition="ready"
 ):
-    if namespace:
-
-        cmd = f"kubectl wait --for=condition={condition} pod -l '{identifier} in ({pods})' --timeout={timeout}s -n {namespace}"
-
+    if value:
+        if namespace:
+            cmd = f"kubectl wait --for=condition={condition} pod -l '{key} in ({value})' --timeout={timeout}s -n {namespace}"
+        else:
+            cmd = f"kubectl wait --for=condition={condition} pod -l '{key} in ({value})' --timeout={timeout}s"
     else:
-        cmd = f"kubectl wait --for=condition={condition} pod -l '{identifier} in ({pods})' --timeout={timeout}s"
+        if namespace:
+            cmd = f"kubectl wait --for=condition={condition} pod --all --timeout={timeout}s -n {namespace}"
     print(f"running command: {cmd}")
-    assert os.system(cmd) == 0
+    # if not succeed print describe
+    retcode = os.system(cmd)
+    if retcode == 1:
+        exec_shell(f"kubectl get pods -n ack-system -o yaml")
 
 
 def kubectl_wait_crd(crd, timeout=60, condition="established"):
