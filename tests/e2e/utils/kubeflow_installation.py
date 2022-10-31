@@ -148,11 +148,17 @@ def install_component(
 def validate_component_installation(installation_config, component_name):
     labels = installation_config[component_name]["validations"]["pods"]["labels"]
     namespace = installation_config[component_name]["validations"]["pods"]["namespace"]
-    for label in labels:
-        key = label["key"]
-        value = label["value"]
-        print(f"Waiting for {component_name} pods to be ready ...")
-        kubectl_wait_pods(value, namespace, key)
+    if component_name == "ack-sagemaker-controller":
+        for i in range(4):
+            print("running command: kubectl get pods -n ack-system -o yaml")
+            exec_shell(f"kubectl get pods -n ack-system -o yaml")
+            time.sleep(60)
+    else:    
+        for label in labels:
+            key = label["key"]
+            value = label["value"]
+            print(f"Waiting for {component_name} pods to be ready ...")
+            kubectl_wait_pods(value, namespace, key)     
 
 
 def install_remote_component(component_name, cluster_name):
