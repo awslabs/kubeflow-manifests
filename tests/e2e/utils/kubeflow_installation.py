@@ -146,17 +146,16 @@ def install_component(
 
 @retry(stop_max_attempt_number=3, wait_fixed=15000)
 def validate_component_installation(installation_config, component_name):
-    labels = installation_config[component_name]["validations"]["pods"]["labels"]
     namespace = installation_config[component_name]["validations"]["pods"]["namespace"]
-  
     if "labels" in installation_config[component_name]["validations"]["pods"]:
-        kubectl_wait_pods(namespace)
-    else:
+        labels = installation_config[component_name]["validations"]["pods"]["labels"]
         for label in labels:
             key = label["key"]
             value = label["value"]
             print(f"Waiting for {component_name} pods to be ready ...")
-            kubectl_wait_pods(value, namespace, key)     
+            kubectl_wait_pods(value, namespace, key)
+    else:
+        kubectl_wait_pods(namespace)   
 
 
 def install_remote_component(component_name, cluster_name):
