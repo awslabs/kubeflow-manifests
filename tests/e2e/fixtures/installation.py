@@ -61,8 +61,6 @@ def installation(
 
     def on_create():
         install_kubeflow(installation_option, deployment_option, cluster)
-        print("wait for 2 minutes before test begin....")
-        time.sleep(120)
         
     def on_delete():
         
