@@ -61,8 +61,8 @@ def installation(
 
     def on_create():
         install_kubeflow(installation_option, deployment_option, cluster)
-        print("wait for 1 minutes for any potential asyn activities...")
-        time.sleep(60)
+        print("wait for 2 minutes for any potential asyn activities...")
+        time.sleep(120)
         
     def on_delete():
         
