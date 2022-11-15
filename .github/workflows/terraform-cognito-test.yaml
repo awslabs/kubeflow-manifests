@@ -30,11 +30,8 @@ jobs:
       # needed to checkout repository
       contents: read
     env:
-      TF_VAR_cognito_user_pool_name: ${{ github.run_id }}-${{ github.run_attempt }}-testpool
-      TF_VAR_aws_route53_root_zone_name: ${{ secrets.ROOT_HOSTED_ZONE_NAME }}
-      TF_VAR_aws_route53_subdomain_zone_name: ${{ github.run_id }}-${{ github.run_attempt }}.${{ secrets.ROOT_HOSTED_ZONE_NAME }}
-      TF_VAR_cluster_name: cognito-${{ github.run_id }}-${{ github.run_attempt }}
-      TF_VAR_cluster_region: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
+      ROOT_DOMAIN_NAME: ${{ secrets.ROOT_HOSTED_ZONE_NAME }}
+      CLUSTER_REGION: ${{ github.event_name == 'schedule' && 'us-west-2' || secrets.AWS_REGION }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -51,13 +48,21 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.2.7
+        terraform_wrapper: false
     
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8' 
+
     - name: Plan and apply terraform
       run: |
-        cd deployments/cognito/terraform
-        make deploy
+        cd tests/e2e
+        pip install -r requirements.txt
+        pytest tests/terraform/test_cognito.py -s -q --region $CLUSTER_REGION --root-domain-name $ROOT_DOMAIN_NAME
+
     - name: Clean up terraform
-      if: success() || failure()
+      if: failure()
       # retry delete if flakiness present
       run: |
         cd deployments/cognito/terraform
