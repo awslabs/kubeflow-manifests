@@ -15,52 +15,35 @@ You can create a Kubeflow Pipeline built entirely using SageMaker components, or
 There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components. 
 
 
-## Configure Permissions
+## Configure Permissions for Pipeline pods to access SageMaker
 
-Configure RBAC permissions for the service account used by kubeflow pipeline pods in the user/profile namespace. The pipeline runs are executed in user namespaces using the default-editor Kubernetes service account.
 
+### Configuration for SageMaker Components V2
+
+There is no additional configuration required for SageMaker Components V2 if you have already installed the AWS distribution of Kubeflow.
+
+### Configuration for SageMaker Components V1
+
+If you are also using the SageMaker components version 1. Grant SageMaker access to the service account used by kubeflow pipeline pods. Otherwise you can skip this section.
 
 Set the environment variable value for PROFILE_NAMESPACE(e.g. kubeflow-user-example-com) according to your profile and SERVICE_ACCOUNT name according to your installation:
 
+***Note:***
+You will need to run these steps for every profile namespace you intend to use.
 ```
 export PROFILE_NAMESPACE=kubeflow-user-example-com
 export KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT=default-editor
 ```
 
-Create a RoleBinding that grants service account access to manage sagemaker custom resources
-
-```
-cat > manage_sagemaker_cr.yaml <<EOF
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: manage-sagemaker-cr
-  namespace: ${PROFILE_NAMESPACE}
-subjects:
-- kind: ServiceAccount
-  name: ${KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT}
-  namespace: ${PROFILE_NAMESPACE}
-roleRef:
-  kind: ClusterRole
-  name: ack-sagemaker-controller
-  apiGroup: rbac.authorization.k8s.io
-EOF
-
-kubectl apply -f manage_sagemaker_cr.yaml
-```
-Check rolebinding was created by running kubectl get rolebinding
-
-```
-manage-sagemaker-cr -n ${PROFILE_NAMESPACE} -oyaml
-```
-
-(Optional) If you are also using the SageMaker components version 1. Grant SageMaker access to the service account used by kubeflow pipeline pods.
-
 ```
 # Export your cluster name and cluster region
 export CLUSTER_NAME=
 export CLUSTER_REGION=
-        
+```
+
+```     
+# Create a service account in your specified profile namespace with SageMaker permissions
+
 eksctl create iamserviceaccount --name ${KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT} --namespace ${PROFILE_NAMESPACE} --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn arn:aws:iam::aws:policy/AmazonSageMakerFullAccess --override-existing-serviceaccounts --approve
 ```
 
