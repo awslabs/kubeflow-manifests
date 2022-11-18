@@ -80,6 +80,9 @@ pwd
     EOF
     ```
 
+### (Optional) Configure Culling for Notebooks
+Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+
 ### View all configurations
 
 View [all possible configuration options of the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf) in the `variables.tf` file.

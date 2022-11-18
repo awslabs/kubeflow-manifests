@@ -26,6 +26,10 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
     1. Create TLS certificates for the domain
     1. Create a Cognito Userpool
     1. Configure Ingress
+
+### (Optional) Configure Culling for Notebooks
+Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+
 2. Deploy Kubeflow.
     1. Install Kubeflow using the following command:
 {{< tabpane persistLang=false >}}

@@ -14,6 +14,10 @@ Be sure that you have satisfied the installation prerequisites before working th
 - [Set up your deployment environment]({{< ref "prerequisites.md" >}})
 - [Create an EKS Cluster]({{< ref "create-eks-cluster.md" >}})
 
+## (Optional) Configure Culling for Notebooks
+Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+
+
 ## Build Manifests and install Kubeflow
 
 > ⚠️ Warning: We use a default email (`user@example.com`) and password (`12341234`) for our guides. For any production Kubeflow deployment, you should change the default password by following the steps in [Change default user password]({{< ref "../connect-kubeflow-dashboard#change-the-default-user-password-kustomize" >}}).

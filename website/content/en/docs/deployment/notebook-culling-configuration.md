@@ -1,17 +1,19 @@
 +++
 title = "Configure Culling for Notebooks"
-description = "Configure Notebook Culling Feature"
+description = "Instruction to configure Notebook Culling Feature"
 weight = 70
 +++
 
-### (Optional) 
-You can expose the timestamp of the last-activity of a Notebook instance and enable culling mechanism with that information. The notebook instance will be "culled" if it has been idled for the specified period of time. The design doc of the feature can be found in [here](https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md)
+ The culling feature allows you to stop a Notebook Server based on its **Last Activity**. The Notebook Controller updates the respective `notebooks.kubeflow.org/last-activity` annotation of each Notebook resource according to the execution state of the kernels. When this feature is enabled, the notebook instances will be "culled" (scaled to zero) if none of the kernels are performing computations for a specified period of time (`CULL_IDLE_TIME`). More information about this feature can be found in the [Jupyter notebook idleness proposal](https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md).
 
-1. Export these values for [culling parameters](https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md#api-changes):
+1. Export the following values values to configure the [culling policy parameters](https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md#api-changes):
     ```bash
-    export ENABLE_CULLING="whether to enable culling feature (true/false)"
-    export CULL_IDLE_TIMEOUT="specified idleness time (minutes) that notebook instance to be culled since last activity"
-    export IDLENESS_CHECK_PERIOD="controller will update each notebook's LAST_ACTIVITY_ANNOTATION every IDLENESS_CHECK_PERIOD (minutes)"
+    # whether to enable culling feature (true/false).ENABLE_CULLING must be set to “true” for this feature to take work
+    export ENABLE_CULLING=<>
+    # specified idleness time (minutes) that notebook instance to be culled since last activity
+    export CULL_IDLE_TIMEOUT=<>
+    # controller will update each notebook's LAST_ACTIVITY_ANNOTATION every IDLENESS_CHECK_PERIOD (minutes)
+    export IDLENESS_CHECK_PERIOD=<>
     ```
 
 1. The following commands will inject those values in a configuration file for setting up Notebook culling:
@@ -30,6 +32,12 @@ yq e '.cullingPolicy.cullIdleTime = env(CULL_IDLE_TIMEOUT)' -i charts/apps/noteb
 yq e '.cullingPolicy.idlenessCheckPeriod = env(IDLENESS_CHECK_PERIOD)' -i charts/apps/notebook-controller/values.yaml
     {{< /tab >}}
     {{< /tabpane >}}
-1. For [Terraform option]({{< ref "/docs/deployment/vanilla/guide-terraform.md#" >}}) , modify the notebook-controller chart values per the Helm option in previous step, then deploy with Terraform with your deployment option.
+1. For Terraform, append the notebook culling parameters in the `sample.auto.tfvars` file with chosen deployment option: [Vanilla]({{< ref "/docs/deployment/vanilla/guide-terraform.md#" >}}), [Cognito]({{< ref "/docs/deployment/cognito/guide-terraform.md#" >}}), [RDS-S3]({{< ref "/docs/deployment/rds-s3/guide-terraform.md#" >}}), and [Cognito-RDS-S3]({{< ref "/docs/deployment/cognito-rds-s3/guide-terraform.md#" >}}).
 
-1. Deploy Kubeflow based on your [Deployment Option]({{< ref "/docs/deployment/_index.md#" >}})
+    ```sh
+    echo notebook_enable_culling=\"${ENABLE_CULLING}\" | tee -a sample.auto.tfvars
+    echo notebook_cull_idle_time=\"${CULL_IDLE_TIMEOUT}\" | tee -a sample.auto.tfvars
+    echo notebook_idleness_check_period=\"${IDLENESS_CHECK_PERIOD}\" | tee -a sample.auto.tfvars
+    ```
+
+1. Deploy Kubeflow based on your [Deployment Option]({{< ref "/docs/deployment/_index.md#" >}}).

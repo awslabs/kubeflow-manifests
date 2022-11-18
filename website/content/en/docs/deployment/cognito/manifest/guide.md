@@ -157,6 +157,9 @@ yq e '.LOGOUT_URL = env(CognitoLogoutURL)' -i charts/common/aws-authservice/valu
 
 1. Follow the [Configure Load Balancer Controller]({{< ref "/docs/add-ons/load-balancer/guide.md#configure-load-balancer-controller" >}}) section of the load balancer guide to setup the resources required by the load balancer controller.
 
+### (Optional) Configure Culling for Notebooks
+Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+
 ## 4.0 Build the manifests and deploy Kubeflow
 
 {{< tabpane persistLang=false >}}
