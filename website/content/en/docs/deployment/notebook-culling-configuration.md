@@ -40,4 +40,4 @@ yq e '.cullingPolicy.idlenessCheckPeriod = env(IDLENESS_CHECK_PERIOD)' -i charts
     echo notebook_idleness_check_period=\"${IDLENESS_CHECK_PERIOD}\" | tee -a sample.auto.tfvars
     ```
 
-1. Deploy Kubeflow based on your [Deployment Option]({{< ref "/docs/deployment/_index.md#" >}}).
+1. Continue deploying Kubeflow based on your [Deployment Option]({{< ref "/docs/deployment/_index.md#" >}}).
