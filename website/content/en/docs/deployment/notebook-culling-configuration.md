@@ -1,6 +1,6 @@
 +++
 title = "Configure Culling for Notebooks"
-description = "Instruction to configure Notebook Culling Feature"
+description = "Automatically stop your notebooks based on idleness"
 weight = 70
 +++
 
