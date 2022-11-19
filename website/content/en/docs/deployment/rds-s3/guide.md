@@ -123,6 +123,10 @@ Follow this step if you prefer to manually set up each component.
     - `RDS database endpoint URL`
     - `RDS database port`
 
+3. [S3] Create IAM User With Permissions To S3 Bucket
+
+   [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
+
 1. Export values:
     ```bash
     export RDS_SECRET="<your rds secret name>"
@@ -131,6 +135,8 @@ Follow this step if you prefer to manually set up each component.
     export MLMD_DB=metadata_db
     export S3_BUCKET="<your s3 bucket name>"
     export MINIO_SERVICE_HOST=s3.amazonaws.com
+    export MINIO_AWS_ACCESS_KEY_ID="<your s3 user access key>"
+    export MINIO_AWS_SECRET_ACCESS_KEY="<your s3 user secret key>"
     ```
 
 3. Create Secrets in AWS Secrets Manager
@@ -159,7 +165,7 @@ yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rd
       1. Configure a Secret (e.g. `s3-secret`) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
          - For more details about configuring or finding your AWS credentials, see [AWS security credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
          - ```bash
-           aws secretsmanager create-secret --name $S3_SECRET --secret-string '{"accesskey":"AXXXXXXXXXXXXXXXXXX6","secretkey":"eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq"}' --region $CLUSTER_REGION
+           aws secretsmanager create-secret --name $S3_SECRET --secret-string '{"accesskey":"'$MINIO_AWS_ACCESS_KEY_ID'","secretkey":"'$MINIO_AWS_SECRET_ACCESS_KEY'"}' --region $CLUSTER_REGION
            ```
       1. Rename the `parameters.objects.objectName` field in [the S3 Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the Secret. 
          - Rename the field with the following command:
