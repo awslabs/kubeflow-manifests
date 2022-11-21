@@ -69,7 +69,7 @@ weight = 10
           storageUri: ${S3_BUCKET_URL}
     ```
     > NOTE: make sure you have workable image in ${ECR_IMAGE_URL} and model in ${S3_BUCKET_URL} for the inferenceService to work. Versioning of model and image must be consistent: eg. you can not use a v1 model then a v2 image.
-1. Check the InferenceService status
+1. Check the InferenceService status:
 ```sh
 kubectl get inferenceservices sklearn-iris -n ${PROFILE_NAMESPACE}
 NAME           URL                                                        READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
