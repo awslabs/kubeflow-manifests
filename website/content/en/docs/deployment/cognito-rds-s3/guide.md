@@ -28,7 +28,7 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
     1. Configure Ingress
 
 ### (Optional) Configure Culling for Notebooks
-Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}) in configure culling for notebooks guide.
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
 2. Deploy Kubeflow.
     1. Install Kubeflow using the following command:

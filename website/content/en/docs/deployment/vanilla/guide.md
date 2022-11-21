@@ -15,7 +15,7 @@ Be sure that you have satisfied the installation prerequisites before working th
 - [Create an EKS Cluster]({{< ref "create-eks-cluster.md" >}})
 
 ## (Optional) Configure Culling for Notebooks
-Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}) in configure culling for notebooks guide.
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
 
 ## Build Manifests and install Kubeflow
