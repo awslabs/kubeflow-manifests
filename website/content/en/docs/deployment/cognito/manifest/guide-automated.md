@@ -103,7 +103,7 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
     ```
 
 ### (Optional) Configure Culling for Notebooks
-Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}) in configure culling for notebooks guide. 
 
 ## 2.0 Install Kubeflow
 

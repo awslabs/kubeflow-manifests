@@ -103,7 +103,7 @@ pwd
     ```
 
 ### (Optional) Configure Culling for Notebooks
-Configure to enable notebook culling with the following [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}). 
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/notebook-culling-configuration.md#" >}}) in configure culling for notebooks guide.
 
 ### View all Configurations
 
