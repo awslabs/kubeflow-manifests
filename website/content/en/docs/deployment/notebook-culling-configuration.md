@@ -19,20 +19,20 @@ weight = 70
 1. The following commands will inject those values in a configuration file for setting up Notebook culling:
     Select the package manager of your choice.
     1. For Kustomize and Helm:
-            {{< tabpane persistLang=false >}}
-            {{< tab header="Kustomize" lang="toml" >}}
-        printf '
-        enableCulling='$ENABLE_CULLING'
-        cullIdleTime='$CULL_IDLE_TIMEOUT'
-        idlenessCheckPeriod='$IDLENESS_CHECK_PERIOD'
-        ' > awsconfigs/apps/notebook-controller/params.env
-            {{< /tab >}}
-            {{< tab header="Helm" lang="yaml" >}}
-        yq e '.cullingPolicy.enableCulling = env(ENABLE_CULLING)' -i charts/apps/notebook-controller/values.yaml
-        yq e '.cullingPolicy.cullIdleTime = env(CULL_IDLE_TIMEOUT)' -i charts/apps/notebook-controller/values.yaml
-        yq e '.cullingPolicy.idlenessCheckPeriod = env(IDLENESS_CHECK_PERIOD)' -i charts/apps/notebook-controller/values.yaml
-            {{< /tab >}}
-            {{< /tabpane >}}
+    {{< tabpane persistLang=false >}}
+    {{< tab header="Kustomize" lang="sh" >}}
+printf '
+enableCulling='$ENABLE_CULLING'
+cullIdleTime='$CULL_IDLE_TIMEOUT'
+idlenessCheckPeriod='$IDLENESS_CHECK_PERIOD'
+' > awsconfigs/apps/notebook-controller/params.env
+    {{< /tab >}}
+    {{< tab header="Helm" lang="sh" >}}
+yq e '.cullingPolicy.enableCulling = env(ENABLE_CULLING)' -i charts/apps/notebook-controller/values.yaml
+yq e '.cullingPolicy.cullIdleTime = env(CULL_IDLE_TIMEOUT)' -i charts/apps/notebook-controller/values.yaml
+yq e '.cullingPolicy.idlenessCheckPeriod = env(IDLENESS_CHECK_PERIOD)' -i charts/apps/notebook-controller/values.yaml
+    {{< /tab >}}
+    {{< /tabpane >}}
     
     1. For Terraform, append the notebook culling parameters in the `sample.auto.tfvars` file with chosen deployment option: [Vanilla]({{< ref "/docs/deployment/vanilla/guide-terraform.md#" >}}), [Cognito]({{< ref "/docs/deployment/cognito/guide-terraform.md#" >}}), [RDS-S3]({{< ref "/docs/deployment/rds-s3/guide-terraform.md#" >}}), and [Cognito-RDS-S3]({{< ref "/docs/deployment/cognito-rds-s3/guide-terraform.md#" >}}).
 
@@ -45,3 +45,5 @@ weight = 70
         ```
 
 1. Continue deploying Kubeflow based on your [Deployment Option]({{< ref "/docs/deployment/_index.md#" >}}).
+
+1. If you wish to configure this feature post deployment, you can do so by updating the notebook controller config map with the culling parameters per previous steps and restart notebook controller.
