@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/rds-s3\/guide\/",
-      "wordCount" : "2187",
+      "wordCount" : "2267",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-10-14T15:57:38-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-22T14:14:58-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2022-10-14T15:57:38-07:00" />
-<meta itemprop="wordCount" content="2187">
+<meta itemprop="dateModified" content="2022-11-22T14:14:58-08:00" />
+<meta itemprop="wordCount" content="2267">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
@@ -586,6 +586,10 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 </ul>
 </li>
 <li>
+<p>[S3] Create IAM User With Permissions To S3 Bucket</p>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> of the IAM user that you created to use in the following step, which will be referenced as <code>MINIO_AWS_ACCESS_KEY_ID</code> and <code>MINIO_AWS_SECRET_ACCESS_KEY</code> respectively.</p>
+</li>
+<li>
 <p>Export values:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RDS_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your rds secret name&gt;&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 secret name&gt;&#34;</span>
@@ -593,6 +597,8 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MLMD_DB</span><span class="o">=</span>metadata_db
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 bucket name&gt;&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_SERVICE_HOST</span><span class="o">=</span>s3.amazonaws.com
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user access key&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user secret key&gt;&#34;</span>
 </span></span></code></pre></div></li>
 <li>
 <p>Create Secrets in AWS Secrets Manager</p>
@@ -683,7 +689,7 @@ Select the package manager of your choice.
 <ul>
 <li>For more details about configuring or finding your AWS credentials, see <a href="https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html">AWS security credentials</a></li>
 <li>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$S3_SECRET</span> --secret-string <span class="s1">&#39;{&#34;accesskey&#34;:&#34;AXXXXXXXXXXXXXXXXXX6&#34;,&#34;secretkey&#34;:&#34;eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$S3_SECRET</span> --secret-string <span class="s1">&#39;{&#34;accesskey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_ACCESS_KEY_ID</span><span class="s1">&#39;&#34;,&#34;secretkey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_SECRET_ACCESS_KEY</span><span class="s1">&#39;&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
 </span></span></code></pre></div></li>
 </ul>
 </li>
@@ -1279,7 +1285,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified October 14, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/01e432b4b6d50695eb8fa55289cc1aafa7cd6090">Update website links to v1.6.1 (#486) (01e432b)</a>
+  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/f69753dae51fe3aa82e622a85297536f57fce6f7">updated doc for manual deployment which was missing step to create IAM user for S3 (#510) (f69753d)</a>
 </div>
 
 </div>
