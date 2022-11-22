@@ -9,9 +9,11 @@ weight = 10
     ```bash
     export CLUSTER_NAME="<>"
     export CLUSTER_REGION="<>"
-    export PROFILE_NAMESPACE=kubeflow-user-profile
+    export PROFILE_NAMESPACE=kubeflow-user-example-com
     export SERVICE_ACCOUNT_NAME=aws-sa
+    # 123456789.dkr.ecr.us-west-2.amazonaws.com/kserve/sklearnserver:v0.8.0
     export ECR_IMAGE_URL="<>"
+    # s3://your-s3-bucket/model
     export S3_BUCKET_URL="<>"
     ```
 
@@ -24,26 +26,26 @@ weight = 10
 
 ### Deploy models from S3 Bucket 
 1. Create Secret with empty AWS Credential:
-    ```sh
-    cat <<EOF > secret.yaml
-    apiVersion: v1
-        kind: Secret
-        metadata:
-          name: aws-secret
-          namespace: ${PROFILE_NAMESPACE}
-          annotations:
-            serving.kserve.io/s3-endpoint: s3.amazonaws.com
-            serving.kserve.io/s3-usehttps: "1"
-            serving.kserve.io/s3-region: ${CLUSTER_REGION}
-        type: Opaque
-        data:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-    EOF
+  ```sh
+  cat <<EOF > secret.yaml
+  apiVersion: v1
+      kind: Secret
+      metadata:
+        name: aws-secret
+        namespace: ${PROFILE_NAMESPACE}
+        annotations:
+          serving.kserve.io/s3-endpoint: s3.amazonaws.com
+          serving.kserve.io/s3-usehttps: "1"
+          serving.kserve.io/s3-region: ${CLUSTER_REGION}
+      type: Opaque
+      data:
+        AWS_ACCESS_KEY_ID: ""
+        AWS_SECRET_ACCESS_KEY: ""
+  EOF
 
-    kubectl apply -f secret.yaml
-    ```
-    > NOTE: The **empty** keys for `AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY` force it to add the env vars to the init containers but don't override the actual credentials from the IAM role (which happens if you add dummy values). These **empty** keys are needed for IRSA to work in current version and will not be needed in future release.
+  kubectl apply -f secret.yaml
+  ```
+  > NOTE: The **empty** keys for `AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY` force it to add the env vars to the init containers but don't override the actual credentials from the IAM role (which happens if you add dummy values). These **empty** keys are needed for IRSA to work in current version and will not be needed in future release.
 
 1. Attach secret to IRSA in your profile namespace:
     ```
@@ -53,25 +55,33 @@ weight = 10
 
 ### Create an InferenceService
 1. Specify the service account in the model server spec :
-    ```yaml
-    apiVersion: serving.kserve.io/v1beta1
-    kind: InferenceService
-    metadata:
-      name: "sklearn-iris"
-      namespace: ${PROFILE_NAMESPACE}
-    spec:
-      predictor:
-        serviceAccountName: ${SERVICE_ACCOUNT_NAME}
-        model:
-          modelFormat:
-            name: sklearn
-          image: ${ECR_IMAGE_URL}
-          storageUri: ${S3_BUCKET_URL}
-    ```
-    > NOTE: make sure you have workable image in ${ECR_IMAGE_URL} and model in ${S3_BUCKET_URL} for the inferenceService to work. Versioning of model and image must be consistent: eg. you can not use a v1 model then a v2 image.
+> NOTE: make sure you have workable image in `${ECR_IMAGE_URL}`and model in `${S3_BUCKET_URL}` for the inferenceService to work. Versioning of model and image must be consistent: eg. you can not use a v1 model then a v2 image.
+
+  ```sh
+  cat <<EOF > inferenceService.yaml
+  apiVersion: serving.kserve.io/v1beta1
+  kind: InferenceService
+  metadata:
+    name: "sklearn-iris"
+    namespace: ${PROFILE_NAMESPACE}
+    annotations:
+      sidecar.istio.io/inject: "false"
+  spec:
+    predictor:
+      serviceAccountName: ${SERVICE_ACCOUNT_NAME}
+      model:
+        modelFormat:
+          name: sklearn
+        image: ${ECR_IMAGE_URL}
+        storageUri: ${S3_BUCKET_URL}
+  EOF
+
+  kubectl apply -f inferenceService.yaml
+  ```
+    
 1. Check the InferenceService status:
-```sh
-kubectl get inferenceservices sklearn-iris -n ${PROFILE_NAMESPACE}
-NAME           URL                                                        READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
-sklearn-iris   http://sklearn-iris.kubeflow-user-example-com.example.com   True           100                              sklearn-iris-predictor-default-00001   105s
-```
+  ```sh
+  kubectl get inferenceservices sklearn-iris -n ${PROFILE_NAMESPACE}
+  NAME           URL                                                        READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
+  sklearn-iris   http://sklearn-iris.kubeflow-user-example-com.example.com   True           100                              sklearn-iris-predictor-default-00001   105s
+  ```
