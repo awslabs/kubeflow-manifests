@@ -104,6 +104,8 @@ Additionally you have to set the Terraform variable &lt;code&gt;create_subdomain
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
+&lt;h3 id=&#34;optional-configure-culling-for-notebooks&#34;&gt;(Optional) Configure Culling for Notebooks&lt;/h3&gt;
+&lt;p&gt;Enable culling for notebooks by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/&#34;&gt;instructions&lt;/a&gt; in configure culling for notebooks guide.&lt;/p&gt;
 &lt;h3 id=&#34;view-all-configurations&#34;&gt;View all configurations&lt;/h3&gt;
 &lt;p&gt;View &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf&#34;&gt;all possible configuration options of the terraform stack&lt;/a&gt; in the &lt;code&gt;variables.tf&lt;/code&gt; file.&lt;/p&gt;
 &lt;h3 id=&#34;preview&#34;&gt;Preview&lt;/h3&gt;

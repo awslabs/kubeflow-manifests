@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/cognito\/manifest\/guide-automated\/",
-      "wordCount" : "684",
+      "wordCount" : "703",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/manifest/guide-automated/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-22T14:14:58-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-22T15:15:44-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Automated Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
-<meta itemprop="dateModified" content="2022-11-22T14:14:58-08:00" />
-<meta itemprop="wordCount" content="684">
+<meta itemprop="dateModified" content="2022-11-22T15:15:44-08:00" />
+<meta itemprop="wordCount" content="703">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Automated Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts"/>
@@ -280,6 +280,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
 </li>
   </ul>
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsmaindocsadd-ons-li">
@@ -395,7 +399,11 @@
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
     <li><a href="#prerequisites">Prerequisites</a></li>
-    <li><a href="#10-create-the-required-resources">1.0 Create the required resources</a></li>
+    <li><a href="#10-create-the-required-resources">1.0 Create the required resources</a>
+      <ul>
+        <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
+      </ul>
+    </li>
     <li><a href="#20-install-kubeflow">2.0 Install Kubeflow</a></li>
     <li><a href="#30-update-the-domain-with-alb-address">3.0 Update the domain with ALB address</a></li>
     <li><a href="#40-connect-to-kubeflow-central-dashboard">4.0 Connect to Kubeflow central dashboard</a></li>
@@ -571,6 +579,8 @@ Skip this step if your domain is managed by other domain provider.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">us-east-1-certARN</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238</span><span class="w">
 </span></span></span></code></pre></div></li>
 </ol>
+<h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
+<p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
 <h2 id="20-install-kubeflow">2.0 Install Kubeflow</h2>
 <p>Install Kubeflow using the following command:
 
@@ -608,25 +618,25 @@ Skip this step if your domain is managed by other domain provider.</p>
 
 
 
-<ul class="nav nav-tabs" id="tabs-6" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-7" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-6-0-tab" data-toggle="tab" href="#tabs-6-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-6-0" aria-selected="true">
+        id="tabs-7-0-tab" data-toggle="tab" href="#tabs-7-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-7-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-6-1-tab" data-toggle="tab" href="#tabs-6-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-6-1" aria-selected="false">
+        id="tabs-7-1-tab" data-toggle="tab" href="#tabs-7-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-7-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
-        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-7-content"><div class="tab-pane fade show active"
+        id="tabs-7-0" role="tabpanel" aria-labelled-by="tabs-7-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span></span></span></code></pre></div></div>
+        id="tabs-7-1" role="tabpanel" aria-labelled-by="tabs-7-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -709,26 +719,26 @@ Skip this step if your domain is managed by other domain provider.</p>
 
 
 
-    <ul class="nav nav-tabs" id="tabs-9" role="tablist"><li class="nav-item">
+    <ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-9-0-tab" data-toggle="tab" href="#tabs-9-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-9-0" aria-selected="true">
+        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-10-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-9-1-tab" data-toggle="tab" href="#tabs-9-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-9-1" aria-selected="false">
+        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-10-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-9-content"><div class="tab-pane fade show active"
-        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span>
+<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
+        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span>
 </span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span><span class="w">
+        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span></span></span></code></pre></div></div>
   
 </div>
@@ -782,7 +792,7 @@ Skip this step if your domain is managed by other domain provider.</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/f69753dae51fe3aa82e622a85297536f57fce6f7">updated doc for manual deployment which was missing step to create IAM user for S3 (#510) (f69753d)</a>
+  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3e605fb44c6c0bdfcacba0e87b6682f608ff2685">Add Notebook Culling Feature Doc (#490) (3e605fb)</a>
 </div>
 
 </div>

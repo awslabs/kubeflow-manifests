@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/cognito\/guide-terraform\/",
-      "wordCount" : "425",
+      "wordCount" : "444",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito/guide-terraform/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-22T14:14:58-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-22T15:15:44-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Terraform Deployment Guide">
 <meta itemprop="description" content="Deploy Kubeflow with AWS Cognito as an identity provider using Terraform">
-<meta itemprop="dateModified" content="2022-11-22T14:14:58-08:00" />
-<meta itemprop="wordCount" content="425">
+<meta itemprop="dateModified" content="2022-11-22T15:15:44-08:00" />
+<meta itemprop="wordCount" content="444">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Terraform Deployment Guide"/>
 <meta name="twitter:description" content="Deploy Kubeflow with AWS Cognito as an identity provider using Terraform"/>
@@ -280,6 +280,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
 </li>
   </ul>
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsmaindocsadd-ons-li">
@@ -399,6 +403,7 @@
     <li><a href="#deployment-steps">Deployment Steps</a>
       <ul>
         <li><a href="#configure">Configure</a></li>
+        <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
         <li><a href="#view-all-configurations">View all configurations</a></li>
         <li><a href="#preview">Preview</a></li>
         <li><a href="#apply">Apply</a></li>
@@ -540,6 +545,8 @@ Additionally you have to set the Terraform variable <code>create_subdomain=false
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></div></li>
 </ol>
+<h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
+<p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
 <h3 id="view-all-configurations">View all configurations</h3>
 <p>View <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito/terraform/variables.tf">all possible configuration options of the terraform stack</a> in the <code>variables.tf</code> file.</p>
 <h3 id="preview">Preview</h3>
@@ -563,7 +570,7 @@ Additionally you have to set the Terraform variable <code>create_subdomain=false
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/f69753dae51fe3aa82e622a85297536f57fce6f7">updated doc for manual deployment which was missing step to create IAM user for S3 (#510) (f69753d)</a>
+  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3e605fb44c6c0bdfcacba0e87b6682f608ff2685">Add Notebook Culling Feature Doc (#490) (3e605fb)</a>
 </div>
 
 </div>
