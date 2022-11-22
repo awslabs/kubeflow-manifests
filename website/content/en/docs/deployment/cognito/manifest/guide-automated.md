@@ -102,6 +102,9 @@ Each section is detailed in [Cognito Manual Deployment Guide]({{< ref "/docs/dep
             us-east-1-certARN: arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238
     ```
 
+### (Optional) Configure Culling for Notebooks
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide. 
+
 ## 2.0 Install Kubeflow
 
 Install Kubeflow using the following command:
