@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/main"
       },
       "articleSection" : "docs",
-      "name" : "SageMaker Components for Kubeflow Pipelines",
-      "headline" : "SageMaker Components for Kubeflow Pipelines",
-      "description" : "Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS",
+      "name" : "Configure inferenceService to Access AWS Services from KServe",
+      "headline" : "Configure inferenceService to Access AWS Services from KServe",
+      "description" : "Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/amazon-sagemaker-integration\/sagemaker-components-for-kubeflow-pipelines\/",
-      "wordCount" : "802",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/component-guides\/kserve\/access-aws-services-from-kserve\/",
+      "wordCount" : "305",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,22 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>SageMaker Components for Kubeflow Pipelines | Kubeflow on AWS</title>
-<meta name="description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS">
-<meta property="og:title" content="SageMaker Components for Kubeflow Pipelines" />
-<meta property="og:description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS" />
+<title>Configure inferenceService to Access AWS Services from KServe | Kubeflow on AWS</title>
+<meta name="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
+<meta property="og:title" content="Configure inferenceService to Access AWS Services from KServe" />
+<meta property="og:description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/" /><meta property="article:section" content="docs" />
 
 <meta property="article:modified_time" content="2022-11-22T17:35:34-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="SageMaker Components for Kubeflow Pipelines">
-<meta itemprop="description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS">
+<meta itemprop="name" content="Configure inferenceService to Access AWS Services from KServe">
+<meta itemprop="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
 <meta itemprop="dateModified" content="2022-11-22T17:35:34-08:00" />
-<meta itemprop="wordCount" content="802">
+<meta itemprop="wordCount" content="305">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="SageMaker Components for Kubeflow Pipelines"/>
-<meta name="twitter:description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS"/>
+<meta name="twitter:title" content="Configure inferenceService to Access AWS Services from KServe"/>
+<meta name="twitter:description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket."/>
 
 
 
@@ -313,8 +313,8 @@
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsmaindocscomponent-guides-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guides-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsmaindocscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guides-check" checked/>
   <label for="m-kubeflow-manifestsmaindocscomponent-guides-check"><a href="/kubeflow-manifests/main/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsmaindocscomponent-guides"><span class="">Component Guides</span></a></label>
   
   <ul class="ul-2 foldable">
@@ -334,14 +334,14 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guidestraining-check"/>
   <label for="m-kubeflow-manifestsmaindocscomponent-guidestraining-check"><a href="/kubeflow-manifests/main/docs/component-guides/training/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocscomponent-guidestraining"><span class="">Training Operators</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsmaindocscomponent-guideskserve-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guideskserve-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsmaindocscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guideskserve-check" checked/>
   <label for="m-kubeflow-manifestsmaindocscomponent-guideskserve-check"><a href="/kubeflow-manifests/main/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsmaindocscomponent-guideskserve"><span class="">KServe</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
-  <label for="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-check" checked/>
+  <label for="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocscomponent-guideskserveaccess-aws-services-from-kserve"><span class="td-sidebar-nav-active-item">Configure inferenceService to Access AWS Services from KServe</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocscomponent-guideskservetutorial-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocscomponent-guideskservetutorial-check"/>
@@ -359,8 +359,8 @@
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration-check" checked/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration-check"/>
   <label for="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration-check"><a href="/kubeflow-manifests/main/docs/amazon-sagemaker-integration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integration"><span class="">Amazon SageMaker Integration</span></a></label>
   
   <ul class="ul-2 foldable">
@@ -368,9 +368,9 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-operators-ack-check"/>
   <label for="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-operators-ack-check"><a href="/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-operators-ack/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-operators-ack"><span class="">SageMaker Operators for Kubernetes (ACK)</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check" checked/>
-  <label for="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"><a href="/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines"><span class="td-sidebar-nav-active-item">SageMaker Components for Kubeflow Pipelines</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"/>
+  <label for="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"><a href="/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines"><span class="">SageMaker Components for Kubeflow Pipelines</span></a></label>
   
 </li>
   </ul>
@@ -389,10 +389,10 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=SageMaker%20Components%20for%20Kubeflow%20Pipelines" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Configure%20inferenceService%20to%20Access%20AWS%20Services%20from%20KServe" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -402,13 +402,12 @@
 
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
-    <li><a href="#available-components">Available components</a></li>
-    <li><a href="#tutorial-sagemaker-training-pipeline-for-mnist-classification-with-k-means">Tutorial: SageMaker Training Pipeline for MNIST Classification with K-Means</a></li>
-    <li><a href="#installing-kubeflow-pipelines">Installing Kubeflow Pipelines</a></li>
-    <li><a href="#s3-bucket">S3 Bucket</a></li>
-    <li><a href="#sagemaker-execution-iam-role">SageMaker execution IAM role</a></li>
-    <li><a href="#prepare-the-dataset">Prepare the dataset</a></li>
-    <li><a href="#run-the-sample-pipeline">Run the sample pipeline</a></li>
+    <li><a href="#access-aws-service-from-kserve-with-iam-roles-for-serviceaccountirsa">Access AWS Service from Kserve with IAM Roles for ServiceAccount（IRSA）</a>
+      <ul>
+        <li><a href="#deploy-models-from-s3-bucket">Deploy models from S3 Bucket</a></li>
+        <li><a href="#create-an-inferenceservice">Create an InferenceService</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
 
@@ -445,17 +444,20 @@
     <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/">Documentation</a>
   </li>
   <li class="breadcrumb-item">
-    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/amazon-sagemaker-integration/">Amazon SageMaker Integration</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/">Component Guides</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve/">KServe</a>
   </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/">SageMaker Components for Kubeflow Pipelines</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/">Configure inferenceService to Access AWS Services from KServe</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>SageMaker Components for Kubeflow Pipelines</h1>
-	<div class="lead">Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS</div>
+	<h1>Configure inferenceService to Access AWS Services from KServe</h1>
+	<div class="lead">Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.</div>
 	<header class="article-meta">
 		
 
@@ -471,78 +473,89 @@
 
 		
 	</header>    
-	<p>The <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html">SageMaker Components for Kubeflow Pipelines</a> allow you to move your data processing and training jobs from the Kubernetes cluster to SageMaker’s machine learning-optimized managed service.</p>
-<p>These components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines. Using the SageMaker components, each job in the pipeline workflow runs on SageMaker instead of the local Kubernetes cluster. The job parameters, status, logs, and outputs from SageMaker are accessible from the Kubeflow Pipelines UI.</p>
-<h2 id="available-components">Available components</h2>
-<p>You can create a Kubeflow Pipeline built entirely using SageMaker components, or integrate individual components into your workflow as needed. Available Amazon SageMaker components can be found in the <a href="https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker">Kubeflow Pipelines GitHub repository</a>.</p>
-<p>There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components.</p>
-<h2 id="tutorial-sagemaker-training-pipeline-for-mnist-classification-with-k-means">Tutorial: SageMaker Training Pipeline for MNIST Classification with K-Means</h2>
-<p>Kubeflow on AWS includes pipeline tutorials for SageMaker components that can be used to run a machine learning workflow with just a few clicks. To try out the examples, deploy Kubeflow on AWS on your cluster and visit the Kubeflow Dashboard <code>Pipelines</code> tab. The sample currently included with Kubeflow is based off of the v2 Training Component.</p>
-<p>In the following section we will walk through the steps to run the Sample SageMaker Training Pipeline. This sample runs a pipeline to train a classficiation model using Kmeans with MNIST dataset on SageMaker. This example was taken from an existing <a href="https://github.com/aws/amazon-sagemaker-examples/blob/8279abfcc78bad091608a4a7135e50a0bd0ec8bb/sagemaker-python-sdk/1P_kmeans_highlevel/kmeans_mnist.ipynb">SageMaker example</a> and modified to work with the Amazon SageMaker Components for Kubeflow Pipelines.</p>
-<p>Note:  The pipeline runs are executed in user namespaces using the default-editor Kubernetes service account.</p>
-<h2 id="installing-kubeflow-pipelines">Installing Kubeflow Pipelines</h2>
-<p>There are two ways to deploy Kubeflow Pipelines on AWS. If you are using the broader Kubeflow deployment, ACK and KFP come configured and ready to use with any of the Kubeflow on AWS deployment options. Read on to complete the pipeline execution.</p>
-<p>On the other hand, if you are using standalone KFP installation, please refer to our more detailed instructions over at the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html">AWS Docs for Kubeflow Pipeline Components</a>.</p>
-<h2 id="s3-bucket">S3 Bucket</h2>
-<p>To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. Run the following commands to create an S3 bucket. Specify the value for <code>SAGEMAKER_REGION</code> as the region you want to create your SageMaker resources. For ease of use in the samples (using the default values of the pipeline), we suggest using <code>us-east-1</code> as the region.</p>
-<pre tabindex="0"><code># Choose any name for your S3 bucket
-export SAGEMAKER_REGION=us-east-1
-export S3_BUCKET_NAME=&lt;bucket_name&gt;
-
-if [[ $SAGEMAKER_REGION == &#34;us-east-1&#34; ]]; then
-    aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${SAGEMAKER_REGION}
-else
-    aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${SAGEMAKER_REGION} \
-    --create-bucket-configuration LocationConstraint=${SAGEMAKER_REGION}
-fi
-
-echo ${S3_BUCKET_NAME}
-</code></pre><p>Note down your S3 bucket name which will be used in the samples.</p>
-<h2 id="sagemaker-execution-iam-role">SageMaker execution IAM role</h2>
-<p>The SageMaker training job needs an IAM role to access Amazon S3 and SageMaker. Run the following commands to create a SageMaker execution IAM role that is used by SageMaker to access AWS resources:</p>
-<pre tabindex="0"><code># Choose any name for your Sagemaker execution role
-export SAGEMAKER_EXECUTION_ROLE_NAME=&lt;sagemaker_role_name&gt;
-
-TRUST=&#34;{ \&#34;Version\&#34;: \&#34;2012-10-17\&#34;, \&#34;Statement\&#34;: [ { \&#34;Effect\&#34;: \&#34;Allow\&#34;, \&#34;Principal\&#34;: { \&#34;Service\&#34;: \&#34;sagemaker.amazonaws.com\&#34; }, \&#34;Action\&#34;: \&#34;sts:AssumeRole\&#34; } ] }&#34;
-aws iam create-role --role-name ${SAGEMAKER_EXECUTION_ROLE_NAME} --assume-role-policy-document &#34;$TRUST&#34;
-aws iam attach-role-policy --role-name ${SAGEMAKER_EXECUTION_ROLE_NAME} --policy-arn arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
-aws iam attach-role-policy --role-name ${SAGEMAKER_EXECUTION_ROLE_NAME} --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
-
-export SAGEMAKER_EXECUTION_ROLE_ARN=$(aws iam get-role --role-name ${SAGEMAKER_EXECUTION_ROLE_NAME} --output text --query &#39;Role.Arn&#39;)
-
-echo $SAGEMAKER_EXECUTION_ROLE_ARN
-</code></pre><p>Note down the execution role ARN to use in samples.</p>
-<h2 id="prepare-the-dataset">Prepare the dataset</h2>
-<p>To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. We will use the S3 bucket you created earlier and simply use the dataset at <code>s3://sagemaker-sample-files/datasets/image/MNIST/mnist.pkl.gz</code>.</p>
-<ol>
-<li>Clone this repository to use the pipelines and sample scripts.
-<pre tabindex="0"><code>git clone https://github.com/awslabs/kubeflow-manifests.git
-cd tests/e2e
-</code></pre></li>
-<li>Run the following commands to install the script dependencies and upload the processed dataset to your S3 bucket:
-<pre tabindex="0"><code>pip install -r requirements.txt
-python3 utils/s3_for_training/sync.py ${S3_BUCKET_NAME} ${SAGEMAKER_REGION}
-</code></pre></li>
-</ol>
-<h2 id="run-the-sample-pipeline">Run the sample pipeline</h2>
+	<h2 id="access-aws-service-from-kserve-with-iam-roles-for-serviceaccountirsa">Access AWS Service from Kserve with IAM Roles for ServiceAccount（IRSA）</h2>
 <ol>
 <li>
-<p>To run the pipeline, open the Pipelines Tab on the Kubeflow dashboard. You should be able to see the pipeline sample called - &ldquo;[Tutorial] SageMaker Training&rdquo;. Select to run. Make sure to either create a new experiment or use an existing one.</p>
-</li>
+<p>Export env values:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span>kubeflow-user-example-com
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SERVICE_ACCOUNT_NAME</span><span class="o">=</span>aws-sa
+</span></span><span class="line"><span class="cl"><span class="c1"># 123456789.dkr.ecr.us-west-2.amazonaws.com/kserve/sklearnserver:v0.8.0</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ECR_IMAGE_URL</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># s3://your-s3-bucket/model</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET_URL</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span></code></pre></div></li>
 <li>
-<p>In order to run the pipeline successfully you will have to provide the following two parameters value at a minimum based on the resources we created above. Feel free to tweak any other parameters as you see fit.</p>
-</li>
-</ol>
-<pre tabindex="0"><code>s3_bucket_name: &lt;S3_BUCKET_NAME&gt;
-sagemaker_role_arn: &lt;SAGEMAKER_EXECUTION_ROLE_ARN&gt;
-region: us-east-1
+<p>Create Service Account with IAM Role using <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IRSA</a>. The following command attaches both <code>AmazonEC2ContainerRegistryReadOnly</code> and <code>AmazonS3ReadOnlyAccess</code> IAM policies:</p>
+<pre tabindex="0"><code>eksctl create iamserviceaccount --name ${SERVICE_ACCOUNT_NAME} --namespace ${PROFILE_NAMESPACE} --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn=arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly --attach-policy-arn=arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess  --override-existing-serviceaccounts --approve
 </code></pre><blockquote>
-<p>Note: The default value for the Training Image in the sample is for us-east-1. If you are not using <code>us-east-1</code> region you will have to find an training image URI according to the region. <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-algo-docker-registry-paths.html">https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-algo-docker-registry-paths.html</a>. For e.g.: for <code>us-west-2</code> the image URI is 174872318107.dkr.ecr.us-west-2.amazonaws.com/kmeans:1</p>
+<p>NOTE: You can use ECR (<code>AmazonEC2ContainerRegistryReadOnly</code>) and S3 (<code>AmazonS3ReadOnlyAccess</code>) ReadOnly managed policies. We recommend creating fine grained policy for production usecase.</p>
 </blockquote>
-<ol start="3">
-<li>Once the pipeline completes, you can see the outputs under &lsquo;Output parameters&rsquo; in the Training component&rsquo;s Input/Output section.</li>
+</li>
 </ol>
-
+<h3 id="deploy-models-from-s3-bucket">Deploy models from S3 Bucket</h3>
+<ol>
+<li>Create Secret with empty AWS Credential:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; secret.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: v1
+</span></span></span><span class="line"><span class="cl"><span class="s">    kind: Secret
+</span></span></span><span class="line"><span class="cl"><span class="s">    metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">      name: aws-secret
+</span></span></span><span class="line"><span class="cl"><span class="s">      namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">      annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-endpoint: s3.amazonaws.com
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-usehttps: &#34;1&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-region: ${CLUSTER_REGION}
+</span></span></span><span class="line"><span class="cl"><span class="s">    type: Opaque
+</span></span></span><span class="line"><span class="cl"><span class="s">    data:
+</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_ACCESS_KEY_ID: &#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_SECRET_ACCESS_KEY: &#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl apply -f secret.yaml
+</span></span></code></pre></div><blockquote>
+<p>NOTE: The <strong>empty</strong> keys for <code>AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY</code> force it to add the env vars to the init containers but don&rsquo;t override the actual credentials from the IAM role (which happens if you add dummy values). These <strong>empty</strong> keys are needed for IRSA to work in current version and will not be needed in future release.</p>
+</blockquote>
+<ol>
+<li>Attach secret to IRSA in your profile namespace:
+<pre tabindex="0"><code>kubectl patch serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${PROFILE_NAMESPACE} -p &#39;{&#34;secrets&#34;: [{&#34;name&#34;: &#34;aws-secret&#34;}]}&#39;
+</code></pre></li>
+</ol>
+<h3 id="create-an-inferenceservice">Create an InferenceService</h3>
+<ol>
+<li>Specify the service account in the model server spec :</li>
+</ol>
+<blockquote>
+<p>NOTE: make sure you have workable image in <code>${ECR_IMAGE_URL}</code>and model in <code>${S3_BUCKET_URL}</code> for the inferenceService to work. Versioning of model and image must be consistent: eg. you can not use a v1 model then a v2 image.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; inferenceService.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: serving.kserve.io/v1beta1
+</span></span></span><span class="line"><span class="cl"><span class="s">kind: InferenceService
+</span></span></span><span class="line"><span class="cl"><span class="s">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: &#34;sklearn-iris&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">  namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">  annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">    sidecar.istio.io/inject: &#34;false&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">spec:
+</span></span></span><span class="line"><span class="cl"><span class="s">  predictor:
+</span></span></span><span class="line"><span class="cl"><span class="s">    serviceAccountName: ${SERVICE_ACCOUNT_NAME}
+</span></span></span><span class="line"><span class="cl"><span class="s">    model:
+</span></span></span><span class="line"><span class="cl"><span class="s">      modelFormat:
+</span></span></span><span class="line"><span class="cl"><span class="s">        name: sklearn
+</span></span></span><span class="line"><span class="cl"><span class="s">      image: ${ECR_IMAGE_URL}
+</span></span></span><span class="line"><span class="cl"><span class="s">      storageUri: ${S3_BUCKET_URL}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl apply -f inferenceService.yaml
+</span></span></code></pre></div><ol>
+<li>Check the InferenceService status:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl get inferenceservices sklearn-iris -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">NAME           URL                                                        READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
+</span></span><span class="line"><span class="cl">sklearn-iris   http://sklearn-iris.kubeflow-user-example-com.example.com   True           <span class="m">100</span>                              sklearn-iris-predictor-default-00001   105s
+</span></span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
