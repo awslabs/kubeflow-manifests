@@ -238,6 +238,9 @@ yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipe
             {{< /tab >}}
             {{< /tabpane >}}
 
+### (Optional) Configure Culling for Notebooks
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide. 
+
 
 ## 3.0 Build Manifests and install Kubeflow
 
