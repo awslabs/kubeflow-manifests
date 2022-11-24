@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.0\/docs\/deployment\/cognito\/manifest\/guide\/",
-      "wordCount" : "1337",
+      "wordCount" : "1356",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/cognito/manifest/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-10-14T16:16:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manual Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using Kustomize or Helm">
-<meta itemprop="dateModified" content="2022-10-14T16:16:53-07:00" />
-<meta itemprop="wordCount" content="1337">
+<meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
+<meta itemprop="wordCount" content="1356">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manual Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider using Kustomize or Helm"/>
@@ -280,6 +280,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
 </li>
   </ul>
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-li">
@@ -335,7 +339,11 @@
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserve-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserve"><span class="">KServe</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskservetutorial-li">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskservetutorial-li">
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskservetutorial-check"/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskservetutorial-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/component-guides/kserve/tutorial/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docscomponent-guideskservetutorial"><span class="">KServe with Kubeflow on AWS</span></a></label>
   
@@ -399,7 +407,11 @@
     <li><a href="#optional-automated-setup">(Optional) Automated setup</a></li>
     <li><a href="#10-create-a-custom-domain-and-certificates">1.0 Create a custom domain and certificates</a></li>
     <li><a href="#20-create-a-cognito-user-pool">2.0 Create a Cognito User Pool</a></li>
-    <li><a href="#30-configure-ingress">3.0 Configure Ingress</a></li>
+    <li><a href="#30-configure-ingress">3.0 Configure Ingress</a>
+      <ul>
+        <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
+      </ul>
+    </li>
     <li><a href="#40-build-the-manifests-and-deploy-kubeflow">4.0 Build the manifests and deploy Kubeflow</a></li>
     <li><a href="#50-update-the-domain-with-the-alb-address">5.0 Update the domain with the ALB address</a></li>
     <li><a href="#60-connect-to-the-central-dashboard">6.0 Connect to the central dashboard</a></li>
@@ -747,6 +759,8 @@ Check also <code>Enabled Identity Providers</code>.</p>
 <p>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/load-balancer/guide/#configure-load-balancer-controller">Configure Load Balancer Controller</a> section of the load balancer guide to setup the resources required by the load balancer controller.</p>
 </li>
 </ol>
+<h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
+<p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
 <h2 id="40-build-the-manifests-and-deploy-kubeflow">4.0 Build the manifests and deploy Kubeflow</h2>
 
 
@@ -783,25 +797,25 @@ Check also <code>Enabled Identity Providers</code>.</p>
 
 
 
-<ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-11" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-10-0" aria-selected="true">
+        id="tabs-11-0-tab" data-toggle="tab" href="#tabs-11-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-11-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-10-1" aria-selected="false">
+        id="tabs-11-1-tab" data-toggle="tab" href="#tabs-11-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-11-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
-        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-11-content"><div class="tab-pane fade show active"
+        id="tabs-11-0" role="tabpanel" aria-labelled-by="tabs-11-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span></span></span></code></pre></div></div>
+        id="tabs-11-1" role="tabpanel" aria-labelled-by="tabs-11-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito</span></span></span></code></pre></div></div>
   
 </div>
 
@@ -870,7 +884,7 @@ Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.c
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified October 14, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8d8b196d2f838de6cd5a88de93aa275f288704d1">Update git clone command (#488) (8d8b196)</a>
+  Last modified November 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cc5098c9e6adbb6740cd50ee4cd5ad285ceb10c3">Cherry-pick Kserve with IRSA and Notebook culling Doc (#512) (cc5098c)</a>
 </div>
 
 </div>

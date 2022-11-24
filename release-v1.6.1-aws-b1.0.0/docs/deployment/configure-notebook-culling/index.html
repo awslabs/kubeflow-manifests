@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.0"
       },
       "articleSection" : "docs",
-      "name" : "CloudWatch",
-      "headline" : "CloudWatch",
-      "description" : "Set up CloudWatch ContainerInsights on Amazon EKS",
+      "name" : "Configure Culling for Notebooks",
+      "headline" : "Configure Culling for Notebooks",
+      "description" : "Automatically stop your notebooks based on idleness",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.0\/docs\/add-ons\/cloudwatch\/guide\/",
-      "wordCount" : "342",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.0\/docs\/deployment\/configure-notebook-culling\/",
+      "wordCount" : "232",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,22 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>CloudWatch | Kubeflow on AWS</title>
-<meta name="description" content="Set up CloudWatch ContainerInsights on Amazon EKS">
-<meta property="og:title" content="CloudWatch" />
-<meta property="og:description" content="Set up CloudWatch ContainerInsights on Amazon EKS" />
+<title>Configure Culling for Notebooks | Kubeflow on AWS</title>
+<meta name="description" content="Automatically stop your notebooks based on idleness">
+<meta property="og:title" content="Configure Culling for Notebooks" />
+<meta property="og:description" content="Automatically stop your notebooks based on idleness" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/cloudwatch/guide/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/" /><meta property="article:section" content="docs" />
 
 <meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="CloudWatch">
-<meta itemprop="description" content="Set up CloudWatch ContainerInsights on Amazon EKS">
+<meta itemprop="name" content="Configure Culling for Notebooks">
+<meta itemprop="description" content="Automatically stop your notebooks based on idleness">
 <meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
-<meta itemprop="wordCount" content="342">
+<meta itemprop="wordCount" content="232">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="CloudWatch"/>
-<meta name="twitter:description" content="Set up CloudWatch ContainerInsights on Amazon EKS"/>
+<meta name="twitter:title" content="Configure Culling for Notebooks"/>
+<meta name="twitter:description" content="Automatically stop your notebooks based on idleness"/>
 
 
 
@@ -192,8 +192,8 @@
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment-check" checked/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeployment"><span class="">Deployment Options</span></a></label>
   
   <ul class="ul-2 foldable">
@@ -280,14 +280,14 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check"/>
-  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsdeploymentconfigure-notebook-culling"><span class="td-sidebar-nav-active-item">Configure Culling for Notebooks</span></a></label>
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-check" checked/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-check"/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-ons"><span class="">Deployment Add-ons</span></a></label>
   
   <ul class="ul-2 foldable">
@@ -303,9 +303,9 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onsstoragefsx-for-lustreguide-check"/>
   <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-check" checked/>
-  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/cloudwatch/guide/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide"><span class="td-sidebar-nav-active-item">CloudWatch</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onsprometheusguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b100docsadd-onsprometheusguide-check"/>
@@ -389,25 +389,16 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/add-ons/cloudwatch/guide.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/add-ons/cloudwatch/guide.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/add-ons/cloudwatch/guide.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=CloudWatch" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/configure-notebook-culling.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/configure-notebook-culling.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/configure-notebook-culling.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Configure%20Culling%20for%20Notebooks" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
 
             
 
-
-<div class="td-toc"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#verify-prerequisites">Verify Prerequisites</a></li>
-    <li><a href="#install">Install</a></li>
-    <li><a href="#uninstall">Uninstall</a></li>
-    <li><a href="#additional-information">Additional information</a></li>
-  </ul>
-</nav></div>
 
 
 
@@ -442,17 +433,17 @@
     <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/">Documentation</a>
   </li>
   <li class="breadcrumb-item">
-    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/">Deployment Add-ons</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/">Deployment Options</a>
   </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/add-ons/cloudwatch/guide/">CloudWatch</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/configure-notebook-culling/">Configure Culling for Notebooks</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>CloudWatch</h1>
-	<div class="lead">Set up CloudWatch ContainerInsights on Amazon EKS</div>
+	<h1>Configure Culling for Notebooks</h1>
+	<div class="lead">Automatically stop your notebooks based on idleness</div>
 	<header class="article-meta">
 		
 
@@ -468,39 +459,103 @@
 
 		
 	</header>    
-	<h2 id="verify-prerequisites">Verify Prerequisites</h2>
-<p>The EKS cluster will need IAM service account roles associated with CloudWatchAgentServerPolicy attached.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span>&lt;&gt;
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span>&lt;&gt;
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --region<span class="o">=</span><span class="nv">$CLUSTER_REGION</span> --cluster<span class="o">=</span><span class="nv">$CLUSTER_NAME</span> --approve
-</span></span><span class="line"><span class="cl">eksctl create iamserviceaccount --name cloudwatch-agent --namespace amazon-cloudwatch --cluster <span class="nv">$CLUSTER_NAME</span> --region <span class="nv">$CLUSTER_REGION</span> --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
-</span></span><span class="line"><span class="cl">eksctl create iamserviceaccount --name fluent-bit --namespace amazon-cloudwatch --cluster <span class="nv">$CLUSTER_NAME</span> --region <span class="nv">$CLUSTER_REGION</span> --approve --override-existing-serviceaccounts --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
-</span></span></code></pre></div><h2 id="install">Install</h2>
-<p>To install an optimized QuickStart configuration, enter the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">FluentBitHttpPort</span><span class="o">=</span><span class="s1">&#39;2020&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">FluentBitReadFromHead</span><span class="o">=</span><span class="s1">&#39;Off&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="o">[[</span> <span class="si">${</span><span class="nv">FluentBitReadFromHead</span><span class="si">}</span> <span class="o">=</span> <span class="s1">&#39;On&#39;</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">FluentBitReadFromTail</span><span class="o">=</span><span class="s1">&#39;Off&#39;</span><span class="o">||</span> <span class="nv">FluentBitReadFromTail</span><span class="o">=</span><span class="s1">&#39;On&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="o">[[</span> -z <span class="si">${</span><span class="nv">FluentBitHttpPort</span><span class="si">}</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">FluentBitHttpServer</span><span class="o">=</span><span class="s1">&#39;Off&#39;</span> <span class="o">||</span> <span class="nv">FluentBitHttpServer</span><span class="o">=</span><span class="s1">&#39;On&#39;</span>
-</span></span><span class="line"><span class="cl">curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml <span class="p">|</span> sed <span class="s1">&#39;s/{{cluster_name}}/&#39;</span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span><span class="s1">&#39;/;s/{{region_name}}/&#39;</span><span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span><span class="s1">&#39;/;s/{{http_server_toggle}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitHttpServer</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{http_server_port}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitHttpPort</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{read_from_head}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitReadFromHead</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{read_from_tail}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitReadFromTail</span><span class="si">}</span><span class="s1">&#39;&#34;/&#39;</span> <span class="p">|</span> kubectl apply -f - 
-</span></span></code></pre></div><p>To verify the installation, you can run the <code>list-metrics</code> command and check that metrics have been created. It may take up to 15 minutes for the metrics to populate.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws cloudwatch list-metrics --namespace ContainerInsights --region <span class="nv">$CLUSTER_REGION</span>
-</span></span></code></pre></div><p>An example of the logs that will be available after installation are the logs of the Pods on your cluster. This way, the Pod logs can still be accessed past their default storage time. This also allows for an easy way to view logs for all Pods on your cluster without having to directly connect to your EKS cluster.</p>
-<p>The logs can be accessed by through CloudWatch log groups <img src="../../../images/cloudwatch/cloudwatch-logs.png" alt="cloudwatch"></p>
-<p>To view individual Pod logs, select <code>/aws/containerinsights/YOUR_CLUSTER_NAME/application</code>. <img src="../../../images/cloudwatch/cloudwatch-application-logs.png" alt="application"></p>
-<p>The following image is an example of the <code>jupyter-web-app</code> Pod logs available through CloudWatch. <img src="../../../images/cloudwatch/cloudwatch-pod-logs.png" alt="jupyter-logs"></p>
-<p>For a full list of metrics that are provided by default, see <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-EKS.html">Amazon EKS and Kubernetes Container Insights metrics</a>.</p>
-<p>The metrics are grouped by varying parameters such as Cluster, Namespace, or PodName.
-<img src="../../../images/cloudwatch/cloudwatch-metrics.png" alt="cloudwatch-metrics"></p>
-<p>The following image is an example of the graphed metrics for the <code>istio-system</code> namespace that deals with internet traffic.
-<img src="../../../images/cloudwatch/cloudwatch-namespace-metrics.png" alt="cloudwatch-namespace-metrics"></p>
-<p>See <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html">Viewing available metrics</a> for more information on CloudWatch metrics. Select the ContainerInsights metric namespace.</p>
-<p>You can see the full list of logs and metrics through the <a href="https://console.aws.amazon.com/cloudwatch/">Amazon CloudWatch AWS Console</a>.</p>
-<h2 id="uninstall">Uninstall</h2>
-<p>To uninstall CloudWatch ContainerInsights, enter the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml <span class="p">|</span> sed <span class="s1">&#39;s/{{cluster_name}}/&#39;</span><span class="si">${</span><span class="nv">ClusterName</span><span class="si">}</span><span class="s1">&#39;/;s/{{region_name}}/&#39;</span><span class="si">${</span><span class="nv">LogRegion</span><span class="si">}</span><span class="s1">&#39;/;s/{{http_server_toggle}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitHttpServer</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{http_server_port}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitHttpPort</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{read_from_head}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitReadFromHead</span><span class="si">}</span><span class="s1">&#39;&#34;/;s/{{read_from_tail}}/&#34;&#39;</span><span class="si">${</span><span class="nv">FluentBitReadFromTail</span><span class="si">}</span><span class="s1">&#39;&#34;/&#39;</span> <span class="p">|</span> kubectl delete -f -
-</span></span></code></pre></div><h2 id="additional-information">Additional information</h2>
-<p>For full documentation and additional configuration options, see <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html">Quick Start setup for Container Insights on Amazon EKS and Kubernetes</a>.</p>
+	<p>The culling feature allows you to stop a Notebook Server based on its <strong>Last Activity</strong>. The Notebook Controller updates the respective <code>notebooks.kubeflow.org/last-activity</code> annotation of each Notebook resource according to the execution state of the kernels. When this feature is enabled, the notebook instances will be &ldquo;culled&rdquo; (scaled to zero) if none of the kernels are performing computations for a specified period of time (<code>CULL_IDLE_TIME</code>). More information about this feature can be found in the <a href="https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md">Jupyter notebook idleness proposal</a>.</p>
+<ol>
+<li>
+<p>Export the following values values to configure the <a href="https://github.com/kubeflow/kubeflow/blob/master/components/proposals/20220121-jupyter-notebook-idleness.md#api-changes">culling policy parameters</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># whether to enable culling feature (true/false). ENABLE_CULLING must be set to “true” for this feature to take work</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ENABLE_CULLING</span><span class="o">=</span><span class="s2">&#34;true&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># specified idleness time (minutes) that notebook instance to be culled since last activity</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CULL_IDLE_TIMEOUT</span><span class="o">=</span><span class="s2">&#34;30&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># controller will update each notebook&#39;s LAST_ACTIVITY_ANNOTATION every IDLENESS_CHECK_PERIOD (minutes)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">IDLENESS_CHECK_PERIOD</span><span class="o">=</span><span class="s2">&#34;5&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>The following commands will inject those values in a configuration file for setting up Notebook culling:
+Select the package manager of your choice.</p>
+<ul>
+<li>
+<p>For Kustomize and Helm:
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <ul class="nav nav-tabs" id="tabs-0" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-0-0-tab" data-toggle="tab" href="#tabs-0-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-0-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-0-1-tab" data-toggle="tab" href="#tabs-0-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-0-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-0-content"><div class="tab-pane fade show active"
+        id="tabs-0-0" role="tabpanel" aria-labelled-by="tabs-0-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">enableCulling=&#39;</span><span class="nv">$ENABLE_CULLING</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">cullIdleTime=&#39;</span><span class="nv">$CULL_IDLE_TIMEOUT</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">idlenessCheckPeriod=&#39;</span><span class="nv">$IDLENESS_CHECK_PERIOD</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt; awsconfigs/apps/notebook-controller/params.env
+</span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-0-1" role="tabpanel" aria-labelled-by="tabs-0-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">yq e <span class="s1">&#39;.cullingPolicy.enableCulling = env(ENABLE_CULLING)&#39;</span> -i charts/apps/notebook-controller/values.yaml
+</span></span><span class="line"><span class="cl">yq e <span class="s1">&#39;.cullingPolicy.cullIdleTime = env(CULL_IDLE_TIMEOUT)&#39;</span> -i charts/apps/notebook-controller/values.yaml
+</span></span><span class="line"><span class="cl">yq e <span class="s1">&#39;.cullingPolicy.idlenessCheckPeriod = env(IDLENESS_CHECK_PERIOD)&#39;</span> -i charts/apps/notebook-controller/values.yaml
+</span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
+<li>
+<p>For Terraform, append the notebook culling parameters in the <code>sample.auto.tfvars</code> file with chosen deployment option: <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/vanilla/guide-terraform/">Vanilla</a>, <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/cognito/guide-terraform/">Cognito</a>, <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/rds-s3/guide-terraform/">RDS-S3</a>, and <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/cognito-rds-s3/guide-terraform/">Cognito-RDS-S3</a>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOT &gt;&gt; sample.auto.tfvars
+</span></span></span><span class="line"><span class="cl"><span class="s">notebook_enable_culling=&#34;${ENABLE_CULLING}&#34; 
+</span></span></span><span class="line"><span class="cl"><span class="s">notebook_cull_idle_time=&#34;${CULL_IDLE_TIMEOUT}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">notebook_idleness_check_period=&#34;${IDLENESS_CHECK_PERIOD}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">EOT</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>Continue deploying Kubeflow based on your <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs/deployment/">Deployment Option</a>.</p>
+</li>
+</ol>
 
 	
 	
