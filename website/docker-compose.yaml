@@ -9,5 +9,6 @@ services:
     command: server
     ports:
       - "1313:1313"
+    working_dir: /src/website
     volumes:
-      - .:/src
+      - ..:/src
