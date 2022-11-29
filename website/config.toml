@@ -31,6 +31,11 @@ disableKinds = ["taxonomy", "taxonomyTerm"]
     pre = "<i class='fas fa-book pr-2'></i>"
     url = "./docs/"
   [[menu.main]]
+    name = "Blog"
+    weight = -100
+    pre = "<i class='fas fa-blog pr-2'></i>"
+    url = "../blog/"
+  [[menu.main]]
     name = "GitHub"
     weight = -99
     pre = "<i class='fab fa-github pr-2'></i>"
