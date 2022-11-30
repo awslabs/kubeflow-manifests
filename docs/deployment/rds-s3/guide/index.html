@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/rds-s3\/guide\/",
-      "wordCount" : "2187",
+      "wordCount" : "2206",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-10-14T15:37:39-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2022-10-14T15:37:39-07:00" />
-<meta itemprop="wordCount" content="2187">
+<meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
+<meta itemprop="wordCount" content="2206">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
@@ -280,6 +280,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
 </li>
   </ul>
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsadd-ons-li">
@@ -335,7 +339,11 @@
   <label for="m-kubeflow-manifestsdocscomponent-guideskserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocscomponent-guideskserve"><span class="">KServe</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial-li">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guideskservetutorial-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/tutorial/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial"><span class="">KServe with Kubeflow on AWS</span></a></label>
   
@@ -411,6 +419,7 @@
         <li><a href="#21-option-1-automated-setup">2.1 <strong>Option 1: Automated Setup</strong></a></li>
         <li><a href="#advanced-customization">Advanced customization</a></li>
         <li><a href="#22-option-2-manual-setup">2.2 <strong>Option 2: Manual Setup</strong></a></li>
+        <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
       </ul>
     </li>
     <li><a href="#30-build-manifests-and-install-kubeflow">3.0 Build Manifests and install Kubeflow</a>
@@ -926,6 +935,8 @@ Select the package manager of your choice.
 </ol>
 </li>
 </ol>
+<h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
+<p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
 <h2 id="30-build-manifests-and-install-kubeflow">3.0 Build Manifests and install Kubeflow</h2>
 <p>Once you have the resources ready, you can deploy the Kubeflow manifests for one of the following deployment options:</p>
 <ul>
@@ -937,65 +948,6 @@ Select the package manager of your choice.
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>
 </span></span></code></pre></div><h4 id="rds-and-s3-deploy-both-rds-and-s3">[RDS and S3] Deploy both RDS and S3</h4>
 <p>Use the following command to deploy the Kubeflow manifests for both RDS and S3:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<ul class="nav nav-tabs" id="tabs-7" role="tablist"><li class="nav-item">
-      <a class="nav-link active tab-Kustomize"
-        id="tabs-7-0-tab" data-toggle="tab" href="#tabs-7-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-7-0" aria-selected="true">
-        Kustomize
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link tab-Helm"
-        id="tabs-7-1-tab" data-toggle="tab" href="#tabs-7-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-7-1" aria-selected="false">
-        Helm
-      </a>
-    </li></ul>
-
-
-<div class="tab-content" id="tabs-7-content"><div class="tab-pane fade show active"
-        id="tabs-7-0" role="tabpanel" aria-labelled-by="tabs-7-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
-  <div class="tab-pane fade"
-        id="tabs-7-1" role="tabpanel" aria-labelled-by="tabs-7-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
-  
-</div>
-</p>
-<h4 id="rds-deploy-rds-only">[RDS] Deploy RDS only</h4>
-<p>Use the following command to deploy the Kubeflow manifests for RDS only:
 
 
 
@@ -1047,14 +999,14 @@ Select the package manager of your choice.
 
 
 <div class="tab-content" id="tabs-8-content"><div class="tab-pane fade show active"
-        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-only</span></span></span></code></pre></div></div>
+        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only</span></span></span></code></pre></div></div>
+        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
   
 </div>
 </p>
-<h4 id="s3-deploy-s3-only">[S3] Deploy S3 only</h4>
-<p>Use the following command to deploy the Kubeflow manifests for S3 only:
+<h4 id="rds-deploy-rds-only">[RDS] Deploy RDS only</h4>
+<p>Use the following command to deploy the Kubeflow manifests for RDS only:
 
 
 
@@ -1106,9 +1058,68 @@ Select the package manager of your choice.
 
 
 <div class="tab-content" id="tabs-9-content"><div class="tab-pane fade show active"
-        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">s3-only</span></span></span></code></pre></div></div>
+        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-only</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only</span></span></span></code></pre></div></div>
+        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+<h4 id="s3-deploy-s3-only">[S3] Deploy S3 only</h4>
+<p>Use the following command to deploy the Kubeflow manifests for S3 only:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-10-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-10-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
+        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">s3-only</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -1240,25 +1251,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-13" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-14" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-13-0-tab" data-toggle="tab" href="#tabs-13-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-13-0" aria-selected="true">
+        id="tabs-14-0-tab" data-toggle="tab" href="#tabs-14-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-14-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-13-1-tab" data-toggle="tab" href="#tabs-13-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-13-1" aria-selected="false">
+        id="tabs-14-1-tab" data-toggle="tab" href="#tabs-14-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-14-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-13-content"><div class="tab-pane fade show active"
-        id="tabs-13-0" role="tabpanel" aria-labelled-by="tabs-13-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-14-content"><div class="tab-pane fade show active"
+        id="tabs-14-0" role="tabpanel" aria-labelled-by="tabs-14-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-13-1" role="tabpanel" aria-labelled-by="tabs-13-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
+        id="tabs-14-1" role="tabpanel" aria-labelled-by="tabs-14-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
   
 </div>
 
@@ -1279,7 +1290,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified October 14, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/7ddc3bcc034eab0fc08680edd37baa4d80a91640">RDS-S3 Web Doc (#483) (7ddc3bcc)</a>
+  Last modified November 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cc5098c9e6adbb6740cd50ee4cd5ad285ceb10c3">Cherry-pick Kserve with IRSA and Notebook culling Doc (#512) (cc5098c9)</a>
 </div>
 
 </div>

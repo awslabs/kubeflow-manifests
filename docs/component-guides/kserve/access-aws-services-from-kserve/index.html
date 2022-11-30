@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/"
       },
       "articleSection" : "docs",
-      "name" : "Pipelines",
-      "headline" : "Pipelines",
-      "description" : "Get started with Kubeflow Pipelines on Amazon EKS",
+      "name" : "Configure inferenceService to Access AWS Services from KServe",
+      "headline" : "Configure inferenceService to Access AWS Services from KServe",
+      "description" : "Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/pipelines\/",
-      "wordCount" : "585",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/kserve\/access-aws-services-from-kserve\/",
+      "wordCount" : "305",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,22 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Pipelines | Kubeflow on AWS</title>
-<meta name="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
-<meta property="og:title" content="Pipelines" />
-<meta property="og:description" content="Get started with Kubeflow Pipelines on Amazon EKS" />
+<title>Configure inferenceService to Access AWS Services from KServe | Kubeflow on AWS</title>
+<meta name="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
+<meta property="og:title" content="Configure inferenceService to Access AWS Services from KServe" />
+<meta property="og:description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/access-aws-services-from-kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-09-19T18:41:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="Pipelines">
-<meta itemprop="description" content="Get started with Kubeflow Pipelines on Amazon EKS">
-<meta itemprop="dateModified" content="2022-09-19T18:41:53-07:00" />
-<meta itemprop="wordCount" content="585">
+<meta itemprop="name" content="Configure inferenceService to Access AWS Services from KServe">
+<meta itemprop="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
+<meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
+<meta itemprop="wordCount" content="305">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Pipelines"/>
-<meta name="twitter:description" content="Get started with Kubeflow Pipelines on Amazon EKS"/>
+<meta name="twitter:title" content="Configure inferenceService to Access AWS Services from KServe"/>
+<meta name="twitter:description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket."/>
 
 
 
@@ -326,22 +326,22 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check" checked/>
-  <label for="m-kubeflow-manifestsdocscomponent-guidespipelines-check"><a href="/kubeflow-manifests/docs/component-guides/pipelines/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidespipelines"><span class="td-sidebar-nav-active-item">Pipelines</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidespipelines-check"><a href="/kubeflow-manifests/docs/component-guides/pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidespipelines"><span class="">Pipelines</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestraining-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestraining-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidestraining-check"><a href="/kubeflow-manifests/docs/component-guides/training/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestraining"><span class="">Training Operators</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocscomponent-guideskserve-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserve-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserve-check" checked/>
   <label for="m-kubeflow-manifestsdocscomponent-guideskserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocscomponent-guideskserve"><span class="">KServe</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
-  <label for="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check" checked/>
+  <label for="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskserveaccess-aws-services-from-kserve"><span class="td-sidebar-nav-active-item">Configure inferenceService to Access AWS Services from KServe</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskservetutorial-check"/>
@@ -389,10 +389,10 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/component-guides/pipelines.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/component-guides/pipelines.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/component-guides/pipelines.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Pipelines" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/component-guides/kserve/access-aws-services-from-kserve.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Configure%20inferenceService%20to%20Access%20AWS%20Services%20from%20KServe" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -402,22 +402,12 @@
 
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
-    <li><a href="#authenticate-kubeflow-pipelines-using-sdk-inside-cluster">Authenticate Kubeflow Pipelines using SDK inside cluster</a></li>
-    <li><a href="#authenticate-kubeflow-pipelines-using-sdk-outside-cluster">Authenticate Kubeflow Pipelines using SDK outside cluster</a>
+    <li><a href="#access-aws-service-from-kserve-with-iam-roles-for-serviceaccountirsa">Access AWS Service from Kserve with IAM Roles for ServiceAccount（IRSA）</a>
       <ul>
-        <li><a href="#dex"><strong>Dex</strong></a></li>
-        <li><a href="#cognito"><strong>Cognito</strong></a></li>
+        <li><a href="#deploy-models-from-s3-bucket">Deploy models from S3 Bucket</a></li>
+        <li><a href="#create-an-inferenceservice">Create an InferenceService</a></li>
       </ul>
     </li>
-    <li><a href="#access-aws-services-from-pipeline-components">Access AWS Services from Pipeline Components</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#verify-configuration">Verify configuration</a></li>
-        <li><a href="#example-s3-access-from-a-pipeline-component">Example: S3 Access from a Pipeline Component</a></li>
-      </ul>
-    </li>
-    <li><a href="#support-s3-as-a-source-for-kubeflow-pipelines-output-viewers">Support S3 as a source for Kubeflow Pipelines output viewers</a></li>
-    <li><a href="#support-tensorboard-in-kubeflow-pipelines">Support TensorBoard in Kubeflow Pipelines</a></li>
   </ul>
 </nav></div>
 
@@ -456,15 +446,18 @@
   <li class="breadcrumb-item">
     <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/">Component Guides</a>
   </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/">KServe</a>
+  </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/">Pipelines</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/access-aws-services-from-kserve/">Configure inferenceService to Access AWS Services from KServe</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>Pipelines</h1>
-	<div class="lead">Get started with Kubeflow Pipelines on Amazon EKS</div>
+	<h1>Configure inferenceService to Access AWS Services from KServe</h1>
+	<div class="lead">Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.</div>
 	<header class="article-meta">
 		
 
@@ -480,107 +473,93 @@
 
 		
 	</header>    
-	<p>For an overview of connecting to Kubeflow Pipelines using the SDK client, see <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/">the Pipelines SDK guide</a>.</p>
-<h2 id="authenticate-kubeflow-pipelines-using-sdk-inside-cluster">Authenticate Kubeflow Pipelines using SDK inside cluster</h2>
-<p>Refer to the following guide to connect to Kubeflow Pipelines from <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-the-same-cluster">inside your cluster</a>.</p>
-<h2 id="authenticate-kubeflow-pipelines-using-sdk-outside-cluster">Authenticate Kubeflow Pipelines using SDK outside cluster</h2>
-<p>Refer to the following guide to connect to Kubeflow Pipelines from <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#connect-to-kubeflow-pipelines-from-outside-your-cluster">outside your cluster</a>.</p>
-<p>Refer to the following steps to use <code>kfp</code> to pass a cookie from your browser after you log into Kubeflow. The following example uses a Chrome browser.</p>
-<p><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/pipelines/kfp-sdk-browser-cookie.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/pipelines/kfp-sdk-browser-cookie-detail.png" alt=""></p>
-<p>Once you get a cookie, authenticate <code>kfp</code> by passing the cookie from your browser. Use the session based on the appropriate manifest for your deployment, as done in the following examples.</p>
-<h3 id="dex"><strong>Dex</strong></h3>
-<p>If you want to use port forwarding to access Kubeflow, run the following command and use <code>http://localhost:8080/pipeline</code> as the host.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-</span></span></code></pre></div><p>Pass the cookie from your browser:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># This is the &#34;Domain&#34; in your cookies. Eg: &#34;localhost:8080&#34; or &#34;&lt;ingress_alb_address&gt;.elb.amazonaws.com&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">kubeflow_gateway_endpoint</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_KUBEFLOW_GATEWAY_ENDPOINT&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">authservice_session_cookie</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_COOKIE&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">namespace</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_NAMESPACE&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">client</span> <span class="o">=</span> kfp.Client<span class="o">(</span><span class="nv">host</span><span class="o">=</span>f<span class="s2">&#34;http://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span class="nv">cookies</span><span class="o">=</span>f<span class="s2">&#34;authservice_session={authservice_session_cookie}&#34;</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">client.list_experiments<span class="o">(</span><span class="nv">namespace</span><span class="o">=</span>namespace<span class="o">)</span>
-</span></span></code></pre></div><p>If you want to set up application load balancing (ALB) with Dex, see the <a href="https://awslabs.github.io/kubeflow-manifests/docs/add-ons/load-balancer/guide/">Load Balancer</a> guide and use the ALB address as the Kubeflow Endpoint.</p>
-<p>To do programmatic authentication with Dex, refer to the following comments under <a href="https://github.com/kubeflow/kfctl/issues/140">issue #140</a> in the <code>kfctl</code> repository: <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-578837304">#140 (comment)</a> and <a href="https://github.com/kubeflow/kfctl/issues/140#issuecomment-719894529">#140 (comment)</a>.</p>
-<h3 id="cognito"><strong>Cognito</strong></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># This is the &#34;Domain&#34; in your cookies. eg: kubeflow.&lt;platform.example.com&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">kubeflow_gateway_endpoint</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_KUBEFLOW_HTTPS_GATEWAY_ENDPOINT&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">alb_session_cookie0</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_COOKIE_0&gt;&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">alb_session_cookie1</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_COOKIE_1&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">namespace</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_NAMESPACE&gt;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">client</span> <span class="o">=</span> kfp.Client<span class="o">(</span><span class="nv">host</span><span class="o">=</span>f<span class="s2">&#34;https://{kubeflow_gateway_endpoint}/pipeline&#34;</span>, <span class="nv">cookies</span><span class="o">=</span>f<span class="s2">&#34;AWSELBAuthSessionCookie-0={alb_session_cookie0};AWSELBAuthSessionCookie-1={alb_session_cookie1}&#34;</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">client.list_experiments<span class="o">(</span><span class="nv">namespace</span><span class="o">=</span>namespace<span class="o">)</span>
-</span></span></code></pre></div><h2 id="access-aws-services-from-pipeline-components">Access AWS Services from Pipeline Components</h2>
-<p>For pipelines components to be granted access to AWS resources, the corresponding profile in which the pipeline is created needs to be configured with the <code>AwsIamForServiceAccount</code> plugin. To configure the <code>AwsIamForServiceAccount</code> plugin to work with profiles, follow the steps below.</p>
-<h3 id="prerequisites">Prerequisites</h3>
-<p>Configuration steps to configure Profiles with AWS IAM permissions can be found in the <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/profiles/#configuration-steps">Profiles component guide</a>. Follow the configuration steps to configure the profile controller to work with the <code>AwsIamForServiceAccount</code> plugin.</p>
-<p>The following is an example of a profile using the <code>AwsIamForServiceAccount</code> plugin:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kubeflow.org/v1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Profile</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">some_profile</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">owner</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">some-user@kubeflow.org</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">plugins</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">AwsIamForServiceAccount</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">awsIamRole</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:iam::123456789012:role/some-profile-role</span><span class="w">
-</span></span></span></code></pre></div><p>The AWS IAM permissions granted to the pipelines components are specified in the profile&rsquo;s <code>awsIamRole</code>.</p>
-<h3 id="verify-configuration">Verify configuration</h3>
-<p>There are no additional configuration steps after the prerequisites.</p>
-<p>You can verify that the profile was configured correctly by running the following commands:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAME</span><span class="o">=</span>&lt;name of the created profile&gt;
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">kubectl get serviceaccount -n <span class="si">${</span><span class="nv">PROFILE_NAME</span><span class="si">}</span> default-editor -oyaml <span class="p">|</span> grep <span class="s2">&#34;eks.amazonaws.com/role-arn&#34;</span>
-</span></span></code></pre></div><p>The output should look similar to the following:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/some-profile-role
-</span></span></code></pre></div><h3 id="example-s3-access-from-a-pipeline-component">Example: S3 Access from a Pipeline Component</h3>
-<p>The following steps walk through creating a pipeline with a component that has permissions to list buckets in S3.</p>
-<h4 id="prerequisites-1">Prerequisites</h4>
-<p>Make sure that you have completed the <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/pipelines/#prerequisites">prerequisites</a> and Profile configuration steps.</p>
-<h4 id="steps">Steps</h4>
+	<h2 id="access-aws-service-from-kserve-with-iam-roles-for-serviceaccountirsa">Access AWS Service from Kserve with IAM Roles for ServiceAccount（IRSA）</h2>
 <ol>
 <li>
-<p>Create and apply a <code>PodDefault</code> in the desired profile namespace that allows KFP access from Jupyter notebooks.</p>
-<ul>
-<li>Instructions can be found in the Kubeflow <a href="https://www.kubeflow.org/docs/components/pipelines/sdk/connect-api/#multi-user-mode">Multi-User mode</a> instructions.</li>
-</ul>
-</li>
+<p>Export env values:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span>kubeflow-user-example-com
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SERVICE_ACCOUNT_NAME</span><span class="o">=</span>aws-sa
+</span></span><span class="line"><span class="cl"><span class="c1"># 123456789.dkr.ecr.us-west-2.amazonaws.com/kserve/sklearnserver:v0.8.0</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ECR_IMAGE_URL</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># s3://your-s3-bucket/model</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET_URL</span><span class="o">=</span><span class="s2">&#34;&lt;&gt;&#34;</span>
+</span></span></code></pre></div></li>
 <li>
-<p>Login to your central dashboard and select the desired profile namespace from the top left corner.</p>
-</li>
-<li>
-<p>Create a notebook server using the <code>PodDefault</code>.</p>
-</li>
-<li>
-<p>Open the notebook server and upload the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/samples/notebooks/verify_profile_iam_kfp.ipynb">sample notebook</a> into the server.</p>
-</li>
-<li>
-<p>Run the notebook.</p>
-</li>
-<li>
-<p>Click on the <code>Run details</code> link that appears.</p>
-</li>
-<li>
-<p>Verify that the run completes successfully and that the <code>Logs</code> are populated with the S3 buckets in the account.</p>
+<p>Create Service Account with IAM Role using <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IRSA</a>. The following command attaches both <code>AmazonEC2ContainerRegistryReadOnly</code> and <code>AmazonS3ReadOnlyAccess</code> IAM policies:</p>
+<pre tabindex="0"><code>eksctl create iamserviceaccount --name ${SERVICE_ACCOUNT_NAME} --namespace ${PROFILE_NAMESPACE} --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn=arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly --attach-policy-arn=arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess  --override-existing-serviceaccounts --approve
+</code></pre><blockquote>
+<p>NOTE: You can use ECR (<code>AmazonEC2ContainerRegistryReadOnly</code>) and S3 (<code>AmazonS3ReadOnlyAccess</code>) ReadOnly managed policies. We recommend creating fine grained policy for production usecase.</p>
+</blockquote>
 </li>
 </ol>
-<h2 id="support-s3-as-a-source-for-kubeflow-pipelines-output-viewers">Support S3 as a source for Kubeflow Pipelines output viewers</h2>
-<p>Support for S3 Artifact Store is in active development. You can track the <a href="https://github.com/awslabs/kubeflow-manifests/issues/117">open issue</a> to stay up-to-date on progress.</p>
-<h2 id="support-tensorboard-in-kubeflow-pipelines">Support TensorBoard in Kubeflow Pipelines</h2>
-<p>Support for TensorBoard in Kubeflow Pipelines is in active development. You can track the <a href="https://github.com/awslabs/kubeflow-manifests/issues/118">open issue</a> to stay up-to-date on progress.</p>
-
+<h3 id="deploy-models-from-s3-bucket">Deploy models from S3 Bucket</h3>
+<ol>
+<li>Create Secret with empty AWS Credential:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; secret.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: v1
+</span></span></span><span class="line"><span class="cl"><span class="s">    kind: Secret
+</span></span></span><span class="line"><span class="cl"><span class="s">    metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">      name: aws-secret
+</span></span></span><span class="line"><span class="cl"><span class="s">      namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">      annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-endpoint: s3.amazonaws.com
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-usehttps: &#34;1&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-region: ${CLUSTER_REGION}
+</span></span></span><span class="line"><span class="cl"><span class="s">    type: Opaque
+</span></span></span><span class="line"><span class="cl"><span class="s">    data:
+</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_ACCESS_KEY_ID: &#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_SECRET_ACCESS_KEY: &#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl apply -f secret.yaml
+</span></span></code></pre></div><blockquote>
+<p>NOTE: The <strong>empty</strong> keys for <code>AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY</code> force it to add the env vars to the init containers but don&rsquo;t override the actual credentials from the IAM role (which happens if you add dummy values). These <strong>empty</strong> keys are needed for IRSA to work in current version and will not be needed in future release.</p>
+</blockquote>
+<ol>
+<li>Attach secret to IRSA in your profile namespace:
+<pre tabindex="0"><code>kubectl patch serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${PROFILE_NAMESPACE} -p &#39;{&#34;secrets&#34;: [{&#34;name&#34;: &#34;aws-secret&#34;}]}&#39;
+</code></pre></li>
+</ol>
+<h3 id="create-an-inferenceservice">Create an InferenceService</h3>
+<ol>
+<li>Specify the service account in the model server spec :</li>
+</ol>
+<blockquote>
+<p>NOTE: make sure you have workable image in <code>${ECR_IMAGE_URL}</code>and model in <code>${S3_BUCKET_URL}</code> for the inferenceService to work. Versioning of model and image must be consistent: eg. you can not use a v1 model then a v2 image.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; inferenceService.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: serving.kserve.io/v1beta1
+</span></span></span><span class="line"><span class="cl"><span class="s">kind: InferenceService
+</span></span></span><span class="line"><span class="cl"><span class="s">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: &#34;sklearn-iris&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">  namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">  annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">    sidecar.istio.io/inject: &#34;false&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">spec:
+</span></span></span><span class="line"><span class="cl"><span class="s">  predictor:
+</span></span></span><span class="line"><span class="cl"><span class="s">    serviceAccountName: ${SERVICE_ACCOUNT_NAME}
+</span></span></span><span class="line"><span class="cl"><span class="s">    model:
+</span></span></span><span class="line"><span class="cl"><span class="s">      modelFormat:
+</span></span></span><span class="line"><span class="cl"><span class="s">        name: sklearn
+</span></span></span><span class="line"><span class="cl"><span class="s">      image: ${ECR_IMAGE_URL}
+</span></span></span><span class="line"><span class="cl"><span class="s">      storageUri: ${S3_BUCKET_URL}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl apply -f inferenceService.yaml
+</span></span></code></pre></div><ol>
+<li>Check the InferenceService status:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kubectl get inferenceservices sklearn-iris -n <span class="si">${</span><span class="nv">PROFILE_NAMESPACE</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">NAME           URL                                                        READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
+</span></span><span class="line"><span class="cl">sklearn-iris   http://sklearn-iris.kubeflow-user-example-com.example.com   True           <span class="m">100</span>                              sklearn-iris-predictor-default-00001   105s
+</span></span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified September 19, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/5fdb7b1c3e53b8633d75b08253dc3aadba361c85">Kubeflow 1.6 docs (#365) (5fdb7b1c)</a>
+  Last modified November 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cc5098c9e6adbb6740cd50ee4cd5ad285ceb10c3">Cherry-pick Kserve with IRSA and Notebook culling Doc (#512) (cc5098c9)</a>
 </div>
 
 </div>
