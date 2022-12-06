@@ -19,7 +19,7 @@ resource "aws_secretsmanager_secret_version" "s3_secret_version" {
   })
 }
 
-resource "aws_s3_bucket_public_access_block" "example" {
+resource "aws_s3_bucket_public_access_block" "artifact_store_block_access" {
   bucket = aws_s3_bucket.artifact_store.id
 
   block_public_acls       = true
