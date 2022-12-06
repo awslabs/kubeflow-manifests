@@ -6,6 +6,12 @@ weight = 40
 
 We highly recommend that you follow AWS security best practices while provisioning any AWS resources. 
 
+## Default security configuration
+
+### Amazon Simple Storage Service (S3)
+
+The Amazon S3 bucket created for Kubeflow artifacts has a default ["block public access" configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html). 
+
 ## Security resources
 
 Refer to the following documents for more information: 
