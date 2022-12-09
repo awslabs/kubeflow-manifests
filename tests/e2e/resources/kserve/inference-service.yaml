@@ -1,0 +1,14 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    sidecar.istio.io/inject: 'false'
+  name: half-plus-two
+  namespace: kubeflow-example-com
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: tensorflow
+      storageUri: s3://s3-kserve-xugq6/saved_model_half_plus_two/
+    serviceAccountName: aws-sa

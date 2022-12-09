@@ -37,7 +37,7 @@ class Route53HostedZone:
 
     def create_zone(self) -> dict:
         randstr = "".join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+            random.choice(string.ascii_lowercase + string.digits) for _ in range(5)
         )
         try:
             response = self.route53_client.create_hosted_zone(

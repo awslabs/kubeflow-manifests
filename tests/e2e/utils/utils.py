@@ -104,10 +104,10 @@ def wait_for_kfp_run_succeeded_from_run_id(kfp_client, run_id):
 
 def rand_name(prefix):
     """
-    Returns a random string of 10 ascii lowercase characters appended to the prefix
+    Returns a random string of 5 ascii lowercase characters appended to the prefix
     """
     suffix = "".join(
-        random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+        random.choice(string.ascii_lowercase + string.digits) for _ in range(5)
     )
     return prefix + suffix
 

@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-predictor
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      component: predictor
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        paths:
+        - /metrics
+        - /healthz
+        - /ready
+        - /wait-for-drain
+        - /v1/models/*
+        - /v2/models/*

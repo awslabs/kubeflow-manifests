@@ -11,11 +11,12 @@ import time
 import pytest
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
-from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file
+from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file, exec_shell, load_json_file, kubectl_apply
 from e2e.utils.config import configure_resource_fixture, metadata
-
 from e2e.conftest import region
+from e2e.utils.load_balancer.setup_load_balancer import dns_update, wait_for_alb_dns, wait_for_alb_status, get_ingress
 
+from e2e.utils.kserve.inference_sample import run_inference_sample
 from e2e.fixtures.cluster import cluster
 from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
 from e2e.fixtures.clients import (
@@ -28,6 +29,7 @@ from e2e.fixtures.clients import (
     client_namespace,
 )
 
+from e2e.utils.aws.route53 import Route53HostedZone
 from e2e.utils.custom_resources import (
     create_katib_experiment_from_yaml,
     get_katib_experiment,
@@ -37,10 +39,11 @@ from e2e.utils.custom_resources import (
 from e2e.utils.load_balancer.common import CONFIG_FILE as LB_CONFIG_FILE
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
-
+from e2e.fixtures.kserve_denpendencies import  kserve_iam_service_account, kserve_secret, clone_tensorflow_serving, s3_bucket_with_training_data, kserve_inference_service
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
+KNATIVE_CONFIG_FILE = "./resources/kserve/knative-config.yaml"
 
 
 @pytest.fixture(scope="class")
@@ -92,6 +95,7 @@ def setup_load_balancer(metadata, region, request, cluster, installation, root_d
                 },
                 "subDomain": {
                     "name": subdomain_name,
+                    "subjectAlternativeNames": ["kubeflow-example-com." + subdomain_name]
                 },
             }
         }
@@ -103,6 +107,22 @@ def setup_load_balancer(metadata, region, request, cluster, installation, root_d
         )
         assert retcode == 0
         lb_deps["config"] = load_yaml_file(LB_CONFIG_FILE)
+
+        #update dns record for kserve domain
+        subdomain_hosted_zone_id = lb_deps["config"]["route53"]["subDomain"]["hostedZoneId"]
+        subdomain_hosted_zone = Route53HostedZone(domain=subdomain_name, region=region, id = subdomain_hosted_zone_id)
+        wait_for_alb_dns(cluster, region)
+        ingress = get_ingress(cluster, region)
+        alb_dns = ingress["status"]["loadBalancer"]["ingress"][0]["hostname"]
+        wait_for_alb_status(alb_dns, region)
+
+        _kserve_record = subdomain_hosted_zone.generate_change_record(
+        record_name="*.kubeflow-example-com." + subdomain_hosted_zone.domain,
+        record_type="CNAME",
+        record_value=[alb_dns],
+        )
+
+        subdomain_hosted_zone.change_record_set([_kserve_record])
 
     def on_delete():
         if metadata.get("lb_deps"):
@@ -224,3 +244,30 @@ class TestSanity:
             raise AssertionError("Expected K8sApiException Not Found")
         except K8sApiException as e:
             assert "Not Found" == e.reason
+
+    def test_kserve_with_irsa(self, region, metadata, kfp_client, clone_tensorflow_serving, kserve_iam_service_account, kserve_secret, s3_bucket_with_training_data, kserve_inference_service):
+        #Edit the ConfigMap to change the default domain as per your deployment
+        #kubectl edit configmap config-domain -n knative-serving
+        exec_shell(f"kubectl get configmap config-domain -n knative-serving -o yaml > {KNATIVE_CONFIG_FILE}")
+        subdomain = metadata.get("lb_deps").get("config").get("route53").get("subDomain").get("name")
+        knative_config = load_yaml_file(KNATIVE_CONFIG_FILE)
+        knative_config["data"][subdomain] = ""
+        del knative_config["data"]["_example"]
+        write_yaml_file(knative_config, KNATIVE_CONFIG_FILE)
+        kubectl_apply(KNATIVE_CONFIG_FILE)
+
+
+        #export env with subprocess
+        #run inference_sample.py
+
+        os.environ['KUBEFLOW_DOMAIN'] = subdomain
+        os.environ['PROFILE_NAMESPACE'] = "kubeflow-example-com"
+        os.environ['MODEL_NAME'] = "half-plus-two"
+        os.environ['AUTH_PROVIDER'] = "dex"
+
+        
+        assert run_inference_sample() == 200
+
+    
+
+    
