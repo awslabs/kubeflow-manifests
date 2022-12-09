@@ -6,13 +6,15 @@ weight = 20
 
 The [SageMaker Components for Kubeflow Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html) allow you to move your data processing and training jobs from the Kubernetes cluster to SageMaker’s machine learning-optimized managed service. 
 
-These components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines. Using the SageMaker components, each job in the pipeline workflow runs on SageMaker instead of the local Kubernetes cluster. The job parameters, status, logs, and outputs from SageMaker are accessible from the Kubeflow Pipelines UI. 
+These components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines. Using the SageMaker components, each job in the pipeline workflow runs on SageMaker instead of the local Kubernetes cluster. 
+
+This allows you to create and monitor native SageMaker training, tuning, endpoint deployment, and batch transform jobs from your Kubeflow Pipelines hence allowing you to move complete compute including data processing and training jobs from the Kubernetes cluster to SageMaker’s machine learning-optimized managed service. The job parameters, status, and outputs from SageMaker are accessible from the Kubeflow Pipelines UI. 
 
 ## Available components
 
 You can create a Kubeflow Pipeline built entirely using SageMaker components, or integrate individual components into your workflow as needed. Available Amazon SageMaker components can be found in the [Kubeflow Pipelines GitHub repository](https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker).
 
-There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components. 
+There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components. You can read more about the two versions in SageMaker developer guide in [AWS documentation](https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html#kubeflow-pipeline-components).
 
 
 ## Configure Permissions for Pipeline pods to access SageMaker
@@ -24,7 +26,8 @@ There is no additional configuration required for SageMaker Components V2 if you
 
 ### Configuration for SageMaker Components V1
 
-If you are also using the SageMaker components version 1. Grant SageMaker access to the service account used by kubeflow pipeline pods. Otherwise you can skip this section.
+To use SageMaker Components version 1, grant SageMaker access to the service account used by Kubeflow pipeline pods. We recommend completing these steps to avoid configuration in future but you can skip this section if you do not intend to use version 1 of the components
+
 
 Set the environment variable value for PROFILE_NAMESPACE(e.g. kubeflow-user-example-com) according to your profile and SERVICE_ACCOUNT name according to your installation:
 
@@ -48,7 +51,11 @@ eksctl create iamserviceaccount --name ${KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT} 
 ```
 
 
-## Tutorial: SageMaker Training Pipeline for MNIST Classification with K-Means
+# Tutorials
+
+There are a number of tutorials in kubeflow/pipelines repository available [here](https://github.com/kubeflow/pipelines/tree/master/samples/contrib/aws-samples). The following is a sample SageMaker training pipeline for MNIST Classification with K-Means.
+
+## SageMaker training pipeline for MNIST Classification with K-Means
 
 Kubeflow on AWS includes pipeline tutorials for SageMaker components that can be used to run a machine learning workflow with just a few clicks. To try out the examples, deploy Kubeflow on AWS on your cluster and visit the Kubeflow Dashboard `Pipelines` tab. The sample currently included with Kubeflow is based off of the v2 Training Component.
 
