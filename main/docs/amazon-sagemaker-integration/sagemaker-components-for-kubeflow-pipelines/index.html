@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/amazon-sagemaker-integration\/sagemaker-components-for-kubeflow-pipelines\/",
-      "wordCount" : "802",
+      "wordCount" : "974",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-22T17:35:34-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-12-09T15:02:29-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="SageMaker Components for Kubeflow Pipelines">
 <meta itemprop="description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-11-22T17:35:34-08:00" />
-<meta itemprop="wordCount" content="802">
+<meta itemprop="dateModified" content="2022-12-09T15:02:29-08:00" />
+<meta itemprop="wordCount" content="974">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SageMaker Components for Kubeflow Pipelines"/>
 <meta name="twitter:description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS"/>
@@ -403,12 +403,21 @@
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
     <li><a href="#available-components">Available components</a></li>
-    <li><a href="#tutorial-sagemaker-training-pipeline-for-mnist-classification-with-k-means">Tutorial: SageMaker Training Pipeline for MNIST Classification with K-Means</a></li>
-    <li><a href="#installing-kubeflow-pipelines">Installing Kubeflow Pipelines</a></li>
-    <li><a href="#s3-bucket">S3 Bucket</a></li>
-    <li><a href="#sagemaker-execution-iam-role">SageMaker execution IAM role</a></li>
-    <li><a href="#prepare-the-dataset">Prepare the dataset</a></li>
-    <li><a href="#run-the-sample-pipeline">Run the sample pipeline</a></li>
+    <li><a href="#configure-permissions-for-pipeline-pods-to-access-sagemaker">Configure Permissions for Pipeline pods to access SageMaker</a>
+      <ul>
+        <li><a href="#configuration-for-sagemaker-components-v2">Configuration for SageMaker Components V2</a></li>
+        <li><a href="#configuration-for-sagemaker-components-v1">Configuration for SageMaker Components V1</a></li>
+      </ul>
+    </li>
+    <li><a href="#tutorials">Tutorials</a>
+      <ul>
+        <li><a href="#sagemaker-training-pipeline-for-mnist-classification-with-k-means">SageMaker training pipeline for MNIST Classification with K-Means</a></li>
+        <li><a href="#s3-bucket">S3 Bucket</a></li>
+        <li><a href="#sagemaker-execution-iam-role">SageMaker execution IAM role</a></li>
+        <li><a href="#prepare-the-dataset">Prepare the dataset</a></li>
+        <li><a href="#run-the-sample-pipeline">Run the sample pipeline</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
 
@@ -472,18 +481,34 @@
 		
 	</header>    
 	<p>The <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html">SageMaker Components for Kubeflow Pipelines</a> allow you to move your data processing and training jobs from the Kubernetes cluster to SageMaker’s machine learning-optimized managed service.</p>
-<p>These components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines. Using the SageMaker components, each job in the pipeline workflow runs on SageMaker instead of the local Kubernetes cluster. The job parameters, status, logs, and outputs from SageMaker are accessible from the Kubeflow Pipelines UI.</p>
+<p>These components integrate SageMaker with the portability and orchestration of Kubeflow Pipelines. Using the SageMaker components, each job in the pipeline workflow runs on SageMaker instead of the local Kubernetes cluster.</p>
+<p>This allows you to create and monitor native SageMaker training, tuning, endpoint deployment, and batch transform jobs from your Kubeflow Pipelines hence allowing you to move complete compute including data processing and training jobs from the Kubernetes cluster to SageMaker’s machine learning-optimized managed service. The job parameters, status, and outputs from SageMaker are accessible from the Kubeflow Pipelines UI.</p>
 <h2 id="available-components">Available components</h2>
 <p>You can create a Kubeflow Pipeline built entirely using SageMaker components, or integrate individual components into your workflow as needed. Available Amazon SageMaker components can be found in the <a href="https://github.com/kubeflow/pipelines/tree/master/components/aws/sagemaker">Kubeflow Pipelines GitHub repository</a>.</p>
-<p>There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components.</p>
-<h2 id="tutorial-sagemaker-training-pipeline-for-mnist-classification-with-k-means">Tutorial: SageMaker Training Pipeline for MNIST Classification with K-Means</h2>
+<p>There are two versions of SageMaker components - boto3 based v1 components and SageMaker Operator for K8s (ACK) based v2 components. You can read more about the two versions in SageMaker developer guide in <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html#kubeflow-pipeline-components">AWS documentation</a>.</p>
+<h2 id="configure-permissions-for-pipeline-pods-to-access-sagemaker">Configure Permissions for Pipeline pods to access SageMaker</h2>
+<h3 id="configuration-for-sagemaker-components-v2">Configuration for SageMaker Components V2</h3>
+<p>There is no additional configuration required for SageMaker Components V2 if you have already installed the AWS distribution of Kubeflow.</p>
+<h3 id="configuration-for-sagemaker-components-v1">Configuration for SageMaker Components V1</h3>
+<p>To use SageMaker Components version 1, grant SageMaker access to the service account used by Kubeflow pipeline pods. We recommend completing these steps to avoid configuration in future but you can skip this section if you do not intend to use version 1 of the components</p>
+<p>Set the environment variable value for PROFILE_NAMESPACE(e.g. kubeflow-user-example-com) according to your profile and SERVICE_ACCOUNT name according to your installation:</p>
+<p><em><strong>Note:</strong></em>
+You will need to run these steps for every profile namespace you intend to use.</p>
+<pre tabindex="0"><code>export PROFILE_NAMESPACE=kubeflow-user-example-com
+export KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT=default-editor
+</code></pre><pre tabindex="0"><code># Export your cluster name and cluster region
+export CLUSTER_NAME=
+export CLUSTER_REGION=
+</code></pre><pre tabindex="0"><code># Create a service account in your specified profile namespace with SageMaker permissions
+
+eksctl create iamserviceaccount --name ${KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT} --namespace ${PROFILE_NAMESPACE} --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn arn:aws:iam::aws:policy/AmazonSageMakerFullAccess --override-existing-serviceaccounts --approve
+</code></pre><h2 id="tutorials">Tutorials</h2>
+<p>There are a number of tutorials in kubeflow/pipelines repository available <a href="https://github.com/kubeflow/pipelines/tree/master/samples/contrib/aws-samples">here</a>. The following is a sample SageMaker training pipeline for MNIST Classification with K-Means.</p>
+<h3 id="sagemaker-training-pipeline-for-mnist-classification-with-k-means">SageMaker training pipeline for MNIST Classification with K-Means</h3>
 <p>Kubeflow on AWS includes pipeline tutorials for SageMaker components that can be used to run a machine learning workflow with just a few clicks. To try out the examples, deploy Kubeflow on AWS on your cluster and visit the Kubeflow Dashboard <code>Pipelines</code> tab. The sample currently included with Kubeflow is based off of the v2 Training Component.</p>
 <p>In the following section we will walk through the steps to run the Sample SageMaker Training Pipeline. This sample runs a pipeline to train a classficiation model using Kmeans with MNIST dataset on SageMaker. This example was taken from an existing <a href="https://github.com/aws/amazon-sagemaker-examples/blob/8279abfcc78bad091608a4a7135e50a0bd0ec8bb/sagemaker-python-sdk/1P_kmeans_highlevel/kmeans_mnist.ipynb">SageMaker example</a> and modified to work with the Amazon SageMaker Components for Kubeflow Pipelines.</p>
 <p>Note:  The pipeline runs are executed in user namespaces using the default-editor Kubernetes service account.</p>
-<h2 id="installing-kubeflow-pipelines">Installing Kubeflow Pipelines</h2>
-<p>There are two ways to deploy Kubeflow Pipelines on AWS. If you are using the broader Kubeflow deployment, ACK and KFP come configured and ready to use with any of the Kubeflow on AWS deployment options. Read on to complete the pipeline execution.</p>
-<p>On the other hand, if you are using standalone KFP installation, please refer to our more detailed instructions over at the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html">AWS Docs for Kubeflow Pipeline Components</a>.</p>
-<h2 id="s3-bucket">S3 Bucket</h2>
+<h3 id="s3-bucket">S3 Bucket</h3>
 <p>To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. Run the following commands to create an S3 bucket. Specify the value for <code>SAGEMAKER_REGION</code> as the region you want to create your SageMaker resources. For ease of use in the samples (using the default values of the pipeline), we suggest using <code>us-east-1</code> as the region.</p>
 <pre tabindex="0"><code># Choose any name for your S3 bucket
 export SAGEMAKER_REGION=us-east-1
@@ -498,7 +523,7 @@ fi
 
 echo ${S3_BUCKET_NAME}
 </code></pre><p>Note down your S3 bucket name which will be used in the samples.</p>
-<h2 id="sagemaker-execution-iam-role">SageMaker execution IAM role</h2>
+<h3 id="sagemaker-execution-iam-role">SageMaker execution IAM role</h3>
 <p>The SageMaker training job needs an IAM role to access Amazon S3 and SageMaker. Run the following commands to create a SageMaker execution IAM role that is used by SageMaker to access AWS resources:</p>
 <pre tabindex="0"><code># Choose any name for your Sagemaker execution role
 export SAGEMAKER_EXECUTION_ROLE_NAME=&lt;sagemaker_role_name&gt;
@@ -512,7 +537,7 @@ export SAGEMAKER_EXECUTION_ROLE_ARN=$(aws iam get-role --role-name ${SAGEMAKER_E
 
 echo $SAGEMAKER_EXECUTION_ROLE_ARN
 </code></pre><p>Note down the execution role ARN to use in samples.</p>
-<h2 id="prepare-the-dataset">Prepare the dataset</h2>
+<h3 id="prepare-the-dataset">Prepare the dataset</h3>
 <p>To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. We will use the S3 bucket you created earlier and simply use the dataset at <code>s3://sagemaker-sample-files/datasets/image/MNIST/mnist.pkl.gz</code>.</p>
 <ol>
 <li>Clone this repository to use the pipelines and sample scripts.
@@ -524,7 +549,7 @@ cd tests/e2e
 python3 utils/s3_for_training/sync.py ${S3_BUCKET_NAME} ${SAGEMAKER_REGION}
 </code></pre></li>
 </ol>
-<h2 id="run-the-sample-pipeline">Run the sample pipeline</h2>
+<h3 id="run-the-sample-pipeline">Run the sample pipeline</h3>
 <ol>
 <li>
 <p>To run the pipeline, open the Pipelines Tab on the Kubeflow dashboard. You should be able to see the pipeline sample called - &ldquo;[Tutorial] SageMaker Training&rdquo;. Select to run. Make sure to either create a new experiment or use an existing one.</p>
@@ -546,7 +571,7 @@ region: us-east-1
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 22, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8e2ffc5958da6fd6e17790236c484938c20e318b">Kserve Doc for configuring IRSA to access AWS services (#501) (8e2ffc5)</a>
+  Last modified December 9, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/49c9a53789f5caddec0dfcf2a4b547636ed5476b">Add permission configuration steps to SageMaker KFP docs (#506) (49c9a53)</a>
 </div>
 
 </div>
