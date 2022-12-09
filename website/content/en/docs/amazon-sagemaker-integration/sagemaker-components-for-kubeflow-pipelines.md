@@ -51,11 +51,11 @@ eksctl create iamserviceaccount --name ${KUBEFLOW_PIPELINE_POD_SERVICE_ACCOUNT} 
 ```
 
 
-# Tutorials
+## Tutorials
 
 There are a number of tutorials in kubeflow/pipelines repository available [here](https://github.com/kubeflow/pipelines/tree/master/samples/contrib/aws-samples). The following is a sample SageMaker training pipeline for MNIST Classification with K-Means.
 
-## SageMaker training pipeline for MNIST Classification with K-Means
+### SageMaker training pipeline for MNIST Classification with K-Means
 
 Kubeflow on AWS includes pipeline tutorials for SageMaker components that can be used to run a machine learning workflow with just a few clicks. To try out the examples, deploy Kubeflow on AWS on your cluster and visit the Kubeflow Dashboard `Pipelines` tab. The sample currently included with Kubeflow is based off of the v2 Training Component.
 
@@ -63,12 +63,7 @@ In the following section we will walk through the steps to run the Sample SageMa
 
 Note:  The pipeline runs are executed in user namespaces using the default-editor Kubernetes service account.
 
-## Installing Kubeflow Pipelines
-There are two ways to deploy Kubeflow Pipelines on AWS. If you are using the broader Kubeflow deployment, ACK and KFP come configured and ready to use with any of the Kubeflow on AWS deployment options. Read on to complete the pipeline execution. 
-
-On the other hand, if you are using standalone KFP installation, please refer to our more detailed instructions over at the [AWS Docs for Kubeflow Pipeline Components](https://docs.aws.amazon.com/sagemaker/latest/dg/kubernetes-sagemaker-components-for-kubeflow-pipelines.html).
-
-## S3 Bucket
+### S3 Bucket
 To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. Run the following commands to create an S3 bucket. Specify the value for `SAGEMAKER_REGION` as the region you want to create your SageMaker resources. For ease of use in the samples (using the default values of the pipeline), we suggest using `us-east-1` as the region.
 
 ```
@@ -87,7 +82,7 @@ echo ${S3_BUCKET_NAME}
 ```
 Note down your S3 bucket name which will be used in the samples.
 
-## SageMaker execution IAM role
+### SageMaker execution IAM role
 The SageMaker training job needs an IAM role to access Amazon S3 and SageMaker. Run the following commands to create a SageMaker execution IAM role that is used by SageMaker to access AWS resources:
 
 ```
@@ -107,7 +102,7 @@ Note down the execution role ARN to use in samples.
 
 
 
-## Prepare the dataset
+### Prepare the dataset
 
 To train a model with SageMaker, we need an S3 bucket to store the dataset and artifacts from the training process. We will use the S3 bucket you created earlier and simply use the dataset at `s3://sagemaker-sample-files/datasets/image/MNIST/mnist.pkl.gz`.
 
@@ -122,7 +117,7 @@ To train a model with SageMaker, we need an S3 bucket to store the dataset and a
     python3 utils/s3_for_training/sync.py ${S3_BUCKET_NAME} ${SAGEMAKER_REGION}
     ```
 
-## Run the sample pipeline
+### Run the sample pipeline
 
 1. To run the pipeline, open the Pipelines Tab on the Kubeflow dashboard. You should be able to see the pipeline sample called - "[Tutorial] SageMaker Training". Select to run. Make sure to either create a new experiment or use an existing one. 
 
