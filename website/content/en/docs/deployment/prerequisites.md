@@ -98,10 +98,10 @@ Run the following command to configure AWS CLI:
 > Warning [Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html) users: When configuring your IAM credentials on Cloud9, we recommend using a [profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles). Click `Cancel` when a pop up "Could not update credentials" opens, then choose `Permanently disable` for the "Unable to update credentials" pop up.
 ```bash
 aws configure --profile=kubeflow
-AWS Access Key ID [None]: <enter access key id>
-AWS Secret Access Key [None]: <enter secret access key>
-Default region name [None]: <AWS region>
-Default output format [None]: json
+# AWS Access Key ID [None]: <enter access key id>
+# AWS Secret Access Key [None]: <enter secret access key>
+# Default region name [None]: <AWS region>
+# Default output format [None]: json
 
 # Set the AWS_PROFILE variable with the profile above
 export AWS_PROFILE=kubeflow
