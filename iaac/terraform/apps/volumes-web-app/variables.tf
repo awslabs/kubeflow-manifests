@@ -1,6 +1,6 @@
 variable "helm_config" {
-  type        = any
-  default     = {}
+  type    = any
+  default = {}
 }
 
 variable "addon_context" {

@@ -22,24 +22,24 @@ variable "addon_context" {
 
 variable "enable_aws_telemetry" {
   description = "Enable AWS telemetry component"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "notebook_enable_culling" {
   description = "Enable Notebook culling feature. If set to true then the Notebook Controller will scale all Notebooks with Last activity older than the notebook_cull_idle_time to zero"
-  type = string
-  default = false
+  type        = string
+  default     = false
 }
 
 variable "notebook_cull_idle_time" {
   description = "If a Notebook's LAST_ACTIVITY_ANNOTATION from the current timestamp exceeds this value then the Notebook will be scaled to zero (culled). ENABLE_CULLING must be set to 'true' for this setting to take effect.(minutes)"
-  type = string
-  default = 30
+  type        = string
+  default     = 30
 }
 
 variable "notebook_idleness_check_period" {
   description = "How frequently the controller should poll each Notebook to update its LAST_ACTIVITY_ANNOTATION (minutes)"
-  type = string
-  default = 5
+  type        = string
+  default     = 5
 }
