@@ -102,6 +102,9 @@ pwd
     EOF
     ```
 
+### (Optional) Configure Culling for Notebooks
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
+
 ### View all Configurations
 
 View [all possible configuration options of the terraform stack](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf) in the `variables.tf` file.

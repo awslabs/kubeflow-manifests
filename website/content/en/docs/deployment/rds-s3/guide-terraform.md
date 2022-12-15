@@ -77,6 +77,9 @@ pwd
     EOF
     ```
 
+### (Optional) Configure Culling for Notebooks
+Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
+
 ### All Configurations
 
 A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/rds-s3/terraform/variables.tf).

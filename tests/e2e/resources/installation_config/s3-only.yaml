@@ -294,7 +294,7 @@ katib:
       paths:
         - ../../upstream/apps/katib/upstream/installs/katib-with-kubeflow
     helm: 
-      paths: ../../charts/apps/katib
+      paths: ../../charts/apps/katib/vanilla
   validations:
     pods: 
       namespace: kubeflow
