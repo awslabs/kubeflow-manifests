@@ -8,6 +8,10 @@
 	</button>
 	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
 		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
 			{{ $p := . }}
 			{{ range .Site.Menus.main }}
 			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
@@ -34,4 +38,5 @@
 			{{ end }}
 		</ul>
 	</div>
+	
 </nav>
