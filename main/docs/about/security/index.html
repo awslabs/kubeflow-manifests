@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/about\/security\/",
-      "wordCount" : "84",
+      "wordCount" : "233",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/about/security/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-09T15:02:29-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-12-20T14:49:12-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Security">
 <meta itemprop="description" content="Follow AWS security best practices when using Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-12-09T15:02:29-08:00" />
-<meta itemprop="wordCount" content="84">
+<meta itemprop="dateModified" content="2022-12-20T14:49:12-07:00" />
+<meta itemprop="wordCount" content="233">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Security"/>
 <meta name="twitter:description" content="Follow AWS security best practices when using Kubeflow on AWS"/>
@@ -394,6 +394,17 @@
             
 
 
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#default-security-configuration">Default security configuration</a>
+      <ul>
+        <li><a href="#amazon-simple-storage-service-s3">Amazon Simple Storage Service (S3)</a></li>
+      </ul>
+    </li>
+    <li><a href="#security-resources">Security resources</a></li>
+  </ul>
+</nav></div>
+
 
 
             
@@ -454,6 +465,14 @@
 		
 	</header>    
 	<p>We highly recommend that you follow AWS security best practices while provisioning any AWS resources.</p>
+<h2 id="default-security-configuration">Default security configuration</h2>
+<h3 id="amazon-simple-storage-service-s3">Amazon Simple Storage Service (S3)</h3>
+<p>When you use Amazon S3 for kubeflow artifact storage, Kubeflow on AWS configures the Amazon S3 bucket to use <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html">server-side encryption with Amazon S3-managed encryption keys</a> (SSE-S3). If you prefer to use <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html">server-side encryption with AWS Key Management Service</a> (SSE-KMS), you can modify these files to specify an AWS KMS key.</p>
+<ul>
+<li><a href="https://github.com/awslabs/kubeflow-manifests/blob/main/iaac/terraform/aws-infra/s3/main.tf">main.tf</a> for Terraform deployments</li>
+<li><a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/rds-s3/auto-rds-s3-setup.py">auto-rds-s3-setup.py</a> for manifest deployments</li>
+</ul>
+<p>Both SSE-S3 and SSE-KMS provide encryption of objects in the Amazon S3 bucket. You may prefer SSE-KMS if you want to separate the management of encryption keys (via AWS KMS) from management of the Amazon S3 bucket. That separation may provide a stronger security posture. In order to access and use an object in an Amazon S3 bucket, a user needs permission to read the object in the Amazon S3 bucket as well as permission to use the AWS KMS encryption key.</p>
 <h2 id="security-resources">Security resources</h2>
 <p>Refer to the following documents for more information:</p>
 <ul>
@@ -470,7 +489,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified December 9, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/49c9a53789f5caddec0dfcf2a4b547636ed5476b">Add permission configuration steps to SageMaker KFP docs (#506) (49c9a53)</a>
+  Last modified December 20, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/3f318988b464d8795d2c5b673a22e1ffd7fc06b7">Enable SSE-s3 encryption on S3 buckets by default (#517) (3f31898)</a>
 </div>
 
 </div>

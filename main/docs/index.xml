@@ -4529,6 +4529,14 @@ Additionally you have to set the Terraform variable &lt;code&gt;create_subdomain
         
         
         &lt;p&gt;We highly recommend that you follow AWS security best practices while provisioning any AWS resources.&lt;/p&gt;
+&lt;h2 id=&#34;default-security-configuration&#34;&gt;Default security configuration&lt;/h2&gt;
+&lt;h3 id=&#34;amazon-simple-storage-service-s3&#34;&gt;Amazon Simple Storage Service (S3)&lt;/h3&gt;
+&lt;p&gt;When you use Amazon S3 for kubeflow artifact storage, Kubeflow on AWS configures the Amazon S3 bucket to use &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html&#34;&gt;server-side encryption with Amazon S3-managed encryption keys&lt;/a&gt; (SSE-S3). If you prefer to use &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html&#34;&gt;server-side encryption with AWS Key Management Service&lt;/a&gt; (SSE-KMS), you can modify these files to specify an AWS KMS key.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/iaac/terraform/aws-infra/s3/main.tf&#34;&gt;main.tf&lt;/a&gt; for Terraform deployments&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/rds-s3/auto-rds-s3-setup.py&#34;&gt;auto-rds-s3-setup.py&lt;/a&gt; for manifest deployments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both SSE-S3 and SSE-KMS provide encryption of objects in the Amazon S3 bucket. You may prefer SSE-KMS if you want to separate the management of encryption keys (via AWS KMS) from management of the Amazon S3 bucket. That separation may provide a stronger security posture. In order to access and use an object in an Amazon S3 bucket, a user needs permission to read the object in the Amazon S3 bucket as well as permission to use the AWS KMS encryption key.&lt;/p&gt;
 &lt;h2 id=&#34;security-resources&#34;&gt;Security resources&lt;/h2&gt;
 &lt;p&gt;Refer to the following documents for more information:&lt;/p&gt;
 &lt;ul&gt;
