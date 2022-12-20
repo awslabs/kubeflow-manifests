@@ -135,6 +135,19 @@ def create_s3_bucket(s3_client):
     )
     print("S3 bucket created!")
 
+    s3_client.put_bucket_encryption(
+        Bucket=S3_BUCKET_NAME,
+        ServerSideEncryptionConfiguration={
+            'Rules': [
+                {
+                    'ApplyServerSideEncryptionByDefault': {
+                        'SSEAlgorithm': 'AES256'
+                    }
+                },
+            ]
+        }
+    )
+
 
 def setup_s3_secrets(secrets_manager_client):
     if not does_secret_already_exist(secrets_manager_client, S3_SECRET_NAME):
