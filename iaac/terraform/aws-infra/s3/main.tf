@@ -28,3 +28,12 @@ resource "aws_secretsmanager_secret_version" "s3_secret_version" {
     secretkey = var.minio_aws_secret_access_key
   })
 }
+
+resource "aws_s3_bucket_public_access_block" "artifact_store_block_access" {
+  bucket = aws_s3_bucket.artifact_store.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}

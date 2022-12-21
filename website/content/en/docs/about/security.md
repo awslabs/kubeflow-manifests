@@ -10,6 +10,12 @@ We highly recommend that you follow AWS security best practices while provisioni
 
 ### Amazon Simple Storage Service (S3)
 
+#### Block public access
+
+The Amazon S3 bucket created for Kubeflow artifacts has a default ["block public access" configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html). 
+
+#### Encryption
+
 When you use Amazon S3 for kubeflow artifact storage, Kubeflow on AWS configures the Amazon S3 bucket to use [server-side encryption with Amazon S3-managed encryption keys](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html) (SSE-S3). If you prefer to use [server-side encryption with AWS Key Management Service](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html) (SSE-KMS), you can modify these files to specify an AWS KMS key.
 
 * [main.tf](https://github.com/awslabs/kubeflow-manifests/blob/main/iaac/terraform/aws-infra/s3/main.tf) for Terraform deployments
