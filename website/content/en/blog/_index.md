@@ -17,6 +17,11 @@ Want to try the latest version of Kubeflow on AWS? Follow the steps in [Kubeflow
 A curated list of blogs illustrating how to build flexible, scalable ML workflows on Kubernetes using AWS distribution of Kubeflow. 
 Find case studies, use cases, best practices, benchmarks, and more.
 
+1. [Enabling hybrid ML workflows on Amazon EKS and Amazon SageMaker with one-click Kubeflow on AWS deployment](https://aws.amazon.com/blogs/machine-learning/enabling-hybrid-ml-workflows-on-amazon-eks-and-amazon-sagemaker-with-one-click-kubeflow-on-aws-deployment/) - In this blog, we discuss Kubeflow on AWS v1.6.1 features and highlight three important integrations that have been bundled on one platform to offer: 
+* Infrastructure as Code (IaaC) one-click solution that automates the end-to-end installation of Kubeflow, including EKS cluster creation
+* Support for distributed training on Amazon SageMaker 
+* Enhanced monitoring and observability for ML workloads using Amazon Managed Prometheus (AMP) and Amazon Managed Grafana
+
 1. [Build and deploy a scalable machine learning system on Kubernetes with Kubeflow on AWS](https://aws.amazon.com/blogs/machine-learning/build-and-deploy-a-scalable-machine-learning-system-on-kubernetes-with-kubeflow-on-aws/). This blog post is based on Kubeflow-1.4 and is listed here for educational purpose. AWS distribution of Kubeflow might have changed since then. We recommend to install the [latest version](http://localhost:1313/kubeflow-manifests/main/docs/deployment/prerequisites/).
 
 1. Find out how [Athenahealth uses Kubeflow on AWS](https://aws.amazon.com/blogs/machine-learning/build-repeatable-secure-and-extensible-end-to-end-machine-learning-workflows-using-kubeflow-on-aws/) to build and streamline an end-to-end data science workflow that preserves essential tooling, optimizes operational efficiency, increases data scientist productivity, and sets the stage for extending their ML capabilities more easily.
@@ -29,6 +34,9 @@ Find case studies, use cases, best practices, benchmarks, and more.
 ## Watch 
 
 This section curates a list of recorded virtual workshops, demos, and general presentations illustrating how to leverage Kubeflow on AWS and SageMaker to build, run, and monitor scalable ML workflows on Kubernetes.
+
+1. [Train and deploy your deep learning models with AWS distribution of Kubeflow integrated with Amazon SageMaker](https://pages.awscloud.com/Train-and-deploy-your-deep-learning-models-with-AWS-distribution-of-Kubeflow-integrated-with-Amazon-SageMaker_2022_VW_s50e02-MCL_OD) - This workshop covers Kubeflow on AWS v1.6 architecture and is using one-click solution that is now provided in AWS Kubeflow distribution to automate end to end deployment of Amazon EKS and Kubeflow.
+The workshop has further used this automated setup to demonstrate how Amazon Sagemaker could be leveraged from Kubeflow Pipelines using latest SageMaker components that now supports SageMaker ACK Operators to run PyTorch based distributed model training.
 
 1. [AWS Virtual Workshop "Distributed Training using PyTorch with Kubeflow on AWS and AWS DLC"](http://youtu.be/qctwfYZKK8M) - Demonstrates how Kubeflow on AWS integration with AWS Deep Learning Containers and Amazon Elastic File System (Amazon EFS) allows building and training PyTorch based deep learning models on both Amazon SageMaker and Amazon Elastic Kubernetes Service (EKS) with flexibility and scale in a hybrid architecture. Attended by over 50 customers. Aug 23rd, 2022
 
