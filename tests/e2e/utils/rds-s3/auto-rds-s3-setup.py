@@ -615,7 +615,7 @@ parser.add_argument(
     help=f"Default is set to {DB_BACKUP_RETENTION_PERIOD_DEFAULT}",
     required=False,
 )
-DB_STORAGE_TYPE_DEFAULT = "gp2"
+DB_STORAGE_TYPE_DEFAULT = "gp3"
 parser.add_argument(
     "--db_storage_type",
     type=str,

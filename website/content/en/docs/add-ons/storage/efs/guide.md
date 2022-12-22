@@ -210,16 +210,16 @@ Once you have everything setup, Port Forward as needed and Login to the Kubeflow
 For more details on how to access your Kubeflow dashboard, refer to one of the [deployment option guides]({{< ref "/docs/deployment" >}}) based on your setup. If you used the vanilla deployment, see [Connect to your Kubeflow cluster]({{< ref "/docs/deployment/vanilla/guide.md#connect-to-your-kubeflow-cluster" >}}).
 
 ### 3.2 Changing the default Storage Class
-After installing Kubeflow, you can change the default Storage Class from `gp2` to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named `efs-sc`. You can check your storage classes by running `kubectl get sc`.  
+After installing Kubeflow, you can change the default Storage Class from `gp3` to the efs storage class you created during the setup. For instance, if you followed the automatic or manual steps, you should have a storage class named `efs-sc`. You can check your storage classes by running `kubectl get sc`.  
   
-This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the `efs-sc` class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using `gp2` for workspace volumes and keep the EFS storage class for datasets/data volumes only.
+This is can be useful if your notebook configuration is set to use the default storage class (it is the case by default). By changing the default storage class, when creating workspace volumes for your notebooks, it will use your EFS storage class automatically. This is not mandatory as you can also manually create a PVC and select the `efs-sc` class via the Volume UI but can facilitate the notebook creation process and automatically select this class when creating volume in the UI. You can also decide to keep using `gp3` for workspace volumes and keep the EFS storage class for datasets/data volumes only.
   
 To learn more about how to change the default Storage Class, you can refer to the [official Kubernetes documentation](https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/#changing-the-default-storageclass).  
   
-For instance, if you have a default class set to `gp2` and another class `efs-sc`, then you would need to do the following : 
-1. Remove `gp2` as your default storage class
+For instance, if you have a default class set to `gp3` and another class `efs-sc`, then you would need to do the following : 
+1. Remove `gp3` as your default storage class
 ```bash
-kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass gp3 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 ```
 2. Set `efs-sc` as your default storage class
 ```bash
