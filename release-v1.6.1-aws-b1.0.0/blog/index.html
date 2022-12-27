@@ -29,7 +29,7 @@
       "datePublished": "2022-10-10 00:00:00 \u002b0000 UTC",
       "dateModified" : "2022-10-10 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.0\/blog\/",
-      "wordCount" : "421",
+      "wordCount" : "591",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -234,6 +234,14 @@
 <p>A curated list of blogs illustrating how to build flexible, scalable ML workflows on Kubernetes using AWS distribution of Kubeflow.
 Find case studies, use cases, best practices, benchmarks, and more.</p>
 <ol>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/enabling-hybrid-ml-workflows-on-amazon-eks-and-amazon-sagemaker-with-one-click-kubeflow-on-aws-deployment/">Enabling hybrid ML workflows on Amazon EKS and Amazon SageMaker with one-click Kubeflow on AWS deployment</a> - In this blog, we discuss Kubeflow on AWS v1.6.1 features and highlight three important integrations that have been bundled on one platform to offer:</li>
+</ol>
+<ul>
+<li>Infrastructure as Code (IaaC) one-click solution that automates the end-to-end installation of Kubeflow, including EKS cluster creation.</li>
+<li>Support for running machine learning workloads on Amazon SageMaker from Kubeflow.</li>
+<li>Enhanced monitoring and observability for ML workloads using Amazon Managed Prometheus (AMP) and Amazon Managed Grafana.</li>
+</ul>
+<ol>
 <li>
 <p><a href="https://aws.amazon.com/blogs/machine-learning/build-and-deploy-a-scalable-machine-learning-system-on-kubernetes-with-kubeflow-on-aws/">Build and deploy a scalable machine learning system on Kubernetes with Kubeflow on AWS</a>. This blog post is based on Kubeflow-1.4 and is listed here for educational purpose. AWS distribution of Kubeflow might have changed since then. We recommend to install the <a href="http://localhost:1313/kubeflow-manifests/main/docs/deployment/prerequisites/">latest version</a>.</p>
 </li>
@@ -250,6 +258,10 @@ Find case studies, use cases, best practices, benchmarks, and more.</p>
 <h2 id="watch">Watch</h2>
 <p>This section curates a list of recorded virtual workshops, demos, and general presentations illustrating how to leverage Kubeflow on AWS and SageMaker to build, run, and monitor scalable ML workflows on Kubernetes.</p>
 <ol>
+<li>
+<p><a href="https://pages.awscloud.com/Train-and-deploy-your-deep-learning-models-with-AWS-distribution-of-Kubeflow-integrated-with-Amazon-SageMaker_2022_VW_s50e02-MCL_OD">Train and deploy your deep learning models with AWS distribution of Kubeflow integrated with Amazon SageMaker</a> - This workshop covers Kubeflow on AWS v1.6 architecture and is using one-click solution that is now provided in AWS Kubeflow distribution to automate end to end deployment of Amazon EKS and Kubeflow.
+The workshop has further used this automated setup to demonstrate how Amazon Sagemaker could be leveraged from Kubeflow Pipelines using latest SageMaker components that now supports SageMaker ACK Operators to run PyTorch based distributed model training.</p>
+</li>
 <li>
 <p><a href="http://youtu.be/qctwfYZKK8M">AWS Virtual Workshop &ldquo;Distributed Training using PyTorch with Kubeflow on AWS and AWS DLC&rdquo;</a> - Demonstrates how Kubeflow on AWS integration with AWS Deep Learning Containers and Amazon Elastic File System (Amazon EFS) allows building and training PyTorch based deep learning models on both Amazon SageMaker and Amazon Elastic Kubernetes Service (EKS) with flexibility and scale in a hybrid architecture. Attended by over 50 customers. Aug 23rd, 2022</p>
 </li>
@@ -279,7 +291,7 @@ Find case studies, use cases, best practices, benchmarks, and more.</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified December 9, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/6919701dd982d41513a2a93358098cc05c4d13bb">Cherrypick: Add permission configuration steps to SageMaker KFP docs (#506) (#528) (6919701)</a>
+  Last modified December 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/86ce59a8d5a18764ebca4d62209aac20421b33ad">New blog/workshop update - 1.6 (#533) (86ce59a)</a>
 </div>
 
 </div>
