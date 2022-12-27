@@ -10,5 +10,5 @@ spec:
     model:
       modelFormat:
         name: tensorflow
-      storageUri: s3://s3-kserve-xugq6/saved_model_half_plus_two/
+      storageUri: ${S3_BUCKET_URI}
     serviceAccountName: aws-sa
