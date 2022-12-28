@@ -124,7 +124,29 @@ def create_s3_bucket(s3_client):
         args["CreateBucketConfiguration"] = {"LocationConstraint": CLUSTER_REGION}
 
     s3_client.create_bucket(**args)
+    s3_client.put_public_access_block(
+        Bucket=S3_BUCKET_NAME,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': True,
+            'IgnorePublicAcls': True,
+            'BlockPublicPolicy': True,
+            'RestrictPublicBuckets': True
+        }
+    )
     print("S3 bucket created!")
+
+    s3_client.put_bucket_encryption(
+        Bucket=S3_BUCKET_NAME,
+        ServerSideEncryptionConfiguration={
+            'Rules': [
+                {
+                    'ApplyServerSideEncryptionByDefault': {
+                        'SSEAlgorithm': 'AES256'
+                    }
+                },
+            ]
+        }
+    )
 
 
 def setup_s3_secrets(secrets_manager_client):
