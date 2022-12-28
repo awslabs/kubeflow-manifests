@@ -1,0 +1,200 @@
+dex:
+  kustomization_paths:
+    - upstream/common/dex/overlays/istio
+  output_helm_chart_path: charts/common/dex
+
+
+ingress:
+  deployment_options:
+    cognito:
+      kustomization_paths:
+      - awsconfigs/common/istio-ingress/overlays/cognito
+      output_helm_chart_path: charts/common/ingress/cognito
+
+
+katib: 
+  deployment_options:
+    vanilla:
+      kustomization_paths:
+      - upstream/apps/katib/upstream/installs/katib-with-kubeflow
+      output_helm_chart_path: charts/apps/katib/vanilla
+    katib-external-db-with-kubeflow:
+      kustomization_paths:
+      - awsconfigs/apps/katib-external-db-with-kubeflow
+      output_helm_chart_path: charts/apps/katib/katib-external-db-with-kubeflow
+      
+
+istio-1-14:
+  kustomization_paths:
+    - upstream/common/istio-1-14/istio-crds/base
+    - upstream/common/istio-1-14/istio-namespace/base
+    - upstream/common/istio-1-14/istio-install/base
+  output_helm_chart_path: ../charts/common/istio-1-14
+
+
+kubeflow-issuer:
+  kustomization_paths:
+    - upstream/common/cert-manager/kubeflow-issuer/base
+  output_helm_chart_path: charts/common/kubeflow-issuer
+
+
+oidc-authservice:
+  kustomization_paths:
+    - upstream/common/oidc-authservice/base
+  output_helm_chart_path: charts/common/oidc-authservice
+
+
+cluster-local-gateway:
+  kustomization_paths:
+    - upstream/common/istio-1-14/cluster-local-gateway/base
+  output_helm_chart_path: charts/common/cluster-local-gateway
+  
+
+kubeflow-namespace:
+  kustomization_paths:
+    - upstream/common/kubeflow-namespace/base
+  output_helm_chart_path: charts/common/kubeflow-namespace
+
+
+kubeflow-istio-resources:
+  kustomization_paths:
+    - upstream/common/istio-1-14/kubeflow-istio-resources/base
+  output_helm_chart_path: charts/common/kubeflow-istio-resources
+
+
+kubeflow-roles:
+  kustomization_paths:
+    - upstream/common/kubeflow-roles/base
+  output_helm_chart_path: charts/common/kubeflow-roles
+
+
+knative-serving:
+  kustomization_paths:
+    - upstream/common/knative/knative-serving/overlays/gateways
+  output_helm_chart_path: charts/common/knative-serving
+
+
+knative-eventing:
+  kustomization_paths:
+    - upstream/common/knative/knative-eventing/base
+  output_helm_chart_path: charts/common/knative-eventing
+
+
+kserve:
+  kustomization_paths:
+    - awsconfigs/apps/kserve
+  output_helm_chart_path: charts/common/kserve
+
+
+models-web-app:
+  kustomization_paths:
+    - upstream/contrib/kserve/models-web-app/overlays/kubeflow
+  output_helm_chart_path: charts/apps/models-web-app
+
+
+central-dashboard:
+  kustomization_paths:
+    - awsconfigs/apps/centraldashboard
+  output_helm_chart_path: charts/apps/central-dashboard
+
+
+aws-secrets-manager:
+  deployment_options:
+    rds-s3:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager
+      output_helm_chart_path: charts/common/aws-secrets-manager/rds-s3
+    rds-only:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager/rds
+      output_helm_chart_path: charts/common/aws-secrets-manager/rds-only
+    s3-only:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager/s3
+      output_helm_chart_path: charts/common/aws-secrets-manager/s3-only
+
+
+kubeflow-pipelines:
+  deployment_options:
+    vanilla:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/base
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/vanilla
+    rds-s3:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-s3
+    rds-only:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/rds
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-only
+    s3-only:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/s3
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/s3-only
+
+
+admission-webhook:
+  kustomization_paths:
+    - upstream/apps/admission-webhook/upstream/overlays/cert-manager
+  output_helm_chart_path: charts/apps/admission-webhook
+
+
+jupyter-web-app:
+  kustomization_paths:
+    - awsconfigs/apps/jupyter-web-app
+  output_helm_chart_path: charts/apps/jupyter-web-app
+
+
+notebook-controller:
+  kustomization_paths:
+    - awsconfigs/apps/notebook-controller
+  output_helm_chart_path: charts/apps/notebook-controller
+
+
+volumes-web-app:
+  kustomization_paths:
+    - upstream/apps/volumes-web-app/upstream/overlays/istio
+  output_helm_chart_path: charts/apps/volumes-web-app
+
+
+training-operator:
+  kustomization_paths:
+    - upstream/apps/training-operator/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/training-operator
+
+
+tensorboards-web-app:
+  kustomization_paths:
+    - upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  output_helm_chart_path: charts/apps/tensorboards-web-app
+
+
+tensorboard-controller:
+  kustomization_paths:
+    - upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/tensorboard-controller
+
+
+profiles-and-kfam:
+  kustomization_paths:
+    - upstream/apps/profiles/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/profiles-and-kfam
+
+
+user-namespace:
+  kustomization_paths:
+    - upstream/common/user-namespace/base
+  output_helm_chart_path: charts/common/user-namespace
+
+
+aws-authservice:
+  kustomization_paths:
+    - awsconfigs/common/aws-authservice/base
+  output_helm_chart_path: charts/common/aws-authservice
+
+
+aws-telemetry:
+  kustomization_paths:
+    - awsconfigs/common/aws-telemetry
+  output_helm_chart_path: charts/common/aws-telemetry
