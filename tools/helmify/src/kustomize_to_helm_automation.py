@@ -295,6 +295,8 @@ def generate_helm_chart(
     kustomize_paths: list,
     helm_chart_name: str,
     output_helm_chart_path: str,
+    version: str,
+    app_version: str,
     deployment_option=None,
 ):
     print_banner(f"==========Converting '{helm_chart_name}'==========")
@@ -320,6 +322,7 @@ def generate_helm_chart(
     split_yaml(kustomized_file_list, splitted_output_path, kustomized_output_files_dir)
     print("Creating Helm Chart Based On Kustomize Build Output")
     create_helm_chart(output_helm_chart_path, helm_chart_name)
+    update_helm_chart_versions(output_helm_chart_path, version, app_version)
     move_generated_helm_files_to_folder(helm_temp_dir, splitted_output_path)
     failed_filelist = find_potential_failed_yaml_files(helm_temp_dir)
     clean_up_folder(splitted_output_path)
@@ -329,6 +332,13 @@ def generate_helm_chart(
         clean_up_folder(helm_temp_dir)
 
 
+def update_helm_chart_versions(output_helm_chart_path: str, version: str, app_version: str):
+    chart_info = load_yaml_file(file_path=f"{output_helm_chart_path}/Chart.yaml")
+    chart_info["version"] = version
+    chart_info["appVersion"] = app_version
+    write_yaml_file(yaml_content=chart_info, file_path=f"{output_helm_chart_path}/Chart.yaml")
+
+
 def main():
     config_file_path = common.CONFIG_FILE
     print_banner("Reading Config")
@@ -336,7 +346,7 @@ def main():
 
     for component in Components:
         helm_chart_name = component
-
+        
         if "deployment_options" in cfg[component]:
             for deployment_option in POSSIBLE_DEPLOYMENT_OPTIONS:
                 if deployment_option in cfg[component]["deployment_options"]:
@@ -346,17 +356,25 @@ def main():
                     output_helm_chart_path = cfg[component]["deployment_options"][
                         deployment_option
                     ]["output_helm_chart_path"]
+                    version = cfg[component]["deployment_options"][
+                        deployment_option]["version"]
+                    app_version = cfg[component]["deployment_options"][
+                        deployment_option]["app_version"]
                     generate_helm_chart(
                         kustomize_paths,
                         helm_chart_name,
                         output_helm_chart_path,
+                        version,
+                        app_version,
                         deployment_option,
                     )
         else:
+            version = cfg[component]["version"]
+            app_version = cfg[component]["app_version"]
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
             generate_helm_chart(
-                kustomize_paths, helm_chart_name, output_helm_chart_path
+                kustomize_paths, helm_chart_name, output_helm_chart_path, version, app_version
             )
 
 
