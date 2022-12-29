@@ -1,0 +1,90 @@
+notebook-controller:
+  value_file_template:
+    cullingPolicy:
+      enableCulling: false
+      cullIdleTime: 5
+      idlenessCheckPeriod: 30
+  params:
+    env_dict:
+    - enableCulling: "{{ .Values.cullingPolicy.enableCulling }}"
+      cullIdleTime: "{{ .Values.cullingPolicy.cullIdleTime }}"
+      idlenessCheckPeriod: "{{ .Values.cullingPolicy.idlenessCheckPeriod }}"
+    paths: 
+      - awsconfigs/apps/notebook-controller/params.env
+  values_path: charts/apps/notebook-controller/values.yaml
+
+
+kubeflow-pipelines:
+  deployment_options:
+    rds-s3:
+      value_file_template:
+        rds:
+          dbHost: ''
+          mlmdDb: ''
+        s3:
+          bucketName: ''
+          minioServiceHost: s3.amazonaws.com
+          minioServiceRegion: ''
+      values_path: charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+    s3-only:
+      value_file_template:
+        s3:
+          bucketName: ''
+          minioServiceHost: s3.amazonaws.com
+          minioServiceRegion: '' 
+      values_path: charts/apps/kubeflow-pipelines/s3-only/values.yaml
+    rds-only:
+      value_file_template:
+        rds:
+          dbHost: ''
+          mlmdDb: ''
+      values_path: charts/apps/kubeflow-pipelines/rds-only/values.yaml
+  params: 
+    env_dict:
+    - bucketName: "{{ .Values.s3.bucketName }}"
+      minioServiceHost: "{{ .Values.s3.minioServiceHost }}"
+      minioServiceRegion: "{{ .Values.s3.minioServiceRegion }}"
+    - dbHost: "{{ .Values.rds.dbHost }}"
+      mlmdDb: "{{ .Values.rds.mlmdDb }}"
+    paths: 
+      - awsconfigs/apps/pipeline/s3/params.env
+      - awsconfigs/apps/pipeline/rds/params.env
+    
+    
+aws-authservice:
+  value_file_template:
+    LOGOUT_URL: ''
+  params:
+    env_dict:
+    - LOGOUT_URL: "{{ .Values.LOGOUT_URL }}"
+    paths: 
+      - awsconfigs/common/aws-authservice/base/params.env
+  values_path: charts/common/aws-authservice/values.yaml
+    
+
+ingress:
+  deployment_options:
+    cognito:
+      value_file_template:
+        alb:
+          certArn: ''
+          cognito:
+            UserPoolArn: '' 
+            UserPoolDomain: '' 
+            appClientId: ''
+          scheme: internet-facing
+      values_path: charts/common/ingress/cognito/values.yaml
+  params: 
+    env_dict:
+    - CognitoUserPoolArn: "{{ .Values.alb.cognito.UserPoolArn }}"
+      CognitoAppClientId: "{{ .Values.alb.cognito.appClientId }}"
+      CognitoUserPoolDomain: "{{ .Values.alb.cognito.UserPoolDomain }}"
+      ertArn: "{{ .Values.alb.certArn }}"
+    - loadBalancerScheme: "{{ .Values.alb.scheme }}"
+    paths: 
+      - awsconfigs/common/istio-ingress/overlays/cognito/params.env
+      - awsconfigs/common/istio-ingress/base/params.env
+
+  
+
+
