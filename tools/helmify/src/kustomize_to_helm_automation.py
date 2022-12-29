@@ -341,7 +341,18 @@ def generate_helm_chart(
 
     if helm_chart_name in values_config:
         component_values_config = values_config[helm_chart_name]
-        write_params_file(component_values_config)
+        #edge case for aws-secrets-manager
+        if helm_chart_name == "aws-secrets-manager":
+            #rds
+            rds_value = "{{ .Values.rds.secretName }}"
+            cmd = f"yq e -i '.spec.parameters.objects |= sub(\"rds-secret\", \"{rds_value}\")' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
+            exec_shell(cmd)
+            #s3
+            s3_value = "{{ .Values.s3.secretName }}"
+            cmd = f"yq e -i '.spec.parameters.objects |= sub(\"s3-secret\", \"{s3_value}\")' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
+            exec_shell(cmd)
+        else:
+            write_params_file(component_values_config)
 
     kustomized_file_list = kustomize_build(
         kustomize_paths, helm_chart_name, kustomized_output_files_dir

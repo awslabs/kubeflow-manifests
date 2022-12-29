@@ -85,6 +85,25 @@ ingress:
       - awsconfigs/common/istio-ingress/overlays/cognito/params.env
       - awsconfigs/common/istio-ingress/base/params.env
 
-  
 
-
+#aws-secrets-manager doesn't have params.env config
+aws-secrets-manager:
+  deployment_options:
+    rds-only:
+      value_file_template:
+        rds:
+          secretName: ''
+      values_path: charts/common/aws-secrets-manager/rds-only/values.yaml
+    s3-only:
+      value_file_template:
+        s3:
+          secretName: ''
+      values_path: charts/common/aws-secrets-manager/s3-only/values.yaml
+    rds-s3:
+      value_file_template:
+        rds:
+          secretName: ''
+        s3:
+          secretName: ''
+      values_path: charts/common/aws-secrets-manager/rds-s3/values.yaml
+    
