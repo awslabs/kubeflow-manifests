@@ -11,17 +11,17 @@ First, make sure you have [kubeflow upstream repo](https://awslabs.github.io/kub
 Step 1. Define kubeflow component config dictionary(tools/helmify/src/config.yaml):
 EXAMPLE without deployment_option subfolder in chart:
 ```
-    dex:
-    kustomization_paths:
-        - upstream/common/dex/overlays/istio
-    output_helm_chart_path: charts/common/dex
-    version: 0.1.0
-    app_version: v2.24.0
+dex:
+  kustomization_paths:
+    - upstream/common/dex/overlays/istio
+  output_helm_chart_path: charts/common/dex
+  version: 0.1.0
+  app_version: v2.24.0
 ```
 
 EXAMPLE with deployment_option subfolder in chart:
 ```
-    kubeflow-pipelines:
+kubeflow-pipelines:
   deployment_options:
     vanilla:
       kustomization_paths:
