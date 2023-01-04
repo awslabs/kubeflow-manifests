@@ -79,7 +79,7 @@ ingress:
     - CognitoUserPoolArn: "{{ .Values.alb.cognito.UserPoolArn }}"
       CognitoAppClientId: "{{ .Values.alb.cognito.appClientId }}"
       CognitoUserPoolDomain: "{{ .Values.alb.cognito.UserPoolDomain }}"
-      ertArn: "{{ .Values.alb.certArn }}"
+      certArn: "{{ .Values.alb.certArn }}"
     - loadBalancerScheme: "{{ .Values.alb.scheme }}"
     paths: 
       - awsconfigs/common/istio-ingress/overlays/cognito/params.env
