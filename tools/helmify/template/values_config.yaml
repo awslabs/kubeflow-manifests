@@ -1,109 +1,78 @@
 notebook-controller:
-  value_file_template:
-    cullingPolicy:
-      enableCulling: false
-      cullIdleTime: 5
-      idlenessCheckPeriod: 30
   params:
-    env_dict:
-    - enableCulling: "{{ .Values.cullingPolicy.enableCulling }}"
-      cullIdleTime: "{{ .Values.cullingPolicy.cullIdleTime }}"
-      idlenessCheckPeriod: "{{ .Values.cullingPolicy.idlenessCheckPeriod }}"
-    paths: 
+    template_paths: 
+      - tools/helmify/template/notebook-controller/params.env
+    target_paths:
       - awsconfigs/apps/notebook-controller/params.env
-  values_path: charts/apps/notebook-controller/values.yaml
+  values:
+    template_paths:
+      - tools/helmify/template/notebook-controller/values.yaml
+    target_paths:
+      - charts/apps/notebook-controller/values.yaml
 
 
 kubeflow-pipelines:
-  deployment_options:
-    rds-s3:
-      value_file_template:
-        rds:
-          dbHost: ''
-          mlmdDb: ''
-        s3:
-          bucketName: ''
-          minioServiceHost: s3.amazonaws.com
-          minioServiceRegion: ''
-      values_path: charts/apps/kubeflow-pipelines/rds-s3/values.yaml
-    s3-only:
-      value_file_template:
-        s3:
-          bucketName: ''
-          minioServiceHost: s3.amazonaws.com
-          minioServiceRegion: '' 
-      values_path: charts/apps/kubeflow-pipelines/s3-only/values.yaml
-    rds-only:
-      value_file_template:
-        rds:
-          dbHost: ''
-          mlmdDb: ''
-      values_path: charts/apps/kubeflow-pipelines/rds-only/values.yaml
-  params: 
-    env_dict:
-    - bucketName: "{{ .Values.s3.bucketName }}"
-      minioServiceHost: "{{ .Values.s3.minioServiceHost }}"
-      minioServiceRegion: "{{ .Values.s3.minioServiceRegion }}"
-    - dbHost: "{{ .Values.rds.dbHost }}"
-      mlmdDb: "{{ .Values.rds.mlmdDb }}"
-    paths: 
+  params:
+    template_paths: 
+      - tools/helmify/template/kubeflow-pipelines/params/s3/params.env
+      - tools/helmify/template/kubeflow-pipelines/params/rds/params.env
+    target_paths:
       - awsconfigs/apps/pipeline/s3/params.env
       - awsconfigs/apps/pipeline/rds/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/kubeflow-pipelines/values/rds-s3/values.yaml
+      - tools/helmify/template/kubeflow-pipelines/values/s3-only/values.yaml
+      - tools/helmify/template/kubeflow-pipelines/values/rds-only/values.yaml
+    target_paths:
+      - charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+      - charts/apps/kubeflow-pipelines/s3-only/values.yaml
+      - charts/apps/kubeflow-pipelines/rds-only/values.yaml
     
     
 aws-authservice:
-  value_file_template:
-    LOGOUT_URL: ''
   params:
-    env_dict:
-    - LOGOUT_URL: "{{ .Values.LOGOUT_URL }}"
-    paths: 
+    template_paths: 
+      - tools/helmify/template/aws-authservice/params.env
+    target_paths:
       - awsconfigs/common/aws-authservice/base/params.env
-  values_path: charts/common/aws-authservice/values.yaml
-    
+  values:
+    template_paths:
+      - tools/helmify/template/aws-authservice/values.yaml
+    target_paths:
+      - charts/common/aws-authservice/values.yaml
+
+
 
 ingress:
-  deployment_options:
-    cognito:
-      value_file_template:
-        alb:
-          certArn: ''
-          cognito:
-            UserPoolArn: '' 
-            UserPoolDomain: '' 
-            appClientId: ''
-          scheme: internet-facing
-      values_path: charts/common/ingress/cognito/values.yaml
-  params: 
-    env_dict:
-    - CognitoUserPoolArn: "{{ .Values.alb.cognito.UserPoolArn }}"
-      CognitoAppClientId: "{{ .Values.alb.cognito.appClientId }}"
-      CognitoUserPoolDomain: "{{ .Values.alb.cognito.UserPoolDomain }}"
-      certArn: "{{ .Values.alb.certArn }}"
-    - loadBalancerScheme: "{{ .Values.alb.scheme }}"
-    paths: 
+  params:
+    template_paths:
+      - tools/helmify/template/ingress/params/overlays/cognito/params.env
+      - tools/helmify/template/ingress/params/base/params.env
+    target_paths:
       - awsconfigs/common/istio-ingress/overlays/cognito/params.env
       - awsconfigs/common/istio-ingress/base/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/ingress/values/cognito/values.yaml
+    target_paths:
+      - charts/common/ingress/cognito/values.yaml
 
 
-#aws-secrets-manager doesn't have params.env config
 aws-secrets-manager:
-  deployment_options:
-    rds-only:
-      value_file_template:
-        rds:
-          secretName: ''
-      values_path: charts/common/aws-secrets-manager/rds-only/values.yaml
-    s3-only:
-      value_file_template:
-        s3:
-          secretName: ''
-      values_path: charts/common/aws-secrets-manager/s3-only/values.yaml
-    rds-s3:
-      value_file_template:
-        rds:
-          secretName: ''
-        s3:
-          secretName: ''
-      values_path: charts/common/aws-secrets-manager/rds-s3/values.yaml
-    
+  params:
+    template_paths:
+      - tools/helmify/template/aws-secrets-manager/params/rds/secret-provider.yaml
+      - tools/helmify/template/aws-secrets-manager/params/s3/secret-provider.yaml
+    target_paths:
+      - awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+      - awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
+  values:
+    template_paths:
+      - tools/helmify/template/aws-secrets-manager/values/rds-only/values.yaml
+      - tools/helmify/template/aws-secrets-manager/values/rds-s3/values.yaml
+      - tools/helmify/template/aws-secrets-manager/values/s3-only/values.yaml
+    target_paths:
+      - charts/common/aws-secrets-manager/rds-only/values.yaml
+      - charts/common/aws-secrets-manager/rds-s3/values.yaml
+      - charts/common/aws-secrets-manager/s3-only/values.yaml

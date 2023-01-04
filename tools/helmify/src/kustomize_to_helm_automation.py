@@ -291,26 +291,11 @@ def clean_up_folder(folder_path: str):
     logger.info("folder deleted.")
 
 
-def write_params_file(component_values_config: dict):
-    params_paths = component_values_config["params"]["paths"]
-    env_dicts = component_values_config["params"]["env_dict"]
-
-    for i in range(len(params_paths)):
-        configure_env_file(params_paths[i], env_dicts[i])
+def copy_template_files_to_target_files(template_paths: list, target_paths: list):
+    for i in range(len(template_paths)):
+        shutil.copy(template_paths[i], target_paths[i])
 
 
-def write_value_file(component_values_config: dict, deployment_option = None):
-    if deployment_option:
-        if deployment_option in component_values_config["deployment_options"]:
-            value_file_path = component_values_config["deployment_options"][deployment_option]["values_path"]
-            values_template = component_values_config["deployment_options"][deployment_option]["value_file_template"]
-            write_yaml_file(yaml_content=values_template, file_path=value_file_path)
-    else:
-        value_file_path = component_values_config["values_path"]
-        values_template = component_values_config["value_file_template"]
-        write_yaml_file(yaml_content=values_template, file_path=value_file_path)
-    #there can be situation that the deployment option exists but the value file is null
-    #return in this case
 
 
 def generate_helm_chart(
@@ -319,7 +304,10 @@ def generate_helm_chart(
     output_helm_chart_path: str,
     version: str,
     app_version: str,
-    values_config: dict,
+    params_template_paths=None,
+    params_target_paths=None,
+    values_template_paths=None,
+    values_target_paths=None,
     deployment_option=None,
 ):
     print_banner(f"==========Converting '{helm_chart_name}'==========")
@@ -339,20 +327,8 @@ def generate_helm_chart(
         )
         helm_temp_dir = f"{HELM_TEMP_OUTPUT_PATH}/{helm_chart_name}"
 
-    if helm_chart_name in values_config:
-        component_values_config = values_config[helm_chart_name]
-        #edge case for aws-secrets-manager
-        if helm_chart_name == "aws-secrets-manager":
-            #rds
-            rds_value = "{{ .Values.rds.secretName }}"
-            cmd = f"yq e -i '.spec.parameters.objects |= sub(\"rds-secret\", \"{rds_value}\")' awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml"
-            exec_shell(cmd)
-            #s3
-            s3_value = "{{ .Values.s3.secretName }}"
-            cmd = f"yq e -i '.spec.parameters.objects |= sub(\"s3-secret\", \"{s3_value}\")' awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
-            exec_shell(cmd)
-        else:
-            write_params_file(component_values_config)
+    if params_template_paths:
+        copy_template_files_to_target_files(params_template_paths, params_target_paths)
 
     kustomized_file_list = kustomize_build(
         kustomize_paths, helm_chart_name, kustomized_output_files_dir
@@ -361,9 +337,8 @@ def generate_helm_chart(
     print("Creating Helm Chart Based On Kustomize Build Output")
     create_helm_chart(output_helm_chart_path, helm_chart_name)
     update_helm_chart_versions(output_helm_chart_path, version, app_version)
-    if helm_chart_name in values_config:
-        component_values_config = values_config[helm_chart_name]
-        write_value_file(component_values_config, deployment_option)
+    if values_template_paths:
+        copy_template_files_to_target_files(values_template_paths, values_target_paths)
     
     move_generated_helm_files_to_folder(helm_temp_dir, splitted_output_path)
     failed_filelist = find_potential_failed_yaml_files(helm_temp_dir)
@@ -381,30 +356,27 @@ def update_helm_chart_versions(output_helm_chart_path: str, version: str, app_ve
     write_yaml_file(yaml_content=chart_info, file_path=f"{output_helm_chart_path}/Chart.yaml")
 
 
-def configure_env_file(env_file_path, env_dict):
-    """
-    Overwrite the contents of a .env file with the input env vars to configure with.
-    E.g.
-        Inputs:
-        env_file_path='/path/to/file/params.env'
-        env_dict={'DB_HOST': 'https://rds.amazon.com/abcde'}
-        Contents of `env_file_path` will become:
-            DB_HOST=https://rds.amazon.com/abcde
-    """
-    with open(env_file_path, "w") as file:
-        for key, value in env_dict.items():
-            file.write(f"{key}={value}\n")
-
 
 def main():
     config_file_path = common.CONFIG_FILE
-    values_config_file_path = common.HELM_VALUES_CONFIG_FILE
     print_banner("Reading Config")
     cfg = load_yaml_file(file_path=config_file_path)
-    values_config = load_yaml_file(file_path=values_config_file_path)
     for component in Components:
         helm_chart_name = component
         
+        ##component needs to configure env files and values file
+        if "params" in cfg[component]:
+            params_template_paths = cfg[component]["params"]["template_paths"]
+            params_target_paths = cfg[component]["params"]["target_paths"]
+            values_template_paths = cfg[component]["values"]["template_paths"]
+            values_target_paths = cfg[component]["values"]["target_paths"]
+        else:
+            params_template_paths = None
+            params_target_paths = None
+            values_template_paths = None
+            values_target_paths = None
+
+
         if "deployment_options" in cfg[component]:
             for deployment_option in POSSIBLE_DEPLOYMENT_OPTIONS:
                 if deployment_option in cfg[component]["deployment_options"]:
@@ -424,8 +396,12 @@ def main():
                         output_helm_chart_path,
                         version,
                         app_version,
-                        values_config,
-                        deployment_option,
+                        params_template_paths,
+                        params_target_paths,
+                        values_template_paths,
+                        values_target_paths,
+                        deployment_option
+
                     )
         else:
             version = cfg[component]["version"]
@@ -433,7 +409,9 @@ def main():
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
             generate_helm_chart(
-                kustomize_paths, helm_chart_name, output_helm_chart_path, version, app_version, values_config
+                kustomize_paths, helm_chart_name, output_helm_chart_path, version, app_version, 
+                params_template_paths,params_target_paths, values_template_paths,
+                values_target_paths
             )
 
 
