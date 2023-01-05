@@ -2,10 +2,10 @@
 
 ## Overview
 
-The Helmify tool creates helm charts based on kustomized output. The tool consumes dictionary defined in `tools/helmify/src/config.yaml` to generates helm charts based on kustomization outputs. To run the tool, simply run `PYTHONPATH=. python tools/helmify/src/kustomize_to_helm_automation.py` in the root directory. You can also comment out components defined in `Components` inside the `kustomize_to_helm_automation.py` script to helmify only the components you want.
+The Helmify tool creates helm charts based on kustomized output. The tool consumes dictionary defined in `tools/helmify/src/config.yaml` to generates helm charts based on kustomization outputs. To run the tool, simply run `make helmify` in the root directory. You can also comment out components defined in `Components` inside the `kustomize_to_helm_automation.py` script to helmify only the components you want.
 
 ## Getting Started
-First, make sure you have [kubeflow upstream repo](https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/#clone-repository) cloned.  
+First, make sure you have [kubeflow upstream repo](https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/#clone-repository) cloned. Then run `make install-tools` in the root directory to have all the necessary tools.
 
 
 Step 1. Define kubeflow component config dictionary(tools/helmify/src/config.yaml):
@@ -51,20 +51,20 @@ kubeflow-pipelines:
 
 Step 2. Define kubeflow component config dictionary (tools/helmify/template/values_config.yaml)
 
-Step 3. Run Script with `PYTHONPATH=. python tools/helmify/src/kustomize_to_helm_automation.py`
+Step 3. Run Script with `make helmify` in kubeflow-manifests root dir
 
 Step 4. Check if potential failed yaml files exist in `tools/helmify/generated_output/helm_chart_temp_output_files`
 
 ## How the tool works
 The Tool generated the helm charts with the following workflow:
 1. Check if the component has multiple deployment options, if yes the chart path will be embedded with subfolders.
-2. Configure `params.env` files based on the component dictionary `tools/helmify/template/values_config.yaml` before running `kustomize build`. (example: `awsconfigs/common/istio-ingress/overlays/cognito/params.env`)
+2. Configure `params.env` and `values.yaml` files based on the component dictionary `tools/helmify/template` before running `kustomize build`
 3. Generate kustomized consolidated files based on the paths defined, and store the outputs in `tools/helmify/generated_output/kustomized_output_files/<chart_name>`.
 4. Split the generated kustomized files into individual yaml files and organized into folders based on `Kind`.
 5. Create helm charts with `helm create`, clean up unnecessary template files, update chart versions. 
-6. Write `values.yaml` file inside the chart with infomation defined in `tools/helmify/template/values_config.yaml`, otherwise the values.yaml will be null.
+6. Override chart `values.yaml` file inside the template folder to the targeted chart directory , otherwise the `values.yaml` will be null.
 7. Find potential failed yaml files in the previously generated splitted yaml files (syntax error such as the yaml file defination involves `{{ }}`)
-8. Moved the splitted files into corresponding chart folders if no issues are found, otherwise the chart contents remain in `tools/helmify/generated_output/helm_chart_temp_output_files` for developer to verify.
+8. Moved the splitted files into corresponding chart folders if no issues are found, otherwise the chart contents remain in `tools/helmify/generated_output/helm_chart_temp_output_files` for developer to verify. (example: `tools/helmify/generated_output/helm_chart_temp_output_files/istio-1-14` to `charts/common/istio-1-14`)
 
 
 ## Help & Feedback
