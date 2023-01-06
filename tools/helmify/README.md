@@ -65,3 +65,16 @@ The Tool generated the helm charts with the following workflow:
 6. Override chart `values.yaml` file inside the template folder to the targeted chart directory , otherwise the `values.yaml` will be null.
 7. Find potential failed yaml files in the previously generated splitted yaml files (syntax error such as the yaml file defination involves `{{ }}`)
 8. Moved the splitted files into corresponding chart folders if no issues are found, otherwise the chart contents remain in `tools/helmify/generated_output/helm_chart_temp_output_files` for developer to verify. (example: `tools/helmify/generated_output/helm_chart_temp_output_files/istio-1-14` to `charts/common/istio-1-14`)
+
+## Temporary output folders
+# Splitted Output 
+
+path: `tools/helmify/generated_output/kustomized_output_files/splitted_output`
+
+This folder stores the splitted yaml files based on the consolidated kustomized yaml during script run time. The files will be eventually moved to `tools/helmify/generated_output/helm_chart_temp_output_files` after script is run. 
+
+# Helm Chart Temp Output Files
+
+path: `tools/helmify/generated_output/helm_chart_temp_output_files`
+
+This folder stores temporary splitted helm chart output files. The files will be moved to chart folder if no potential failed files are found (`files with {{ or }} inside`), otherwise the files will remain here until developer verifies all the files are valid.

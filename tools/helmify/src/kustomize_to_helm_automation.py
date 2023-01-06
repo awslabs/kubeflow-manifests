@@ -354,6 +354,16 @@ def main():
     helm_temp_output_path = common.HELM_TEMP_OUTPUT_PATH
     possible_deployment_options = common.POSSIBLE_DEPLOYMENT_OPTIONS
     possible_problem_file_types = common.POSSIBLE_PROBLEM_FILE_TYPES
+    splitted_output_path = common.SPLITTED_OUTPUT_PATH
+    #create folders for temp output
+    
+    if os.path.isdir(helm_temp_output_path) == False:
+        exec_shell(f"mkdir -p {helm_temp_output_path}")
+    if os.path.isdir(splitted_output_path) == False:
+        exec_shell(f"mkdir -p {splitted_output_path}")
+
+
+
     print_banner("Reading Config")
     cfg = load_yaml_file(file_path=config_file_path)
     for component in Components:
