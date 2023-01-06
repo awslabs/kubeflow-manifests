@@ -296,8 +296,6 @@ def copy_template_files_to_target_files(template_paths: list, target_paths: list
         shutil.copy(template_paths[i], target_paths[i])
 
 
-
-
 def generate_helm_chart(
     kustomize_paths: list,
     helm_chart_name: str,
@@ -339,7 +337,7 @@ def generate_helm_chart(
     update_helm_chart_versions(output_helm_chart_path, version, app_version)
     if values_template_paths:
         copy_template_files_to_target_files(values_template_paths, values_target_paths)
-    
+
     move_generated_helm_files_to_folder(helm_temp_dir, splitted_output_path)
     failed_filelist = find_potential_failed_yaml_files(helm_temp_dir)
     clean_up_folder(splitted_output_path)
@@ -349,12 +347,15 @@ def generate_helm_chart(
         clean_up_folder(helm_temp_dir)
 
 
-def update_helm_chart_versions(output_helm_chart_path: str, version: str, app_version: str):
+def update_helm_chart_versions(
+    output_helm_chart_path: str, version: str, app_version: str
+):
     chart_info = load_yaml_file(file_path=f"{output_helm_chart_path}/Chart.yaml")
     chart_info["version"] = version
     chart_info["appVersion"] = app_version
-    write_yaml_file(yaml_content=chart_info, file_path=f"{output_helm_chart_path}/Chart.yaml")
-
+    write_yaml_file(
+        yaml_content=chart_info, file_path=f"{output_helm_chart_path}/Chart.yaml"
+    )
 
 
 def main():
@@ -363,7 +364,7 @@ def main():
     cfg = load_yaml_file(file_path=config_file_path)
     for component in Components:
         helm_chart_name = component
-        
+
         ##component needs to configure env files and values file
         if "params" in cfg[component]:
             params_template_paths = cfg[component]["params"]["template_paths"]
@@ -376,7 +377,6 @@ def main():
             values_template_paths = None
             values_target_paths = None
 
-
         if "deployment_options" in cfg[component]:
             for deployment_option in POSSIBLE_DEPLOYMENT_OPTIONS:
                 if deployment_option in cfg[component]["deployment_options"]:
@@ -386,10 +386,12 @@ def main():
                     output_helm_chart_path = cfg[component]["deployment_options"][
                         deployment_option
                     ]["output_helm_chart_path"]
-                    version = cfg[component]["deployment_options"][
-                        deployment_option]["version"]
+                    version = cfg[component]["deployment_options"][deployment_option][
+                        "version"
+                    ]
                     app_version = cfg[component]["deployment_options"][
-                        deployment_option]["app_version"]
+                        deployment_option
+                    ]["app_version"]
                     generate_helm_chart(
                         kustomize_paths,
                         helm_chart_name,
@@ -400,8 +402,7 @@ def main():
                         params_target_paths,
                         values_template_paths,
                         values_target_paths,
-                        deployment_option
-
+                        deployment_option,
                     )
         else:
             version = cfg[component]["version"]
@@ -409,9 +410,15 @@ def main():
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
             generate_helm_chart(
-                kustomize_paths, helm_chart_name, output_helm_chart_path, version, app_version, 
-                params_template_paths,params_target_paths, values_template_paths,
-                values_target_paths
+                kustomize_paths,
+                helm_chart_name,
+                output_helm_chart_path,
+                version,
+                app_version,
+                params_template_paths,
+                params_target_paths,
+                values_template_paths,
+                values_target_paths,
             )
 
 
