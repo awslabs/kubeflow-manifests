@@ -65,31 +65,3 @@ The Tool generated the helm charts with the following workflow:
 6. Override chart `values.yaml` file inside the template folder to the targeted chart directory , otherwise the `values.yaml` will be null.
 7. Find potential failed yaml files in the previously generated splitted yaml files (syntax error such as the yaml file defination involves `{{ }}`)
 8. Moved the splitted files into corresponding chart folders if no issues are found, otherwise the chart contents remain in `tools/helmify/generated_output/helm_chart_temp_output_files` for developer to verify. (example: `tools/helmify/generated_output/helm_chart_temp_output_files/istio-1-14` to `charts/common/istio-1-14`)
-
-
-## Help & Feedback
-
-For help, please consider the following venues (in order):
-
-* [Documentation](https://awslabs.github.io/kubeflow-manifests/docs/)
-* [Search open issues](https://github.com/awslabs/kubeflow-manifests/issues)
-* [File an issue](https://github.com/awslabs/kubeflow-manifests/issues/new/choose)
-* Chat with us on the `#platform-aws` channel in the [Kubeflow Slack](https://www.kubeflow.org/docs/about/community/#slack) community.
-
-## Contributing
-
-We welcome community contributions and pull requests.
-
-See our [contribution guide](CONTRIBUTING.md) for more information on how to
-report issues, set up a development environment, and submit code.
-
-We adhere to the [Amazon Open Source Code of Conduct](CODE_OF_CONDUCT.md#code-of-conduct).
-
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This project is [licensed](LICENSE) under the Apache-2.0 License.
-

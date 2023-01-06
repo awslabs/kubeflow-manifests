@@ -19,21 +19,6 @@ from tools.helmify.src import common
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-KUSTOMIZED_BUILD_OUTPUT_PATH = (
-    "./tools/helmify/generated_output/kustomized_output_files"
-)
-HELM_TEMP_OUTPUT_PATH = "./tools/helmify/generated_output/helm_chart_temp_output_files"
-ROOT_DIR = f"{os.getcwd()}"
-POSSIBLE_DEPLOYMENT_OPTIONS = [
-    "vanilla",
-    "cognito",
-    "rds-s3",
-    "rds-only",
-    "s3-only",
-    "katib-external-db-with-kubeflow",
-]
-POSSIBLE_PROBLEM_FILE_TYPES = ["ConfigMap", "ClusterServingRuntime"]
-
 
 Components = [
     "istio-1-14",
@@ -155,7 +140,7 @@ def create_helm_chart(helm_chart_path: str, helm_chart_name: str):
     # delete folder
     shutil.rmtree(source)
 
-    os.chdir(ROOT_DIR)
+    os.chdir(os.getcwd())
 
 
 def clean_up_redundant_helm_chart_contents(helm_chart_name):
@@ -222,12 +207,14 @@ def move_non_crd_files(dest_dir: str, source_dir: str):
     )
 
 
-def find_potential_failed_yaml_files(helm_temp_dir: str):
+def find_potential_failed_yaml_files(
+    helm_temp_dir: str, possible_problem_file_types: list
+):
 
     problem_filelist = []
     problem_filelist_output_paths = []
 
-    for file_type in POSSIBLE_PROBLEM_FILE_TYPES:
+    for file_type in possible_problem_file_types:
         if os.path.isdir(f"{helm_temp_dir}/templates/{file_type}"):
             logger.info(
                 f"finding potential problematic yaml files in {file_type} folder."
@@ -302,6 +289,9 @@ def generate_helm_chart(
     output_helm_chart_path: str,
     version: str,
     app_version: str,
+    kustomize_build_output_path: str,
+    helm_temp_output_path: str,
+    possible_problem_file_types: list,
     params_template_paths=None,
     params_target_paths=None,
     values_template_paths=None,
@@ -312,18 +302,16 @@ def generate_helm_chart(
     if deployment_option:
         print(f"Deployment Option: {deployment_option}")
         kustomized_output_files_dir = (
-            f"{KUSTOMIZED_BUILD_OUTPUT_PATH}/{helm_chart_name}/{deployment_option}"
+            f"{kustomize_build_output_path}/{helm_chart_name}/{deployment_option}"
         )
-        splitted_output_path = f"{KUSTOMIZED_BUILD_OUTPUT_PATH}/splitted_output/{helm_chart_name}/{deployment_option}"
-        helm_temp_dir = f"{HELM_TEMP_OUTPUT_PATH}/{helm_chart_name}/{deployment_option}"
+        splitted_output_path = f"{kustomize_build_output_path}/splitted_output/{helm_chart_name}/{deployment_option}"
+        helm_temp_dir = f"{helm_temp_output_path}/{helm_chart_name}/{deployment_option}"
     else:
-        kustomized_output_files_dir = (
-            f"{KUSTOMIZED_BUILD_OUTPUT_PATH}/{helm_chart_name}"
-        )
+        kustomized_output_files_dir = f"{kustomize_build_output_path}/{helm_chart_name}"
         splitted_output_path = (
-            f"{KUSTOMIZED_BUILD_OUTPUT_PATH}/splitted_output/{helm_chart_name}"
+            f"{kustomize_build_output_path}/splitted_output/{helm_chart_name}"
         )
-        helm_temp_dir = f"{HELM_TEMP_OUTPUT_PATH}/{helm_chart_name}"
+        helm_temp_dir = f"{helm_temp_output_path}/{helm_chart_name}"
 
     if params_template_paths:
         copy_template_files_to_target_files(params_template_paths, params_target_paths)
@@ -339,7 +327,9 @@ def generate_helm_chart(
         copy_template_files_to_target_files(values_template_paths, values_target_paths)
 
     move_generated_helm_files_to_folder(helm_temp_dir, splitted_output_path)
-    failed_filelist = find_potential_failed_yaml_files(helm_temp_dir)
+    failed_filelist = find_potential_failed_yaml_files(
+        helm_temp_dir, possible_problem_file_types
+    )
     clean_up_folder(splitted_output_path)
 
     if len(failed_filelist) == 0:
@@ -360,10 +350,20 @@ def update_helm_chart_versions(
 
 def main():
     config_file_path = common.CONFIG_FILE
+    kustomize_build_output_path = common.KUSTOMIZED_BUILD_OUTPUT_PATH
+    helm_temp_output_path = common.HELM_TEMP_OUTPUT_PATH
+    possible_deployment_options = common.POSSIBLE_DEPLOYMENT_OPTIONS
+    possible_problem_file_types = common.POSSIBLE_PROBLEM_FILE_TYPES
     print_banner("Reading Config")
     cfg = load_yaml_file(file_path=config_file_path)
     for component in Components:
         helm_chart_name = component
+
+        params_template_paths = None
+        params_target_paths = None
+        values_template_paths = None
+        values_target_paths = None
+        deployment_option = None
 
         ##component needs to configure env files and values file
         if "params" in cfg[component]:
@@ -371,55 +371,41 @@ def main():
             params_target_paths = cfg[component]["params"]["target_paths"]
             values_template_paths = cfg[component]["values"]["template_paths"]
             values_target_paths = cfg[component]["values"]["target_paths"]
-        else:
-            params_template_paths = None
-            params_target_paths = None
-            values_template_paths = None
-            values_target_paths = None
 
         if "deployment_options" in cfg[component]:
-            for deployment_option in POSSIBLE_DEPLOYMENT_OPTIONS:
-                if deployment_option in cfg[component]["deployment_options"]:
-                    kustomize_paths = cfg[component]["deployment_options"][
+            for possible_deployment_option in possible_deployment_options:
+                if possible_deployment_option in cfg[component]["deployment_options"]:
+                    deployment_option = possible_deployment_option
+                    component_deployment_option = cfg[component]["deployment_options"][
                         deployment_option
-                    ]["kustomization_paths"]
-                    output_helm_chart_path = cfg[component]["deployment_options"][
-                        deployment_option
-                    ]["output_helm_chart_path"]
-                    version = cfg[component]["deployment_options"][deployment_option][
-                        "version"
                     ]
-                    app_version = cfg[component]["deployment_options"][
-                        deployment_option
-                    ]["app_version"]
-                    generate_helm_chart(
-                        kustomize_paths,
-                        helm_chart_name,
-                        output_helm_chart_path,
-                        version,
-                        app_version,
-                        params_template_paths,
-                        params_target_paths,
-                        values_template_paths,
-                        values_target_paths,
-                        deployment_option,
-                    )
+                    kustomize_paths = component_deployment_option["kustomization_paths"]
+                    output_helm_chart_path = component_deployment_option[
+                        "output_helm_chart_path"
+                    ]
+                    version = component_deployment_option["version"]
+                    app_version = component_deployment_option["app_version"]
         else:
             version = cfg[component]["version"]
             app_version = cfg[component]["app_version"]
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
-            generate_helm_chart(
-                kustomize_paths,
-                helm_chart_name,
-                output_helm_chart_path,
-                version,
-                app_version,
-                params_template_paths,
-                params_target_paths,
-                values_template_paths,
-                values_target_paths,
-            )
+
+        generate_helm_chart(
+            kustomize_paths,
+            helm_chart_name,
+            output_helm_chart_path,
+            version,
+            app_version,
+            kustomize_build_output_path,
+            helm_temp_output_path,
+            possible_problem_file_types,
+            params_template_paths,
+            params_target_paths,
+            values_template_paths,
+            values_target_paths,
+            deployment_option,
+        )
 
 
 if __name__ == "__main__":
