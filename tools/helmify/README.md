@@ -78,3 +78,9 @@ This folder stores the splitted yaml files based on the consolidated kustomized 
 path: `tools/helmify/generated_output/helm_chart_temp_output_files`
 
 This folder stores temporary splitted helm chart output files. The files will be moved to chart folder if no potential failed files are found (`files with {{ or }} inside`), otherwise the files will remain here until developer verifies all the files are valid.
+
+# Kustomized Output Files
+
+path: `tools/helmify/generated_output/kustomized_output_files`
+
+This folder stores the consolidated kustomized yaml based on the input kustomize paths.
