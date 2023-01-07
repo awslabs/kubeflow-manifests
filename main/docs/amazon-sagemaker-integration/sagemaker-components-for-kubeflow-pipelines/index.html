@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-27T14:09:45-05:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-01-07T02:19:59-05:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="SageMaker Components for Kubeflow Pipelines">
 <meta itemprop="description" content="Use SageMaker Components for Kubeflow Pipelines with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-12-27T14:09:45-05:00" />
+<meta itemprop="dateModified" content="2023-01-07T02:19:59-05:00" />
 <meta itemprop="wordCount" content="974">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SageMaker Components for Kubeflow Pipelines"/>
@@ -76,6 +76,8 @@
     
     <link href="/kubeflow-manifests/main/css/copy-code-button.min.css" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
 
   </head>
   <body class="td-page">
@@ -90,6 +92,10 @@
 	</button>
 	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
 		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
 			
 			
 			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
@@ -146,6 +152,7 @@
 			
 		</ul>
 	</div>
+	
 </nav>
 
     </header>
@@ -571,7 +578,7 @@ region: us-east-1
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified December 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8e89baf517a76e219e0937bb5a07f6b221634043">New blog/workshop added (#532) (8e89baf)</a>
+  Last modified January 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/951a5a74e842a4d16ad1516216e6345ac80fe02c">docsearch integration - main (#531) (951a5a7)</a>
 </div>
 
 </div>
@@ -591,7 +598,7 @@ region: us-east-1
         
       </div>
       <div class="col text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
         
 	
       </div>
@@ -638,6 +645,28 @@ region: us-east-1
 
 <script src="/kubeflow-manifests/main/js/copy-code-button.min.js"></script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ['version: latest'],
+  },
+debug: true 
+
+});
+</script>
 
 
 
