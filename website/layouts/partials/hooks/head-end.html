@@ -5,3 +5,5 @@
     {{ $copyCss := resources.Get "css/copy-code-button.css" | minify }}
     <link href="{{ $copyCss.RelPermalink }}" rel="stylesheet">
 {{ end }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
