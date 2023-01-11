@@ -21,34 +21,34 @@ logger = logging.getLogger(__name__)
 
 
 Components = [
-    "istio-1-14",
-    "dex",
-    "oidc-authservice",
-    "cluster-local-gateway",
-    "kubeflow-namespace",
-    "kubeflow-istio-resources",
-    "kubeflow-roles",
-    "kubeflow-issuer",
-    "knative-serving",
-    "knative-eventing",
-    "kserve",
-    "models-web-app",
-    "central-dashboard",
-    "aws-secrets-manager",
+    # "istio-1-14",
+    # "dex",
+    # "oidc-authservice",
+    # "cluster-local-gateway",
+    # "kubeflow-namespace",
+    # "kubeflow-istio-resources",
+    # "kubeflow-roles",
+    # "kubeflow-issuer",
+    # "knative-serving",
+    # "knative-eventing",
+    # "kserve",
+    # "models-web-app",
+    # "central-dashboard",
+    # "aws-secrets-manager",
     "kubeflow-pipelines",
-    "admission-webhook",
-    "jupyter-web-app",
-    "notebook-controller",
-    "volumes-web-app",
-    "training-operator",
-    "katib",
-    "tensorboards-web-app",
-    "tensorboard-controller",
-    "profiles-and-kfam",
-    "user-namespace",
-    "ingress",
-    "aws-authservice",
-    "aws-telemetry",
+    # "admission-webhook",
+    # "jupyter-web-app",
+    # "notebook-controller",
+    # "volumes-web-app",
+    # "training-operator",
+    # "katib",
+    # "tensorboards-web-app",
+    # "tensorboard-controller",
+    # "profiles-and-kfam",
+    # "user-namespace",
+    # "ingress",
+    # "aws-authservice",
+    # "aws-telemetry",
 ]
 
 
@@ -395,27 +395,43 @@ def main():
                     ]
                     version = component_deployment_option["version"]
                     app_version = component_deployment_option["app_version"]
+                    #multiple deployment_options, run generate helm chart for each option
+                    generate_helm_chart(
+                        kustomize_paths,
+                        helm_chart_name,
+                        output_helm_chart_path,
+                        version,
+                        app_version,
+                        kustomize_build_output_path,
+                        helm_temp_output_path,
+                        possible_problem_file_types,
+                        params_template_paths,
+                        params_target_paths,
+                        values_template_paths,
+                        values_target_paths,
+                        deployment_option,
+                    )
         else:
             version = cfg[component]["version"]
             app_version = cfg[component]["app_version"]
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
-
-        generate_helm_chart(
-            kustomize_paths,
-            helm_chart_name,
-            output_helm_chart_path,
-            version,
-            app_version,
-            kustomize_build_output_path,
-            helm_temp_output_path,
-            possible_problem_file_types,
-            params_template_paths,
-            params_target_paths,
-            values_template_paths,
-            values_target_paths,
-            deployment_option,
-        )
+            #only one deployment_option, run generate helm chart
+            generate_helm_chart(
+                kustomize_paths,
+                helm_chart_name,
+                output_helm_chart_path,
+                version,
+                app_version,
+                kustomize_build_output_path,
+                helm_temp_output_path,
+                possible_problem_file_types,
+                params_template_paths,
+                params_target_paths,
+                values_template_paths,
+                values_target_paths,
+                deployment_option,
+            )
 
 
 if __name__ == "__main__":
