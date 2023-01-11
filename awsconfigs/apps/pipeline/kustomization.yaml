@@ -27,7 +27,7 @@ generatorOptions:
 patchesStrategicMerge:
 - ./rds/disable-mysql-pv-claim.yaml
 - ./rds/disable-default-secret.yaml
-- ./s3/remove-minio-server-resources.yaml
+- ./s3/disable-minio-server-resources.yaml
 - ./s3/deployment_patch.yaml
 - ./s3/disable-default-secret.yaml
 - ./s3/aws-configuration-patch.yaml
