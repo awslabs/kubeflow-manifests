@@ -63,7 +63,7 @@ The Tool generated the helm charts with the following workflow:
 4. Split the generated kustomized files into individual yaml files and organized into folders based on `Kind`.
 5. Create helm charts with `helm create`, clean up unnecessary template files, update chart versions. 
 6. Override chart `values.yaml` file inside the template folder to the targeted chart directory , otherwise the `values.yaml` will be null.
-7. Find potential failed yaml files in the previously generated splitted yaml files (syntax error such as the yaml file defination involves `{{ }}`)
+7. Find potential failed yaml files in the previously generated splitted yaml files (syntax error such as the yaml file defination involves `{{ }}`) [Escape Curly Braces in Helm Chart](https://stackoverflow.com/questions/47195593/how-an-helm-chart-have-an-attribute-with-value-contain)
 8. Moved the splitted files into corresponding chart folders if no issues are found, otherwise the chart contents remain in `tools/helmify/generated_output/helm_chart_temp_output_files` for developer to verify. (example: `tools/helmify/generated_output/helm_chart_temp_output_files/istio-1-14` to `charts/common/istio-1-14`)
 
 ## Temporary output folders

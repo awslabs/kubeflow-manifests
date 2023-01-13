@@ -21,34 +21,34 @@ logger = logging.getLogger(__name__)
 
 
 Components = [
-    # "istio-1-14",
-    # "dex",
-    # "oidc-authservice",
-    # "cluster-local-gateway",
-    # "kubeflow-namespace",
-    # "kubeflow-istio-resources",
-    # "kubeflow-roles",
-    # "kubeflow-issuer",
-    # "knative-serving",
-    # "knative-eventing",
-    # "kserve",
-    # "models-web-app",
-    # "central-dashboard",
-    # "aws-secrets-manager",
+    "istio-1-14",
+    "dex",
+    "oidc-authservice",
+    "cluster-local-gateway",
+    "kubeflow-namespace",
+    "kubeflow-istio-resources",
+    "kubeflow-roles",
+    "kubeflow-issuer",
+    "knative-serving",
+    "knative-eventing",
+    "kserve",
+    "models-web-app",
+    "central-dashboard",
+    "aws-secrets-manager",
     "kubeflow-pipelines",
-    # "admission-webhook",
-    # "jupyter-web-app",
-    # "notebook-controller",
-    # "volumes-web-app",
-    # "training-operator",
-    # "katib",
-    # "tensorboards-web-app",
-    # "tensorboard-controller",
-    # "profiles-and-kfam",
-    # "user-namespace",
-    # "ingress",
-    # "aws-authservice",
-    # "aws-telemetry",
+    "admission-webhook",
+    "jupyter-web-app",
+    "notebook-controller",
+    "volumes-web-app",
+    "training-operator",
+    "katib",
+    "tensorboards-web-app",
+    "tensorboard-controller",
+    "profiles-and-kfam",
+    "user-namespace",
+    "ingress",
+    "aws-authservice",
+    "aws-telemetry",
 ]
 
 
@@ -172,7 +172,6 @@ def move_generated_helm_files_to_folder(dest_dir: str, source_dir: str):
         move_crd_files(dest_dir, f"{source_dir}/crds")
 
     # move rest of kinds
-
     move_non_crd_files(f"{dest_dir}/templates", f"{source_dir}/templates")
 
 
@@ -256,7 +255,6 @@ def find_potential_failed_files_recursive_lookup(
     for k, v in dictionaries.items():
         if isinstance(v, dict):
             find_potential_failed_files_recursive_lookup(v, problem_filelist, file)
-
         else:
             flag = search(v, "{{") or search(v, "}}")
             if flag:
@@ -352,7 +350,6 @@ def main():
     config_file_path = common.CONFIG_FILE
     kustomize_build_output_path = common.KUSTOMIZED_BUILD_OUTPUT_PATH
     helm_temp_output_path = common.HELM_TEMP_OUTPUT_PATH
-    possible_deployment_options = common.POSSIBLE_DEPLOYMENT_OPTIONS
     possible_problem_file_types = common.POSSIBLE_PROBLEM_FILE_TYPES
     splitted_output_path = common.SPLITTED_OUTPUT_PATH
     #create folders for temp output
@@ -361,7 +358,6 @@ def main():
         exec_shell(f"mkdir -p {helm_temp_output_path}")
     if os.path.isdir(splitted_output_path) == False:
         exec_shell(f"mkdir -p {splitted_output_path}")
-
 
 
     print_banner("Reading Config")
@@ -383,9 +379,7 @@ def main():
             values_target_paths = cfg[component]["values"]["target_paths"]
 
         if "deployment_options" in cfg[component]:
-            for possible_deployment_option in possible_deployment_options:
-                if possible_deployment_option in cfg[component]["deployment_options"]:
-                    deployment_option = possible_deployment_option
+            for deployment_option in cfg[component]["deployment_options"].keys():
                     component_deployment_option = cfg[component]["deployment_options"][
                         deployment_option
                     ]
