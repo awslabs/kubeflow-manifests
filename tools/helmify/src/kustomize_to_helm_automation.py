@@ -117,10 +117,11 @@ def split_yaml(
         logger.info(f"finished splitting!")
 
 
-def create_helm_chart(helm_chart_path: str, helm_chart_name: str):
+def create_helm_chart(helm_chart_path: str, helm_chart_name: str, root_dir: str):
     # if helm chart has been created already, return
     if os.path.exists(f"{helm_chart_path}/Chart.yaml"):
-        return
+        shutil.rmtree(helm_chart_path)
+        
 
     # make directory for helm chart location if it doesn't exist
     if os.path.isdir(f"{helm_chart_path}") == False:
@@ -140,7 +141,7 @@ def create_helm_chart(helm_chart_path: str, helm_chart_name: str):
     # delete folder
     shutil.rmtree(source)
 
-    os.chdir(os.getcwd())
+    os.chdir(root_dir)
 
 
 def clean_up_redundant_helm_chart_contents(helm_chart_name):
@@ -290,6 +291,7 @@ def generate_helm_chart(
     kustomize_build_output_path: str,
     helm_temp_output_path: str,
     possible_problem_file_types: list,
+    root_dir: str,
     params_template_paths=None,
     params_target_paths=None,
     values_template_paths=None,
@@ -319,7 +321,7 @@ def generate_helm_chart(
     )
     split_yaml(kustomized_file_list, splitted_output_path, kustomized_output_files_dir)
     print("Creating Helm Chart Based On Kustomize Build Output")
-    create_helm_chart(output_helm_chart_path, helm_chart_name)
+    create_helm_chart(output_helm_chart_path, helm_chart_name, root_dir)
     update_helm_chart_versions(output_helm_chart_path, version, app_version)
     if values_template_paths:
         copy_template_files_to_target_files(values_template_paths, values_target_paths)
@@ -347,6 +349,7 @@ def update_helm_chart_versions(
 
 
 def main():
+    root_dir = os.getcwd()
     config_file_path = common.CONFIG_FILE
     kustomize_build_output_path = common.KUSTOMIZED_BUILD_OUTPUT_PATH
     helm_temp_output_path = common.HELM_TEMP_OUTPUT_PATH
@@ -399,6 +402,7 @@ def main():
                         kustomize_build_output_path,
                         helm_temp_output_path,
                         possible_problem_file_types,
+                        root_dir,
                         params_template_paths,
                         params_target_paths,
                         values_template_paths,
@@ -420,6 +424,7 @@ def main():
                 kustomize_build_output_path,
                 helm_temp_output_path,
                 possible_problem_file_types,
+                root_dir,
                 params_template_paths,
                 params_target_paths,
                 values_template_paths,
