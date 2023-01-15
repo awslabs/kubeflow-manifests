@@ -292,6 +292,7 @@ def generate_helm_chart(
     helm_temp_output_path: str,
     possible_problem_file_types: list,
     root_dir: str,
+    potential_failed_components: set,
     params_template_paths=None,
     params_target_paths=None,
     values_template_paths=None,
@@ -335,6 +336,9 @@ def generate_helm_chart(
     if len(failed_filelist) == 0:
         move_generated_helm_files_to_folder(output_helm_chart_path, helm_temp_dir)
         clean_up_folder(helm_temp_dir)
+    else:
+        potential_failed_components.add(helm_chart_name)
+    return potential_failed_components
 
 
 def update_helm_chart_versions(
@@ -355,6 +359,7 @@ def main():
     helm_temp_output_path = common.HELM_TEMP_OUTPUT_PATH
     possible_problem_file_types = common.POSSIBLE_PROBLEM_FILE_TYPES
     splitted_output_path = common.SPLITTED_OUTPUT_PATH
+    potential_failed_components = set()
     #create folders for temp output
     
     if os.path.isdir(helm_temp_output_path) == False:
@@ -393,7 +398,7 @@ def main():
                     version = component_deployment_option["version"]
                     app_version = component_deployment_option["app_version"]
                     #multiple deployment_options, run generate helm chart for each option
-                    generate_helm_chart(
+                    potential_failed_components = generate_helm_chart(
                         kustomize_paths,
                         helm_chart_name,
                         output_helm_chart_path,
@@ -403,6 +408,7 @@ def main():
                         helm_temp_output_path,
                         possible_problem_file_types,
                         root_dir,
+                        potential_failed_components,
                         params_template_paths,
                         params_target_paths,
                         values_template_paths,
@@ -415,7 +421,7 @@ def main():
             kustomize_paths = cfg[component]["kustomization_paths"]
             output_helm_chart_path = cfg[component]["output_helm_chart_path"]
             #only one deployment_option, run generate helm chart
-            generate_helm_chart(
+            potential_failed_components = generate_helm_chart(
                 kustomize_paths,
                 helm_chart_name,
                 output_helm_chart_path,
@@ -425,12 +431,17 @@ def main():
                 helm_temp_output_path,
                 possible_problem_file_types,
                 root_dir,
+                potential_failed_components,
                 params_template_paths,
                 params_target_paths,
                 values_template_paths,
                 values_target_paths,
                 deployment_option,
             )
+        
+    if len(potential_failed_components) != 0:
+        print_banner ("The following components have potential failed yaml files when running helm install")
+        print(potential_failed_components)
 
 
 if __name__ == "__main__":
