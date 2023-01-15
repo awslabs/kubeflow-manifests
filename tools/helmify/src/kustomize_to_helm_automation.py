@@ -442,6 +442,7 @@ def main():
     if len(potential_failed_components) != 0:
         print_banner ("The following components have potential failed yaml files when running helm install")
         print(potential_failed_components)
+        print (f"please check folder in {helm_temp_output_path}")
 
 
 if __name__ == "__main__":
