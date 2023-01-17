@@ -76,6 +76,8 @@
     
     <link href="/kubeflow-manifests/css/copy-code-button.min.css" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
 
   </head>
   <body class="td-page">
@@ -90,6 +92,10 @@
 	</button>
 	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
 		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
 			
 			
 			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
@@ -146,6 +152,7 @@
 			
 		</ul>
 	</div>
+	
 </nav>
 
     </header>
@@ -597,7 +604,7 @@ public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-
         
       </div>
       <div class="col text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
         
 	
       </div>
@@ -644,6 +651,28 @@ public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-
 
 <script src="/kubeflow-manifests/js/copy-code-button.min.js"></script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ["version: latest "],
+  },
+debug: true 
+
+});
+</script>
 
 
 
