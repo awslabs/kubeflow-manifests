@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/vanilla/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-28T19:27:09-05:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-01-07T02:20:02-05:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Vanilla Installation">
 <meta itemprop="description" content="Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)">
-<meta itemprop="dateModified" content="2022-11-28T19:27:09-05:00" />
+<meta itemprop="dateModified" content="2023-01-07T02:20:02-05:00" />
 <meta itemprop="wordCount" content="1272">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Vanilla Installation"/>
@@ -76,6 +76,8 @@
     
     <link href="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/css/copy-code-button.min.css" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
 
   </head>
   <body class="td-page">
@@ -90,6 +92,10 @@
 	</button>
 	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
 		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
 			
 			
 			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
@@ -144,6 +150,7 @@
 			
 		</ul>
 	</div>
+	
 </nav>
 
     </header>
@@ -547,7 +554,7 @@ components:</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 28, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/096b5130e6195b535b83c7d164f6683b5a706077">[Kubeflow on AWS] Added Blog menu to 1.5 and sent blog to main branch (#476) (096b513)</a>
+  Last modified January 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8c282f1ce5c65fabfb19e78f6fcfb191cc9cf7de">docsearch backport 1.5 (#535) (8c282f1)</a>
 </div>
 
 </div>
@@ -567,7 +574,7 @@ components:</p>
         
       </div>
       <div class="col text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
         
 	
       </div>
@@ -614,6 +621,28 @@ components:</p>
 
 <script src="/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/js/copy-code-button.min.js"></script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ["version: 1.5 "],
+  },
+debug: true 
+
+});
+</script>
 
 
 

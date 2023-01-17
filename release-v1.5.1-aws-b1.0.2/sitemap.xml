@@ -3,147 +3,147 @@
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/load-balancer/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/guide-automated/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/features/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/storage/efs/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/notebooks/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/katib/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/storage/fsx-for-lustre/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/pipelines/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/prerequisites/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/releases/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/eks-compatibility/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/cloudwatch/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/kserve/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/troubleshooting-aws/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/vanilla/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/component-guides/profiles/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/rds-s3/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/security/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/about/usage-tracking/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/guide/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/add-ons/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/deployment/uninstall-kubeflow/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.kubeflow.orghttps://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/</loc>
-    <lastmod>2022-11-28T19:27:09-05:00</lastmod>
+    <lastmod>2023-01-07T02:20:02-05:00</lastmod>
   </url>
   
 </urlset>

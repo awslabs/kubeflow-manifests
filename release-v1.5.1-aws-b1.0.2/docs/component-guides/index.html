@@ -66,6 +66,8 @@
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
 
   </head>
   <body class="td-section">
@@ -80,6 +82,10 @@
 	</button>
 	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
 		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
 			
 			
 			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
@@ -134,6 +140,7 @@
 			
 		</ul>
 	</div>
+	
 </nav>
 
     </header>
@@ -413,7 +420,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 28, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/096b5130e6195b535b83c7d164f6683b5a706077">[Kubeflow on AWS] Added Blog menu to 1.5 and sent blog to main branch (#476) (096b513)</a>
+  Last modified January 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8c282f1ce5c65fabfb19e78f6fcfb191cc9cf7de">docsearch backport 1.5 (#535) (8c282f1)</a>
 </div>
 
 </div>
@@ -432,7 +439,7 @@
         
       </div>
       <div class="col text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2022 The Kubeflow on AWS Authors.</small>
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
         
 	
       </div>
@@ -476,6 +483,28 @@
 
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ["version: 1.5 "],
+  },
+debug: true 
+
+});
+</script>
 
 
 
