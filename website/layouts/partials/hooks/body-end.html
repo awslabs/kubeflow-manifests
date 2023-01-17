@@ -18,7 +18,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ['version: latest'],
+    facetFilters: ["version: {{ .Site.Params.version }} "],
   },
 debug: true // Set debug to true if you want to inspect the modal
 
