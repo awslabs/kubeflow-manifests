@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/about\/eks-compatibility\/",
-      "wordCount" : "62",
+      "wordCount" : "88",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T16:20:11-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Amazon EKS and Kubeflow Compatibility">
 <meta itemprop="description" content="Check compatibility between Amazon EKS and Kubeflow versions">
-<meta itemprop="dateModified" content="2022-06-27T16:20:11-07:00" />
-<meta itemprop="wordCount" content="62">
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
+<meta itemprop="wordCount" content="88">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Amazon EKS and Kubeflow Compatibility"/>
 <meta name="twitter:description" content="Check compatibility between Amazon EKS and Kubeflow versions"/>
@@ -130,8 +130,6 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
-	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
@@ -215,7 +213,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -264,10 +262,6 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
-  <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
@@ -369,13 +363,13 @@
 		
 	</header>    
 	<h2 id="compatibility">Compatibility</h2>
-<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.5.</p>
+<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.4.</p>
 <div class="table-responsive">
   <table class="table table-bordered">
     <thead class="thead-light">
       <tr>
         <th>EKS Versions</th>
-        <th>Kubeflow v1.5</th>
+        <th>Kubeflow v1.4</th>
       </tr>
     </thead>
     <tbody>
@@ -402,11 +396,16 @@
 <li><strong>Incompatible</strong>: the combination is not known to work together</li>
 <li><strong>Compatible</strong>: all Kubeflow features have been tested and verified for the EKS Kubernetes version</li>
 </ul>
+<h2 id="kubeflow-v15-support">Kubeflow v1.5 Support</h2>
+<p>Support for Kubeflow-v1.5 is in active development. You can track the following issue to stay up to date on progress:</p>
+<ul>
+<li><a href="https://github.com/awslabs/kubeflow-manifests/issues/91">v1.5 tracking issue</a></li>
+</ul>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/07fac2a1edb4df75930fb9e4527afb93401b6c58">Quick Website fixes (#280) (07fac2a1)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043a)</a>
 </div>
 
 </div>
@@ -486,7 +485,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: 1.5 "],
+    facetFilters: ["version: 1.4 "],
   },
 debug: true 
 

@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/kserve\/",
-      "wordCount" : "1358",
+      "wordCount" : "1357",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-08-05T20:13:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T17:57:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="KServe">
 <meta itemprop="description" content="Model serving using KServe with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-08-05T20:13:54-07:00" />
-<meta itemprop="wordCount" content="1358">
+<meta itemprop="dateModified" content="2022-06-27T17:57:59-07:00" />
+<meta itemprop="wordCount" content="1357">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="KServe"/>
 <meta name="twitter:description" content="Model serving using KServe with Kubeflow on AWS"/>
@@ -136,8 +136,6 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
-	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
@@ -221,7 +219,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -270,10 +268,6 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
-  <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
@@ -536,7 +530,7 @@ data:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_DOMAIN</span><span class="o">=</span><span class="s2">&#34;platform.example.com&#34;</span>
 </span></span></code></pre></div><p>Install dependencies for the script by running:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
-</span></span><span class="line"><span class="cl">pip install -r requirements.txt
+</span></span><span class="line"><span class="cl">pip install requirements.txt
 </span></span></code></pre></div><p>Run the sample python script to send an inference request based on your auth provider:</p>
 <h4 id="cognito-inference">Cognito inference</h4>
 <p>Run the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/kserve/inference_sample.py">inference_sample.py</a> Python script by exporting the values for <code>HTTP_HEADER_NAME</code>(e.g. <code>x-api-key</code>) and <code>HTTP_HEADER_VALUE</code>(e.g. <code>token1</code>) according to the values configured in <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/kserve/#create-ingress">ingress section</a>.</p>
@@ -598,7 +592,7 @@ data:
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified August 5, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2a536c32f8c8fc07b7debf2757c2ffed36e5df05">Cherry pick few more bug fixes to 1.5.1-1.0.1 (#316) (2a536c32)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/dd7090c0331f662723cc8fcccf652f1e2619d348">Minor website changes (#284) (dd7090c0)</a>
 </div>
 
 </div>
@@ -681,7 +675,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: 1.5 "],
+    facetFilters: ["version: 1.4 "],
   },
 debug: true 
 

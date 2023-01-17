@@ -88,13 +88,13 @@
         
         
         &lt;h2 id=&#34;compatibility&#34;&gt;Compatibility&lt;/h2&gt;
-&lt;p&gt;Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.5.&lt;/p&gt;
+&lt;p&gt;Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.4.&lt;/p&gt;
 &lt;div class=&#34;table-responsive&#34;&gt;
   &lt;table class=&#34;table table-bordered&#34;&gt;
     &lt;thead class=&#34;thead-light&#34;&gt;
       &lt;tr&gt;
         &lt;th&gt;EKS Versions&lt;/th&gt;
-        &lt;th&gt;Kubeflow v1.5&lt;/th&gt;
+        &lt;th&gt;Kubeflow v1.4&lt;/th&gt;
       &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody&gt;
@@ -120,6 +120,11 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Incompatible&lt;/strong&gt;: the combination is not known to work together&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Compatible&lt;/strong&gt;: all Kubeflow features have been tested and verified for the EKS Kubernetes version&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;kubeflow-v15-support&#34;&gt;Kubeflow v1.5 Support&lt;/h2&gt;
+&lt;p&gt;Support for Kubeflow-v1.5 is in active development. You can track the following issue to stay up to date on progress:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/issues/91&#34;&gt;v1.5 tracking issue&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>

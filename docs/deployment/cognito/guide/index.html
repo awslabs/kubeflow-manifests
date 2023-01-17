@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/guide\/",
-      "wordCount" : "1572",
+      "wordCount" : "1550",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-08-05T20:13:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T17:57:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manual Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
-<meta itemprop="dateModified" content="2022-08-05T20:13:54-07:00" />
-<meta itemprop="wordCount" content="1572">
+<meta itemprop="dateModified" content="2022-06-27T17:57:59-07:00" />
+<meta itemprop="wordCount" content="1550">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manual Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider"/>
@@ -136,8 +136,6 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
-	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
@@ -221,7 +219,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check" checked/>
@@ -270,10 +268,6 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
-  <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
@@ -326,7 +320,6 @@
     <li><a href="#40-building-manifests-and-deploying-kubeflow">4.0 Building manifests and deploying Kubeflow</a></li>
     <li><a href="#50-updating-the-domain-with-alb-address">5.0 Updating the domain with ALB address</a></li>
     <li><a href="#60-connecting-to-central-dashboard">6.0 Connecting to central dashboard</a></li>
-    <li><a href="#70-uninstall-kubeflow">7.0 Uninstall Kubeflow</a></li>
   </ul>
 </nav></div>
 
@@ -434,7 +427,7 @@
 <li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png" alt="cognito-app-client-settings"></li>
 </ol>
 </li>
-<li>Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need to specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+<li>Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
 <ol>
 <li>In order to use a custom domain, its root(i.e. <code>platform.example.com</code>) must have an valid A type record. Create a new record of type <code>A</code> in <code>platform.example.com</code> hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
 <ol>
@@ -523,7 +516,7 @@
 <li>Choose one of the two options to deploy kubeflow:
 <ol>
 <li><strong>[Option 1]</strong> Install with a single command:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/cognito <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/cognito <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div></li>
 <li><strong>[Option 2]</strong> Install individual components:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Kubeflow namespace</span>
@@ -533,9 +526,9 @@
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-roles/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Istio</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-crds/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-namespace/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-install/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-crds/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-install/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Cert-Manager</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/cert-manager/cert-manager/base <span class="p">|</span> kubectl apply -f -
@@ -544,10 +537,10 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># KNative</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-serving/overlays/gateways <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-eventing/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Istio Resources</span>
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Pipelines</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># reapply manifest if you see an error</span>
@@ -663,13 +656,11 @@
 <blockquote>
 <p>Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.com/apps/dig/#CNAME/">Google Admin Toolbox</a></p>
 </blockquote>
-<h2 id="70-uninstall-kubeflow">7.0 Uninstall Kubeflow</h2>
-<p>To delete the resources created in this guide, refer to the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/#uninstall-kubeflow">Uninstall section in Automated Cognito deployment guide</a></p>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified August 5, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2a536c32f8c8fc07b7debf2757c2ffed36e5df05">Cherry pick few more bug fixes to 1.5.1-1.0.1 (#316) (2a536c32)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/dd7090c0331f662723cc8fcccf652f1e2619d348">Minor website changes (#284) (dd7090c0)</a>
 </div>
 
 </div>
@@ -752,7 +743,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: 1.5 "],
+    facetFilters: ["version: 1.4 "],
   },
 debug: true 
 
