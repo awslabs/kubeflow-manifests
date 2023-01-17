@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/add-ons\/storage\/efs\/guide\/",
-      "wordCount" : "2590",
+      "wordCount" : "2682",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/storage/efs/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-08-05T20:13:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="EFS">
 <meta itemprop="description" content="Use Amazon EFS as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
-<meta itemprop="wordCount" content="2590">
+<meta itemprop="dateModified" content="2022-08-05T20:13:54-07:00" />
+<meta itemprop="wordCount" content="2682">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="EFS"/>
 <meta name="twitter:description" content="Use Amazon EFS as persistent storage with Kubeflow on AWS"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
@@ -219,7 +221,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -268,6 +270,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
@@ -415,7 +421,7 @@
 <li>At this point, you have likely cloned the necessary repository and checked out the right branch. Save this path to help naviagte to different paths in the rest of this guide.</li>
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GITHUB_ROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GITHUB_STORAGE_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$GITHUB_ROOT</span><span class="s2">/docs/deployment/add-ons/storage/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">GITHUB_STORAGE_DIR</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$GITHUB_ROOT</span><span class="s2">/deployments/add-ons/storage/&#34;</span>
 </span></span></code></pre></div><ol start="3">
 <li>Make sure that the following environment variables are set.</li>
 </ol>
@@ -583,7 +589,13 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 </span></span><span class="line"><span class="cl">yq e <span class="s1">&#39;.spec.template.spec.volumes[0].persistentVolumeClaim.claimName = env(CLAIM_NAME)&#39;</span> -i <span class="nv">$GITHUB_STORAGE_DIR</span>/notebook-sample/set-permission-job.yaml
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">kubectl apply -f <span class="nv">$GITHUB_STORAGE_DIR</span>/notebook-sample/set-permission-job.yaml
-</span></span></code></pre></div><h3 id="34-use-existing-efs-volume-as-workspace-or-data-volume-for-a-notebook">3.4 Use existing EFS volume as workspace or data volume for a Notebook</h3>
+</span></span></code></pre></div><h4 id="dynamic-provisioning--default-owner">Dynamic provisioning  default owner</h4>
+<p>For dynamic provisioning (manual and automated setup), we already set the default Kubeflow Notebook user (Jovyan) as owner of the EFS file system by default.</p>
+<h5 id="changing-the-default-values">Changing the default values</h5>
+<p>You can always change the <code>uid</code> and <code>gid</code> used for the setup.<br>
+For the manual setup, you need to edit the <code>uid</code> and <code>gid</code> in the storage class inside <code>dynamic-provisioning/sc.yaml</code>. <br>
+For the automated setup, you can specify the <code>uid</code> and <code>gid</code> as arguments to the script, see <a href="#advanced-customization">Advanced Customization</a> for more details on the different parameters that are available.</p>
+<h3 id="34-use-existing-efs-volume-as-workspace-or-data-volume-for-a-notebook">3.4 Use existing EFS volume as workspace or data volume for a Notebook</h3>
 <p>Spin up a new Kubeflow notebook server and specify the name of the PVC to be used as the workspace volume or the data volume and specify your desired mount point. We&rsquo;ll assume you created a PVC with the name <code>efs-claim</code> via Kubeflow Volumes UI or via the manual setup step <a href="#4-option-2-static-provisioning">Static Provisioning</a>. For our example here, we are using the AWS Optimized Tensorflow 2.6 CPU image provided in the Notebook configuration options (<code>public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow</code>). Additionally, use the existing <code>efs-claim</code> volume as the workspace volume at the default mount point <code>/home/jovyan</code>. The server might take a few minutes to come up.</p>
 <p>In case the server does not start up in the expected time, do make sure to check:</p>
 <ol>
@@ -650,7 +662,7 @@ b. Delete the <code>efs-csi-controller-sa</code> service account and then re-run
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043a)</a>
+  Last modified August 5, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2a536c32f8c8fc07b7debf2757c2ffed36e5df05">Cherry pick few more bug fixes to 1.5.1-1.0.1 (#316) (2a536c32)</a>
 </div>
 
 </div>
@@ -733,7 +745,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: 1.4 "],
+    facetFilters: ["version: 1.5 "],
   },
 debug: true 
 
