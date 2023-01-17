@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T12:25:42-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Vanilla Installation">
 <meta itemprop="description" content="Deploy Kubeflow on AWS using Amazon Elastic Kubernetes Service (EKS)">
-<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
+<meta itemprop="dateModified" content="2022-06-27T12:25:42-07:00" />
 <meta itemprop="wordCount" content="1272">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Vanilla Installation"/>
@@ -137,6 +137,8 @@
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
 	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
+	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
@@ -219,7 +221,7 @@
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Deployment Guide</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -268,6 +270,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guideskatib-check"><a href="/kubeflow-manifests/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guideskatib"><span class="">Katib</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidespipelines-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidespipelines-check"/>
@@ -403,7 +409,7 @@ Option 2 targets customization and ability to pick and choose individual compone
 <hr>
 <h3 id="install-with-a-single-command">Install with a single command</h3>
 <p>You can install all Kubeflow official components (residing under <code>apps</code>) and all common services (residing under <code>common</code>) using the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/vanilla <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/vanilla <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div><p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="#connect-to-your-kubeflow-cluster">by logging into your cluster</a>.</p>
 <p>You can now start experimenting and running your end-to-end ML workflows with Kubeflow!</p>
 <h3 id="install-individual-components">Install individual components</h3>
@@ -424,9 +430,9 @@ admission webhooks.</p>
 <p>Istio is used by many Kubeflow components to secure their traffic, enforce
 network authorization, and implement routing policies.</p>
 <p>Install Istio:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-crds/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-namespace/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/istio-install/base <span class="p">|</span> kubectl apply -f -
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-crds/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-namespace/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/istio-install/base <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><h4 id="dex">Dex</h4>
 <p>Dex is an OpenID Connect Identity (OIDC) with multiple authentication backends. In this default installation, it includes a static user with the email <code>user@example.com</code>. By default, the user&rsquo;s password is <code>12341234</code>. For any production Kubeflow deployment, you should change the default password by following the steps in <a href="#change-default-user-password">Change default user password</a>.</p>
 <p>Install Dex:</p>
@@ -439,7 +445,7 @@ network authorization, and implement routing policies.</p>
 <p>Knative is used by the KServe/KFServing official Kubeflow component.</p>
 <p>Install Knative Serving:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-serving/base <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/cluster-local-gateway/base <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><p>Optionally, you can install Knative Eventing, which can be used for inference request logging.</p>
 <p>Install Knative Eventing:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/knative/knative-eventing/base <span class="p">|</span> kubectl apply -f -
@@ -460,7 +466,7 @@ creates an Istio Gateway named <code>kubeflow-gateway</code> in the <code>kubefl
 If you want to install with your own Istio, then you need this kustomization as
 well.</p>
 <p>Install Istio resources:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/common/istio-1-11/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><h4 id="kubeflow-pipelines">Kubeflow Pipelines</h4>
 <p>Install the <a href="https://www.kubeflow.org/docs/components/pipelines/multi-user/">Multi-User Kubeflow Pipelines</a> official Kubeflow component:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user <span class="p">|</span> kubectl apply -f -
@@ -548,7 +554,7 @@ components:</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043a)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/4fb88f32e28bfce2e8395b2097f6360034e69a3d">Webside doc fixes (#275) (4fb88f32)</a>
 </div>
 
 </div>
@@ -631,7 +637,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: 1.4 "],
+    facetFilters: ["version: 1.5 "],
   },
 debug: true 
 
