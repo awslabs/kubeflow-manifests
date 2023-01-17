@@ -22,6 +22,7 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
+- disable-minio-server-resources.yaml
 - deployment_patch.yaml
 - disable-default-secret.yaml
 - aws-configuration-patch.yaml
