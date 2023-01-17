@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/"
       },
       "articleSection" : "docs",
-      "name" : "Prerequisites",
-      "headline" : "Prerequisites",
-      "description" : "Everything you need to get started with Kubeflow on AWS",
+      "name" : "Automated Setup",
+      "headline" : "Automated Setup",
+      "description" : "Deploying Kubeflow with AWS Cognito as identity provider using setup scripts",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/prerequisites\/",
-      "wordCount" : "397",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/guide-automated\/",
+      "wordCount" : "442",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,22 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Prerequisites | Kubeflow on AWS</title>
-<meta name="description" content="Everything you need to get started with Kubeflow on AWS">
-<meta property="og:title" content="Prerequisites" />
-<meta property="og:description" content="Everything you need to get started with Kubeflow on AWS" />
+<title>Automated Setup | Kubeflow on AWS</title>
+<meta name="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
+<meta property="og:title" content="Automated Setup" />
+<meta property="og:description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-09-16T20:28:41-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-06-27T14:34:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="Prerequisites">
-<meta itemprop="description" content="Everything you need to get started with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-09-16T20:28:41-07:00" />
-<meta itemprop="wordCount" content="397">
+<meta itemprop="name" content="Automated Setup">
+<meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts">
+<meta itemprop="dateModified" content="2022-06-27T14:34:59-07:00" />
+<meta itemprop="wordCount" content="442">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Prerequisites"/>
-<meta name="twitter:description" content="Everything you need to get started with Kubeflow on AWS"/>
+<meta name="twitter:title" content="Automated Setup"/>
+<meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider using setup scripts"/>
 
 
 
@@ -200,9 +200,9 @@
   <label for="m-kubeflow-manifestsdocsdeployment-check"><a href="/kubeflow-manifests/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeployment"><span class="">Deployment</span></a></label>
   
   <ul class="ul-2 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentprerequisites-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentprerequisites-check" checked/>
-  <label for="m-kubeflow-manifestsdocsdeploymentprerequisites-check"><a href="/kubeflow-manifests/docs/deployment/prerequisites/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentprerequisites"><span class="td-sidebar-nav-active-item">Prerequisites</span></a></label>
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentprerequisites-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentprerequisites-check"><a href="/kubeflow-manifests/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentvanillaguide-check"/>
@@ -212,14 +212,14 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check" checked/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognito-check"><a href="/kubeflow-manifests/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentcognito"><span class="">Cognito</span></a></label>
   
   <ul class="ul-3 foldable">
-    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check" checked/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="td-sidebar-nav-active-item">Automated Setup</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
@@ -298,10 +298,10 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/prerequisites.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/prerequisites.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/prerequisites.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Prerequisites" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito/guide-automated.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito/guide-automated.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito/guide-automated.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Automated%20Setup" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -311,9 +311,8 @@
 
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
-    <li><a href="#install-the-necessary-tools">Install the necessary tools</a></li>
-    <li><a href="#create-an-eks-cluster">Create an EKS cluster</a></li>
-    <li><a href="#clone-the-repository">Clone the repository</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#create-required-resources-and-deploy-kubeflow">Create required resources and deploy Kubeflow</a></li>
   </ul>
 </nav></div>
 
@@ -352,15 +351,18 @@
   <li class="breadcrumb-item">
     <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/">Deployment</a>
   </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/">Cognito</a>
+  </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">Prerequisites</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/">Automated Setup</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>Prerequisites</h1>
-	<div class="lead">Everything you need to get started with Kubeflow on AWS</div>
+	<h1>Automated Setup</h1>
+	<div class="lead">Deploying Kubeflow with AWS Cognito as identity provider using setup scripts</div>
 	<header class="article-meta">
 		
 
@@ -376,62 +378,142 @@
 
 		
 	</header>    
-	<h2 id="install-the-necessary-tools">Install the necessary tools</h2>
-<ul>
-<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS CLI</a> - A command line tool for interacting with AWS services.</li>
-<li><a href="https://eksctl.io/introduction/#installation">eksctl</a> - A command line tool for working with EKS clusters.</li>
-<li><a href="https://kubernetes.io/docs/tasks/tools">kubectl</a> - A command line tool for working with Kubernetes clusters.</li>
-<li><a href="https://mikefarah.gitbook.io/yq">yq</a> - A command line tool for YAML processing. (For Linux environments, use the <a href="https://github.com/mikefarah/yq/#install">wget plain binary installation</a>)</li>
-<li><a href="https://stedolan.github.io/jq/download/">jq</a> - A command line tool for processing JSON.</li>
-<li><a href="https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0">kustomize version 3.2.0</a> - A command line tool to customize Kubernetes objects through a kustomization file.</li>
-</ul>
-<blockquote>
-<p>Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see <a href="https://github.com/kubernetes-sigs/kustomize/issues/3794">kubernetes-sigs/kustomize#3794</a> and <a href="https://github.com/kubeflow/manifests/issues/1797">kubeflow/manifests#1797</a>. We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.</p>
-</blockquote>
-<ul>
-<li><a href="https://www.python.org/downloads/">python 3.8+</a> - A programming language used for automated installation scripts.</li>
-<li><a href="https://pip.pypa.io/en/stable/installation/">pip</a> - A package installer for python.</li>
-</ul>
-<h2 id="create-an-eks-cluster">Create an EKS cluster</h2>
-<blockquote>
-<p>Note: Be sure to check <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/">Amazon EKS and Kubeflow Compatibility</a> when creating your cluster with specific EKS versions.</p>
-</blockquote>
-<p>If you do not have an existing cluster, run the following command to create an EKS cluster.</p>
-<blockquote>
-<p>Note: Various controllers use IAM roles for service accounts (IRSA). An <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">OIDC provider</a> must exist for your cluster to use IRSA.</p>
-</blockquote>
-<p>Change the values for the <code>CLUSTER_NAME</code> and <code>CLUSTER_REGION</code> environment variables:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span><span class="nv">$CLUSTER_NAME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span><span class="nv">$CLUSTER_REGION</span>
-</span></span></code></pre></div><p>Run the following command to create an EKS cluster:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl create cluster <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--name <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.21 <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodegroup-name linux-nodes <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--node-type m5.xlarge <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodes <span class="m">5</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodes-min <span class="m">5</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodes-max <span class="m">10</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--managed <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--with-oidc
-</span></span></code></pre></div><p>If you are using an existing EKS cluster, create an <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">OIDC provider</a> and associate it with for your EKS cluster with the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --cluster <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> --approve
-</span></span></code></pre></div><p>More details about cluster creation via <code>eksctl</code> can be found in the <a href="https://eksctl.io/usage/creating-and-managing-clusters/">Creating and managing clusters</a> guide.</p>
-<h2 id="clone-the-repository">Clone the repository</h2>
-<p>Clone the <a href="https://github.com/awslabs/kubeflow-manifests"><code>awslabs/kubeflow-manifests</code></a> and the <a href="https://github.com/kubeflow/manifests"><code>kubeflow/manifests</code></a> repositories and check out the release branches of your choosing.</p>
-<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.4.1) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.4.1-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.4.1
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.4.1-aws-b1.0.0
-</span></span><span class="line"><span class="cl">git clone https://github.com/awslabs/kubeflow-manifests.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kubeflow-manifests
-</span></span><span class="line"><span class="cl">git checkout <span class="si">${</span><span class="nv">AWS_RELEASE_VERSION</span><span class="si">}</span>
-</span></span><span class="line"><span class="cl">git clone --branch <span class="si">${</span><span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="si">}</span> https://github.com/kubeflow/manifests.git upstream
-</span></span></code></pre></div>
+	<p>This guide describes how to deploy Kubeflow on AWS EKS using Cognito as identity provider. Kubeflow uses Istio to manage internal traffic. In this guide we will be creating an Ingress to manage external traffic to the Kubernetes services and an Application Load Balancer (ALB) to provide public DNS and enable TLS authentication at the load balancer. We will also be creating a custom domain to host Kubeflow since certificates (needed for TLS) for ALB&rsquo;s public DNS names are not supported.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This guide assumes you have Python 3.8 installed and that you have completed the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a>.</p>
+<h2 id="create-required-resources-and-deploy-kubeflow">Create required resources and deploy Kubeflow</h2>
+<ol>
+<li>
+<p>The following steps automate <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">section 1.0(Custom domain and certificates)</a> (creating a custom domain to host Kubeflow and TLS certificates for the domain), <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#20-cognito-user-pool">section 2.0(Cognito user pool)</a> (creating a Cognito Userpool used for user authentication) and<a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">section 3.0(Configure Ingress)</a> (configuring ingress and load balancer controller manifests) of the cognito guide.</p>
+<ol>
+<li>Install dependencies for the scripts
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">pip install -r tests/e2e/requirements.txt
+</span></span></code></pre></div></li>
+<li>Substitute values in <code>tests/e2e/utils/cognito_bootstrap/config.yaml</code>.
+<ol>
+<li>Registed root domain in <code>route53.rootDomain.name</code>. Lets assume this domain is <code>example.com</code>
+<ol>
+<li>If your domain is managed in route53, enter the Hosted zone ID found under Hosted zone details in <code>route53.rootDomain.hostedZoneId</code>. Skip this step if your domain is managed by other domain provider.</li>
+</ol>
+</li>
+<li>Name of the sudomain you want to host Kubeflow (e.g. <code>platform.example.com</code>) in <code>route53.subDomain.name</code>. Please read <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">this section</a> to understand why we use a subdomain.</li>
+<li>Cluster name and region where kubeflow will be deployed in <code>cluster.name</code> and <code>cluster.region</code> (e.g. us-west-2) respectively.</li>
+<li>Name of cognito userpool in <code>cognitoUserpool.name</code> e.g. kubeflow-users.</li>
+<li>The config file will look something like:
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w"> </span><span class="nt">cognitoUserpool</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">kubeflow-users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nt">cluster</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">kube-eks-cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l">us-west-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nt">route53</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">rootDomain</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">hostedZoneId</span><span class="p">:</span><span class="w"> </span><span class="l">XXXX</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">subDomain</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">platform.example.com</span><span class="w">
+</span></span></span></code></pre></div></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Run the script to create the resources
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> <span class="nb">cd</span> tests/e2e
+</span></span><span class="line"><span class="cl"> <span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/cognito_bootstrap/cognito_pre_deployment.py
+</span></span><span class="line"><span class="cl"> <span class="nb">cd</span> -
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>The script will update the config file with the resource names/ids/ARNs it created. It will look something like:
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w"> </span><span class="nt">cognitoUserpool</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">ARN</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_yasI9dbxF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">appClientId</span><span class="p">:</span><span class="w"> </span><span class="l">5jmk7ljl2a74jk3n0a0fvj3l31</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">domainAliasTarget</span><span class="p">:</span><span class="w"> </span><span class="l">xxxxxxxxxx.cloudfront.net</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">domain</span><span class="p">:</span><span class="w"> </span><span class="l">auth.platform.example.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">kubeflow-users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nt">kubeflow</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">alb</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">serviceAccount</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">alb-ingress-controller</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">kubeflow</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="nt">policyArn</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nt">cluster</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">kube-eks-cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l">us-west-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="nt">route53</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">rootDomain</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">certARN</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:acm:us-east-1:123456789012:certificate/9d8c4bbc-3b02-4a48-8c7d-d91441c6e5af</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">hostedZoneId</span><span class="p">:</span><span class="w"> </span><span class="l">XXXXX</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">subDomain</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">us-west-2-certARN</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:acm:us-west-2:123456789012:certificate/d1d7b641c238-4bc7-f525-b7bf-373cc726</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">hostedZoneId</span><span class="p">:</span><span class="w"> </span><span class="l">XXXXX</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">platform.example.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">us-east-1-certARN</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:acm:us-east-1:123456789012:certificate/373cc726-f525-4bc7-b7bf-d1d7b641c238</span><span class="w">
+</span></span></span></code></pre></div></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#40-building-manifests-and-deploying-kubeflow">section 4.0(Building manifests and deploying Kubeflow)</a> to install Kubeflow</p>
+</li>
+<li>
+<p>Updating the domain with ALB address</p>
+<ol>
+<li>Check if ALB is provisioned. It takes around 3-5 minutes
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> kubectl get ingress -n istio-system
+</span></span><span class="line"><span class="cl"> Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+<span class="p">;</span> use networking.k8s.io/v1 Ingress
+</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span></code></pre></div></li>
+<li>If <code>ADDRESS</code> is empty after a few minutes, check the logs of alb-ingress-controller by following <a href="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">this guide</a></li>
+</ol>
+</li>
+<li>Substitute the ALB address under <code>kubeflow.alb.dns</code> in <code>tests/e2e/utils/cognito_bootstrap/config.yaml</code>. The kubeflow section of the config file will look like:
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w"> </span><span class="nt">kubeflow</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">alb</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="l">ebde55ee-istiosystem-istio-2af2-1100502020.us-west-2.elb.amazonaws.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">serviceAccount</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">alb-ingress-controller</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">             </span><span class="nt">policyArn</span><span class="p">:</span><span class="w"> </span><span class="l">arn:aws:iam::123456789012:policy/alb_ingress_controller_kube-eks-clusterxxx</span><span class="w">
+</span></span></span></code></pre></div></li>
+</ol>
+</li>
+<li>Run the following script to update the subdomain with ALB address
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> <span class="nb">cd</span> tests/e2e
+</span></span><span class="line"><span class="cl"> <span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/cognito_bootstrap/cognito_post_deployment.py
+</span></span><span class="line"><span class="cl"> <span class="nb">cd</span> -
+</span></span></code></pre></div></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>Follow the rest of the cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#60-connecting-to-central-dashboard">section 6.0(Connecting to central dashboard)</a> to:</p>
+<ol>
+<li>Create a user in Cognito user pool</li>
+<li>Create a profile for the user from the user pool</li>
+<li>Connect to the central dashboard</li>
+</ol>
+</li>
+</ol>
+
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified September 16, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/34ac5ddaf464bba997ef63755a8450f752e6e331">Website build changes from release v1.4.1 aws b1.0.0 (#375) (34ac5dda)</a>
+  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/47f8043a27c9f92fef458df987cd134efe423b83">Website changes (#278) (47f8043a)</a>
 </div>
 
 </div>

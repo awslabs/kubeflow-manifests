@@ -15,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/"
       },
       "articleSection" : "docs",
-      "name" : "Cognito, RDS, and S3",
-      "headline" : "Cognito, RDS, and S3",
-      "description" : "Deploying Kubeflow with Amazon Cognito, RDS and S3",
+      "name" : "Manual Deployment Guide",
+      "headline" : "Manual Deployment Guide",
+      "description" : "Deploying Kubeflow with AWS Cognito as identity provider",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -27,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito-rds-s3\/guide\/",
-      "wordCount" : "572",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito\/guide\/",
+      "wordCount" : "1550",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,22 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Cognito, RDS, and S3 | Kubeflow on AWS</title>
-<meta name="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
-<meta property="og:title" content="Cognito, RDS, and S3" />
-<meta property="og:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3" />
+<title>Manual Deployment Guide | Kubeflow on AWS</title>
+<meta name="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
+<meta property="og:title" content="Manual Deployment Guide" />
+<meta property="og:description" content="Deploying Kubeflow with AWS Cognito as identity provider" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/" /><meta property="article:section" content="docs" />
 
 <meta property="article:modified_time" content="2022-06-27T17:57:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="Cognito, RDS, and S3">
-<meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
+<meta itemprop="name" content="Manual Deployment Guide">
+<meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
 <meta itemprop="dateModified" content="2022-06-27T17:57:59-07:00" />
-<meta itemprop="wordCount" content="572">
+<meta itemprop="wordCount" content="1550">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cognito, RDS, and S3"/>
-<meta name="twitter:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3"/>
+<meta name="twitter:title" content="Manual Deployment Guide"/>
+<meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider"/>
 
 
 
@@ -212,8 +212,8 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentrds-s3guide"><span class="">RDS and S3</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check"/>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-check" checked/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognito-check"><a href="/kubeflow-manifests/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsdocsdeploymentcognito"><span class="">Cognito</span></a></label>
   
   <ul class="ul-3 foldable">
@@ -221,15 +221,15 @@
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-automated"><span class="">Automated Setup</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="">Manual Deployment Guide</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognitoguide-check" checked/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognitoguide-check"><a href="/kubeflow-manifests/docs/deployment/cognito/guide/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognitoguide"><span class="td-sidebar-nav-active-item">Manual Deployment Guide</span></a></label>
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-li">
-  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check" checked/>
-  <label for="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide"><span class="td-sidebar-nav-active-item">Cognito, RDS, and S3</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentcognito-rds-s3guide"><span class="">Cognito, RDS, and S3</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsdocsdeploymentadd-ons-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentadd-ons-check"/>
@@ -298,10 +298,10 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito-rds-s3/guide.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Cognito,%20RDS,%20and%20S3" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito/guide.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito/guide.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito/guide.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Manual%20Deployment%20Guide" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -311,8 +311,15 @@
 
 <div class="td-toc"><nav id="TableOfContents">
   <ul>
-    <li><a href="#1-prerequisites">1. Prerequisites</a></li>
-    <li><a href="#configure-custom-domain-and-cognito">Configure Custom Domain and Cognito</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#background">Background</a></li>
+    <li><a href="#optional-automated-setup">(Optional) Automated setup</a></li>
+    <li><a href="#10-custom-domain-and-certificates">1.0 Custom domain and certificates</a></li>
+    <li><a href="#20-cognito-user-pool">2.0 Cognito User Pool</a></li>
+    <li><a href="#30-configure-ingress">3.0 Configure Ingress</a></li>
+    <li><a href="#40-building-manifests-and-deploying-kubeflow">4.0 Building manifests and deploying Kubeflow</a></li>
+    <li><a href="#50-updating-the-domain-with-alb-address">5.0 Updating the domain with ALB address</a></li>
+    <li><a href="#60-connecting-to-central-dashboard">6.0 Connecting to central dashboard</a></li>
   </ul>
 </nav></div>
 
@@ -351,15 +358,18 @@
   <li class="breadcrumb-item">
     <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/">Deployment</a>
   </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/">Cognito</a>
+  </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/">Cognito, RDS, and S3</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/">Manual Deployment Guide</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>Cognito, RDS, and S3</h1>
-	<div class="lead">Deploying Kubeflow with Amazon Cognito, RDS and S3</div>
+	<h1>Manual Deployment Guide</h1>
+	<div class="lead">Deploying Kubeflow with AWS Cognito as identity provider</div>
 	<header class="article-meta">
 		
 
@@ -375,36 +385,141 @@
 
 		
 	</header>    
-	<p>This guide describes how to deploy Kubeflow on Amazon EKS using Cognito for your identity provider, RDS for your database, and S3 for your artifact storage.</p>
-<h2 id="1-prerequisites">1. Prerequisites</h2>
-<p>Refer to the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">general prerequisites guide</a> and the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/">RDS and S3 setup guide</a> in order to:</p>
+	<p>This guide describes how to deploy Kubeflow on Amazon EKS using Cognito as your identity provider. Kubeflow uses Istio to manage internal traffic. In this guide, we will:</p>
+<ul>
+<li>create an Ingress to manage external traffic to the Kubernetes services</li>
+<li>create an Application Load Balancer (ALB) to provide public DNS</li>
+<li>enable TLS authentication for the Load Balancer</li>
+<li>create a custom domain to host Kubeflow (because the certificates needed for TLS are not supported for ALB&rsquo;s public DNS names)</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Check to make sure that you have the necessary <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/">prerequisites</a>.</p>
+<h2 id="background">Background</h2>
+<p>Read the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#background">background section</a> in the Load Balancer guide for information on the requirements for exposing Kubeflow over a Load Balancer.</p>
+<p>Read the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-domain-and-certificates">create domain and certificate section</a> for information on why we use a subdomain for hosting Kubeflow.</p>
+<h2 id="optional-automated-setup">(Optional) Automated setup</h2>
+<p>The rest of the sections in this guide walk you through each step for setting up domain, certificates, and a Cognito userpool using the AWS Console. This guide is intended for a new user to understand the design and details of these setup steps. If you prefer to use automated scripts and avoid human error for setting up the resources for deploying Kubeflow with Cognito, follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide-automated/">automated setup guide</a>.</p>
+<h2 id="10-custom-domain-and-certificates">1.0 Custom domain and certificates</h2>
 <ol>
-<li>Install the CLI tools</li>
-<li>Clone the repositories</li>
-<li>Create an EKS cluster</li>
-<li>Create an S3 Bucket</li>
-<li>Create an RDS Instance</li>
-<li>Configure AWS Secrets for RDS and S3</li>
-<li>Install AWS Secrets and Kubernetes Secrets Store CSI driver</li>
-<li>Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines</li>
+<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-a-subdomain">Create a subdomain</a> section of the Load Balancer guide to create a subdomain(e.g. <code>platform.example.com</code>) for hosting Kubeflow.</li>
+<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">Create certificates for domain</a> section of the Load Balancer guide to create certificates required for TLS.</li>
 </ol>
-<h2 id="configure-custom-domain-and-cognito">Configure Custom Domain and Cognito</h2>
+<p>From this point onwards, we will be creating/updating the DNS records <strong>only in the subdomain</strong>. All the screenshots of the hosted zone in the following sections/steps of this guide are for the subdomain.</p>
+<h2 id="20-cognito-user-pool">2.0 Cognito User Pool</h2>
 <ol>
-<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/">Cognito setup guide</a> from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#10-custom-domain-and-certificates">Section 1.0 (Custom domain)</a> up to <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#30-configure-ingress">Section 3.0 (Configure ingress)</a> in order to:
+<li>Create a user pool in Cognito in the same region as your EKS cluster. Type a pool name and choose <code>Review defaults</code>.</li>
+<li>Email is a required user attribute since Kubeflow uses email address as the user identifier for multi-user isolation. See this <a href="https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation">documentation</a> for example. On the review page, make sure email is selected as a required attribute. If it is not by default, Edit the <code>Required attributes</code> and select <code>email</code>.
 <ol>
-<li>Create a custom domain</li>
-<li>Create TLS certificates for the domain</li>
-<li>Create a Cognito Userpool</li>
-<li>Configure Ingress</li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-email-required.png" alt="cognito-email-required"></li>
 </ol>
 </li>
-<li>Deploy Kubeflow. Choose one of the two options to deploy kubeflow:
+<li>On the Policies page, select <code>Only allow administrators to create users</code> under <code>Do you want to allow users to sign themselves up?</code> and save changes. This step is optional but is recommended to have strict control over the users.</li>
+<li>Click on <code>Create pool</code> to create the user pool.</li>
+<li>Add an <code>App client</code> with any name and the default options.
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-id.png" alt="cognito-app-client-id"></li>
+</ol>
+</li>
+<li>In the <code>App client settings</code>, select <code>Authorization code grant</code> flow under OAuth-2.0 and check box <code>email</code>, <code>openid</code>, <code>aws.cognito.signin.user.admin</code> and <code>profile</code> scopes. Also check box <code>Enabled Identity Providers</code>.
+<ol>
+<li>Substitute <code>example.com</code> in this URL - <code>https://kubeflow.platform.example.com/oauth2/idpresponse</code> with your domain and use it as the Callback URL(s).</li>
+<li>Substitute <code>example.com</code> in this URL - <code>https://kubeflow.platform.example.com</code> with your domain and use it as the Sign out URL(s).</li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png" alt="cognito-app-client-settings"></li>
+</ol>
+</li>
+<li>Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
+<ol>
+<li>In order to use a custom domain, its root(i.e. <code>platform.example.com</code>) must have an valid A type record. Create a new record of type <code>A</code> in <code>platform.example.com</code> hosted zone with an arbitrary IP for now. Once we have ALB created, we will update this value.
+<ol>
+<li>Following is a screenshot of <code>platform.example.com</code> hosted zone. A record is shown.
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-initial-A-record.png" alt="subdomain-initial-A-record"></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>If your cluster is not in N.Virginia(us-east-1), create an ACM certificate in us-east-1 for <code>*.platform.example.com</code> by following the process similar to <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#create-certificates-for-domain">section 2.0</a>. That is because <a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html">Cognito requires</a> a certificate in N.Virginia in order to have a custom domain for a user pool.</li>
+<li>In the <code>Domain name</code> choose <code>Use your domain</code>, type <code>auth.platform.example.com</code> and select the <code>*.platform.example.com</code> AWS managed certificate you’ve created in N.Virginia. Creating domain takes up to 15 mins.
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-active-domain.png" alt="cognito-active-domain"></li>
+<li>When it’s created, it will return the <code>Alias target</code> CloudFront address.
+<ol>
+<li>Screenshot of the CloudFront URL for Cognito Domain name:
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-url.png" alt="cognito-domain-cloudfront-url"></li>
+</ol>
+</li>
+<li>Create a new record of type <code>A</code> for <code>auth.platform.example.com</code> with the value of the CloudFront URL.
+<ol>
+<li>Select the <code>alias</code> toggle and select Alias to Cloudfront distribution for creating the record</li>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-creatin.png" alt="cognito-domain-cloudfront-A-record-creating"></li>
+<li>Following is a screenshot of the A record for <code>auth.platform.example.com</code> in <code>platform.example.com</code> hosted zone:
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-domain-cloudfront-A-record-created.png" alt="cognito-domain-cloudfront-A-record-created"></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="30-configure-ingress">3.0 Configure Ingress</h2>
+<ol>
+<li>Take note of the following values from the previous step
+<ol>
+<li>The Pool ARN of the user pool found in Cognito general settings.</li>
+<li>The App client id, found in Cognito App clients.</li>
+<li>The custom user pool domain (e.g. <code>auth.platform.example.com</code>), found in the Cognito domain name.</li>
+<li>The ARN of the certificate from the Certificate Manager in the region where your platform (for the subdomain) is running.</li>
+<li>signOutURL is the domain that you provided as the Sign out URL(s).</li>
+<li>CognitoLogoutURL is comprised of your CognitoUserPoolDomain, CognitoAppClientId, and your domain that you provided as the Sign out URL(s).</li>
+<li>Export the values:
+1.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CognitoUserPoolArn</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_USER_POOL_ARN&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CognitoAppClientId</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_APP_CLIENT_ID&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CognitoUserPoolDomain</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_USER_POOL_DOMAIN&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">certArn</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_ACM_CERTIFICATE_ARN&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">signOutURL</span><span class="o">=</span><span class="s2">&#34;&lt;YOUR_SIGN_OUT_URL&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CognitoLogoutURL</span><span class="o">=</span><span class="s2">&#34;https://</span><span class="nv">$CognitoUserPoolDomain</span><span class="s2">/logout?client_id=</span><span class="nv">$CognitoAppClientId</span><span class="s2">&amp;logout_uri=</span><span class="nv">$signOutURL</span><span class="s2">&#34;</span>
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>Substitute values for setting up Ingress.
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> <span class="nb">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> CognitoUserPoolArn=&#39;</span><span class="nv">$CognitoUserPoolArn</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> CognitoAppClientId=&#39;</span><span class="nv">$CognitoAppClientId</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> CognitoUserPoolDomain=&#39;</span><span class="nv">$CognitoUserPoolDomain</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> certArn=&#39;</span><span class="nv">$certArn</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> &#39;</span> &gt; awsconfigs/common/istio-ingress/overlays/cognito/params.env
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>Substitute values for setting up AWS authservice.
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> <span class="nb">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> LOGOUT_URL=&#39;</span><span class="nv">$CognitoLogoutURL</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1"> &#39;</span> &gt; awsconfigs/common/aws-authservice/base/params.env
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>Follow the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/add-ons/load-balancer/guide/#configure-load-balancer-controller">Configure Load Balancer Controller</a> section of the load balancer guide to setup the resources required the load balancer controller.</li>
+</ol>
+<h2 id="40-building-manifests-and-deploying-kubeflow">4.0 Building manifests and deploying Kubeflow</h2>
+<ol>
+<li>Choose one of the two options to deploy kubeflow:
 <ol>
 <li><strong>[Option 1]</strong> Install with a single command:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/cognito-rds-s3 <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build docs/deployment/cognito <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 10<span class="p">;</span> <span class="k">done</span>
 </span></span></code></pre></div></li>
 <li><strong>[Option 2]</strong> Install individual components:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Kubeflow namespace</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Kubeflow namespace</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/kubeflow-namespace/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Roles</span>
@@ -427,12 +542,19 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Istio Resources</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/common/istio-1-9/kubeflow-istio-resources/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Pipelines</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># reapply manifest if you see an error</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># KServe</span>
 </span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/kserve <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">kustomize build upstream/contrib/kserve/models-web-app/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># KFServing -  This is an optional component and required only if you are not ready to migrate to KServe. We recommend migrating to KServe as soon as possible</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/kfserving/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Katib</span>
+</span></span><span class="line"><span class="cl">kustomize build upstream/apps/katib/upstream/installs/katib-with-kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Central Dashboard</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/centraldashboard/upstream/overlays/kserve <span class="p">|</span> kubectl apply -f -
@@ -457,19 +579,8 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Training Operator</span>
 </span></span><span class="line"><span class="cl">kustomize build upstream/apps/training-operator/upstream/overlays/kubeflow <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># AWS Telemetry - This is an optional component. See usage tracking documentation for more information.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Telemetry - This is an optional component. See usage tracking documentation for more information</span>
 </span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-telemetry <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># AWS Secret Manager</span>
-</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-secrets-manager <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Kubeflow Pipelines</span>
-</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/pipeline <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Katib</span>
-</span></span><span class="line"><span class="cl">kustomize build awsconfigs/apps/katib-external-db-with-kubeflow <span class="p">|</span> kubectl apply -f -
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Configured for AWS Cognito</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Ingress</span>
 </span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/cognito <span class="p">|</span> kubectl apply -f -
@@ -477,20 +588,74 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># ALB controller</span>
 </span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-alb-ingress-controller/base <span class="p">|</span> kubectl apply -f -
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Authservice</span>
-</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-authservice/base <span class="p">|</span> kubectl apply -f -        
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Authservice</span>
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-authservice/base <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div></li>
 </ol>
 </li>
-<li>Follow the rest of the Cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/guide/#50-updating-the-domain-with-alb-address">section 5.0 (Updating the domain with ALB address)</a> in order to:
+</ol>
+<h2 id="50-updating-the-domain-with-alb-address">5.0 Updating the domain with ALB address</h2>
 <ol>
-<li>Add/Update the DNS records in a custom domain with the ALB address</li>
-<li>Create a user in a Cognito user pool</li>
-<li>Create a profile for the user from the user pool</li>
-<li>Connect to the central dashboard</li>
+<li>Check if ALB is provisioned. This may take a few minutes.
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> kubectl get ingress -n istio-system
+</span></span><span class="line"><span class="cl"> Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+<span class="p">;</span> use networking.k8s.io/v1 Ingress
+</span></span><span class="line"><span class="cl"> NAME            CLASS    HOSTS   ADDRESS                                                              PORTS   AGE
+</span></span><span class="line"><span class="cl"> istio-ingress   &lt;none&gt;   *       k8s-istiosys-istioing-xxxxxx-110050202.us-west-2.elb.amazonaws.com   <span class="m">80</span>      15d
+</span></span></code></pre></div></li>
+<li>If <code>ADDRESS</code> is empty after a few minutes, see <a href="https://awslabs.github.io/kubeflow-manifests/docs/troubleshooting-aws/#alb-fails-to-provision">ALB fails to provision</a> in the troubleshooting guide.</li>
+</ol>
+</li>
+<li>When ALB is ready, copy the DNS name of that load balancer and create a CNAME entry to it in Route53 under subdomain (<code>platform.example.com</code>) for <code>*.platform.example.com</code>
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-*.platform-and-*.default-records.png" alt="subdomain-.platform-and-.default-records"></li>
+</ol>
+</li>
+<li>Update the type <code>A</code> record created in section for <code>platform.example.com</code> using ALB DNS name. Change from <code>127.0.0.1</code> → ALB DNS name. You have to use alias form under <code>Alias to application and classical load balancer</code> and select region and your ALB address.
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-A-record-updated.png" alt="subdomain-A-record-updated"></li>
+</ol>
+</li>
+<li>Screenshot of all the record sets in hosted zone for reference
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/subdomain-records-summary.png" alt="subdomain-records-summary"></li>
 </ol>
 </li>
 </ol>
+<h2 id="60-connecting-to-central-dashboard">6.0 Connecting to central dashboard</h2>
+<ol>
+<li>The central dashboard should now be available at <code>https://kubeflow.platform.example.com</code>. Before connecting to the dashboard:
+<ol>
+<li>Head over to the Cognito console and create some users in <code>Users and groups</code>. These are the users who will log in to the central dashboard.
+<ol>
+<li><img src="https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png" alt="cognito-user-pool-created"></li>
+</ol>
+</li>
+<li>Create a Profile for a user by following the steps in the <a href="https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation">Manual Profile Creation</a>. The following is an example Profile for reference:
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> apiVersion: kubeflow.org/v1beta1
+</span></span><span class="line"><span class="cl"> kind: Profile
+</span></span><span class="line"><span class="cl"> metadata:
+</span></span><span class="line"><span class="cl">     <span class="c1"># replace with the name of profile you want, this will be user&#39;s namespace name</span>
+</span></span><span class="line"><span class="cl">     name: namespace-for-my-user
+</span></span><span class="line"><span class="cl">     namespace: kubeflow
+</span></span><span class="line"><span class="cl"> spec:
+</span></span><span class="line"><span class="cl">     owner:
+</span></span><span class="line"><span class="cl">         kind: User
+</span></span><span class="line"><span class="cl">         <span class="c1"># replace with the email of the user</span>
+</span></span><span class="line"><span class="cl">         name: my_user_email@kubeflow.com
+</span></span></code></pre></div></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Open the central dashboard at <code>https://kubeflow.platform.example.com</code>. It will redirect to Cognito for login. Use the credentials of the user that you just created a Profile for in previous step.</li>
+</ol>
+<blockquote>
+<p>Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.com/apps/dig/#CNAME/">Google Admin Toolbox</a></p>
+</blockquote>
 
 	
 	
