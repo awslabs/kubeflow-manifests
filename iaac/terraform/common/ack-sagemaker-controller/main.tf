@@ -2,7 +2,7 @@ data "github_repository" "kubeflow-manifests" {
   full_name = "ni/kubeflow-manifests"
 }
 data "github_repository_file" "profile_controller_policy" {
-  repository = github_repository.kubeflow-manifests.name
+  repository = data.github_repository.kubeflow-manifests.name
   branch     = "main"
   file       = "awsconfigs/infra_configs/iam_ack_oidc_sm_studio_policy.json"
 }
