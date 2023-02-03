@@ -5,6 +5,7 @@ data:
   idlenessCheckPeriod: '{{ .Values.cullingPolicy.idlenessCheckPeriod }}'
   ISTIO_GATEWAY: kubeflow/kubeflow-gateway
   USE_ISTIO: 'true'
+  MULTIUSER: 'true'
 kind: ConfigMap
 metadata:
   annotations: {}
