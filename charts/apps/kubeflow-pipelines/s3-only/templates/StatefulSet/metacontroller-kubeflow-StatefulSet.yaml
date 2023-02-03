@@ -8,7 +8,7 @@ metadata:
   name: metacontroller
   namespace: kubeflow
 spec:
-  replicas: 1
+  replicas: {{ Values.replicas }}
   selector:
     matchLabels:
       app: metacontroller

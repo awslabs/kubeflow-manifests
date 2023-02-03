@@ -6,7 +6,7 @@ metadata:
   name: training-operator
   namespace: kubeflow
 spec:
-  replicas: 1
+  replicas: {{ Values.replicas }}
   selector:
     matchLabels:
       control-plane: kubeflow-training-operator

@@ -11,7 +11,7 @@ metadata:
   name: istiod
   namespace: istio-system
 spec:
-  replicas: 1
+  replicas: {{ Values.replicas }}
   selector:
     matchLabels:
       istio: pilot

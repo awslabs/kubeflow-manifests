@@ -14,7 +14,7 @@ data:
     \"\"\n            - \"--nn_config=\\\"${trialParameters.neuralNetworkConfig}\\\
     \"\"\n      restartPolicy: Never"
   pytorchJobTemplate: "apiVersion: kubeflow.org/v1\nkind: PyTorchJob\nspec:\n  pytorchReplicaSpecs:\n\
-    \    Master:\n      replicas: 1\n      restartPolicy: OnFailure\n      template:\n\
+    \    Master:\n      replicas: {{ Values.replicas }}\n      restartPolicy: OnFailure\n      template:\n\
     \        spec:\n          containers:\n            - name: pytorch\n         \
     \     image: docker.io/kubeflowkatib/pytorch-mnist-cpu:v0.14.0\n             \
     \ command:\n                - \"python3\"\n                - \"/opt/pytorch-mnist/mnist.py\"\

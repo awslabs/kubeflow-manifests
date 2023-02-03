@@ -9,7 +9,7 @@ metadata:
   name: centraldashboard
   namespace: kubeflow
 spec:
-  replicas: 1
+  replicas: {{ Values.replicas }}
   selector:
     matchLabels:
       app: centraldashboard

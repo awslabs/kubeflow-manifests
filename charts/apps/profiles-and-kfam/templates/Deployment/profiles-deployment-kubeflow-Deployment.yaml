@@ -6,7 +6,7 @@ metadata:
   name: profiles-deployment
   namespace: kubeflow
 spec:
-  replicas: 1
+  replicas: {{ Values.replicas }}
   selector:
     matchLabels:
       kustomize.component: profiles
