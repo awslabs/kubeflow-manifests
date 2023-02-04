@@ -7,7 +7,7 @@ metadata:
   name: jupyter-web-app-deployment
   namespace: kubeflow
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: jupyter-web-app

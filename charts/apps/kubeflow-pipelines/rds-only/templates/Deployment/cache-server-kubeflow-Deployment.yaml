@@ -9,7 +9,7 @@ metadata:
   name: cache-server
   namespace: kubeflow
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: cache-server

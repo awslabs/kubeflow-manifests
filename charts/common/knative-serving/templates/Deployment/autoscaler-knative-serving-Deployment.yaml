@@ -9,7 +9,7 @@ metadata:
   name: autoscaler
   namespace: knative-serving
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: autoscaler

@@ -9,7 +9,7 @@ metadata:
   name: kubeflow-pipelines-profile-controller
   namespace: kubeflow
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: kubeflow-pipelines-profile-controller

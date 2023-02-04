@@ -6,7 +6,7 @@ metadata:
   name: katib-db-manager
   namespace: kubeflow
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       katib.kubeflow.org/component: db-manager

@@ -6,7 +6,7 @@ metadata:
   name: dex
   namespace: auth
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: dex

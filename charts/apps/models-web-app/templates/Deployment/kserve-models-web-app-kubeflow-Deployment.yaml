@@ -9,7 +9,7 @@ metadata:
   name: kserve-models-web-app
   namespace: kubeflow
 spec:
-  replicas: {{ Values.replicas }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: kserve
