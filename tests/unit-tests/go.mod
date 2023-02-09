@@ -3,7 +3,7 @@ module github.com/kubeflow/manifests/tests
 go 1.13
 
 require (
-	github.com/emicklei/go-restful v2.15.0+incompatible // indirect
+	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
