@@ -107,3 +107,6 @@ delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
+
+helmify:
+	PYTHONPATH=. python3.8 tools/helmify/src/kustomize_to_helm_automation.py
