@@ -18,9 +18,10 @@ A curated list of blogs illustrating how to build flexible, scalable ML workflow
 Find case studies, use cases, best practices, benchmarks, and more.
 
 1. [Enabling hybrid ML workflows on Amazon EKS and Amazon SageMaker with one-click Kubeflow on AWS deployment](https://aws.amazon.com/blogs/machine-learning/enabling-hybrid-ml-workflows-on-amazon-eks-and-amazon-sagemaker-with-one-click-kubeflow-on-aws-deployment/) - In this blog, we discuss Kubeflow on AWS v1.6.1 features and highlight three important integrations that have been bundled on one platform to offer: 
-* Infrastructure as Code (IaaC) one-click solution that automates the end-to-end installation of Kubeflow, including EKS cluster creation.
-* Support for running machine learning workloads on Amazon SageMaker from Kubeflow.
-* Enhanced monitoring and observability for ML workloads using Amazon Managed Prometheus (AMP) and Amazon Managed Grafana.
+
+    * Infrastructure as Code (IaaC) one-click solution that automates the end-to-end installation of Kubeflow, including EKS cluster creation.
+    * Support for running machine learning workloads on Amazon SageMaker from Kubeflow.
+    * Enhanced monitoring and observability for ML workloads using Amazon Managed Prometheus (AMP) and Amazon Managed Grafana.
 
 1. [Build and deploy a scalable machine learning system on Kubernetes with Kubeflow on AWS](https://aws.amazon.com/blogs/machine-learning/build-and-deploy-a-scalable-machine-learning-system-on-kubernetes-with-kubeflow-on-aws/). This blog post is based on Kubeflow-1.4 and is listed here for educational purpose. AWS distribution of Kubeflow might have changed since then. We recommend to install the [latest version](http://localhost:1313/kubeflow-manifests/main/docs/deployment/prerequisites/).
 
@@ -30,6 +31,7 @@ Find case studies, use cases, best practices, benchmarks, and more.
 
 1. [Use Amazon SageMaker Operators for Kubernetes (ACK) to train and deploy machine learning models](https://aws.amazon.com/blogs/machine-learning/use-amazon-sagemaker-ack-operators-to-train-and-deploy-machine-learning-models/).
 
+1. [Scaling distributed training with AWS Trainium and Amazon EKS](https://aws.amazon.com/blogs/machine-learning/scaling-distributed-training-with-aws-trainium-and-amazon-eks/). Details about official support for distributed training jobs using Amazon EKS and EC2 Trn1 instances. You can now easily run large-scale containerized training jobs within Amazon EKS while taking full advantage of the price-performance, scalability, and ease of use offered by Trn1 instances.
 
 ## Watch 
 

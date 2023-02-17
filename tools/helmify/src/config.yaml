@@ -1,0 +1,332 @@
+dex:
+  kustomization_paths:
+    - upstream/common/dex/overlays/istio
+  output_helm_chart_path: charts/common/dex
+  version: 0.1.0
+  app_version: v2.24.0
+
+
+ingress:
+  deployment_options:
+    cognito:
+      kustomization_paths:
+      - awsconfigs/common/istio-ingress/overlays/cognito
+      output_helm_chart_path: charts/common/ingress/cognito
+      version: 0.1.0
+      app_version: v0.1.0
+  params:
+    template_paths:
+      - tools/helmify/template/ingress/params/overlays/cognito/params.env
+      - tools/helmify/template/ingress/params/base/params.env
+    target_paths:
+      - awsconfigs/common/istio-ingress/overlays/cognito/params.env
+      - awsconfigs/common/istio-ingress/base/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/ingress/values/cognito/values.yaml
+    target_paths:
+      - charts/common/ingress/cognito/values.yaml
+
+
+katib: 
+  deployment_options:
+    vanilla:
+      kustomization_paths:
+      - upstream/apps/katib/upstream/installs/katib-with-kubeflow
+      output_helm_chart_path: charts/apps/katib/vanilla
+      version: 0.1.0
+      app_version: v0.14.0-rc.0
+    katib-external-db-with-kubeflow:
+      kustomization_paths:
+      - awsconfigs/apps/katib-external-db-with-kubeflow
+      output_helm_chart_path: charts/apps/katib/katib-external-db-with-kubeflow
+      version: 0.1.0
+      app_version: v0.14.0-rc.0
+      
+
+istio-1-14:
+  kustomization_paths:
+    - upstream/common/istio-1-14/istio-crds/base
+    - upstream/common/istio-1-14/istio-namespace/base
+    - upstream/common/istio-1-14/istio-install/base
+  output_helm_chart_path: charts/common/istio-1-14
+  version: 0.1.1
+  app_version: 1.14.1
+
+
+kubeflow-issuer:
+  kustomization_paths:
+    - upstream/common/cert-manager/kubeflow-issuer/base
+  output_helm_chart_path: charts/common/kubeflow-issuer
+  version: 0.1.0
+  app_version: v1.6.1
+
+
+oidc-authservice:
+  kustomization_paths:
+    - upstream/common/oidc-authservice/base
+  output_helm_chart_path: charts/common/oidc-authservice
+  version: 0.1.0
+  app_version: 0.1.0
+
+
+cluster-local-gateway:
+  kustomization_paths:
+    - upstream/common/istio-1-14/cluster-local-gateway/base
+  output_helm_chart_path: charts/common/cluster-local-gateway
+  version: 0.1.0
+  app_version: 1.6.1
+
+
+kubeflow-namespace:
+  kustomization_paths:
+    - upstream/common/kubeflow-namespace/base
+  output_helm_chart_path: charts/common/kubeflow-namespace
+  version: 0.1.0
+  app_version: v1.6.1
+
+
+kubeflow-istio-resources:
+  kustomization_paths:
+    - upstream/common/istio-1-14/kubeflow-istio-resources/base
+  output_helm_chart_path: charts/common/kubeflow-istio-resources
+  version: 0.1.0
+  app_version: 1.6.1
+
+
+kubeflow-roles:
+  kustomization_paths:
+    - upstream/common/kubeflow-roles/base
+  output_helm_chart_path: charts/common/kubeflow-roles
+  version: 0.1.0
+  app_version: v1.6.1
+
+
+knative-serving:
+  kustomization_paths:
+    - upstream/common/knative/knative-serving/overlays/gateways
+  output_helm_chart_path: charts/common/knative-serving
+  version: 0.1.0
+  app_version: 1.2.5
+
+
+knative-eventing:
+  kustomization_paths:
+    - upstream/common/knative/knative-eventing/base
+  output_helm_chart_path: charts/common/knative-eventing
+  version: 0.1.0
+  app_version: 1.2.5
+
+
+kserve:
+  kustomization_paths:
+    - awsconfigs/apps/kserve
+  output_helm_chart_path: charts/common/kserve
+  version: 0.1.0
+  app_version: release-0.8
+
+
+models-web-app:
+  kustomization_paths:
+    - upstream/contrib/kserve/models-web-app/overlays/kubeflow
+  output_helm_chart_path: charts/apps/models-web-app
+  version: 0.1.0
+  app_version: v0.8.1
+
+
+central-dashboard:
+  kustomization_paths:
+    - awsconfigs/apps/centraldashboard
+  output_helm_chart_path: charts/apps/central-dashboard
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+aws-secrets-manager:
+  deployment_options:
+    rds-s3:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager
+      output_helm_chart_path: charts/common/aws-secrets-manager/rds-s3
+      version: 0.1.0
+      app_version: v0.1.0
+    rds-only:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager/rds
+      output_helm_chart_path: charts/common/aws-secrets-manager/rds-only
+      version: 0.1.0
+      app_version: v0.1.0
+    s3-only:
+      kustomization_paths:
+        - awsconfigs/common/aws-secrets-manager/s3
+      output_helm_chart_path: charts/common/aws-secrets-manager/s3-only
+      version: 0.1.0
+      app_version: v0.1.0
+  params:
+    template_paths:
+      - tools/helmify/template/aws-secrets-manager/params/rds/secret-provider.yaml
+      - tools/helmify/template/aws-secrets-manager/params/s3/secret-provider.yaml
+    target_paths:
+      - awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml
+      - awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml
+  values:
+    template_paths:
+      - tools/helmify/template/aws-secrets-manager/values/rds-only/values.yaml
+      - tools/helmify/template/aws-secrets-manager/values/rds-s3/values.yaml
+      - tools/helmify/template/aws-secrets-manager/values/s3-only/values.yaml
+    target_paths:
+      - charts/common/aws-secrets-manager/rds-only/values.yaml
+      - charts/common/aws-secrets-manager/rds-s3/values.yaml
+      - charts/common/aws-secrets-manager/s3-only/values.yaml
+
+
+kubeflow-pipelines:
+  deployment_options:
+    vanilla:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/base
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/vanilla
+      version: 0.1.1
+      app_version: 2.0.0-alpha.5
+    rds-s3:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-s3
+      version: 0.1.1
+      app_version: 2.0.0-alpha.5
+    rds-only:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/rds
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-only
+      version: 0.1.1
+      app_version: 2.0.0-alpha.5
+    s3-only:
+      kustomization_paths:
+        - awsconfigs/apps/pipeline/s3
+      output_helm_chart_path: charts/apps/kubeflow-pipelines/s3-only
+      version: 0.1.1
+      app_version: 2.0.0-alpha.5
+  params:
+    template_paths: 
+      - tools/helmify/template/kubeflow-pipelines/params/s3/params.env
+      - tools/helmify/template/kubeflow-pipelines/params/rds/params.env
+    target_paths:
+      - awsconfigs/apps/pipeline/s3/params.env
+      - awsconfigs/apps/pipeline/rds/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/kubeflow-pipelines/values/rds-s3/values.yaml
+      - tools/helmify/template/kubeflow-pipelines/values/s3-only/values.yaml
+      - tools/helmify/template/kubeflow-pipelines/values/rds-only/values.yaml
+    target_paths:
+      - charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+      - charts/apps/kubeflow-pipelines/s3-only/values.yaml
+      - charts/apps/kubeflow-pipelines/rds-only/values.yaml
+
+
+admission-webhook:
+  kustomization_paths:
+    - upstream/apps/admission-webhook/upstream/overlays/cert-manager
+  output_helm_chart_path: charts/apps/admission-webhook
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+jupyter-web-app:
+  kustomization_paths:
+    - awsconfigs/apps/jupyter-web-app
+  output_helm_chart_path: charts/apps/jupyter-web-app
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+notebook-controller:
+  kustomization_paths:
+    - awsconfigs/apps/notebook-controller
+  output_helm_chart_path: charts/apps/notebook-controller
+  version: 0.1.1
+  app_version: v1.6.1
+  params:
+    template_paths: 
+      - tools/helmify/template/notebook-controller/params.env
+    target_paths:
+      - awsconfigs/apps/notebook-controller/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/notebook-controller/values.yaml
+    target_paths:
+      - charts/apps/notebook-controller/values.yaml
+
+
+volumes-web-app:
+  kustomization_paths:
+    - upstream/apps/volumes-web-app/upstream/overlays/istio
+  output_helm_chart_path: charts/apps/volumes-web-app
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+training-operator:
+  kustomization_paths:
+    - upstream/apps/training-operator/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/training-operator
+  version: 0.1.0
+  app_version: v1.5.0
+
+
+tensorboards-web-app:
+  kustomization_paths:
+    - upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  output_helm_chart_path: charts/apps/tensorboards-web-app
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+tensorboard-controller:
+  kustomization_paths:
+    - upstream/apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/tensorboard-controller
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+profiles-and-kfam:
+  kustomization_paths:
+    - upstream/apps/profiles/upstream/overlays/kubeflow
+  output_helm_chart_path: charts/apps/profiles-and-kfam
+  version: 0.1.1
+  app_version: v1.6.1
+
+
+user-namespace:
+  kustomization_paths:
+    - upstream/common/user-namespace/base
+  output_helm_chart_path: charts/common/user-namespace
+  version: 0.1.0
+  app_version: v1.6.1
+
+
+aws-authservice:
+  kustomization_paths:
+    - awsconfigs/common/aws-authservice/base
+  output_helm_chart_path: charts/common/aws-authservice
+  version: 0.1.0
+  app_version: v0.1.0
+  params:
+    template_paths: 
+      - tools/helmify/template/aws-authservice/params.env
+    target_paths:
+      - awsconfigs/common/aws-authservice/base/params.env
+  values:
+    template_paths:
+      - tools/helmify/template/aws-authservice/values.yaml
+    target_paths:
+      - charts/common/aws-authservice/values.yaml
+
+
+aws-telemetry:
+  kustomization_paths:
+    - awsconfigs/common/aws-telemetry
+  output_helm_chart_path: charts/common/aws-telemetry
+  version: 0.1.0
+  app_version: v1.6.1
