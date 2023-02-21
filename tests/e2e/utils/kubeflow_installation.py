@@ -22,7 +22,7 @@ INSTALLATION_CONFIG_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rd
 
 Install_Sequence = [
     "cert-manager",
-    "istio-1-14",
+    "istio",
     "dex",
     "oidc-authservice",
     "cluster-local-gateway",
