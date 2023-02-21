@@ -27,10 +27,8 @@ spec:
             config:
               configuration:
                 '@type': type.googleapis.com/google.protobuf.StringValue
-                value: "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n\
-                  \  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\"\
-                  : \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\":\
-                  \ \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
+                value: "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n\
+                  }\n"
               root_id: stats_inbound
               vm_config:
                 code:

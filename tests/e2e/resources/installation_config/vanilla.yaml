@@ -36,15 +36,15 @@ kubeflow-issuer:
       paths: ../../charts/common/kubeflow-issuer
 
 #istio
-istio-1-14:
+istio:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/common/istio-1-14/istio-crds/base
-        - ../../upstream/common/istio-1-14/istio-namespace/base
-        - ../../upstream/common/istio-1-14/istio-install/base
+        - ../../upstream/common/istio-1-16/istio-crds/base
+        - ../../upstream/common/istio-1-16/istio-namespace/base
+        - ../../upstream/common/istio-1-16/istio-install/base
     helm: 
-      paths: ../../charts/common/istio-1-14
+      paths: ../../charts/common/istio
   validations: 
     pods: 
       namespace: istio-system
@@ -84,7 +84,7 @@ cluster-local-gateway:
   installation_options:
     kustomize:
       paths:
-        - ../../upstream/common/istio-1-14/cluster-local-gateway/base
+        - ../../upstream/common/istio-1-16/cluster-local-gateway/base
     helm: 
       paths: ../../charts/common/cluster-local-gateway
   validations:
@@ -149,7 +149,7 @@ kubeflow-istio-resources:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/common/istio-1-14/kubeflow-istio-resources/base
+        - ../../upstream/common/istio-1-16/kubeflow-istio-resources/base
     helm: 
       paths: ../../charts/common/kubeflow-istio-resources
 

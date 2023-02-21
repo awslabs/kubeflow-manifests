@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "app.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    k8s-app: {{ include "app.name" . }}
+    helm.sh/chart: {{ include "chart.name-version" . }}
+    control-plane: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "app.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+      {{- range $key, $value := .Values.deployment.annotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "app.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: Helm
+        k8s-app: {{ include "app.name" . }}
+{{- range $key, $value := .Values.deployment.labels }}
+        {{ $key }}: {{ $value | quote }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ include "service-account.name" . }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - command:
+        - ./bin/controller
+        args:
+        - --aws-region
+        - "$(AWS_REGION)"
+        - --aws-endpoint-url
+        - "$(AWS_ENDPOINT_URL)"
+        - --enable-development-logging
+        - "$(ACK_ENABLE_DEVELOPMENT_LOGGING)"
+        - --log-level
+        - "$(ACK_LOG_LEVEL)"
+        - --resource-tags
+        - "$(ACK_RESOURCE_TAGS)"
+        - --watch-namespace
+        - "$(ACK_WATCH_NAMESPACE)"
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: controller
+        ports:
+          - name: http
+            containerPort: {{ .Values.deployment.containerPort }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        env:
+        - name: ACK_SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: AWS_REGION
+          value: {{ .Values.aws.region }}
+        - name: AWS_ENDPOINT_URL
+          value: {{ .Values.aws.endpoint_url | quote }}
+        - name: ACK_WATCH_NAMESPACE
+          value: {{ include "watch-namespace" . }}
+        - name: ACK_ENABLE_DEVELOPMENT_LOGGING
+          value: {{ .Values.log.enable_development_logging | quote }}
+        - name: ACK_LOG_LEVEL
+          value: {{ .Values.log.level | quote }}
+        - name: ACK_RESOURCE_TAGS
+          value: {{ join "," .Values.resourceTags | quote }}
+        {{- if .Values.aws.credentials.secretName }}
+        - name: AWS_SHARED_CREDENTIALS_FILE
+          value: {{ include "aws.credentials.path" . }}
+        - name: AWS_PROFILE
+          value: {{ .Values.aws.credentials.profile }}
+        volumeMounts:
+          - name: {{ .Values.aws.credentials.secretName }}
+            mountPath: {{ include "aws.credentials.secret_mount_path" . }}
+            readOnly: true
+        {{- end }}          
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+      terminationGracePeriodSeconds: 10
+      nodeSelector: {{ toYaml .Values.deployment.nodeSelector | nindent 8 }}
+      {{ if .Values.deployment.tolerations -}}
+      tolerations: {{ toYaml .Values.deployment.tolerations | nindent 8 }}
+      {{ end -}}
+      {{ if .Values.deployment.affinity -}}
+      affinity: {{ toYaml .Values.deployment.affinity | nindent 8 }}
+      {{ end -}}
+      {{ if .Values.deployment.priorityClassName -}}
+      priorityClassName: {{ .Values.deployment.priorityClassName }}
+      {{ end -}}
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      {{ if .Values.aws.credentials.secretName -}}
+      volumes:
+        - name: {{ .Values.aws.credentials.secretName }}
+          secret:
+            secretName: {{ .Values.aws.credentials.secretName }}
+      {{ end -}}

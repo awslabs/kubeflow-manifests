@@ -3,7 +3,7 @@ kind: EnvoyFilter
 metadata:
   labels:
     istio.io/rev: default
-  name: tcp-stats-filter-1.11
+  name: tcp-stats-filter-1.16
   namespace: istio-system
 spec:
   configPatches:
@@ -15,7 +15,7 @@ spec:
           filter:
             name: envoy.filters.network.tcp_proxy
       proxy:
-        proxyVersion: ^1\.11.*
+        proxyVersion: ^1\.16.*
     patch:
       operation: INSERT_BEFORE
       value:
@@ -27,10 +27,8 @@ spec:
             config:
               configuration:
                 '@type': type.googleapis.com/google.protobuf.StringValue
-                value: "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n\
-                  \  \"metrics\": [\n    {\n      \"dimensions\": {\n        \"destination_cluster\"\
-                  : \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\":\
-                  \ \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
+                value: "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n\
+                  }\n"
               root_id: stats_inbound
               vm_config:
                 code:
@@ -46,7 +44,7 @@ spec:
           filter:
             name: envoy.filters.network.tcp_proxy
       proxy:
-        proxyVersion: ^1\.11.*
+        proxyVersion: ^1\.16.*
     patch:
       operation: INSERT_BEFORE
       value:
@@ -75,7 +73,7 @@ spec:
           filter:
             name: envoy.filters.network.tcp_proxy
       proxy:
-        proxyVersion: ^1\.11.*
+        proxyVersion: ^1\.16.*
     patch:
       operation: INSERT_BEFORE
       value:

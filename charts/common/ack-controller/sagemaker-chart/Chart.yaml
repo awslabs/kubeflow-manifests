@@ -1,0 +1,18 @@
+apiVersion: v1
+appVersion: v0.4.5
+description: A Helm chart for the ACK service controller for Amazon SageMaker (SageMaker)
+home: https://github.com/aws-controllers-k8s/sagemaker-controller
+icon: https://raw.githubusercontent.com/aws/eks-charts/master/docs/logo/aws.png
+keywords:
+- aws
+- kubernetes
+- sagemaker
+maintainers:
+- name: ACK Admins
+  url: https://github.com/orgs/aws-controllers-k8s/teams/ack-admin
+- name: SageMaker Admins
+  url: https://github.com/orgs/aws-controllers-k8s/teams/sagemaker-maintainer
+name: sagemaker-chart
+sources:
+- https://github.com/aws-controllers-k8s/sagemaker-controller
+version: v0.4.5

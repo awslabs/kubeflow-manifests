@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 Components = [
-    "istio-1-14",
+    "istio",
     "dex",
     "oidc-authservice",
     "cluster-local-gateway",
