@@ -24,3 +24,9 @@ rules:
   - list
   - update
   - delete
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - delete

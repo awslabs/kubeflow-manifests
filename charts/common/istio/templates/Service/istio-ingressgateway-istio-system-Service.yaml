@@ -36,4 +36,4 @@ spec:
   selector:
     app: istio-ingressgateway
     istio: ingressgateway
-  type: NodePort
+  type: ClusterIP
