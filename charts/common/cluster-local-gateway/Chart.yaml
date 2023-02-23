@@ -1,6 +1,6 @@
 apiVersion: v2
-appVersion: 1.6.2
+appVersion: 1.7.0
 description: A Helm chart for Kubernetes
 name: cluster-local-gateway
 type: application
-version: 0.1.1
+version: 0.2.0

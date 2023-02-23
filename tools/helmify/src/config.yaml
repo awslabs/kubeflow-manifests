@@ -49,7 +49,7 @@ istio:
     - upstream/common/istio-1-16/istio-crds/base
     - upstream/common/istio-1-16/istio-namespace/base
     - upstream/common/istio-1-16/istio-install/base
-  output_helm_chart_path: charts/common/istio-1-16
+  output_helm_chart_path: charts/common/istio
   version: 0.2.0
   app_version: 1.16.0
 
@@ -74,8 +74,8 @@ cluster-local-gateway:
   kustomization_paths:
     - upstream/common/istio-1-16/cluster-local-gateway/base
   output_helm_chart_path: charts/common/cluster-local-gateway
-  version: 0.1.1
-  app_version: 1.6.2
+  version: 0.2.0
+  app_version: 1.7.0
 
 
 kubeflow-namespace:
@@ -90,8 +90,8 @@ kubeflow-istio-resources:
   kustomization_paths:
     - upstream/common/istio-1-16/kubeflow-istio-resources/base
   output_helm_chart_path: charts/common/kubeflow-istio-resources
-  version: 0.1.1
-  app_version: 1.6.2
+  version: 0.2.0
+  app_version: 1.7.0
 
 
 kubeflow-roles:
