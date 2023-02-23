@@ -11,6 +11,7 @@ metadata:
     alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
     alb.ingress.kubernetes.io/scheme: internet-facing
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/target-type: ip
   labels:
     kustomize.component: istio-ingress
   name: istio-ingress

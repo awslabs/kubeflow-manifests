@@ -43,6 +43,7 @@ resource "kubernetes_ingress_v1" "istio_ingress" {
         "alb.ingress.kubernetes.io/auth-idp-cognito": "{\"UserPoolArn\":\"${var.cognito_user_pool_arn}\",\"UserPoolClientId\":\"${var.cognito_app_client_id}\", \"UserPoolDomain\":\"${var.cognito_user_pool_domain}\"}"
         "alb.ingress.kubernetes.io/certificate-arn": "${aws_acm_certificate.deployment_region.arn}"
         "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTPS\":443}]",
+        "alb.ingress.kubernetes.io/target-type": "ip",
         "alb.ingress.kubernetes.io/load-balancer-attributes": "routing.http.drop_invalid_header_fields.enabled=true",
         "alb.ingress.kubernetes.io/scheme": "${var.load_balancer_scheme}"
     }

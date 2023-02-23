@@ -61,10 +61,7 @@ spec:
               configuration:
                 '@type': type.googleapis.com/google.protobuf.StringValue
                 value: "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\",\n\
-                  \  \"disable_host_header_fallback\": true,\n  \"metrics\": [\n \
-                  \   {\n      \"dimensions\": {\n        \"destination_cluster\"\
-                  : \"node.metadata['CLUSTER_ID']\",\n        \"source_cluster\":\
-                  \ \"downstream_peer.cluster_id\"\n      }\n    }\n  ]\n}\n"
+                  \  \"disable_host_header_fallback\": true\n}\n"
               root_id: stats_inbound
               vm_config:
                 code:

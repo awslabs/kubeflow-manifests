@@ -43,6 +43,7 @@ spec:
         - --keepaliveMaxServerConnectionAge
         - 30m
         env:
+        - name: ENABLE_DEBUG_ON_HTTP
         - name: REVISION
           value: default
         - name: JWT_POLICY
@@ -78,8 +79,7 @@ spec:
           value: 'false'
         - name: CLUSTER_ID
           value: Kubernetes
-        image: gcr.io/arrikto/istio/pilot:1.14.1-1-g19df463bb
-        imagePullPolicy: IfNotPresent
+        image: docker.io/istio/pilot:1.16.0
         name: discovery
         ports:
         - containerPort: 8080
@@ -120,6 +120,12 @@ spec:
         - mountPath: /var/run/secrets/remote
           name: istio-kubeconfig
           readOnly: true
+        - mountPath: /var/run/secrets/istiod/tls
+          name: istio-csr-dns-cert
+          readOnly: true
+        - mountPath: /var/run/secrets/istiod/ca
+          name: istio-csr-ca-configmap
+          readOnly: true
       securityContext:
         fsGroup: 1337
       serviceAccountName: istiod
@@ -142,3 +148,12 @@ spec:
         secret:
           optional: true
           secretName: istio-kubeconfig
+      - name: istio-csr-dns-cert
+        secret:
+          optional: true
+          secretName: istiod-tls
+      - configMap:
+          defaultMode: 420
+          name: istio-ca-root-cert
+          optional: true
+        name: istio-csr-ca-configmap

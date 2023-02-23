@@ -49,7 +49,7 @@ Uninstall_Sequence = [
     "cluster-local-gateway",
     "oidc-authservice",
     "dex",
-    "istio-1-14",
+    "istio",
     "cert-manager",
     "aws-telemetry",
     "ack-sagemaker-controller",
