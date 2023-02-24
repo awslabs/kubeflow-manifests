@@ -3,4 +3,4 @@ appVersion: v2.35.3
 description: A Helm chart for Kubernetes
 name: dex
 type: application
-version: 0.1.0
+version: 0.2.0

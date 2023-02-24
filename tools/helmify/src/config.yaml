@@ -2,7 +2,7 @@ dex:
   kustomization_paths:
     - upstream/common/dex/overlays/istio
   output_helm_chart_path: charts/common/dex
-  version: 0.1.0
+  version: 0.2.0
   app_version: v2.35.3
 
 
