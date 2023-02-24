@@ -6,7 +6,14 @@ artifactRepository:
         keyPrefix: artifacts,
         endpoint: $(kfp-artifact-storage-endpoint),
         insecure: false,
-        useSDKCreds: true,
+        accessKeySecret: {
+            name: mlpipeline-minio-artifact,
+            key: accesskey
+        },
+        secretKeySecret: {
+            name: mlpipeline-minio-artifact,
+            key: secretkey
+        }
     },
     archiveLogs: true
 }
