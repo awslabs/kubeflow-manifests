@@ -66,8 +66,8 @@ oidc-authservice:
   kustomization_paths:
     - upstream/common/oidc-authservice/base
   output_helm_chart_path: charts/common/oidc-authservice
-  version: 0.1.0
-  app_version: 0.1.0
+  version: 0.2.0
+  app_version: 0.2.0
 
 
 cluster-local-gateway:
