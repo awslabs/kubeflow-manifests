@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: domain-mapping
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: webhook.domainmapping.serving.knative.dev
 webhooks:
 - admissionReviewVersions:
@@ -21,13 +20,13 @@ webhooks:
   - apiGroups:
     - serving.knative.dev
     apiVersions:
-    - v1alpha1
-    - v1beta1
+    - '*'
     operations:
     - CREATE
     - UPDATE
     resources:
     - domainmappings
+    - domainmappings/status
     scope: '*'
   sideEffects: None
   timeoutSeconds: 10

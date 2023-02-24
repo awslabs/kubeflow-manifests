@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: controller
   namespace: knative-serving
 spec:
@@ -21,8 +20,7 @@ spec:
         app: controller
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: 1.2.5
-        serving.knative.dev/release: v1.2.5
+        app.kubernetes.io/version: 1.8.0
     spec:
       affinity:
         podAntiAffinity:
@@ -49,7 +47,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:75cfdcfa050af9522e798e820ba5483b9093de1ce520207a3fedf112d73a4686
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:38f9557f4d61ec79cc2cdbe76da8df6c6ae5f978a50a2847c22cc61aa240da95
         name: controller
         ports:
         - containerPort: 9090
@@ -67,7 +65,9 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: controller

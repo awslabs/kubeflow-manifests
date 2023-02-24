@@ -148,13 +148,23 @@ data:
     # fronting Knative with an external loadbalancer that deals with TLS termination and
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
+
+    # internal-encryption indicates whether internal traffic is encrypted or not.
+    # If this is "true", the following traffic are encrypted:
+    #  - ingress to activator
+    #  - ingress to queue-proxy
+    #  - activator to queue-proxy
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    internal-encryption: "false"
 kind: ConfigMap
 metadata:
   annotations:
-    knative.dev/example-checksum: 6e2033e0
+    knative.dev/example-checksum: 73d96d1b
   labels:
+    app.kubernetes.io/component: networking
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config-network
   namespace: knative-serving

@@ -5,8 +5,7 @@ metadata:
     app: activator
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: activator-service
   namespace: knative-serving
 spec:
@@ -23,6 +22,9 @@ spec:
   - name: http2
     port: 81
     targetPort: 8013
+  - name: https
+    port: 443
+    targetPort: 8112
   selector:
     app: activator
   type: ClusterIP
