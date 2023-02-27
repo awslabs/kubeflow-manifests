@@ -186,8 +186,8 @@ kubeflow-pipelines:
       kustomization_paths:
         - awsconfigs/apps/pipeline/base
       output_helm_chart_path: charts/apps/kubeflow-pipelines/vanilla
-      version: 0.1.1
-      app_version: 2.0.0-alpha.5
+      version: 0.2.0
+      app_version: 2.0.0-alpha.6
     rds-s3:
       kustomization_paths:
         - awsconfigs/apps/pipeline
