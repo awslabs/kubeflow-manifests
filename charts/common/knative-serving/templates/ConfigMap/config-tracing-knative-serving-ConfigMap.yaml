@@ -58,8 +58,8 @@ metadata:
   annotations:
     knative.dev/example-checksum: '26614636'
   labels:
+    app.kubernetes.io/component: tracing
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config-tracing
   namespace: knative-serving

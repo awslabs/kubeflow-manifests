@@ -106,8 +106,8 @@ knative-serving:
   kustomization_paths:
     - upstream/common/knative/knative-serving/overlays/gateways
   output_helm_chart_path: charts/common/knative-serving
-  version: 0.1.0
-  app_version: 1.2.5
+  version: 0.2.0
+  app_version: 1.8.1
 
 
 knative-eventing:

@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: domain-mapping
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: domainmapping-webhook
   namespace: knative-serving
 spec:
@@ -22,9 +21,8 @@ spec:
         app: domainmapping-webhook
         app.kubernetes.io/component: domain-mapping
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: 1.2.5
+        app.kubernetes.io/version: 1.8.0
         role: domainmapping-webhook
-        serving.knative.dev/release: v1.2.5
     spec:
       affinity:
         podAntiAffinity:
@@ -53,7 +51,7 @@ spec:
           value: '8443'
         - name: METRICS_DOMAIN
           value: knative.dev/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping-webhook@sha256:847bb97e38440c71cb4bcc3e430743e18b328ad1e168b6fca35b10353b9a2c22
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping-webhook@sha256:a4ba0076df2efaca2eed561339e21b3a4ca9d90167befd31de882bff69639470
         livenessProbe:
           failureThreshold: 6
           httpGet:
@@ -91,8 +89,10 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: controller
       terminationGracePeriodSeconds: 300
