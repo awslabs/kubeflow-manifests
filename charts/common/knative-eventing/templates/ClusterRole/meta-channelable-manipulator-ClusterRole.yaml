@@ -4,9 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.2.4
+    app.kubernetes.io/version: 1.8.1
     duck.knative.dev/channelable: 'true'
-    eventing.knative.dev/release: v1.2.4
+    eventing.knative.dev/release: v1.8.1
     kustomize.component: knative
   name: meta-channelable-manipulator
 rules:
