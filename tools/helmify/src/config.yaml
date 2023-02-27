@@ -122,8 +122,8 @@ kserve:
   kustomization_paths:
     - awsconfigs/apps/kserve
   output_helm_chart_path: charts/common/kserve
-  version: 0.1.0
-  app_version: release-0.8
+  version: 0.2.0
+  app_version: v0.10.0
 
 
 models-web-app:
