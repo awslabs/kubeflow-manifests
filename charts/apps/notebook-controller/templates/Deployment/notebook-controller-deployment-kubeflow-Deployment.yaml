@@ -21,33 +21,38 @@ spec:
       - command:
         - /manager
         env:
-        - name: ENABLE_CULLING
-          valueFrom:
-            configMapKeyRef:
-              key: enableCulling
-              name: notebook-controller-config-9675dd2fhk
-        - name: CULL_IDLE_TIME
-          valueFrom:
-            configMapKeyRef:
-              key: cullIdleTime
-              name: notebook-controller-config-9675dd2fhk
-        - name: IDLENESS_CHECK_PERIOD
-          valueFrom:
-            configMapKeyRef:
-              key: idlenessCheckPeriod
-              name: notebook-controller-config-9675dd2fhk
         - name: USE_ISTIO
           valueFrom:
             configMapKeyRef:
               key: USE_ISTIO
-              name: notebook-controller-config-9675dd2fhk
+              name: notebook-controller-config-m74d8m24hc
         - name: ISTIO_GATEWAY
           valueFrom:
             configMapKeyRef:
               key: ISTIO_GATEWAY
-              name: notebook-controller-config-9675dd2fhk
-        image: docker.io/kubeflownotebookswg/notebook-controller:v1.6.1
-        imagePullPolicy: Always
+              name: notebook-controller-config-m74d8m24hc
+        - name: CLUSTER_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_DOMAIN
+              name: notebook-controller-config-m74d8m24hc
+        - name: ENABLE_CULLING
+          valueFrom:
+            configMapKeyRef:
+              key: enableCulling
+              name: notebook-controller-config-m74d8m24hc
+        - name: CULL_IDLE_TIME
+          valueFrom:
+            configMapKeyRef:
+              key: cullIdleTime
+              name: notebook-controller-config-m74d8m24hc
+        - name: IDLENESS_CHECK_PERIOD
+          valueFrom:
+            configMapKeyRef:
+              key: idlenessCheckPeriod
+              name: notebook-controller-config-m74d8m24hc
+        image: docker.io/kubeflownotebookswg/notebook-controller:v1.7.0-rc.1
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             path: /healthz
