@@ -39,12 +39,12 @@ kind: ConfigMap
 metadata:
   annotations:
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.2.4
+    app.kubernetes.io/version: 1.8.1
     knative.dev/example-checksum: 9185c153
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
-    eventing.knative.dev/release: v1.2.4
+    eventing.knative.dev/release: v1.8.1
     kustomize.component: knative
   name: config-ping-defaults
   namespace: knative-eventing

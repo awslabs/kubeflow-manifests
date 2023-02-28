@@ -114,8 +114,8 @@ knative-eventing:
   kustomization_paths:
     - upstream/common/knative/knative-eventing/base
   output_helm_chart_path: charts/common/knative-eventing
-  version: 0.1.0
-  app_version: 1.2.5
+  version: 0.2.0
+  app_version: 1.8.1
 
 
 kserve:

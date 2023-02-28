@@ -26,43 +26,44 @@ data:
 
     # to actually change the configuration.
 
-    #
 
-    # This may be "zipkin" or "none". the default is "none"
+    # namespace-selector specifies a LabelSelector which
 
-    backend: "none"
+    # determines which namespaces the Sugar Controller should operate upon
 
+    # Use an empty value to disable the feature (this is the default):
 
-    # URL to zipkin collector where traces are sent.
-
-    # This must be specified when backend is "zipkin"
-
-    zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
+    namespace-selector: ""
 
 
-    # Enable zipkin debug mode. This allows all spans to be sent to the server
+    # Use an empty object as a string to enable for all namespaces
 
-    # bypassing sampling.
-
-    debug: "false"
+    namespace-selector: "{}"
 
 
-    # Percentage (0-1) of requests to trace
+    # trigger-selector specifies a LabelSelector which
 
-    sample-rate: "0.1"
+    # determines which triggers the Sugar Controller should operate upon
+
+    # Use an empty value to disable the feature (this is the default):
+
+    trigger-selector: ""
+
+
+    # Use an empty object as string to enable for all triggers
+
+    trigger-selector: "{}"
 
     '
 kind: ConfigMap
 metadata:
   annotations:
-    knative.dev/example-checksum: 0492ceb0
+    knative.dev/example-checksum: 62dfac6f
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
     app.kubernetes.io/version: 1.8.1
     eventing.knative.dev/release: v1.8.1
-    knative.dev/config-category: eventing
-    knative.dev/config-propagation: original
     kustomize.component: knative
-  name: config-tracing
+  name: config-sugar
   namespace: knative-eventing
