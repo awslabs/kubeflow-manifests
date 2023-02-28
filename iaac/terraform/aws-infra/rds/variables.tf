@@ -45,7 +45,7 @@ variable "db_allocated_storage" {
 variable "mysql_engine_version" {
   type        = string
   description = "The engine version of MySQL"
-  default = "8.0.31"
+  default = "8.0.32"
 }
 
 variable "backup_retention_period" {
