@@ -3,9 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
+    app.kubernetes.io/version: 1.8.0
     knative.dev/crd-install: 'true'
-    serving.knative.dev/release: v1.2.5
   name: podautoscalers.autoscaling.internal.knative.dev
 spec:
   group: autoscaling.internal.knative.dev
@@ -40,7 +39,7 @@ spec:
         description: 'PodAutoscaler is a Knative abstraction that encapsulates the
           interface by which Knative components instantiate autoscalers.  This definition
           is an abstraction that may be backed by multiple definitions.  For more
-          information, see the Knative Pluggability presentation: https://docs.google.com/presentation/d/10KWynvAJYuOEWy69VBa6bHJVCqIsz1TNdEKosNvcpPY/edit'
+          information, see the Knative Pluggability presentation: https://docs.google.com/presentation/d/19vW9HFZ6Puxt31biNZF3uLRejDmu82rxJIk1cWmxF7w/edit'
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -86,6 +85,7 @@ spec:
                     description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                     type: string
                 type: object
+                x-kubernetes-map-type: atomic
             required:
             - protocolType
             - scaleTargetRef
@@ -119,7 +119,6 @@ spec:
                         transitioned from one status to another. We use VolatileTime
                         in place of metav1.Time to exclude this from creating equality.Semantic
                         differences (all other things held constant).
-                      format: date-time
                       type: string
                     message:
                       description: A human readable message indicating details about

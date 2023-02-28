@@ -2,8 +2,8 @@ dex:
   kustomization_paths:
     - upstream/common/dex/overlays/istio
   output_helm_chart_path: charts/common/dex
-  version: 0.1.0
-  app_version: v2.24.0
+  version: 0.2.0
+  app_version: v2.35.3
 
 
 ingress:
@@ -66,8 +66,8 @@ oidc-authservice:
   kustomization_paths:
     - upstream/common/oidc-authservice/base
   output_helm_chart_path: charts/common/oidc-authservice
-  version: 0.1.0
-  app_version: 0.1.0
+  version: 0.2.0
+  app_version: 0.2.0
 
 
 cluster-local-gateway:
@@ -106,8 +106,8 @@ knative-serving:
   kustomization_paths:
     - upstream/common/knative/knative-serving/overlays/gateways
   output_helm_chart_path: charts/common/knative-serving
-  version: 0.1.0
-  app_version: 1.2.5
+  version: 0.2.0
+  app_version: 1.8.1
 
 
 knative-eventing:

@@ -3,9 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
+    app.kubernetes.io/version: 1.8.0
     knative.dev/crd-install: 'true'
-    serving.knative.dev/release: v1.2.5
   name: metrics.autoscaling.internal.knative.dev
 spec:
   group: autoscaling.internal.knative.dev
@@ -89,7 +88,6 @@ spec:
                         transitioned from one status to another. We use VolatileTime
                         in place of metav1.Time to exclude this from creating equality.Semantic
                         differences (all other things held constant).
-                      format: date-time
                       type: string
                     message:
                       description: A human readable message indicating details about
