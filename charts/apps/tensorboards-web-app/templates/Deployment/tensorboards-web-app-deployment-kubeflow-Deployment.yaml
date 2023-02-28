@@ -14,8 +14,6 @@ spec:
       kustomize.component: tensorboards-web-app
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: 'false'
       labels:
         app: tensorboards-web-app
         kustomize.component: tensorboards-web-app
@@ -29,8 +27,8 @@ spec:
         - name: USERID_PREFIX
           value: ''
         - name: APP_SECURE_COOKIES
-          value: $(TWA_APP_SECURE_COOKIES)
-        image: docker.io/kubeflownotebookswg/tensorboards-web-app:v1.6.1
+          value: 'true '
+        image: docker.io/kubeflownotebookswg/tensorboards-web-app:v1.7.0-rc.1
         name: tensorboards-web-app
         ports:
         - containerPort: 5000

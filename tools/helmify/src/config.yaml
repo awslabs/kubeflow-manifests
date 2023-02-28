@@ -278,8 +278,8 @@ tensorboards-web-app:
   kustomization_paths:
     - upstream/apps/tensorboard/tensorboards-web-app/upstream/overlays/istio
   output_helm_chart_path: charts/apps/tensorboards-web-app
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 tensorboard-controller:
