@@ -3,8 +3,6 @@ kind: Kustomization
 namespace: kubeflow
 bases:
 - ../../../upstream/apps/jupyter/notebook-controller/upstream/overlays/kubeflow
-patchesStrategicMerge:
-- deployment_patch.yaml
 configMapGenerator:
 - name: config
   behavior: merge
