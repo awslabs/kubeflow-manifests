@@ -130,16 +130,16 @@ models-web-app:
   kustomization_paths:
     - upstream/contrib/kserve/models-web-app/overlays/kubeflow
   output_helm_chart_path: charts/apps/models-web-app
-  version: 0.1.0
-  app_version: v0.8.1
+  version: 0.2.0
+  app_version: v0.10.0
 
 
 central-dashboard:
   kustomization_paths:
     - awsconfigs/apps/centraldashboard
   output_helm_chart_path: charts/apps/central-dashboard
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 aws-secrets-manager:
