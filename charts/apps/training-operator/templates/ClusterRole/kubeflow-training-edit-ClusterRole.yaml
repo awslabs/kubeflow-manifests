@@ -14,6 +14,7 @@ rules:
   - pytorchjobs
   - mxjobs
   - xgboostjobs
+  - paddlejobs
   verbs:
   - create
   - delete
@@ -30,5 +31,6 @@ rules:
   - pytorchjobs/status
   - mxjobs/status
   - xgboostjobs/status
+  - paddlejobs/status
   verbs:
   - get
