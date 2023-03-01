@@ -70,7 +70,7 @@ verify-cluster-variables:
 create-eks-cluster: verify-cluster-variables
 	eksctl create cluster \
 	--name $(CLUSTER_NAME) \
-	--version 1.22 \
+	--version 1.23 \
 	--region $(CLUSTER_REGION) \
 	--nodegroup-name linux-nodes \
 	--node-type m5.xlarge \
