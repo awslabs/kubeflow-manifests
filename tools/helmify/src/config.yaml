@@ -262,8 +262,8 @@ volumes-web-app:
   kustomization_paths:
     - upstream/apps/volumes-web-app/upstream/overlays/istio
   output_helm_chart_path: charts/apps/volumes-web-app
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 training-operator:
