@@ -13,6 +13,7 @@ rules:
   - pytorchjobs
   - mxjobs
   - xgboostjobs
+  - paddlejobs
   verbs:
   - get
   - list
@@ -25,5 +26,6 @@ rules:
   - pytorchjobs/status
   - mxjobs/status
   - xgboostjobs/status
+  - paddlejobs/status
   verbs:
   - get

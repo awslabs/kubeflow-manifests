@@ -14,8 +14,6 @@ spec:
       kustomize.component: volumes-web-app
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: 'false'
       labels:
         app: volumes-web-app
         kustomize.component: volumes-web-app
@@ -29,8 +27,8 @@ spec:
         - name: USERID_PREFIX
           value: ''
         - name: APP_SECURE_COOKIES
-          value: $(VWA_APP_SECURE_COOKIES)
-        image: docker.io/kubeflownotebookswg/volumes-web-app:v1.6.1
+          value: 'true'
+        image: docker.io/kubeflownotebookswg/volumes-web-app:v1.7.0-rc.1
         name: volumes-web-app
         ports:
         - containerPort: 5000

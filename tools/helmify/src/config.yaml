@@ -228,16 +228,16 @@ admission-webhook:
   kustomization_paths:
     - upstream/apps/admission-webhook/upstream/overlays/cert-manager
   output_helm_chart_path: charts/apps/admission-webhook
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 jupyter-web-app:
   kustomization_paths:
     - awsconfigs/apps/jupyter-web-app
   output_helm_chart_path: charts/apps/jupyter-web-app
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 notebook-controller:
@@ -262,16 +262,16 @@ volumes-web-app:
   kustomization_paths:
     - upstream/apps/volumes-web-app/upstream/overlays/istio
   output_helm_chart_path: charts/apps/volumes-web-app
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 training-operator:
   kustomization_paths:
     - upstream/apps/training-operator/upstream/overlays/kubeflow
   output_helm_chart_path: charts/apps/training-operator
-  version: 0.1.0
-  app_version: v1.5.0
+  version: 0.2.0
+  app_version: v1.6.0
 
 
 tensorboards-web-app:
@@ -294,8 +294,8 @@ profiles-and-kfam:
   kustomization_paths:
     - upstream/apps/profiles/upstream/overlays/kubeflow
   output_helm_chart_path: charts/apps/profiles-and-kfam
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 user-namespace:
