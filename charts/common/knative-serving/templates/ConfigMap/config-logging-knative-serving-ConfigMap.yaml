@@ -51,13 +51,14 @@ data:
     loglevel.hpaautoscaler: "info"
     loglevel.net-certmanager-controller: "info"
     loglevel.net-istio-controller: "info"
+    loglevel.net-contour-controller: "info"
 kind: ConfigMap
 metadata:
   annotations:
-    knative.dev/example-checksum: be93ff10
+    knative.dev/example-checksum: b0f3c6f2
   labels:
+    app.kubernetes.io/component: logging
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config-logging
   namespace: knative-serving

@@ -86,8 +86,8 @@ metadata:
   annotations:
     knative.dev/example-checksum: fed4756e
   labels:
+    app.kubernetes.io/component: observability
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config-observability
   namespace: knative-serving

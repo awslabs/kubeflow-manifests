@@ -4,8 +4,8 @@ metadata:
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.2.4
-    eventing.knative.dev/release: v1.2.4
+    app.kubernetes.io/version: 1.8.1
+    eventing.knative.dev/release: v1.8.1
     kustomize.component: knative
   name: pingsource-mt-adapter
   namespace: knative-eventing
@@ -23,8 +23,8 @@ spec:
       labels:
         app.kubernetes.io/component: knative-eventing
         app.kubernetes.io/name: knative-eventing
-        app.kubernetes.io/version: 1.2.4
-        eventing.knative.dev/release: v1.2.4
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
         eventing.knative.dev/source: ping-source-controller
         kustomize.component: knative
         sources.knative.dev/role: adapter
@@ -50,6 +50,12 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
+        - name: NAMESPACE
+          value: ''
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
         - name: K_METRICS_CONFIG
           value: ''
         - name: K_LOGGING_CONFIG
@@ -64,7 +70,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256:632d9d710d070efed2563f6125a87993e825e8e36562ec3da0366e2a897406c0
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256:282b5265e1ef26309b3343038c9b4f172654e06cbee46f6ddffd23ea9ad9a3be
         name: dispatcher
         ports:
         - containerPort: 9090
@@ -81,8 +87,10 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       enableServiceLinks: false
       serviceAccountName: pingsource-mt-adapter

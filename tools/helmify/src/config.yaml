@@ -2,8 +2,8 @@ dex:
   kustomization_paths:
     - upstream/common/dex/overlays/istio
   output_helm_chart_path: charts/common/dex
-  version: 0.1.0
-  app_version: v2.24.0
+  version: 0.2.0
+  app_version: v2.35.3
 
 
 ingress:
@@ -66,8 +66,8 @@ oidc-authservice:
   kustomization_paths:
     - upstream/common/oidc-authservice/base
   output_helm_chart_path: charts/common/oidc-authservice
-  version: 0.1.0
-  app_version: 0.1.0
+  version: 0.2.0
+  app_version: 0.2.0
 
 
 cluster-local-gateway:
@@ -106,16 +106,16 @@ knative-serving:
   kustomization_paths:
     - upstream/common/knative/knative-serving/overlays/gateways
   output_helm_chart_path: charts/common/knative-serving
-  version: 0.1.0
-  app_version: 1.2.5
+  version: 0.2.0
+  app_version: 1.8.1
 
 
 knative-eventing:
   kustomization_paths:
     - upstream/common/knative/knative-eventing/base
   output_helm_chart_path: charts/common/knative-eventing
-  version: 0.1.0
-  app_version: 1.2.5
+  version: 0.2.0
+  app_version: 1.8.1
 
 
 kserve:
@@ -130,16 +130,16 @@ models-web-app:
   kustomization_paths:
     - upstream/contrib/kserve/models-web-app/overlays/kubeflow
   output_helm_chart_path: charts/apps/models-web-app
-  version: 0.1.0
-  app_version: v0.8.1
+  version: 0.2.0
+  app_version: v0.10.0
 
 
 central-dashboard:
   kustomization_paths:
     - awsconfigs/apps/centraldashboard
   output_helm_chart_path: charts/apps/central-dashboard
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 aws-secrets-manager:
@@ -186,26 +186,26 @@ kubeflow-pipelines:
       kustomization_paths:
         - awsconfigs/apps/pipeline/base
       output_helm_chart_path: charts/apps/kubeflow-pipelines/vanilla
-      version: 0.1.1
-      app_version: 2.0.0-alpha.5
+      version: 0.2.0
+      app_version: 2.0.0-alpha.6
     rds-s3:
       kustomization_paths:
         - awsconfigs/apps/pipeline
       output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-s3
-      version: 0.1.1
-      app_version: 2.0.0-alpha.5
+      version: 0.2.0
+      app_version: 2.0.0-alpha.6
     rds-only:
       kustomization_paths:
         - awsconfigs/apps/pipeline/rds
       output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-only
-      version: 0.1.1
-      app_version: 2.0.0-alpha.5
+      version: 0.2.0
+      app_version: 2.0.0-alpha.6
     s3-only:
       kustomization_paths:
         - awsconfigs/apps/pipeline/s3
       output_helm_chart_path: charts/apps/kubeflow-pipelines/s3-only
-      version: 0.1.1
-      app_version: 2.0.0-alpha.5
+      version: 0.2.0
+      app_version: 2.0.0-alpha.6
   params:
     template_paths: 
       - tools/helmify/template/kubeflow-pipelines/params/s3/params.env
