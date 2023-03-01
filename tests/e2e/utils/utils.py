@@ -397,7 +397,7 @@ def check_helm_chart_exists(chart_name, namespace):
     return False
 
 
-def create_addon(addon_name, cluster_name, account_id, role_name):
+def create_addon(addon_name, cluster_name, account_id, role_name, region=None):
     cmd = []
     cmd += "eksctl create addon".split()
     cmd += f"--name {addon_name}".split()
@@ -405,17 +405,23 @@ def create_addon(addon_name, cluster_name, account_id, role_name):
     cmd += (
         f"--service-account-role-arn arn:aws:iam::{account_id}:role/{role_name}".split()
     )
+    if region:
+        cmd += f"--region {region}".split()
+
     cmd += "--force".split()
 
     retcode = subprocess.call(cmd)
     assert retcode == 0
 
 
-def delete_addon(addon_name, cluster_name):
+def delete_addon(addon_name, cluster_name, region=None):
     cmd = []
     cmd += "eksctl delete addon".split()
     cmd += f"--cluster {cluster_name}".split()
     cmd += f"--name {addon_name}".split()
+
+    if region:
+        cmd += f"--region {region}".split()
 
     retcode = subprocess.call(cmd)
     assert retcode == 0
