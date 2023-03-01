@@ -76,7 +76,7 @@ def ebs_addon(metadata, region, request, account_id, cluster):
         )
         ebs_csi_driver["role_name"] = ebs_csi_role_name
         ebs_csi_driver["service_account_name"] = "ebs-csi-controller-sa"
-        create_addon("aws-ebs-csi-driver", cluster, account_id, ebs_csi_role_name)
+        create_addon("aws-ebs-csi-driver", cluster, account_id, ebs_csi_role_name, region)
         ebs_csi_driver["addon_name"] = "aws-ebs-csi-driver"
         ebs_csi_driver["addon_account"] = account_id
 
@@ -84,7 +84,7 @@ def ebs_addon(metadata, region, request, account_id, cluster):
         delete_iam_service_account(
             "ebs-csi-controller-sa", "kube-system", cluster, region
         )
-        delete_addon("aws-ebs-csi-driver", cluster)
+        delete_addon("aws-ebs-csi-driver", cluster, region)
 
     configure_resource_fixture(
         metadata, request, ebs_csi_driver, "ebs_csi_driver", on_create, on_delete
