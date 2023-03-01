@@ -236,8 +236,8 @@ jupyter-web-app:
   kustomization_paths:
     - awsconfigs/apps/jupyter-web-app
   output_helm_chart_path: charts/apps/jupyter-web-app
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
 
 
 notebook-controller:

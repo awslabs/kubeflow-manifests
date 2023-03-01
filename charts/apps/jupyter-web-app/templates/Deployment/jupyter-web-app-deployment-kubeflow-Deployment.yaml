@@ -14,8 +14,6 @@ spec:
       kustomize.component: jupyter-web-app
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: 'false'
       labels:
         app: jupyter-web-app
         kustomize.component: jupyter-web-app
@@ -31,8 +29,8 @@ spec:
         - name: USERID_PREFIX
           value: ''
         - name: APP_SECURE_COOKIES
-          value: $(JWA_APP_SECURE_COOKIES)
-        image: docker.io/kubeflownotebookswg/jupyter-web-app:v1.6.1
+          value: 'true'
+        image: docker.io/kubeflownotebookswg/jupyter-web-app:v1.7.0-rc.1
         name: jupyter-web-app
         ports:
         - containerPort: 5000
@@ -44,7 +42,7 @@ spec:
       serviceAccountName: jupyter-web-app-service-account
       volumes:
       - configMap:
-          name: jupyter-web-app-config-tgcbb2gdkd
+          name: jupyter-web-app-config-dmh59b856d
         name: config-volume
       - configMap:
           name: jupyter-web-app-logos
