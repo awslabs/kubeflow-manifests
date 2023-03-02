@@ -34,14 +34,14 @@ katib:
       kustomization_paths:
       - upstream/apps/katib/upstream/installs/katib-with-kubeflow
       output_helm_chart_path: charts/apps/katib/vanilla
-      version: 0.1.0
-      app_version: v0.14.0-rc.0
+      version: 0.2.0
+      app_version: v0.15.0
     katib-external-db-with-kubeflow:
       kustomization_paths:
       - awsconfigs/apps/katib-external-db-with-kubeflow
       output_helm_chart_path: charts/apps/katib/katib-external-db-with-kubeflow
-      version: 0.1.0
-      app_version: v0.14.0-rc.0
+      version: 0.2.0
+      app_version: v0.15.0
       
 
 istio:
@@ -244,8 +244,8 @@ notebook-controller:
   kustomization_paths:
     - awsconfigs/apps/notebook-controller
   output_helm_chart_path: charts/apps/notebook-controller
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
   params:
     template_paths: 
       - tools/helmify/template/notebook-controller/params.env

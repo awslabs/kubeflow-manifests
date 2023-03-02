@@ -17,7 +17,7 @@ from e2e.utils.config import configure_resource_fixture, metadata
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream, ebs_addon
 from e2e.fixtures.clients import (
     kfp_client,
     port_forward,
