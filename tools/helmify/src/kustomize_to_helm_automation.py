@@ -247,6 +247,7 @@ def find_potential_failed_yaml_files(
                     dest = f"{helm_temp_dir}/potential_failed_helm_conversions/{file_type}/{file}"
                     shutil.move(source, dest)
                     problem_filelist_output_paths.append(dest)
+                    problem_filelist.remove(file)
     return problem_filelist_output_paths
 
 

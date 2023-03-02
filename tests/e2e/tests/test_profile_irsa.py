@@ -34,7 +34,7 @@ from e2e.fixtures.cluster import (
     associate_iam_oidc_provider,
     delete_iam_service_account,
 )
-from e2e.fixtures.installation import installation, clone_upstream
+from e2e.fixtures.installation import installation, clone_upstream, ebs_addon
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,

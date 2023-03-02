@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: activator
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: activator
   namespace: knative-serving
 spec:
@@ -22,9 +21,8 @@ spec:
         app: activator
         app.kubernetes.io/component: activator
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: 1.2.5
+        app.kubernetes.io/version: 1.8.0
         role: activator
-        serving.knative.dev/release: v1.2.5
     spec:
       containers:
       - env:
@@ -48,7 +46,7 @@ spec:
           value: config-observability
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:93ff6e69357785ff97806945b284cbd1d37e50402b876a320645be8877c0d7b7
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:c3bbf3a96920048869dcab8e133e00f59855670b8a0bbca3d72ced2f512eb5e1
         livenessProbe:
           failureThreshold: 12
           httpGet:
@@ -87,8 +85,10 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: controller
       terminationGracePeriodSeconds: 600

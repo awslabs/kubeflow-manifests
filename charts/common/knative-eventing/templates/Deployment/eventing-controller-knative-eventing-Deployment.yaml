@@ -4,8 +4,8 @@ metadata:
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.2.4
-    eventing.knative.dev/release: v1.2.4
+    app.kubernetes.io/version: 1.8.1
+    eventing.knative.dev/release: v1.8.1
     knative.dev/high-availability: 'true'
     kustomize.component: knative
   name: eventing-controller
@@ -23,8 +23,8 @@ spec:
         app: eventing-controller
         app.kubernetes.io/component: knative-eventing
         app.kubernetes.io/name: knative-eventing
-        app.kubernetes.io/version: 1.2.4
-        eventing.knative.dev/release: v1.2.4
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
         kustomize.component: knative
     spec:
       affinity:
@@ -52,18 +52,36 @@ spec:
         - name: METRICS_DOMAIN
           value: knative.dev/eventing
         - name: APISERVER_RA_IMAGE
-          value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:5b672eedd343bcf9496c2070479f9d8f29231069148bf2aa7991bd5ca5a7562a
+          value: gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256:2fd38788ae96abd96e63bf8b7ef3e1b37370513a84a86cd153dfb1cd9442a095
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:dc0ac2d8f235edb04ec1290721f389d2bc719ab8b6222ee86f17af8d7d2a160f
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256:33d78536e9b38dbb2ec2952207b48ff8e05acb48e7d28c2305bd0a0f7156198f
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: probes
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
         name: eventing-controller
         ports:
         - containerPort: 9090
           name: metrics
         - containerPort: 8008
           name: profiling
+        - containerPort: 8080
+          name: probes
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: probes
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
         resources:
           requests:
             cpu: 100m
@@ -72,9 +90,11 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePolicy: FallbackToLogsOnError
       enableServiceLinks: false
       serviceAccountName: eventing-controller

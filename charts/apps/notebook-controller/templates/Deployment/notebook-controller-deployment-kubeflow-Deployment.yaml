@@ -21,33 +21,38 @@ spec:
       - command:
         - /manager
         env:
-        - name: ENABLE_CULLING
-          valueFrom:
-            configMapKeyRef:
-              key: enableCulling
-              name: notebook-controller-config-9675dd2fhk
-        - name: CULL_IDLE_TIME
-          valueFrom:
-            configMapKeyRef:
-              key: cullIdleTime
-              name: notebook-controller-config-9675dd2fhk
-        - name: IDLENESS_CHECK_PERIOD
-          valueFrom:
-            configMapKeyRef:
-              key: idlenessCheckPeriod
-              name: notebook-controller-config-9675dd2fhk
         - name: USE_ISTIO
           valueFrom:
             configMapKeyRef:
               key: USE_ISTIO
-              name: notebook-controller-config-9675dd2fhk
+              name: notebook-controller-config-mf8876789d
         - name: ISTIO_GATEWAY
           valueFrom:
             configMapKeyRef:
               key: ISTIO_GATEWAY
-              name: notebook-controller-config-9675dd2fhk
-        image: docker.io/kubeflownotebookswg/notebook-controller:v1.6.1
-        imagePullPolicy: Always
+              name: notebook-controller-config-mf8876789d
+        - name: CLUSTER_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_DOMAIN
+              name: notebook-controller-config-mf8876789d
+        - name: ENABLE_CULLING
+          valueFrom:
+            configMapKeyRef:
+              key: ENABLE_CULLING
+              name: notebook-controller-config-mf8876789d
+        - name: CULL_IDLE_TIME
+          valueFrom:
+            configMapKeyRef:
+              key: CULL_IDLE_TIME
+              name: notebook-controller-config-mf8876789d
+        - name: IDLENESS_CHECK_PERIOD
+          valueFrom:
+            configMapKeyRef:
+              key: IDLENESS_CHECK_PERIOD
+              name: notebook-controller-config-mf8876789d
+        image: docker.io/kubeflownotebookswg/notebook-controller:v1.7.0-rc.1
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             path: /healthz
