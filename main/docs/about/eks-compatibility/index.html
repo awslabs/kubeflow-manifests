@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/about/eks-compatibility/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-02-07T19:24:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-03-02T10:32:04-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Amazon EKS and Kubeflow Compatibility">
 <meta itemprop="description" content="Check compatibility between Amazon EKS and Kubeflow versions">
-<meta itemprop="dateModified" content="2023-02-07T19:24:40-07:00" />
+<meta itemprop="dateModified" content="2023-03-02T10:32:04-08:00" />
 <meta itemprop="wordCount" content="62">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Amazon EKS and Kubeflow Compatibility"/>
@@ -461,30 +461,30 @@
 		
 	</header>    
 	<h2 id="compatibility">Compatibility</h2>
-<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.6.</p>
+<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.7.</p>
 <div class="table-responsive">
   <table class="table table-bordered">
     <thead class="thead-light">
       <tr>
         <th>EKS Versions</th>
-        <th>Kubeflow v1.6</th>
+        <th>Kubeflow v1.7</th>
       </tr>
     </thead>
     <tbody>
     <tr>
+        <td>1.25</td>
+        <td><b>Compatible</b></td>
+      </tr>
+      <tr>
+        <td>1.24</td>
+        <td><b>Compatible</b></td>
+      </tr>
+      <tr>
         <td>1.23</td>
         <td><b>Compatible</b></td>
       </tr>
       <tr>
         <td>1.22</td>
-        <td><b>Compatible</b></td>
-      </tr>
-      <tr>
-        <td>1.21</td>
-        <td><b>Incompatible</b></td>
-      </tr>
-      <tr>
-        <td>1.20</td>
         <td><b>Incompatible</b></td>
       </tr>
     </tbody>
@@ -498,7 +498,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified February 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2579341cfc1c14d3047d1cb39cf42f0505ee3faf">Add Trainium blog post (#557) (2579341)</a>
+  Last modified March 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/970528e5e992a15a9caacaf343d1694a942246c6">Added EBS-driver fixture in integration test for k8s 1.23&#43; (#597) (970528e)</a>
 </div>
 
 </div>

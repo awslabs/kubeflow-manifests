@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/create-eks-cluster/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-02-07T19:24:40-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-03-02T10:32:04-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Create an EKS Cluster">
 <meta itemprop="description" content="Create an EKS cluster before you deploy Kubeflow on AWS using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-02-07T19:24:40-07:00" />
+<meta itemprop="dateModified" content="2023-03-02T10:32:04-08:00" />
 <meta itemprop="wordCount" content="196">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Create an EKS Cluster"/>
@@ -483,7 +483,7 @@
 </span></span></code></pre></div><p>Run the following command to create an EKS cluster:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl create cluster <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--name <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.22 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.24 <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodegroup-name linux-nodes <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--node-type m5.xlarge <span class="se">\
@@ -501,7 +501,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified February 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2579341cfc1c14d3047d1cb39cf42f0505ee3faf">Add Trainium blog post (#557) (2579341)</a>
+  Last modified March 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/970528e5e992a15a9caacaf343d1694a942246c6">Added EBS-driver fixture in integration test for k8s 1.23&#43; (#597) (970528e)</a>
 </div>
 
 </div>
