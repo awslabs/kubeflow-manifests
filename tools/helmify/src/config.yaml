@@ -244,8 +244,8 @@ notebook-controller:
   kustomization_paths:
     - awsconfigs/apps/notebook-controller
   output_helm_chart_path: charts/apps/notebook-controller
-  version: 0.1.1
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
   params:
     template_paths: 
       - tools/helmify/template/notebook-controller/params.env
