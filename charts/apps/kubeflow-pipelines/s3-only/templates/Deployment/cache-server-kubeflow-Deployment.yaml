@@ -36,6 +36,16 @@ spec:
         - --tls_cert_filename=tls.crt
         - --tls_key_filename=tls.key
         env:
+        - name: DEFAULT_CACHE_STALENESS
+          valueFrom:
+            configMapKeyRef:
+              key: DEFAULT_CACHE_STALENESS
+              name: pipeline-install-config
+        - name: MAXIMUM_CACHE_STALENESS
+          valueFrom:
+            configMapKeyRef:
+              key: MAXIMUM_CACHE_STALENESS
+              name: pipeline-install-config
         - name: CACHE_IMAGE
           valueFrom:
             configMapKeyRef:
@@ -75,7 +85,7 @@ spec:
               name: mysql-secret
         - name: NAMESPACE_TO_WATCH
           value: ''
-        image: gcr.io/ml-pipeline/cache-server:2.0.0-alpha.5
+        image: gcr.io/ml-pipeline/cache-server:2.0.0-alpha.6
         imagePullPolicy: Always
         name: server
         ports:

@@ -39,13 +39,6 @@ data:
     # "knative-serving"
     local-gateway.knative-serving.knative-local-gateway: "knative-local-gateway.istio-system.svc.cluster.local"
 
-    # DEPRECATED: local-gateway.mesh is deprecated.
-    # See: https://github.com/knative/serving/issues/11523
-    #
-    # To use only Istio service mesh and no knative-local-gateway, replace
-    # all local-gateway.* entries by the following entry.
-    local-gateway.mesh: "mesh"
-
     # If true, knative will use the Istio VirtualService's status to determine
     # endpoint readiness. Otherwise, probe as usual.
     # NOTE: This feature is currently experimental and should not be used in production.
@@ -56,8 +49,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/version: 1.8.0
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: v1.2.0
   name: config-istio
   namespace: knative-serving

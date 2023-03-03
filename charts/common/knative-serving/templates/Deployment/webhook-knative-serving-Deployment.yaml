@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: webhook
   namespace: knative-serving
 spec:
@@ -20,11 +19,9 @@ spec:
         sidecar.istio.io/inject: 'true'
       labels:
         app: webhook
-        app.kubernetes.io/component: webhook
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: 1.2.5
+        app.kubernetes.io/version: 1.8.0
         role: webhook
-        serving.knative.dev/release: v1.2.5
     spec:
       affinity:
         podAntiAffinity:
@@ -55,7 +52,7 @@ spec:
           value: '8443'
         - name: METRICS_DOMAIN
           value: knative.dev/internal/serving
-        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:9084ea8498eae3c6c4364a397d66516a25e48488f4a9871ef765fa554ba483f0
+        image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:bc13765ba4895c0fa318a065392d05d0adc0e20415c739e0aacb3f56140bf9ae
         livenessProbe:
           failureThreshold: 6
           httpGet:
@@ -93,8 +90,10 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: controller
       terminationGracePeriodSeconds: 300
