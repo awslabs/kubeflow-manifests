@@ -132,12 +132,12 @@ def install_component(
                     else:
                         apply_kustomize(kustomize_path)
                 # TO DO: Debug and add additional validation step for cert-manager resources in future for kubeflow-issuer to be installed
-                # temporary solution to wait for 30s
+                # temporary solution to wait for 60s
                 if component_name == "cert-manager":
                     print(
-                        "wait for 30s for cert-manager-webhook resource to be ready..."
+                        "wait for 60s for cert-manager-webhook resource to be ready..."
                     )
-                    time.sleep(30)
+                    time.sleep(60)
 
         if "validations" in installation_config[component_name]:
             validate_component_installation(installation_config, component_name)
