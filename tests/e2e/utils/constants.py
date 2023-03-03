@@ -9,7 +9,7 @@ DEFAULT_USERNAME = "user@example.com"
 DEFAULT_PASSWORD = "12341234"
 KUBEFLOW_GROUP = "kubeflow.org"
 KUBEFLOW_NAMESPACE = "kubeflow"
-KUBEFLOW_VERSION = "v1.6.1"
+KUBEFLOW_VERSION = "v1.7.0-rc.1"
 ALTERNATE_MLMDB_NAME = "metadata_db"
 
 TO_ROOT = "../../"  # As of this commit, tests are run from the tests/e2e folder
