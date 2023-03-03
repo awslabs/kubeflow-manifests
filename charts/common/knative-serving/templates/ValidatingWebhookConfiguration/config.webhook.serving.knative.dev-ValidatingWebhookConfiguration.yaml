@@ -4,8 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: webhook
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config.webhook.serving.knative.dev
 webhooks:
 - admissionReviewVersions:
@@ -17,9 +16,20 @@ webhooks:
       namespace: knative-serving
   failurePolicy: Fail
   name: config.webhook.serving.knative.dev
-  namespaceSelector:
+  objectSelector:
     matchExpressions:
-    - key: serving.knative.dev/release
-      operator: Exists
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - knative-serving
+    - key: app.kubernetes.io/component
+      operator: In
+      values:
+      - autoscaler
+      - controller
+      - logging
+      - networking
+      - observability
+      - tracing
   sideEffects: None
   timeoutSeconds: 10

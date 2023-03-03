@@ -4,9 +4,8 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/version: 1.8.0
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: v1.2.0
   name: config.webhook.istio.networking.internal.knative.dev
 webhooks:
 - admissionReviewVersions:
@@ -18,8 +17,8 @@ webhooks:
       namespace: knative-serving
   failurePolicy: Fail
   name: config.webhook.istio.networking.internal.knative.dev
-  namespaceSelector:
-    matchExpressions:
-    - key: serving.knative.dev/release
-      operator: Exists
+  objectSelector:
+    matchLabels:
+      app.kubernetes.io/component: net-istio
+      app.kubernetes.io/name: knative-serving
   sideEffects: None

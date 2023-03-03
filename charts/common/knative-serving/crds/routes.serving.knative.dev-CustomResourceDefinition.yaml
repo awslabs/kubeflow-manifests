@@ -3,10 +3,9 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
+    app.kubernetes.io/version: 1.8.0
     duck.knative.dev/addressable: 'true'
     knative.dev/crd-install: 'true'
-    serving.knative.dev/release: v1.2.5
   name: routes.serving.knative.dev
 spec:
   group: serving.knative.dev
@@ -86,7 +85,7 @@ spec:
                         mean no traffic, `100` means all traffic. When percentage
                         based routing is being used the follow rules apply: - the
                         sum of all percent values must equal 100 - when not specified,
-                        the implied value for `percent` is zero for   that particular
+                        the implied value for `percent` is zero for that particular
                         Revision or Configuration'
                       format: int64
                       type: integer
@@ -140,7 +139,6 @@ spec:
                         transitioned from one status to another. We use VolatileTime
                         in place of metav1.Time to exclude this from creating equality.Semantic
                         differences (all other things held constant).
-                      format: date-time
                       type: string
                     message:
                       description: A human readable message indicating details about
@@ -200,7 +198,7 @@ spec:
                         mean no traffic, `100` means all traffic. When percentage
                         based routing is being used the follow rules apply: - the
                         sum of all percent values must equal 100 - when not specified,
-                        the implied value for `percent` is zero for   that particular
+                        the implied value for `percent` is zero for that particular
                         Revision or Configuration'
                       format: int64
                       type: integer

@@ -29,6 +29,7 @@ from e2e.fixtures.installation import (
     installation, # Needed for port_forward.
     clone_upstream, # Needed for kustomize.
     configure_manifests, # Needed for kustomize.
+    ebs_addon
 )
 from e2e.fixtures.clients import (
     kfp_client,

@@ -28,14 +28,18 @@ def get_account_id():
 
 def delete_iam_role(role_name, policy_name, region):
     iam_client = get_iam_client(region=region)
-    iam_client.detach_role_policy(
-        RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
-    )
-    acc_id = get_account_id()
-    custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
-    iam_client.detach_role_policy(
-        RoleName=role_name, PolicyArn=custom_policy_arn
-    )
+    try:
+        iam_client.detach_role_policy(
+            RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+        )
+        acc_id = get_account_id()
+        custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
+        iam_client.detach_role_policy(
+            RoleName=role_name, PolicyArn=custom_policy_arn
+        ) 
+    except:
+        logger.log("Failed to detach role policy, it may not exist anymore.")
+    
     iam_client.delete_role(RoleName=role_name)
     print(f"Deleted IAM Role : {role_name}")
 

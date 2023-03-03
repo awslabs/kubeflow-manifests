@@ -3,9 +3,8 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
+    app.kubernetes.io/version: 1.8.0
     knative.dev/crd-install: 'true'
-    serving.knative.dev/release: v1.2.5
   name: revisions.serving.knative.dev
 spec:
   group: serving.knative.dev
@@ -66,6 +65,10 @@ spec:
             description: RevisionSpec holds the desired state of the Revision (from
               the client).
             properties:
+              affinity:
+                description: This is accessible behind a feature flag - kubernetes.podspec-affinity
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
               automountServiceAccountToken:
                 description: AutomountServiceAccountToken indicates whether a service
                   account token should be automatically mounted.
@@ -86,7 +89,7 @@ spec:
                     within a pod.
                   properties:
                     args:
-                      description: 'Arguments to the entrypoint. The docker image''s
+                      description: 'Arguments to the entrypoint. The container image''s
                         CMD is used if this is not provided. Variable references $(VAR_NAME)
                         are expanded using the container''s environment. If a variable
                         cannot be resolved, the reference in the input string will
@@ -100,7 +103,7 @@ spec:
                       type: array
                     command:
                       description: 'Entrypoint array. Not executed within a shell.
-                        The docker image''s ENTRYPOINT is used if this is not provided.
+                        The container image''s ENTRYPOINT is used if this is not provided.
                         Variable references $(VAR_NAME) are expanded using the container''s
                         environment. If a variable cannot be resolved, the reference
                         in the input string will be unchanged. Double $$ are reduced
@@ -158,6 +161,19 @@ spec:
                                 required:
                                 - key
                                 type: object
+                                x-kubernetes-map-type: atomic
+                              fieldRef:
+                                description: This is accessible behind a feature flag
+                                  - kubernetes.podspec-fieldref
+                                type: object
+                                x-kubernetes-map-type: atomic
+                                x-kubernetes-preserve-unknown-fields: true
+                              resourceFieldRef:
+                                description: This is accessible behind a feature flag
+                                  - kubernetes.podspec-fieldref
+                                type: object
+                                x-kubernetes-map-type: atomic
+                                x-kubernetes-preserve-unknown-fields: true
                               secretKeyRef:
                                 description: Selects a key of a secret in the pod's
                                   namespace
@@ -179,8 +195,8 @@ spec:
                                 required:
                                 - key
                                 type: object
+                                x-kubernetes-map-type: atomic
                             type: object
-                            x-kubernetes-preserve-unknown-fields: true
                         required:
                         - name
                         type: object
@@ -210,6 +226,7 @@ spec:
                                   defined
                                 type: boolean
                             type: object
+                            x-kubernetes-map-type: atomic
                           prefix:
                             description: An optional identifier to prepend to each
                               key in the ConfigMap. Must be a C_IDENTIFIER.
@@ -226,10 +243,11 @@ spec:
                                 description: Specify whether the Secret must be defined
                                 type: boolean
                             type: object
+                            x-kubernetes-map-type: atomic
                         type: object
                       type: array
                     image:
-                      description: 'Docker image name. More info: https://kubernetes.io/docs/concepts/containers/images
+                      description: 'Container image name. More info: https://kubernetes.io/docs/concepts/containers/images
                         This field is optional to allow higher level config management
                         to default or override container images in workload controllers
                         like Deployments and StatefulSets.'
@@ -245,8 +263,7 @@ spec:
                         info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
                       properties:
                         exec:
-                          description: One and only one of the following should be
-                            specified. Exec specifies the action to take.
+                          description: Exec specifies the action to take.
                           properties:
                             command:
                               description: Command is the command line to execute
@@ -296,12 +313,19 @@ spec:
                             path:
                               description: Path to access on the HTTP server.
                               type: string
+                            port:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Name or number of the port to access on
+                                the container. Number must be in the range 1 to 65535.
+                                Name must be an IANA_SVC_NAME.
+                              x-kubernetes-int-or-string: true
                             scheme:
                               description: Scheme to use for connecting to the host.
                                 Defaults to HTTP.
                               type: string
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         initialDelaySeconds:
                           description: 'Number of seconds after the container has
                             started before liveness probes are initiated. More info:
@@ -320,16 +344,22 @@ spec:
                           format: int32
                           type: integer
                         tcpSocket:
-                          description: 'TCPSocket specifies an action involving a
-                            TCP port. TCP hooks not yet supported TODO: implement
-                            a realistic TCP lifecycle hook'
+                          description: TCPSocket specifies an action involving a TCP
+                            port.
                           properties:
                             host:
                               description: 'Optional: Host name to connect to, defaults
                                 to the pod IP.'
                               type: string
+                            port:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Number or name of the port to access on
+                                the container. Number must be in the range 1 to 65535.
+                                Name must be an IANA_SVC_NAME.
+                              x-kubernetes-int-or-string: true
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         timeoutSeconds:
                           description: 'Number of seconds after which the probe times
                             out. Defaults to 1 second. Minimum value is 1. More info:
@@ -343,13 +373,13 @@ spec:
                         Cannot be updated.
                       type: string
                     ports:
-                      description: List of ports to expose from the container. Exposing
-                        a port here gives the system additional information about
-                        the network connections a container uses, but is primarily
-                        informational. Not specifying a port here DOES NOT prevent
-                        that port from being exposed. Any port which is listening
-                        on the default "0.0.0.0" address inside a container will be
-                        accessible from the network. Cannot be updated.
+                      description: List of ports to expose from the container. Not
+                        specifying a port here DOES NOT prevent that port from being
+                        exposed. Any port which is listening on the default "0.0.0.0"
+                        address inside a container will be accessible from the network.
+                        Modifying this array with strategic merge patch may corrupt
+                        the data. For more information See https://github.com/kubernetes/kubernetes/issues/108255.
+                        Cannot be updated.
                       items:
                         description: ContainerPort represents a network port in a
                           single container.
@@ -373,7 +403,6 @@ spec:
                         required:
                         - containerPort
                         type: object
-                        x-kubernetes-preserve-unknown-fields: true
                       type: array
                       x-kubernetes-list-map-keys:
                       - containerPort
@@ -385,8 +414,7 @@ spec:
                         fails. Cannot be updated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
                       properties:
                         exec:
-                          description: One and only one of the following should be
-                            specified. Exec specifies the action to take.
+                          description: Exec specifies the action to take.
                           properties:
                             command:
                               description: Command is the command line to execute
@@ -436,12 +464,19 @@ spec:
                             path:
                               description: Path to access on the HTTP server.
                               type: string
+                            port:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Name or number of the port to access on
+                                the container. Number must be in the range 1 to 65535.
+                                Name must be an IANA_SVC_NAME.
+                              x-kubernetes-int-or-string: true
                             scheme:
                               description: Scheme to use for connecting to the host.
                                 Defaults to HTTP.
                               type: string
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         initialDelaySeconds:
                           description: 'Number of seconds after the container has
                             started before liveness probes are initiated. More info:
@@ -460,16 +495,22 @@ spec:
                           format: int32
                           type: integer
                         tcpSocket:
-                          description: 'TCPSocket specifies an action involving a
-                            TCP port. TCP hooks not yet supported TODO: implement
-                            a realistic TCP lifecycle hook'
+                          description: TCPSocket specifies an action involving a TCP
+                            port.
                           properties:
                             host:
                               description: 'Optional: Host name to connect to, defaults
                                 to the pod IP.'
                               type: string
+                            port:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Number or name of the port to access on
+                                the container. Number must be in the range 1 to 65535.
+                                Name must be an IANA_SVC_NAME.
+                              x-kubernetes-int-or-string: true
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         timeoutSeconds:
                           description: 'Number of seconds after which the probe times
                             out. Defaults to 1 second. Minimum value is 1. More info:
@@ -511,11 +552,29 @@ spec:
                         override the equivalent fields of PodSecurityContext. More
                         info: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/'
                       properties:
+                        allowPrivilegeEscalation:
+                          description: 'AllowPrivilegeEscalation controls whether
+                            a process can gain more privileges than its parent process.
+                            This bool directly controls if the no_new_privs flag will
+                            be set on the container process. AllowPrivilegeEscalation
+                            is true always when the container is: 1) run as Privileged
+                            2) has CAP_SYS_ADMIN Note that this field cannot be set
+                            when spec.os.name is windows.'
+                          type: boolean
                         capabilities:
                           description: The capabilities to add/drop when running containers.
                             Defaults to the default set of capabilities granted by
-                            the container runtime.
+                            the container runtime. Note that this field cannot be
+                            set when spec.os.name is windows.
                           properties:
+                            add:
+                              description: This is accessible behind a feature flag
+                                - kubernetes.containerspec-addcapabilities
+                              items:
+                                description: Capability represent POSIX capabilities
+                                  type
+                                type: string
+                              type: array
                             drop:
                               description: Removed capabilities
                               items:
@@ -524,21 +583,40 @@ spec:
                                 type: string
                               type: array
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         readOnlyRootFilesystem:
                           description: Whether this container has a read-only root
-                            filesystem. Default is false.
+                            filesystem. Default is false. Note that this field cannot
+                            be set when spec.os.name is windows.
+                          type: boolean
+                        runAsGroup:
+                          description: The GID to run the entrypoint of the container
+                            process. Uses runtime default if unset. May also be set
+                            in PodSecurityContext.  If set in both SecurityContext
+                            and PodSecurityContext, the value specified in SecurityContext
+                            takes precedence. Note that this field cannot be set when
+                            spec.os.name is windows.
+                          format: int64
+                          type: integer
+                        runAsNonRoot:
+                          description: Indicates that the container must run as a
+                            non-root user. If true, the Kubelet will validate the
+                            image at runtime to ensure that it does not run as UID
+                            0 (root) and fail to start the container if it does. If
+                            unset or false, no such validation will be performed.
+                            May also be set in PodSecurityContext.  If set in both
+                            SecurityContext and PodSecurityContext, the value specified
+                            in SecurityContext takes precedence.
                           type: boolean
                         runAsUser:
                           description: The UID to run the entrypoint of the container
                             process. Defaults to user specified in image metadata
                             if unspecified. May also be set in PodSecurityContext.  If
                             set in both SecurityContext and PodSecurityContext, the
-                            value specified in SecurityContext takes precedence.
+                            value specified in SecurityContext takes precedence. Note
+                            that this field cannot be set when spec.os.name is windows.
                           format: int64
                           type: integer
                       type: object
-                      x-kubernetes-preserve-unknown-fields: true
                     terminationMessagePath:
                       description: 'Optional: Path at which the file to which the
                         container''s termination message will be written is mounted
@@ -591,20 +669,39 @@ spec:
                         be configured in the container image. Cannot be updated.
                       type: string
                   type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: array
+              dnsConfig:
+                description: This is accessible behind a feature flag - kubernetes.podspec-dnsconfig
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              dnsPolicy:
+                description: This is accessible behind a feature flag - kubernetes.podspec-dnspolicy
+                type: string
               enableServiceLinks:
                 description: 'EnableServiceLinks indicates whether information about
                   services should be injected into pod''s environment variables, matching
-                  the syntax of Docker links. Optional: Defaults to true.'
+                  the syntax of Docker links. Optional: Knative defaults this to false.'
                 type: boolean
+              hostAliases:
+                description: This is accessible behind a feature flag - kubernetes.podspec-hostaliases
+                items:
+                  description: This is accessible behind a feature flag - kubernetes.podspec-hostaliases
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                type: array
+              idleTimeoutSeconds:
+                description: IdleTimeoutSeconds is the maximum duration in seconds
+                  a request will be allowed to stay open while not receiving any bytes
+                  from the user's application. If unspecified, a system default will
+                  be provided.
+                format: int64
+                type: integer
               imagePullSecrets:
                 description: 'ImagePullSecrets is an optional list of references to
                   secrets in the same namespace to use for pulling any of the images
                   used by this PodSpec. If specified, these secrets will be passed
-                  to individual puller implementations for them to use. For example,
-                  in the case of docker, only DockerConfig type secrets are honored.
-                  More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod'
+                  to individual puller implementations for them to use. More info:
+                  https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod'
                 items:
                   description: LocalObjectReference contains enough information to
                     let you locate the referenced object inside the same namespace.
@@ -614,18 +711,78 @@ spec:
                         TODO: Add other useful fields. apiVersion, kind, uid?'
                       type: string
                   type: object
+                  x-kubernetes-map-type: atomic
                 type: array
+              initContainers:
+                description: 'List of initialization containers belonging to the pod.
+                  Init containers are executed in order prior to containers being
+                  started. If any init container fails, the pod is considered to have
+                  failed and is handled according to its restartPolicy. The name for
+                  an init container or normal container must be unique among all containers.
+                  Init containers may not have Lifecycle actions, Readiness probes,
+                  Liveness probes, or Startup probes. The resourceRequirements of
+                  an init container are taken into account during scheduling by finding
+                  the highest request/limit for each resource type, and then using
+                  the max of of that value or the sum of the normal containers. Limits
+                  are applied to init containers in a similar fashion. Init containers
+                  cannot currently be added or removed. Cannot be updated. More info:
+                  https://kubernetes.io/docs/concepts/workloads/pods/init-containers/'
+                items:
+                  description: This is accessible behind a feature flag - kubernetes.podspec-init-containers
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                type: array
+              nodeSelector:
+                description: This is accessible behind a feature flag - kubernetes.podspec-nodeselector
+                type: object
+                x-kubernetes-map-type: atomic
+                x-kubernetes-preserve-unknown-fields: true
+              priorityClassName:
+                description: This is accessible behind a feature flag - kubernetes.podspec-priorityclassname
+                type: string
+                x-kubernetes-preserve-unknown-fields: true
+              responseStartTimeoutSeconds:
+                description: ResponseStartTimeoutSeconds is the maximum duration in
+                  seconds that the request routing layer will wait for a request delivered
+                  to a container to begin sending any network traffic.
+                format: int64
+                type: integer
+              runtimeClassName:
+                description: This is accessible behind a feature flag - kubernetes.podspec-runtimeclassname
+                type: string
+                x-kubernetes-preserve-unknown-fields: true
+              schedulerName:
+                description: This is accessible behind a feature flag - kubernetes.podspec-schedulername
+                type: string
+                x-kubernetes-preserve-unknown-fields: true
+              securityContext:
+                description: This is accessible behind a feature flag - kubernetes.podspec-securitycontext
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
               serviceAccountName:
                 description: 'ServiceAccountName is the name of the ServiceAccount
                   to use to run this pod. More info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/'
                 type: string
               timeoutSeconds:
                 description: TimeoutSeconds is the maximum duration in seconds that
-                  the request routing layer will wait for a request delivered to a
-                  container to begin replying (send network traffic). If unspecified,
+                  the request instance is allowed to respond to a request. If unspecified,
                   a system default will be provided.
                 format: int64
                 type: integer
+              tolerations:
+                description: This is accessible behind a feature flag - kubernetes.podspec-tolerations
+                items:
+                  description: This is accessible behind a feature flag - kubernetes.podspec-tolerations
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                type: array
+              topologySpreadConstraints:
+                description: This is accessible behind a feature flag - kubernetes.podspec-topologyspreadconstraints
+                items:
+                  description: This is accessible behind a feature flag - kubernetes.podspec-topologyspreadconstraints
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                type: array
               volumes:
                 description: 'List of volumes that can be mounted by containers belonging
                   to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes'
@@ -634,24 +791,24 @@ spec:
                     be accessed by any container in the pod.
                   properties:
                     configMap:
-                      description: ConfigMap represents a configMap that should populate
+                      description: configMap represents a configMap that should populate
                         this volume
                       properties:
                         defaultMode:
-                          description: 'Optional: mode bits used to set permissions
-                            on created files by default. Must be an octal value between
-                            0000 and 0777 or a decimal value between 0 and 511. YAML
-                            accepts both octal and decimal values, JSON requires decimal
-                            values for mode bits. Defaults to 0644. Directories within
-                            the path are not affected by this setting. This might
-                            be in conflict with other options that affect the file
-                            mode, like fsGroup, and the result can be other mode bits
-                            set.'
+                          description: 'defaultMode is optional: mode bits used to
+                            set permissions on created files by default. Must be an
+                            octal value between 0000 and 0777 or a decimal value between
+                            0 and 511. YAML accepts both octal and decimal values,
+                            JSON requires decimal values for mode bits. Defaults to
+                            0644. Directories within the path are not affected by
+                            this setting. This might be in conflict with other options
+                            that affect the file mode, like fsGroup, and the result
+                            can be other mode bits set.'
                           format: int32
                           type: integer
                         items:
-                          description: If unspecified, each key-value pair in the
-                            Data field of the referenced ConfigMap will be projected
+                          description: items if unspecified, each key-value pair in
+                            the Data field of the referenced ConfigMap will be projected
                             into the volume as a file whose name is the key and content
                             is the value. If specified, the listed keys will be projected
                             into the specified paths, and unlisted keys will not be
@@ -663,25 +820,25 @@ spec:
                             description: Maps a string key to a path within a volume.
                             properties:
                               key:
-                                description: The key to project.
+                                description: key is the key to project.
                                 type: string
                               mode:
-                                description: 'Optional: mode bits used to set permissions
-                                  on this file. Must be an octal value between 0000
-                                  and 0777 or a decimal value between 0 and 511. YAML
-                                  accepts both octal and decimal values, JSON requires
-                                  decimal values for mode bits. If not specified,
-                                  the volume defaultMode will be used. This might
-                                  be in conflict with other options that affect the
-                                  file mode, like fsGroup, and the result can be other
-                                  mode bits set.'
+                                description: 'mode is Optional: mode bits used to
+                                  set permissions on this file. Must be an octal value
+                                  between 0000 and 0777 or a decimal value between
+                                  0 and 511. YAML accepts both octal and decimal values,
+                                  JSON requires decimal values for mode bits. If not
+                                  specified, the volume defaultMode will be used.
+                                  This might be in conflict with other options that
+                                  affect the file mode, like fsGroup, and the result
+                                  can be other mode bits set.'
                                 format: int32
                                 type: integer
                               path:
-                                description: The relative path of the file to map
-                                  the key to. May not be an absolute path. May not
-                                  contain the path element '..'. May not start with
-                                  the string '..'.
+                                description: path is the relative path of the file
+                                  to map the key to. May not be an absolute path.
+                                  May not contain the path element '..'. May not start
+                                  with the string '..'.
                                 type: string
                             required:
                             - key
@@ -693,42 +850,51 @@ spec:
                             TODO: Add other useful fields. apiVersion, kind, uid?'
                           type: string
                         optional:
-                          description: Specify whether the ConfigMap or its keys must
-                            be defined
+                          description: optional specify whether the ConfigMap or its
+                            keys must be defined
                           type: boolean
                       type: object
+                      x-kubernetes-map-type: atomic
+                    emptyDir:
+                      description: This is accessible behind a feature flag - kubernetes.podspec-emptydir
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
                     name:
-                      description: 'Volume''s name. Must be a DNS_LABEL and unique
+                      description: 'name of the volume. Must be a DNS_LABEL and unique
                         within the pod. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                       type: string
+                    persistentVolumeClaim:
+                      description: This is accessible behind a feature flag - kubernetes.podspec-persistent-volume-claim
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
                     projected:
-                      description: Items for all in one resources secrets, configmaps,
-                        and downward API
+                      description: projected items for all in one resources secrets,
+                        configmaps, and downward API
                       properties:
                         defaultMode:
-                          description: Mode bits used to set permissions on created
-                            files by default. Must be an octal value between 0000
-                            and 0777 or a decimal value between 0 and 511. YAML accepts
-                            both octal and decimal values, JSON requires decimal values
-                            for mode bits. Directories within the path are not affected
-                            by this setting. This might be in conflict with other
-                            options that affect the file mode, like fsGroup, and the
-                            result can be other mode bits set.
+                          description: defaultMode are the mode bits used to set permissions
+                            on created files by default. Must be an octal value between
+                            0000 and 0777 or a decimal value between 0 and 511. YAML
+                            accepts both octal and decimal values, JSON requires decimal
+                            values for mode bits. Directories within the path are
+                            not affected by this setting. This might be in conflict
+                            with other options that affect the file mode, like fsGroup,
+                            and the result can be other mode bits set.
                           format: int32
                           type: integer
                         sources:
-                          description: list of volume projections
+                          description: sources is the list of volume projections
                           items:
                             description: Projection that may be projected along with
                               other supported volume types
                             properties:
                               configMap:
-                                description: information about the configMap data
-                                  to project
+                                description: configMap information about the configMap
+                                  data to project
                                 properties:
                                   items:
-                                    description: If unspecified, each key-value pair
-                                      in the Data field of the referenced ConfigMap
+                                    description: items if unspecified, each key-value
+                                      pair in the Data field of the referenced ConfigMap
                                       will be projected into the volume as a file
                                       whose name is the key and content is the value.
                                       If specified, the listed keys will be projected
@@ -743,27 +909,28 @@ spec:
                                         a volume.
                                       properties:
                                         key:
-                                          description: The key to project.
+                                          description: key is the key to project.
                                           type: string
                                         mode:
-                                          description: 'Optional: mode bits used to
-                                            set permissions on this file. Must be
-                                            an octal value between 0000 and 0777 or
-                                            a decimal value between 0 and 511. YAML
-                                            accepts both octal and decimal values,
-                                            JSON requires decimal values for mode
-                                            bits. If not specified, the volume defaultMode
-                                            will be used. This might be in conflict
-                                            with other options that affect the file
-                                            mode, like fsGroup, and the result can
-                                            be other mode bits set.'
+                                          description: 'mode is Optional: mode bits
+                                            used to set permissions on this file.
+                                            Must be an octal value between 0000 and
+                                            0777 or a decimal value between 0 and
+                                            511. YAML accepts both octal and decimal
+                                            values, JSON requires decimal values for
+                                            mode bits. If not specified, the volume
+                                            defaultMode will be used. This might be
+                                            in conflict with other options that affect
+                                            the file mode, like fsGroup, and the result
+                                            can be other mode bits set.'
                                           format: int32
                                           type: integer
                                         path:
-                                          description: The relative path of the file
-                                            to map the key to. May not be an absolute
-                                            path. May not contain the path element
-                                            '..'. May not start with the string '..'.
+                                          description: path is the relative path of
+                                            the file to map the key to. May not be
+                                            an absolute path. May not contain the
+                                            path element '..'. May not start with
+                                            the string '..'.
                                           type: string
                                       required:
                                       - key
@@ -777,20 +944,21 @@ spec:
                                       uid?'
                                     type: string
                                   optional:
-                                    description: Specify whether the ConfigMap or
-                                      its keys must be defined
+                                    description: optional specify whether the ConfigMap
+                                      or its keys must be defined
                                     type: boolean
                                 type: object
+                                x-kubernetes-map-type: atomic
                               secret:
-                                description: information about the secret data to
-                                  project
+                                description: secret information about the secret data
+                                  to project
                                 properties:
                                   items:
-                                    description: If unspecified, each key-value pair
-                                      in the Data field of the referenced Secret will
-                                      be projected into the volume as a file whose
-                                      name is the key and content is the value. If
-                                      specified, the listed keys will be projected
+                                    description: items if unspecified, each key-value
+                                      pair in the Data field of the referenced Secret
+                                      will be projected into the volume as a file
+                                      whose name is the key and content is the value.
+                                      If specified, the listed keys will be projected
                                       into the specified paths, and unlisted keys
                                       will not be present. If a key is specified which
                                       is not present in the Secret, the volume setup
@@ -802,27 +970,28 @@ spec:
                                         a volume.
                                       properties:
                                         key:
-                                          description: The key to project.
+                                          description: key is the key to project.
                                           type: string
                                         mode:
-                                          description: 'Optional: mode bits used to
-                                            set permissions on this file. Must be
-                                            an octal value between 0000 and 0777 or
-                                            a decimal value between 0 and 511. YAML
-                                            accepts both octal and decimal values,
-                                            JSON requires decimal values for mode
-                                            bits. If not specified, the volume defaultMode
-                                            will be used. This might be in conflict
-                                            with other options that affect the file
-                                            mode, like fsGroup, and the result can
-                                            be other mode bits set.'
+                                          description: 'mode is Optional: mode bits
+                                            used to set permissions on this file.
+                                            Must be an octal value between 0000 and
+                                            0777 or a decimal value between 0 and
+                                            511. YAML accepts both octal and decimal
+                                            values, JSON requires decimal values for
+                                            mode bits. If not specified, the volume
+                                            defaultMode will be used. This might be
+                                            in conflict with other options that affect
+                                            the file mode, like fsGroup, and the result
+                                            can be other mode bits set.'
                                           format: int32
                                           type: integer
                                         path:
-                                          description: The relative path of the file
-                                            to map the key to. May not be an absolute
-                                            path. May not contain the path element
-                                            '..'. May not start with the string '..'.
+                                          description: path is the relative path of
+                                            the file to map the key to. May not be
+                                            an absolute path. May not contain the
+                                            path element '..'. May not start with
+                                            the string '..'.
                                           type: string
                                       required:
                                       - key
@@ -836,16 +1005,17 @@ spec:
                                       uid?'
                                     type: string
                                   optional:
-                                    description: Specify whether the Secret or its
-                                      key must be defined
+                                    description: optional field specify whether the
+                                      Secret or its key must be defined
                                     type: boolean
                                 type: object
+                                x-kubernetes-map-type: atomic
                               serviceAccountToken:
-                                description: information about the serviceAccountToken
-                                  data to project
+                                description: serviceAccountToken is information about
+                                  the serviceAccountToken data to project
                                 properties:
                                   audience:
-                                    description: Audience is the intended audience
+                                    description: audience is the intended audience
                                       of the token. A recipient of a token must identify
                                       itself with an identifier specified in the audience
                                       of the token, and otherwise should reject the
@@ -853,7 +1023,7 @@ spec:
                                       of the apiserver.
                                     type: string
                                   expirationSeconds:
-                                    description: ExpirationSeconds is the requested
+                                    description: expirationSeconds is the requested
                                       duration of validity of the service account
                                       token. As the token approaches expiration, the
                                       kubelet volume plugin will proactively rotate
@@ -865,7 +1035,7 @@ spec:
                                     format: int64
                                     type: integer
                                   path:
-                                    description: Path is the path relative to the
+                                    description: path is the path relative to the
                                       mount point of the file to project the token
                                       into.
                                     type: string
@@ -876,24 +1046,24 @@ spec:
                           type: array
                       type: object
                     secret:
-                      description: 'Secret represents a secret that should populate
+                      description: 'secret represents a secret that should populate
                         this volume. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
                       properties:
                         defaultMode:
-                          description: 'Optional: mode bits used to set permissions
-                            on created files by default. Must be an octal value between
-                            0000 and 0777 or a decimal value between 0 and 511. YAML
-                            accepts both octal and decimal values, JSON requires decimal
-                            values for mode bits. Defaults to 0644. Directories within
-                            the path are not affected by this setting. This might
-                            be in conflict with other options that affect the file
-                            mode, like fsGroup, and the result can be other mode bits
-                            set.'
+                          description: 'defaultMode is Optional: mode bits used to
+                            set permissions on created files by default. Must be an
+                            octal value between 0000 and 0777 or a decimal value between
+                            0 and 511. YAML accepts both octal and decimal values,
+                            JSON requires decimal values for mode bits. Defaults to
+                            0644. Directories within the path are not affected by
+                            this setting. This might be in conflict with other options
+                            that affect the file mode, like fsGroup, and the result
+                            can be other mode bits set.'
                           format: int32
                           type: integer
                         items:
-                          description: If unspecified, each key-value pair in the
-                            Data field of the referenced Secret will be projected
+                          description: items If unspecified, each key-value pair in
+                            the Data field of the referenced Secret will be projected
                             into the volume as a file whose name is the key and content
                             is the value. If specified, the listed keys will be projected
                             into the specified paths, and unlisted keys will not be
@@ -905,25 +1075,25 @@ spec:
                             description: Maps a string key to a path within a volume.
                             properties:
                               key:
-                                description: The key to project.
+                                description: key is the key to project.
                                 type: string
                               mode:
-                                description: 'Optional: mode bits used to set permissions
-                                  on this file. Must be an octal value between 0000
-                                  and 0777 or a decimal value between 0 and 511. YAML
-                                  accepts both octal and decimal values, JSON requires
-                                  decimal values for mode bits. If not specified,
-                                  the volume defaultMode will be used. This might
-                                  be in conflict with other options that affect the
-                                  file mode, like fsGroup, and the result can be other
-                                  mode bits set.'
+                                description: 'mode is Optional: mode bits used to
+                                  set permissions on this file. Must be an octal value
+                                  between 0000 and 0777 or a decimal value between
+                                  0 and 511. YAML accepts both octal and decimal values,
+                                  JSON requires decimal values for mode bits. If not
+                                  specified, the volume defaultMode will be used.
+                                  This might be in conflict with other options that
+                                  affect the file mode, like fsGroup, and the result
+                                  can be other mode bits set.'
                                 format: int32
                                 type: integer
                               path:
-                                description: The relative path of the file to map
-                                  the key to. May not be an absolute path. May not
-                                  contain the path element '..'. May not start with
-                                  the string '..'.
+                                description: path is the relative path of the file
+                                  to map the key to. May not be an absolute path.
+                                  May not contain the path element '..'. May not start
+                                  with the string '..'.
                                 type: string
                             required:
                             - key
@@ -931,23 +1101,21 @@ spec:
                             type: object
                           type: array
                         optional:
-                          description: Specify whether the Secret or its keys must
-                            be defined
+                          description: optional field specify whether the Secret or
+                            its keys must be defined
                           type: boolean
                         secretName:
-                          description: 'Name of the secret in the pod''s namespace
-                            to use. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
+                          description: 'secretName is the name of the secret in the
+                            pod''s namespace to use. More info: https://kubernetes.io/docs/concepts/storage/volumes#secret'
                           type: string
                       type: object
                   required:
                   - name
                   type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: array
             required:
             - containers
             type: object
-            x-kubernetes-preserve-unknown-fields: true
           status:
             description: RevisionStatus communicates the observed state of the Revision
               (from the controller).
@@ -977,7 +1145,6 @@ spec:
                         transitioned from one status to another. We use VolatileTime
                         in place of metav1.Time to exclude this from creating equality.Semantic
                         differences (all other things held constant).
-                      format: date-time
                       type: string
                     message:
                       description: A human readable message indicating details about

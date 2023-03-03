@@ -28,7 +28,6 @@ data:
     # to actually change the configuration.
 
 
-
     # ---------------------------------------
 
     # Garbage Collector Settings
@@ -73,6 +72,8 @@ data:
 
     #    min-non-active-revisions: "0"
 
+    #    max-non-active-revisions: "0"
+
     #    retain-since-create-time: "disabled"
 
     #    retain-since-last-active-time: "disabled"
@@ -89,7 +90,7 @@ data:
 
     #
 
-    # Example config to disable all GC:
+    # Example config to disable all garbage collection:
 
     #     retain-since-create-time: "disabled"
 
@@ -139,11 +140,10 @@ data:
 kind: ConfigMap
 metadata:
   annotations:
-    knative.dev/example-checksum: 51b4d68a
+    knative.dev/example-checksum: aa3813a8
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.5
-    serving.knative.dev/release: v1.2.5
+    app.kubernetes.io/version: 1.8.0
   name: config-gc
   namespace: knative-serving

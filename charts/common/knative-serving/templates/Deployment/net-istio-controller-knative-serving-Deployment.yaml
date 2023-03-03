@@ -4,9 +4,8 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/version: 1.8.0
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: v1.2.0
   name: net-istio-controller
   namespace: knative-serving
 spec:
@@ -22,8 +21,7 @@ spec:
         app: net-istio-controller
         app.kubernetes.io/component: net-istio
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: 1.2.0
-        serving.knative.dev/release: v1.2.0
+        app.kubernetes.io/version: 1.8.0
     spec:
       containers:
       - env:
@@ -35,9 +33,11 @@ spec:
           value: config-logging
         - name: CONFIG_OBSERVABILITY_NAME
           value: config-observability
+        - name: ENABLE_SECRET_INFORMER_FILTERING_BY_CERT_UID
+          value: 'false'
         - name: METRICS_DOMAIN
           value: knative.dev/net-istio
-        image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:f253b82941c2220181cee80d7488fe1cefce9d49ab30bdb54bcb8c76515f7a26
+        image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:2b484d982ef1a5d6ff93c46d3e45f51c2605c2e3ed766e20247d1727eb5ce918
         name: controller
         ports:
         - containerPort: 9090
@@ -55,7 +55,9 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: controller

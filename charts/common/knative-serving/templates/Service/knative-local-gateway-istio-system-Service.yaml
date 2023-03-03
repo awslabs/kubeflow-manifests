@@ -4,10 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/component: net-istio
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/version: 1.8.0
     experimental.istio.io/disable-gateway-port-translation: 'true'
     networking.knative.dev/ingress-provider: istio
-    serving.knative.dev/release: v1.2.0
   name: knative-local-gateway
   namespace: istio-system
 spec:
