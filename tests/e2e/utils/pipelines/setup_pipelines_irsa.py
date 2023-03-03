@@ -84,7 +84,7 @@ def get_account_id():
 def write_params(oidc_role_arn, region, env_file_path, config_file_path):
     write_env_to_yaml({"pipeline_oidc_role": oidc_role_arn}, config_file_path)
     print(f"Config file written to : {config_file_path}")
- 
+
 
 if __name__ == "__main__":
     print_banner("Reading Config")
