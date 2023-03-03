@@ -17,7 +17,9 @@ INSTALLATION_CONFIG_COGNITO = "./resources/installation_config/cognito.yaml"
 INSTALLATION_CONFIG_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
 INSTALLATION_CONFIG_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
 INSTALLATION_CONFIG_S3_ONLY = "./resources/installation_config/s3-only.yaml"
-INSTALLATION_CONFIG_COGNITO_RDS_S3 = "./resources/installation_config/cognito-rds-s3.yaml"
+INSTALLATION_CONFIG_COGNITO_RDS_S3 = (
+    "./resources/installation_config/cognito-rds-s3.yaml"
+)
 
 
 Install_Sequence = [
@@ -80,7 +82,7 @@ def install_kubeflow(
             installation_option,
             component,
             installation_config,
-            cluster_name
+            cluster_name,
         )
 
     if aws_telemetry == True:
@@ -105,26 +107,44 @@ def install_component(
     else:
         print(f"==========Installing {component_name}==========")
         # remote repo
-        if "repo"in installation_config[component_name]["installation_options"][installation_option]:
+        if (
+            "repo"
+            in installation_config[component_name]["installation_options"][
+                installation_option
+            ]
+        ):
             install_remote_component(component_name, cluster_name)
         # local repo
         else:
-            installation_paths = installation_config[component_name]["installation_options"][installation_option]["paths"]
+            installation_paths = installation_config[component_name][
+                "installation_options"
+            ][installation_option]["paths"]
             # helm
             if installation_option == "helm":
                 ##deal with namespace already exist issue for rds-s3 auto set-up script
                 if component_name == "kubeflow-namespace":
-                    for kustomize_path in installation_config[component_name]["installation_options"]["kustomize"]["paths"]:
+                    for kustomize_path in installation_config[component_name][
+                        "installation_options"
+                    ]["kustomize"]["paths"]:
                         apply_kustomize(kustomize_path)
+                elif component_name == "kubeflow-pipelines":
+                    configure_kubeflow_pipelines(
+                        component_name, installation_paths, installation_option
+                    )
                 else:
                     install_helm(component_name, installation_paths)
             # kustomize
             else:
                 # crd required to established for installation
-                if "validations" in installation_config[component_name] and "crds" in installation_config[component_name]["validations"]:
+                if (
+                    "validations" in installation_config[component_name]
+                    and "crds" in installation_config[component_name]["validations"]
+                ):
                     print("need to wait for crds....")
                     crds = installation_config[component_name]["validations"]["crds"]
                     crd_established = False
+                if component_name == "kubeflow-pipelines":
+                    configure_kubeflow_pipelines()
                 for kustomize_path in installation_paths:
                     if not crd_established:
                         apply_kustomize(kustomize_path, crds)
@@ -228,6 +248,28 @@ def install_ack_controller():
         f"helm upgrade --install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "
         f"{CHART_EXPORT_PATH}/{SERVICE}-chart"
     )
+
+
+def configure_kubeflow_pipelines(
+    component_name, installation_paths, installation_option
+):
+    cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
+    IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
+    if installation_option == "kustomize":
+        CHART_EXPORT_PATH = "../../apps/pipeline/s3/service-account.yaml"
+        exec_shell(
+            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {CHART_EXPORT_PATH}"
+        )
+
+    else:
+        IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
+        CHART_EXPORT_PATH = f"{installation_paths}/templates/ServiceAccount/ml-pipeline-kubeflow-ServiceAccount.yaml"
+        exec_shell(
+            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {CHART_EXPORT_PATH}"
+        )
+        install_helm(component_name, installation_paths)
 
 
 if __name__ == "__main__":
