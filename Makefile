@@ -103,10 +103,14 @@ cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
-deploy-kubeflow: bootstrap-ack bootstrap-pipelines
+deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	cd tests/e2e && PYTHONPATH=.. python3 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --cluster_name $(CLUSTER_NAME)
+	$(eval CREDENTIAL_OPTION:=irsa)
+	if [ "$(CREDENTIAL_OPTION)" = "irsa" ]; then \
+		make bootstrap-pipelines; \
+	fi
+	cd tests/e2e && PYTHONPATH=.. python3 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credential_option $(CREDENTIAL_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
