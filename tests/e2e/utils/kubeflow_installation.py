@@ -20,6 +20,13 @@ INSTALLATION_CONFIG_S3_ONLY = "./resources/installation_config/s3-only.yaml"
 INSTALLATION_CONFIG_COGNITO_RDS_S3 = (
     "./resources/installation_config/cognito-rds-s3.yaml"
 )
+INSTALLATION_CONFIG_S3_ONLY_STATIC = (
+    "./resources/installation_config/s3-only-static.yaml"
+)
+INSTALLATION_CONFIG_RDS_S3_STATIC = "./resources/installation_config/rds-s3-static.yaml"
+INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC = (
+    "./resources/installation_config/cognito-rds-s3-static.yaml"
+)
 
 
 Install_Sequence = [
@@ -57,7 +64,11 @@ Install_Sequence = [
 
 
 def install_kubeflow(
-    installation_option, deployment_option, cluster_name, aws_telemetry=True
+    installation_option,
+    deployment_option,
+    cluster_name,
+    credentials_option,
+    aws_telemetry=True,
 ):
     print(cluster_name)
     if deployment_option == "vanilla":
@@ -83,6 +94,7 @@ def install_kubeflow(
             component,
             installation_config,
             cluster_name,
+            credentials_option,
         )
 
     if aws_telemetry == True:
@@ -91,6 +103,7 @@ def install_kubeflow(
             "aws-telemetry",
             installation_config,
             cluster_name,
+            credentials_option,
         )
 
 
@@ -99,6 +112,7 @@ def install_component(
     component_name,
     installation_config,
     cluster_name,
+    credentials_option,
     crd_established=True,
 ):
     # component not applicable for deployment option
@@ -127,11 +141,14 @@ def install_component(
                         "installation_options"
                     ]["kustomize"]["paths"]:
                         apply_kustomize(kustomize_path)
-                elif component_name == "kubeflow-pipelines":
-                    configure_kubeflow_pipelines(
-                        component_name, installation_paths, installation_option
-                    )
                 else:
+                    if component_name == "kubeflow-pipelines":
+                        configure_kubeflow_pipelines(
+                            component_name,
+                            installation_paths,
+                            installation_option,
+                            credentials_option,
+                        )
                     install_helm(component_name, installation_paths)
             # kustomize
             else:
@@ -144,7 +161,12 @@ def install_component(
                     crds = installation_config[component_name]["validations"]["crds"]
                     crd_established = False
                 if component_name == "kubeflow-pipelines":
-                    configure_kubeflow_pipelines()
+                    configure_kubeflow_pipelines(
+                        component_name,
+                        installation_paths,
+                        installation_option,
+                        credentials_option,
+                    )
                 for kustomize_path in installation_paths:
                     if not crd_established:
                         apply_kustomize(kustomize_path, crds)
@@ -192,7 +214,7 @@ def install_certmanager():
         f"helm upgrade --install cert-manager jetstack/cert-manager \
                         --namespace cert-manager \
                         --create-namespace \
-                        --version v1.5.0 \
+                        --version v1.10.1 \
                         --set installCRDs=true"
     )
 
@@ -251,7 +273,7 @@ def install_ack_controller():
 
 
 def configure_kubeflow_pipelines(
-    component_name, installation_paths, installation_option
+    component_name, installation_paths, installation_option, credentials_option
 ):
     cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
     IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
@@ -269,7 +291,6 @@ def configure_kubeflow_pipelines(
             f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {CHART_EXPORT_PATH}"
         )
-        install_helm(component_name, installation_paths)
 
 
 if __name__ == "__main__":
@@ -314,6 +335,15 @@ if __name__ == "__main__":
         help=f"EKS cluster Name",
         required=True,
     )
+    CREDENTIAL_OPTION_DEFAULT = "irsa"
+    parser.add_argument(
+        "--credentials_option",
+        type=str,
+        default=CREDENTIAL_OPTION_DEFAULT,
+        choices=["irsa", "static"],
+        help=f"Kubeflow default credential option default is set to irsa",
+        required=False,
+    )
 
     args, _ = parser.parse_known_args()
 
@@ -321,5 +351,6 @@ if __name__ == "__main__":
         args.installation_option,
         args.deployment_option,
         args.cluster_name,
+        args.credentials_option,
         args.aws_telemetry,
     )

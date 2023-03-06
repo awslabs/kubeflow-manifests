@@ -1,0 +1,7 @@
+rds:
+  dbHost: testa.c6uzclpednto.ca-central-1.rds.amazonaws.com
+  mlmdDb: metadb
+s3:
+  bucketName: canada-irsa
+  minioServiceHost: s3.amazonaws.com
+  minioServiceRegion: ca-central-1
