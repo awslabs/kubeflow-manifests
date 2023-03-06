@@ -11,7 +11,6 @@ from e2e.utils.utils import (
 import subprocess
 import os
 import time
-from e2e.utils.pipelines import setup_pipelines_irsa
 
 INSTALLATION_CONFIG_VANILLA = "./resources/installation_config/vanilla.yaml"
 INSTALLATION_CONFIG_COGNITO = "./resources/installation_config/cognito.yaml"
