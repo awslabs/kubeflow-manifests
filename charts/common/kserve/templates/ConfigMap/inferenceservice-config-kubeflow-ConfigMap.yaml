@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   agent: |-
     {
-        "image" : "kserve/agent:v0.8.0",
+        "image" : "kserve/agent:v0.10.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
@@ -10,7 +10,7 @@ data:
     }
   batcher: |-
     {
-        "image" : "kserve/agent:v0.8.0",
+        "image" : "kserve/agent:v0.10.0",
         "memoryRequest": "1Gi",
         "memoryLimit": "1Gi",
         "cpuRequest": "1",
@@ -23,7 +23,14 @@ data:
        },
        "s3": {
            "s3AccessKeyIDName": "AWS_ACCESS_KEY_ID",
-           "s3SecretAccessKeyName": "AWS_SECRET_ACCESS_KEY"
+           "s3SecretAccessKeyName": "AWS_SECRET_ACCESS_KEY",
+           "s3Endpoint": "",
+           "s3UseHttps": "",
+           "s3Region": "",
+           "s3VerifySSL": "",
+           "s3UseVirtualBucket": "",
+           "s3UseAnonymousCredential": "",
+           "s3CABundle": ""
        }
     }
   deploy: |-
@@ -47,143 +54,46 @@ data:
     }
   ingress: |-
     {
-        "ingressGateway" : "kubeflow/kubeflow-gateway",
-        "ingressService" : "istio-ingressgateway.istio-system.svc.cluster.local",
-        "localGateway" : "knative-serving/knative-local-gateway",
-        "localGatewayService" : "knative-local-gateway.istio-system.svc.cluster.local",
-        "ingressDomain"  : "example.com"
+      "ingressGateway": "kubeflow/kubeflow-gateway",
+      "ingressService": "istio-ingressgateway.istio-system.svc.cluster.local",
+      "localGateway": "knative-serving/knative-local-gateway",
+      "localGatewayService": "knative-local-gateway.istio-system.svc.cluster.local",
+      "ingressDomain": "example.com",
+      "ingressClassName": "istio",
+      "domainTemplate": "{{ .Name }}-{{ .Namespace }}.{{ .IngressDomain }}",
+      "urlScheme": "http",
+      "disableIstioVirtualHost": false
     }
   logger: |-
     {
-        "image" : "kserve/agent:v0.8.0",
+        "image" : "kserve/agent:v0.10.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
         "cpuLimit": "1",
         "defaultUrl": "http://default-broker"
     }
-  predictors: |-
+  metricsAggregator: |-
     {
-        "tensorflow": {
-            "image": "tensorflow/serving",
-            "defaultImageVersion": "2.6.2",
-            "defaultGpuImageVersion": "2.6.2-gpu",
-            "defaultTimeout": "60",
-            "supportedFrameworks": [
-              "tensorflow"
-            ],
-            "multiModelServer": false
-        },
-        "onnx": {
-            "image": "mcr.microsoft.com/onnxruntime/server",
-            "defaultImageVersion": "v1.0.0",
-            "supportedFrameworks": [
-              "onnx"
-            ],
-            "multiModelServer": false
-        },
-        "sklearn": {
-          "v1": {
-            "image": "kserve/sklearnserver",
-            "defaultImageVersion": "v0.8.0",
-            "supportedFrameworks": [
-              "sklearn"
-            ],
-            "multiModelServer": true
-          },
-          "v2": {
-            "image": "docker.io/seldonio/mlserver",
-            "defaultImageVersion": "0.5.3",
-            "supportedFrameworks": [
-              "sklearn"
-            ],
-            "multiModelServer": true
-          }
-        },
-        "xgboost": {
-          "v1": {
-            "image": "kserve/xgbserver",
-            "defaultImageVersion": "v0.8.0",
-            "supportedFrameworks": [
-              "xgboost"
-            ],
-            "multiModelServer": true
-          },
-          "v2": {
-            "image": "docker.io/seldonio/mlserver",
-            "defaultImageVersion": "0.5.3",
-            "supportedFrameworks": [
-              "xgboost"
-            ],
-            "multiModelServer": true
-          }
-        },
-        "pytorch": {
-          "v1" : {
-            "image": "kserve/torchserve-kfs",
-            "defaultImageVersion": "0.5.3",
-            "defaultGpuImageVersion": "0.5.3-gpu",
-            "supportedFrameworks": [
-              "pytorch"
-            ],
-            "multiModelServer": false
-          },
-          "v2" : {
-            "image": "kserve/torchserve-kfs",
-            "defaultImageVersion": "0.5.3",
-            "defaultGpuImageVersion": "0.5.3-gpu",
-            "supportedFrameworks": [
-              "pytorch"
-            ],
-            "multiModelServer": false
-          }
-        },
-        "triton": {
-            "image": "nvcr.io/nvidia/tritonserver",
-            "defaultImageVersion": "21.09-py3",
-            "supportedFrameworks": [
-              "tensorrt",
-              "tensorflow",
-              "onnx",
-              "pytorch"
-            ],
-            "multiModelServer": true
-        },
-        "pmml": {
-            "image": "kserve/pmmlserver",
-            "defaultImageVersion": "v0.8.0",
-            "supportedFrameworks": [
-              "pmml"
-            ],
-            "multiModelServer": false
-        },
-        "lightgbm": {
-            "image": "kserve/lgbserver",
-            "defaultImageVersion": "v0.8.0",
-            "supportedFrameworks": [
-              "lightgbm"
-            ],
-            "multiModelServer": false
-        },
-        "paddle": {
-            "image": "kserve/paddleserver",
-            "defaultImageVersion": "v0.8.0",
-            "supportedFrameworks": [
-              "paddle"
-            ],
-            "multiModelServer": false
-        }
+      "enableMetricAggregation": "false",
+      "enablePrometheusScraping" : "false"
     }
-  storageInitializer: |-
+  router: |-
     {
-        "image" : "kserve/storage-initializer:v0.8.0",
+        "image" : "kserve/router:v0.10.0",
         "memoryRequest": "100Mi",
         "memoryLimit": "1Gi",
         "cpuRequest": "100m",
         "cpuLimit": "1"
     }
-  transformers: |-
+  storageInitializer: |-
     {
+        "image" : "kserve/storage-initializer:v0.10.0",
+        "memoryRequest": "100Mi",
+        "memoryLimit": "1Gi",
+        "cpuRequest": "100m",
+        "cpuLimit": "1",
+        "storageSpecSecretName": "storage-config"
     }
 kind: ConfigMap
 metadata:
