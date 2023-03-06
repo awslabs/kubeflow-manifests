@@ -12,8 +12,8 @@ ingress:
       kustomization_paths:
       - awsconfigs/common/istio-ingress/overlays/cognito
       output_helm_chart_path: charts/common/ingress/cognito
-      version: 0.1.0
-      app_version: v0.1.0
+      version: 0.2.0
+      app_version: v0.2.0
   params:
     template_paths:
       - tools/helmify/template/ingress/params/overlays/cognito/params.env
@@ -328,5 +328,5 @@ aws-telemetry:
   kustomization_paths:
     - awsconfigs/common/aws-telemetry
   output_helm_chart_path: charts/common/aws-telemetry
-  version: 0.1.0
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
