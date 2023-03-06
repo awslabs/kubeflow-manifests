@@ -11,6 +11,7 @@ from e2e.utils.utils import (
 import subprocess
 import os
 import time
+from e2e.utils.pipelines import setup_pipelines_irsa
 
 INSTALLATION_CONFIG_VANILLA = "./resources/installation_config/vanilla.yaml"
 INSTALLATION_CONFIG_COGNITO = "./resources/installation_config/cognito.yaml"
@@ -83,6 +84,12 @@ def install_kubeflow(
         installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY)
     elif deployment_option == "cognito-rds-s3":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3)
+    elif deployment_option == "rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3_STATIC)
+    elif deployment_option == "s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY_STATIC)
+    elif deployment_option == "cognito-rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC)
 
     print_banner(
         f"Installing kubeflow {deployment_option} deployment with {installation_option}"
