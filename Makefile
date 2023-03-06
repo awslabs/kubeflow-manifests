@@ -22,10 +22,10 @@ install-kubectl:
 	kubectl version --client
 
 install-kustomize:
-	$(eval KUSTOMIZE_VERSION:=3.2.0)
-	wget https://github.com/kubernetes-sigs/kustomize/releases/download/v$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_linux_amd64
-	chmod +x kustomize_$(KUSTOMIZE_VERSION)_linux_amd64
-	sudo mv kustomize_$(KUSTOMIZE_VERSION)_linux_amd64 /usr/local/bin/kustomize
+	$(eval KUSTOMIZE_VERSION:=5.0.0)
+	wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz | tar xz -C /tmp
+	chmod +x /tmp/kustomize
+	sudo mv /tmp/kustomize usr/local/bin/kustomize
 	kustomize version
 
 install-yq:
