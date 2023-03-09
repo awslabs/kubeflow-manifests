@@ -69,7 +69,6 @@ from e2e.fixtures.kserve_dependencies import (
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
-KNATIVE_CONFIG_FILE = "./resources/kserve/knative-config.yaml"
 PROFILE_NAMESPACE = "kubeflow-user-example-com"
 
 
