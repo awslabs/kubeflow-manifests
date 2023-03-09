@@ -172,7 +172,7 @@ def setup_load_balancer(
 def host(setup_load_balancer):
     print(setup_load_balancer["config"]["route53"]["subDomain"]["name"])
     print("wait for 60s for website to be available...")
-    # time.sleep(60)
+    time.sleep(60)
     host = (
         "https://kubeflow."
         + setup_load_balancer["config"]["route53"]["subDomain"]["name"]
