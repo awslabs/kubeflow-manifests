@@ -28,7 +28,7 @@ from e2e.fixtures.clients import (
     patch_kfp_to_disable_cache,
 )
 
-from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream, ebs_addon
 
 from e2e.fixtures.storage_fsx_dependencies import (
     static_provisioning,

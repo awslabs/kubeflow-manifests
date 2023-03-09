@@ -219,7 +219,9 @@ def install_helm(chart_name, path, namespace=None):
             f"helm upgrade --install {chart_name} {path} --namespace {namespace}".split()
         )
     else:
-        install_retcode = subprocess.call(f"helm upgrade --install {chart_name} {path}".split())
+        install_retcode = subprocess.call(
+            f"helm upgrade --install {chart_name} {path}".split()
+        )
     assert install_retcode == 0
 
 
@@ -252,6 +254,7 @@ def uninstall_helm(chart_name, namespace=None):
     else:
         uninstall_retcode = subprocess.call(f"helm uninstall {chart_name}".split())
     assert uninstall_retcode == 0
+
 
 def kubectl_wait_pods(
     pods, namespace=None, identifier="app", timeout=240, condition="ready"
@@ -367,27 +370,58 @@ def exec_shell(cmd):
     if completedProcess.returncode != 0:
         raise Exception(f"ERROR: Failed to execute shell command \n{cmd}")
 
+
 def get_variable_from_params(path, var_name):
     with open(path) as f:
         for line in f:
             if var_name in line:
                 return line.split("=")[1].strip()
 
+
 def find_and_replace_in_file(path, old_val, new_val):
-    with open(path, 'r') as file :
+    with open(path, "r") as file:
         filedata = file.read()
     filedata = filedata.replace(old_val, new_val)
-    with open(path, 'w') as file:
+    with open(path, "w") as file:
         file.write(filedata)
+
 
 def check_helm_chart_exists(chart_name, namespace):
     if namespace:
-        retcode = subprocess.call(
-            f"helm status {chart_name} -n {namespace}".split()
-        )
+        retcode = subprocess.call(f"helm status {chart_name} -n {namespace}".split())
     else:
         retcode = subprocess.call(f"helm status {chart_name}".split())
 
     if retcode == 0:
         return True
     return False
+
+
+def create_addon(addon_name, cluster_name, account_id, role_name, region=None):
+    cmd = []
+    cmd += "eksctl create addon".split()
+    cmd += f"--name {addon_name}".split()
+    cmd += f"--cluster {cluster_name}".split()
+    cmd += (
+        f"--service-account-role-arn arn:aws:iam::{account_id}:role/{role_name}".split()
+    )
+    if region:
+        cmd += f"--region {region}".split()
+
+    cmd += "--force".split()
+
+    retcode = subprocess.call(cmd)
+    assert retcode == 0
+
+
+def delete_addon(addon_name, cluster_name, region=None):
+    cmd = []
+    cmd += "eksctl delete addon".split()
+    cmd += f"--cluster {cluster_name}".split()
+    cmd += f"--name {addon_name}".split()
+
+    if region:
+        cmd += f"--region {region}".split()
+
+    retcode = subprocess.call(cmd)
+    assert retcode == 0

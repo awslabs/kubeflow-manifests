@@ -19,7 +19,7 @@ from e2e.utils.utils import (
     load_yaml_file,
     write_env_to_yaml
 )
-from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
+from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture, ebs_addon
 
 from e2e.conftest import (
     region,

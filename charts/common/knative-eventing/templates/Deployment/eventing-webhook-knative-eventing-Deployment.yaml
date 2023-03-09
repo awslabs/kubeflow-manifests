@@ -4,8 +4,8 @@ metadata:
   labels:
     app.kubernetes.io/component: knative-eventing
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.2.4
-    eventing.knative.dev/release: v1.2.4
+    app.kubernetes.io/version: 1.8.1
+    eventing.knative.dev/release: v1.8.1
     kustomize.component: knative
   name: eventing-webhook
   namespace: knative-eventing
@@ -23,8 +23,8 @@ spec:
         app: eventing-webhook
         app.kubernetes.io/component: knative-eventing
         app.kubernetes.io/name: knative-eventing
-        app.kubernetes.io/version: 1.2.4
-        eventing.knative.dev/release: v1.2.4
+        app.kubernetes.io/version: 1.8.1
+        eventing.knative.dev/release: v1.8.1
         kustomize.component: knative
         role: eventing-webhook
     spec:
@@ -60,7 +60,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:b7faf7d253bd256dbe08f1cac084469128989cf39abbe256ecb4e1d4eb085a31
+        image: gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256:d217ab7e3452a87f8cbb3b45df65c98b18b8be39551e3e960cd49ea44bb415ba
         livenessProbe:
           httpGet:
             httpHeaders:
@@ -68,7 +68,7 @@ spec:
               value: webhook
             port: 8443
             scheme: HTTPS
-          initialDelaySeconds: 20
+          initialDelaySeconds: 120
           periodSeconds: 1
         name: eventing-webhook
         ports:
@@ -97,9 +97,11 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePolicy: FallbackToLogsOnError
       enableServiceLinks: false
       serviceAccountName: eventing-webhook

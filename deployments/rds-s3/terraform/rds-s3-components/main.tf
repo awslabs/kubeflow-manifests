@@ -123,7 +123,7 @@ module "kubeflow_issuer" {
 module "kubeflow_istio" {
   source            = "../../../../iaac/terraform/common/istio"
   helm_config = {
-    chart = "${var.kf_helm_repo_path}/charts/common/istio-1-14"
+    chart = "${var.kf_helm_repo_path}/charts/common/istio"
   }
   addon_context = var.addon_context
   depends_on = [module.kubeflow_issuer]

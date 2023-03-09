@@ -12,7 +12,7 @@ variable "cluster_region" {
 variable "eks_version" {
   description = "The EKS version to use"
   type        = string
-  default     = "1.22"
+  default     = "1.24"
 }
 
 variable "node_instance_type" {
@@ -89,7 +89,7 @@ variable "db_allocated_storage" {
 variable "mysql_engine_version" {
   type        = string
   description = "The engine version of MySQL"
-  default = "8.0.30"
+  default = "8.0.32"
 }
 
 variable "backup_retention_period" {

@@ -38,7 +38,9 @@ spec:
           value: 'false'
         - name: DASHBOARD_LINKS_CONFIGMAP
           value: centraldashboard-config
-        image: docker.io/kubeflownotebookswg/centraldashboard:v1.6.1
+        - name: LOGOUT_URL
+          value: /authservice/logout
+        image: docker.io/kubeflownotebookswg/centraldashboard:v1.7.0-rc.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

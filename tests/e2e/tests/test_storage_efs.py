@@ -33,7 +33,7 @@ from e2e.fixtures.clients import (
 )
 from e2e.utils.custom_resources import get_pvc_status, get_service_account, get_pod_from_label
 
-from e2e.fixtures.installation import installation, configure_manifests, clone_upstream
+from e2e.fixtures.installation import installation, configure_manifests, clone_upstream, ebs_addon
 
 from e2e.fixtures.storage_efs_dependencies import (
     install_efs_csi_driver,

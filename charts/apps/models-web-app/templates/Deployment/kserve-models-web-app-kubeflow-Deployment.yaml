@@ -30,7 +30,7 @@ spec:
       - envFrom:
         - configMapRef:
             name: kserve-models-web-app-config-gfh88m49k6
-        image: kserve/models-web-app:v0.8.0
+        image: kserve/models-web-app:v0.10.0
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
