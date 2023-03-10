@@ -37,6 +37,11 @@ variable "use_s3" {
   default = true
 }
 
+variable "use_static" {
+  type = bool
+  default = false
+}
+
 variable "enable_aws_telemetry" {
   description = "Enable AWS telemetry component"
   type = bool
