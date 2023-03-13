@@ -75,6 +75,12 @@ def install_kubeflow(
         installation_config = load_yaml_file(INSTALLATION_CONFIG_VANILLA)
     elif deployment_option == "cognito":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO)
+    elif deployment_option == "rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3_STATIC)
+    elif deployment_option == "s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY_STATIC)
+    elif deployment_option == "cognito-rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC)
     elif deployment_option == "rds-s3":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3)
     elif deployment_option == "rds-only":
@@ -83,15 +89,10 @@ def install_kubeflow(
         installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY)
     elif deployment_option == "cognito-rds-s3":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3)
-    elif deployment_option == "rds-s3" and credentials_option == "static":
-        installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3_STATIC)
-    elif deployment_option == "s3" and credentials_option == "static":
-        installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY_STATIC)
-    elif deployment_option == "cognito-rds-s3" and credentials_option == "static":
-        installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC)
+
 
     print_banner(
-        f"Installing kubeflow {deployment_option} deployment with {installation_option}"
+        f"Installing kubeflow {deployment_option} deployment with {installation_option} with {credentials_option}"
     )
 
     for component in Install_Sequence:
