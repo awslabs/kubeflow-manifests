@@ -100,10 +100,10 @@ if __name__ == "__main__":
         print(e)
         print("Try running cleanup_pipeline_irsa.py")
 
-    pipeline_oidc_role_name = f"{common.PIPELINE_OIDC_ROLE_NAME_PREFIX}-{cluster_name}"
+    pipeline_oidc_role_name = f"{common.PIPELINE_OIDC_ROLE_NAME_PREFIX}-{cluster_name}"[:64]
     oidc_role_arn = get_role_arn(pipeline_oidc_role_name, cluster_region)
 
-    print_banner("Writing params.env for Pipelines")
+    print_banner("Writing config.yaml for Pipelines")
     output_params_file_path = common.OUTPUT_FILE_PATH
     write_params(
         oidc_role_arn, cluster_region, output_params_file_path, config_file_path
