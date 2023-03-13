@@ -4,7 +4,7 @@
 Install dependencies
 ```
 python3
-kustomize   # MUST BE VERSION 3.2.0
+kustomize 
 eksctl
 kubectl
 

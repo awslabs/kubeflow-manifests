@@ -3,6 +3,9 @@ kind: ClusterServingRuntime
 metadata:
   name: kserve-torchserve
 spec:
+  annotations:
+    prometheus.kserve.io/path: /metrics
+    prometheus.kserve.io/port: '8082'
   containers:
   - args:
     - torchserve
@@ -12,7 +15,7 @@ spec:
     env:
     - name: TS_SERVICE_ENVELOPE
       value: '{{`{{.Labels.serviceEnvelope}}`}}'
-    image: kserve/torchserve-kfs:0.5.3
+    image: pytorch/torchserve-kfs:0.7.0
     name: kserve-container
     resources:
       limits:
@@ -21,6 +24,10 @@ spec:
       requests:
         cpu: '1'
         memory: 2Gi
+  protocolVersions:
+  - v1
+  - v2
+  - grpc-v1
   supportedModelFormats:
   - autoSelect: true
     name: pytorch
