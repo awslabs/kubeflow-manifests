@@ -91,12 +91,12 @@ port-forward:
 bootstrap-ack: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3 utils/ack_sm_controller_bootstrap/setup_sm_controller_req.py
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/setup_sm_controller_req.py
 
 bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3 utils/pipelines/setup_pipelines_irsa.py
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/setup_pipelines_irsa.py
 
 bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
@@ -106,7 +106,7 @@ bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
 cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
 cleanup-pipelines-req: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
@@ -125,7 +125,7 @@ deploy-kubeflow: bootstrap-ack
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	cd tests/e2e && PYTHONPATH=.. python3 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_uninstallation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION)
 
 helmify:
-	PYTHONPATH=. python3 tools/helmify/src/kustomize_to_helm_automation.py
+	PYTHONPATH=. python3.8 tools/helmify/src/kustomize_to_helm_automation.py
