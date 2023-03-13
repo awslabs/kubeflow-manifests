@@ -282,6 +282,8 @@ def install_ack_controller():
 def configure_kubeflow_pipelines(
     component_name, installation_paths, installation_option, credentials_option
 ):
+    if credentials_option == "static":
+        return
     cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
     IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
     if installation_option == "kustomize":
