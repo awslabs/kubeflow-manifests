@@ -20,12 +20,14 @@ class AcmCertificate:
     def __init__(
         self,
         domain: str = None,
+        subject_alternative_names: list = None,
         hosted_zone: Route53HostedZone = None,
         region: str = "us-east-1",
         acm_client: Any = None,
         arn: str = None,
     ):
         self.domain = domain
+        self.subject_alternative_names = subject_alternative_names
         self.hosted_zone = hosted_zone
         self.region = region
         self.acm_client = acm_client or boto3.client("acm", region_name=region)
@@ -49,9 +51,16 @@ class AcmCertificate:
         :return: The ARN of the requested certificate.
         """
         try:
-            response = self.acm_client.request_certificate(
-                DomainName=self.domain, ValidationMethod=validation_method
-            )
+            args = {
+                'DomainName': self.domain,
+                'ValidationMethod': validation_method,
+            }
+            if self.subject_alternative_names is not None:
+                args['SubjectAlternativeNames'] = self.subject_alternative_names
+
+            response = self.acm_client.request_certificate(**args)
+       
+            
         except ClientError:
             logger.exception(
                 f"failed to request validation of certificate for {self.domain} in {self.region}"
@@ -93,35 +102,46 @@ class AcmCertificate:
         except WaiterError:
             logger.exception(f"timed out waiting for validation: {self.arn}")
 
-    def get_domain_validation_record_detail(self):
-        validation_options = self.describe().get("DomainValidationOptions", None)
-        if validation_options:
-            return validation_options[0].get("ResourceRecord", None)
-        return None
-
-    def generate_domain_validation_record(
-        self, wait_periods: int = 6, period_length: int = 15
-    ) -> dict:
-        record_detail = self.get_domain_validation_record_detail()
-        logger.info(f"{self.arn}: waiting for domain validation record ...")
+    def get_domain_validation_record_detail(self, wait_periods: int = 6, period_length: int = 15) -> list:
+        validation_options = self.describe().get("DomainValidationOptions")
         for _ in range(wait_periods):
-            if record_detail is not None:
-                break
+            if validation_options is not None:
+                resource_record = validation_options[0].get("ResourceRecord", None)
+                if resource_record is not None:
+                    break
             time.sleep(period_length)
-            record_detail = self.get_domain_validation_record_detail()
+            validation_options = self.describe().get("DomainValidationOptions")
         else:
             raise Exception(
-                f"timed out waiting for domain validation record for: {self.arn}"
+                f"timed out waiting for resource record for: {self.arn}"
             )
 
-        return self.hosted_zone.generate_change_record(
-            record_detail.get("Name"),
-            record_detail.get("Type"),
-            [record_detail.get("Value")],
-        )
+        resource_records = []
+        for option in validation_options:
+            resource_records.append(option.get("ResourceRecord"))
+        return resource_records
+    
 
-    def create_domain_validation_records(self, validation_record):
-        self.hosted_zone.change_record_set([validation_record])
+    def generate_domain_validation_record(self) -> list:
+        logger.info(f"{self.arn}: waiting for domain validation record ...")
+        record_detail = self.get_domain_validation_record_detail()
+       
+        domain_validation_records = []
+        for record in record_detail:
+            domain_validation_records.append(self.hosted_zone.generate_change_record(
+            record.get("Name"),
+            record.get("Type"),
+            [record.get("Value")]
+                )
+            )
+        
+        return domain_validation_records
+
+
+    def create_domain_validation_records(self, validation_records):
+
+        for record in validation_records:
+            self.hosted_zone.change_record_set([record])
 
     def wait_for_cert_not_in_use(
         self, wait_periods: int = 20, period_length: int = 30

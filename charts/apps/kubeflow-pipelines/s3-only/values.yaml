@@ -3,4 +3,4 @@ s3:
   minioServiceHost: s3.amazonaws.com
   minioServiceRegion: 
 irsa:
-  roleName:
+  roleArn:

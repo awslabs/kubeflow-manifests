@@ -75,6 +75,12 @@ def install_kubeflow(
         installation_config = load_yaml_file(INSTALLATION_CONFIG_VANILLA)
     elif deployment_option == "cognito":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO)
+    elif deployment_option == "rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3_STATIC)
+    elif deployment_option == "s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_S3_ONLY_STATIC)
+    elif deployment_option == "cognito-rds-s3" and credentials_option == "static":
+        installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC)
     elif deployment_option == "rds-s3":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_RDS_S3)
     elif deployment_option == "rds-only":
@@ -90,8 +96,9 @@ def install_kubeflow(
     elif deployment_option == "cognito-rds-s3" and credentials_option == "static":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3_STATIC)
 
+
     print_banner(
-        f"Installing kubeflow {deployment_option} deployment with {installation_option}"
+        f"Installing kubeflow {deployment_option} deployment with {installation_option} with {credentials_option}"
     )
 
     for component in Install_Sequence:
@@ -180,12 +187,12 @@ def install_component(
                     else:
                         apply_kustomize(kustomize_path)
                 # TO DO: Debug and add additional validation step for cert-manager resources in future for kubeflow-issuer to be installed
-                # temporary solution to wait for 30s
+                # temporary solution to wait for 60s
                 if component_name == "cert-manager":
                     print(
-                        "wait for 30s for cert-manager-webhook resource to be ready..."
+                        "wait for 60s for cert-manager-webhook resource to be ready..."
                     )
-                    time.sleep(30)
+                    time.sleep(60)
 
         if "validations" in installation_config[component_name]:
             validate_component_installation(installation_config, component_name)
@@ -281,6 +288,8 @@ def install_ack_controller():
 def configure_kubeflow_pipelines(
     component_name, installation_paths, installation_option, credentials_option
 ):
+    if credentials_option == "static":
+        return
     cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
     IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
     if installation_option == "kustomize":

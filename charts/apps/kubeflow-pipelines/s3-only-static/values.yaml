@@ -1,4 +1,4 @@
 s3:
-  bucketName: canada-irsa
+  bucketName: 
   minioServiceHost: s3.amazonaws.com
-  minioServiceRegion: ca-central-1
+  minioServiceRegion:
