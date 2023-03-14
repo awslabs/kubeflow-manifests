@@ -35,27 +35,37 @@ class S3BucketWithTrainingData:
         region: str = "us-east-1",
         s3_client: Any = None,
         arn: str = None,
+        cmd: str = None,
+        time_to_sleep: int = 60
     ):
         self.region = region
         self.s3_client = s3_client or boto3.client("s3", region_name=region)
         self.name = name
         self.arn = arn
+        self.cmd = cmd
+        self.time_to_sleep = time_to_sleep
         if not name and not arn:
             raise ValueError("Either role name or arn should be defined")
 
     def create(self):
         try:
             print(f"Bucket being created: {self.name}")
-            # TODO: the test is currently configured only for us-east-1. The cluster can be in any region though.
-            self.s3_client.create_bucket(
+
+            if self.region == "us-east-1":
+                self.s3_client.create_bucket(
                 Bucket=self.name,
                 # CreateBucketConfiguration={"LocationConstraint": self.region},
             )
-            time.sleep(60)
+            else:
+                self.s3_client.create_bucket(
+                Bucket=self.name,
+                CreateBucketConfiguration={"LocationConstraint": self.region},
+            )
 
-            cmd = f"python utils/s3_for_training/sync.py {self.name} {self.region}".split()
-            subprocess.Popen(cmd)
-            time.sleep(120)
+            time.sleep(self.time_to_sleep)
+
+            subprocess.Popen(self.cmd.split())
+            time.sleep(self.time_to_sleep)
 
         except ClientError:
             logger.exception(f"failed to create S3 bucket {self.name}")

@@ -23,17 +23,17 @@ install-kubectl:
 
 install-kustomize:
 	$(eval KUSTOMIZE_VERSION:=5.0.0)
-	wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz | tar xz -C /tmp
+	curl --silent --location "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz" | tar xz -C /tmp
 	chmod +x /tmp/kustomize
-	sudo mv /tmp/kustomize usr/local/bin/kustomize
+	sudo mv /tmp/kustomize /usr/local/bin/kustomize
 	kustomize version
 
 install-yq:
 	$(eval YQ_VERSION:=v4.26.1)
-	wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz -O - | tar xz 
-	sudo mv yq_linux_amd64 /usr/bin/yq
-	rm install-man-page.sh
-	rm yq.1
+	curl --silent --location "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz" | tar xz -C /tmp
+	sudo mv /tmp/yq_linux_amd64 /usr/bin/yq
+	rm /tmp/install-man-page.sh
+	rm /tmp/yq.1
 	yq --version
 
 install-jq:
@@ -93,15 +93,34 @@ bootstrap-ack: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/setup_sm_controller_req.py
 
+bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
+	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
+	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/setup_pipelines_irsa.py
+
+bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
+	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
+	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/setup_pipelines_irsa.py
+
 cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
+cleanup-pipelines-req: verify-cluster-variables
+	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
+	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/cleanup_pipelines_irsa.py
+
 deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --cluster_name $(CLUSTER_NAME)
+	$(eval CREDENTIAL_OPTION:=irsa)
+	if [ "$(CREDENTIAL_OPTION)" = "irsa" ]; then \
+		make bootstrap-pipelines; \
+	fi
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credential_option $(CREDENTIAL_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)

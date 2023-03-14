@@ -199,7 +199,7 @@ kubeflow-pipelines:
   installation_options:
     kustomize: 
       paths:
-        - ../../awsconfigs/apps/pipeline
+        - ../../awsconfigs/apps/pipeline/
     helm:
       paths: ../../charts/apps/kubeflow-pipelines/rds-s3
   validations:
@@ -361,9 +361,9 @@ aws-secrets-manager:
   installation_options:
     kustomize: 
       paths:
-        - ../../awsconfigs/common/aws-secrets-manager
+        - ../../awsconfigs/common/aws-secrets-manager/rds
     helm:
-      paths: ../../charts/common/aws-secrets-manager/rds-s3
+      paths: ../../charts/common/aws-secrets-manager/rds-only
   validations:
     pods:
       namespace: kubeflow
