@@ -9,14 +9,7 @@ data:
             keyPrefix: artifacts,
             endpoint: {{ .Values.s3.minioServiceHost }},
             insecure: false,
-            accessKeySecret: {
-                name: mlpipeline-minio-artifact,
-                key: accesskey
-            },
-            secretKeySecret: {
-                name: mlpipeline-minio-artifact,
-                key: secretkey
-            }
+            useSDKCreds: true,
         },
         archiveLogs: true
     }
