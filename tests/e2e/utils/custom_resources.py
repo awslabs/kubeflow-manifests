@@ -94,6 +94,18 @@ def get_ingress(cluster, region, name="istio-ingress", namespace="istio-system")
     )
 
 
+def get_inference_service(cluster, region, name="half-plus-two", namespace="kubeflow-user-example-com"):
+    return get_namespaced_resource(
+        cluster,
+        region,
+        group="serving.kserve.io",
+        version="v1beta1",
+        namespace=namespace,
+        plural="inferenceservices",
+        name=name,
+    )
+
+
 def get_pvc_status(cluster, region, namespace, name):
     client = create_k8s_core_api_client(cluster, region)
 
