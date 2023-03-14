@@ -55,7 +55,7 @@ def profile_trust_policy(cluster, region, account_id):
 def create_pipeline_oidc_role(cluster_name, region):
     iam_client = get_iam_client(region=region)
     acc_id = get_account_id()
-    role_name = f"{common.PIPELINE_OIDC_ROLE_NAME_PREFIX}-{cluster_name}"
+    role_name = f"{common.PIPELINE_OIDC_ROLE_NAME_PREFIX}-{cluster_name}"[:64]
 
     resp = iam_client.create_role(
         RoleName=role_name,
