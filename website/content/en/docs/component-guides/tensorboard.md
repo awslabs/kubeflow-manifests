@@ -10,7 +10,7 @@ You can configure AWS S3 as a TensorBoard object store for measurements and visu
 
 ## Try it out
 
-You can use AWS S3 as an object store with TensorBaord to visualize events.
+You can use AWS S3 as an object store with TensorBoard to visualize events.
 
 1. Choose a service account which has access to an S3 bucket with data. The following example uses `default-editor` as the service account. The TensorBoard controller creates instances using the `default` service account by default. You can also use secrets, but this example uses [IAM roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
 
