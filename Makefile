@@ -23,17 +23,17 @@ install-kubectl:
 
 install-kustomize:
 	$(eval KUSTOMIZE_VERSION:=5.0.0)
-	wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz | tar xz -C /tmp
+	curl --silent --location "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz" | tar xz -C /tmp
 	chmod +x /tmp/kustomize
-	sudo mv /tmp/kustomize usr/local/bin/kustomize
+	sudo mv /tmp/kustomize /usr/local/bin/kustomize
 	kustomize version
 
 install-yq:
 	$(eval YQ_VERSION:=v4.26.1)
-	wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz -O - | tar xz 
-	sudo mv yq_linux_amd64 /usr/bin/yq
-	rm install-man-page.sh
-	rm yq.1
+	curl --silent --location "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz" | tar xz -C /tmp
+	sudo mv /tmp/yq_linux_amd64 /usr/bin/yq
+	rm /tmp/install-man-page.sh
+	rm /tmp/yq.1
 	yq --version
 
 install-jq:
