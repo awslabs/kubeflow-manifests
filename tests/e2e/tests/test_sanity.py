@@ -70,6 +70,7 @@ from e2e.fixtures.kserve_dependencies import (
 )
 
 from e2e.utils.aws.iam import IAMRole
+from e2e.utils.s3_for_training.data_bucket import S3BucketWithTrainingData
 
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
@@ -232,6 +233,17 @@ def sagemaker_execution_role(region, metadata, request):
 @pytest.fixture(scope="class")
 def port_forward(installation):
     pass
+
+@pytest.fixture(scope="class")
+def s3_bucket_with_data(region):
+    bucket_name = "s3-" + RANDOM_PREFIX
+    bucket = S3BucketWithTrainingData(name=bucket_name, cmd=f"python utils/s3_for_training/sync.py {bucket_name} {region}",
+                                       time_to_sleep=120)
+    bucket.create()
+
+    yield
+    bucket.delete()
+
 
 @pytest.fixture(scope="class")
 def clean_up_training_jobs_in_user_ns():

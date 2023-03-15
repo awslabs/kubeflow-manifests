@@ -42,8 +42,6 @@ from e2e.utils.custom_resources import (
 from e2e.utils.load_balancer.common import CONFIG_FILE as LB_CONFIG_FILE
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
-from e2e.utils.aws.iam import IAMRole
-from e2e.utils.s3_for_training.data_bucket import S3BucketWithTrainingData
 from e2e.fixtures.notebook_dependencies import notebook_server
 
 
@@ -90,16 +88,6 @@ def wait_for_run_succeeded(kfp_client, run, job_name, pipeline_id):
         return resp
 
     return wait_for(callback, timeout=900)
-
-@pytest.fixture(scope="class")
-def s3_bucket_with_data(region):
-    bucket_name = "s3-" + RANDOM_PREFIX
-    bucket = S3BucketWithTrainingData(name=bucket_name, cmd=f"python utils/s3_for_training/sync.py {bucket_name} {region}",
-                                       time_to_sleep=120)
-    bucket.create()
-
-    yield
-    bucket.delete()
 
 
 class TestSanity:
