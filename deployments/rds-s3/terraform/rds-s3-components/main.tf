@@ -227,7 +227,7 @@ module "filter_kfp_set_values" {
     "s3.minioServiceRegion" = coalesce(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb"            = var.mlmdb_name,
     "s3.minioServiceHost"   = var.minio_service_host
-    "irsa.roleName"         = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
+    "irsa.roleArn"         = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
   }
 }
 
