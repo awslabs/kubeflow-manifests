@@ -31,6 +31,7 @@ patchesStrategicMerge:
 - ./s3/deployment_patch.yaml
 - ./s3/disable-default-secret.yaml
 - ./s3/aws-configuration-patch.yaml
+- ./s3/service-account.yaml
 # Identifier for application manager to apply ownerReference.
 # The ownerReference ensures the resources get garbage collected
 # when application is deleted.

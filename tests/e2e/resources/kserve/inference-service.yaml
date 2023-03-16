@@ -1,0 +1,14 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    sidecar.istio.io/inject: 'false'
+  name: half-plus-two
+  namespace: ${PROFILE_NAMESPACE}
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: tensorflow
+      storageUri: ${S3_BUCKET_URI}
+    serviceAccountName: aws-sa

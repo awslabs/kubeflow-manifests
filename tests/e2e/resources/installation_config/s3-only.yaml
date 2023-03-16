@@ -356,20 +356,6 @@ user-namespace:
     helm: 
       paths: ../../charts/common/user-namespace
 
-#AWS Secrets Manager
-aws-secrets-manager:
-  installation_options:
-    kustomize: 
-      paths:
-        - ../../awsconfigs/common/aws-secrets-manager/s3
-    helm: 
-      paths: ../../charts/common/aws-secrets-manager/s3-only
-  validations:
-    pods:
-      namespace: kubeflow
-      labels:
-        - key: app
-          value: aws-secrets-sync
 
 ack-sagemaker-controller:
   installation_options:
