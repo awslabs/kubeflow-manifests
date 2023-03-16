@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  viewer-pod-template.json: "{\n  \"spec\": {\n    \"containers\": [\n      {\n  \
+    \      \"env\": [\n          {\n            \"name\": \"AWS_ACCESS_KEY_ID\",\n\
+    \            \"valueFrom\": {\n              \"secretKeyRef\": {\n           \
+    \     \"name\": \"mlpipeline-minio-artifact\",\n                \"key\": \"accesskey\"\
+    \n              }\n            }\n          },\n          {\n            \"name\"\
+    : \"AWS_SECRET_ACCESS_KEY\",\n            \"valueFrom\": {\n              \"secretKeyRef\"\
+    : {\n                \"name\": \"mlpipeline-minio-artifact\",\n              \
+    \  \"key\": \"secretkey\"\n              }\n            }\n          },\n    \
+    \      {\n            \"name\": \"AWS_REGION\",\n            \"valueFrom\": {\n\
+    \              \"configMapKeyRef\": {\n                \"name\": \"pipeline-install-config\"\
+    ,\n                \"key\": \"minioServiceRegion\"\n              }\n        \
+    \    }\n          }\n        ]\n      }\n    ]\n  }\n}"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+    application-crd-id: kubeflow-pipelines
+  name: ml-pipeline-ui-configmap
+  namespace: kubeflow

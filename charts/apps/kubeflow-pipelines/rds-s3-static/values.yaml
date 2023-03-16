@@ -1,0 +1,7 @@
+rds:
+  dbHost: 
+  mlmdDb: metadb
+s3:
+  bucketName: 
+  minioServiceHost: s3.amazonaws.com
+  minioServiceRegion: 

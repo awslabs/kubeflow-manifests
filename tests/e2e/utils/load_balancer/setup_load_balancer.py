@@ -72,6 +72,7 @@ def create_certificates(
     deployment_region: str,
     subdomain_hosted_zone: Route53HostedZone,
     root_hosted_zone: Route53HostedZone = None,
+    subdomain_subject_alternative_names: list = None,
 ) -> Tuple[AcmCertificate, AcmCertificate]:
     root_certificate = None
     if root_hosted_zone:
@@ -91,11 +92,20 @@ def create_certificates(
         )
         input("Press any key once the certificate status is ISSUED")
 
-    subdomain_cert_deployment_region = AcmCertificate(
-        domain="*." + subdomain_hosted_zone.domain,
-        hosted_zone=subdomain_hosted_zone,
-        region=deployment_region,
-    )
+    args = {
+        "domain": "*." + subdomain_hosted_zone.domain,
+        "hosted_zone": subdomain_hosted_zone,
+        "region": deployment_region,
+    }
+
+    if subdomain_subject_alternative_names:
+        subject_alternative_names = []
+        for subject_alternative_name in subdomain_subject_alternative_names:
+            subject_alternative_names.append("*." + subject_alternative_name)
+        args["subject_alternative_names"] = subject_alternative_names
+
+    subdomain_cert_deployment_region = AcmCertificate(**args)
+
     subdomain_cert_deployment_region.request_validation()
     validation_record = (
         subdomain_cert_deployment_region.generate_domain_validation_record()
@@ -240,6 +250,7 @@ if __name__ == "__main__":
     root_domain_name = cfg["route53"]["rootDomain"]["name"]
     root_domain_hosted_zone_id = cfg["route53"]["rootDomain"].get("hostedZoneId", None)
     load_balancer_scheme = cfg["kubeflow"]["alb"]["scheme"]
+    subdomain_subject_alternative_names = cfg["route53"]["subDomain"].get("subjectAlternativeNames", None)
 
     print_banner("Creating Subdomain in Route 53")
     root_hosted_zone, subdomain_hosted_zone = create_subdomain_hosted_zone(
@@ -255,7 +266,7 @@ if __name__ == "__main__":
     (
         root_certificate,
         subdomain_cert_deployment_region,
-    ) = create_certificates(deployment_region, subdomain_hosted_zone, root_hosted_zone)
+    ) = create_certificates(deployment_region, subdomain_hosted_zone, root_hosted_zone, subdomain_subject_alternative_names)
 
     if root_certificate:
         cfg["route53"]["rootDomain"]["certARN"] = root_certificate.arn
