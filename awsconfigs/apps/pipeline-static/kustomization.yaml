@@ -12,4 +12,3 @@ generatorOptions:
   disableNameSuffixHash: true
 patchesStrategicMerge:
 - ./s3/disable-default-secret.yaml
-- ./s3/service-account.yaml
