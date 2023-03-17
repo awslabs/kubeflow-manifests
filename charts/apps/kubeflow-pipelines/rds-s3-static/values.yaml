@@ -1,6 +1,6 @@
 rds:
   dbHost: 
-  mlmdDb: metadb
+  mlmdDb: 
 s3:
   bucketName: 
   minioServiceHost: s3.amazonaws.com

@@ -8,5 +8,5 @@ metadata:
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
     application-crd-id: kubeflow-pipelines
-  name: kubeflow-pipelines-profile-controller-env-mgh6th2gff
+  name: kubeflow-pipelines-profile-controller-env-5252m69c4c
   namespace: kubeflow

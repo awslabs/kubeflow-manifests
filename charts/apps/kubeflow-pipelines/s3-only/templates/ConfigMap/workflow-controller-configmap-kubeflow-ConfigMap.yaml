@@ -16,7 +16,6 @@ data:
     }
 kind: ConfigMap
 metadata:
-  annotations: {}
   labels:
     application-crd-id: kubeflow-pipelines
   name: workflow-controller-configmap

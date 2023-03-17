@@ -54,7 +54,7 @@ spec:
               name: mlpipeline-minio-artifact
         envFrom:
         - configMapRef:
-            name: kubeflow-pipelines-profile-controller-env-mgh6th2gff
+            name: kubeflow-pipelines-profile-controller-env-5252m69c4c
         image: python:3.7
         name: profile-controller
         ports:
@@ -64,5 +64,5 @@ spec:
           name: hooks
       volumes:
       - configMap:
-          name: kubeflow-pipelines-profile-controller-code-btcch948fc
+          name: kubeflow-pipelines-profile-controller-code-hdk828hd6c
         name: hooks

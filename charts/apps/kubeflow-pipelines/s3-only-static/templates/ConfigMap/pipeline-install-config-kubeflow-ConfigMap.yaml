@@ -6,7 +6,7 @@ data:
   appName: pipeline
   appVersion: 2.0.0-alpha.6
   autoUpdatePipelineDefaultVersion: 'true'
-  bucketName: '{{ .Values.s3.bucketName }}' 
+  bucketName: '{{ .Values.s3.bucketName }}'
   cacheDb: cachedb
   cacheImage: gcr.io/google-containers/busybox
   cacheNodeRestrictions: 'false'

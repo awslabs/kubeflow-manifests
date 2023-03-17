@@ -186,38 +186,38 @@ kubeflow-pipelines:
       kustomization_paths:
         - awsconfigs/apps/pipeline/base
       output_helm_chart_path: charts/apps/kubeflow-pipelines/vanilla
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
     rds-s3:
       kustomization_paths:
         - awsconfigs/apps/pipeline
       output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-s3
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
     rds-only:
       kustomization_paths:
         - awsconfigs/apps/pipeline/rds
       output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-only
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
     s3-only:
       kustomization_paths:
         - awsconfigs/apps/pipeline/s3
       output_helm_chart_path: charts/apps/kubeflow-pipelines/s3-only
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
     s3-only-static:
       kustomization_paths:
           - awsconfigs/apps/pipeline-static/s3
       output_helm_chart_path: charts/apps/kubeflow-pipelines/s3-only-static
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
     rds-s3-static:
       kustomization_paths:
           - awsconfigs/apps/pipeline-static/
       output_helm_chart_path: charts/apps/kubeflow-pipelines/rds-s3-static
-      version: 0.2.0
-      app_version: 2.0.0-alpha.6
+      version: 0.2.1
+      app_version: 2.0.0-alpha.7
   params:
     template_paths: 
       - tools/helmify/template/kubeflow-pipelines/params/s3/params.env

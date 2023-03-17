@@ -34,7 +34,6 @@ data:
     '
 kind: ConfigMap
 metadata:
-  annotations: {}
   labels:
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines
