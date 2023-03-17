@@ -287,7 +287,7 @@ def configure_kubeflow_pipelines(
     cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
     IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
     if installation_option == "kustomize":
-        CHART_EXPORT_PATH = "../../apps/pipeline/s3/service-account.yaml"
+        CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
         exec_shell(
             f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {CHART_EXPORT_PATH}"
