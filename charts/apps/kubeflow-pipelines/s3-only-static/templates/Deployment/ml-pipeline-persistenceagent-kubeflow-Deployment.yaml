@@ -40,7 +40,7 @@ spec:
         envFrom:
         - configMapRef:
             name: persistenceagent-config-hkgkmd64bh
-        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.6
+        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.7
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
         resources:

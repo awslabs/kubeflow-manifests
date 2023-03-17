@@ -85,7 +85,7 @@ spec:
             secretKeyRef:
               key: password
               name: mysql-secret
-        image: gcr.io/ml-pipeline/cache-server:2.0.0-alpha.6
+        image: gcr.io/ml-pipeline/cache-server:2.0.0-alpha.7
         imagePullPolicy: Always
         name: server
         ports:

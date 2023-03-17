@@ -59,7 +59,7 @@ spec:
               name: mlpipeline-minio-artifact
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: 'true'
-        image: gcr.io/ml-pipeline/frontend:2.0.0-alpha.6
+        image: gcr.io/ml-pipeline/frontend:2.0.0-alpha.7
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
