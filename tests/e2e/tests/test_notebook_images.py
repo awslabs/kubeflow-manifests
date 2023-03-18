@@ -23,7 +23,7 @@ TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 NOTEBOOK_IMAGES = [
-    "kubeflownotebookswg/jupyter-scipy:v1.6.1",
+    "kubeflownotebookswg/jupyter-scipy:v1.7.0-rc.1",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-gpu-py39-cu112-ubuntu20.04-ec2-v1.1",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2",
