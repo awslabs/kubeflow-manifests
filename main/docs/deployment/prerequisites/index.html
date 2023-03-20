@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/prerequisites/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-03-20T11:22:19-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-03-20T11:42:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Prerequisites">
 <meta itemprop="description" content="Set up your environment for deploying Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-03-20T11:22:19-07:00" />
+<meta itemprop="dateModified" content="2023-03-20T11:42:50-07:00" />
 <meta itemprop="wordCount" content="652">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Prerequisites"/>
@@ -507,9 +507,9 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">Launch Ubuntu 18.04 cloud9 instance 
 </span></span></code></pre></div><h2 id="clone-repository">Clone repository</h2>
 <p>Clone the <a href="https://github.com/awslabs/kubeflow-manifests"><code>awslabs/kubeflow-manifests</code></a> and the <a href="https://github.com/kubeflow/manifests"><code>kubeflow/manifests</code></a> repositories and check out the release branches of your choosing.</p>
-<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.6.1) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.6.0-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.6.1
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>main
+<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.7.0-rc.2) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.7.0-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.7.0-rc.2
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.7.0-aws-b1.0.0
 </span></span><span class="line"><span class="cl">git clone https://github.com/awslabs/kubeflow-manifests.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kubeflow-manifests
 </span></span><span class="line"><span class="cl">git checkout <span class="si">${</span><span class="nv">AWS_RELEASE_VERSION</span><span class="si">}</span>
 </span></span><span class="line"><span class="cl">git clone --branch <span class="si">${</span><span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="si">}</span> https://github.com/kubeflow/manifests.git upstream
@@ -555,7 +555,7 @@ You might want to grant <code>Administrative Privileges</code> as it will requir
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified March 20, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8ea80a43f0e1868260b2c004595152a0f78f0799">Update Kustomize version to 5.0.1 (#627) (8ea80a4)</a>
+  Last modified March 20, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/415ad0f3787e5fd4da8b8fb21db383bc71ca964c">[Website] Clone repository doc change (#624) (415ad0f)</a>
 </div>
 
 </div>
