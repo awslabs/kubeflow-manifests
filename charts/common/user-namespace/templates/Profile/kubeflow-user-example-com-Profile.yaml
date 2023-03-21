@@ -6,3 +6,7 @@ spec:
   owner:
     kind: User
     name: user@example.com
+  plugins:
+  - kind: AwsIamForServiceAccount
+    spec:
+      awsIamRole: '{{ .Values.irsa.roleArn }}'
