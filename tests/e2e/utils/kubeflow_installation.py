@@ -90,9 +90,8 @@ def install_kubeflow(
     elif deployment_option == "cognito-rds-s3":
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3)
 
-
     print_banner(
-        f"Installing kubeflow {deployment_option} deployment with {installation_option} with {credentials_option}"
+        f"Installing kubeflow {deployment_option} deployment with {installation_option} and {credentials_option}"
     )
 
     for component in Install_Sequence:
@@ -168,6 +167,7 @@ def install_component(
                     crds = installation_config[component_name]["validations"]["crds"]
                     crd_established = False
                 if component_name == "kubeflow-pipelines":
+                    print(credentials_option)
                     configure_kubeflow_pipelines(
                         component_name,
                         installation_paths,
@@ -175,6 +175,7 @@ def install_component(
                         credentials_option,
                     )
                 for kustomize_path in installation_paths:
+                    print(kustomize_path)
                     if not crd_established:
                         apply_kustomize(kustomize_path, crds)
                         crd_established = True
@@ -292,7 +293,11 @@ def configure_kubeflow_pipelines(
             f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {CHART_EXPORT_PATH}"
         )
-
+        USER_NAMESPACE_PATH = "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
+        exec_shell(
+            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
     else:
         IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
         CHART_EXPORT_PATH = f"{installation_paths}/templates/ServiceAccount/ml-pipeline-kubeflow-ServiceAccount.yaml"
@@ -300,7 +305,11 @@ def configure_kubeflow_pipelines(
             f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {CHART_EXPORT_PATH}"
         )
-
+        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/templates/Profile/kubeflow-user-example-com-Profile.yaml"
+        exec_shell(
+            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
