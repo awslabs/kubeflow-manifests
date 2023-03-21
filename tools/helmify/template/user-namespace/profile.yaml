@@ -1,0 +1,12 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Profile
+metadata:
+  name: $(profile-name)
+spec:
+  owner:
+    kind: User
+    name: $(user)
+  plugins:
+    - kind: AwsIamForServiceAccount
+      spec:
+        awsIamRole: '{{ .Values.irsa.roleArn }}'

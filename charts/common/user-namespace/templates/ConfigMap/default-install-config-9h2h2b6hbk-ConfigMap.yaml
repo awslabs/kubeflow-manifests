@@ -4,4 +4,4 @@ data:
   user: user@example.com
 kind: ConfigMap
 metadata:
-  name: default-install-config-5cbhhbttg4
+  name: default-install-config-9h2h2b6hbk
