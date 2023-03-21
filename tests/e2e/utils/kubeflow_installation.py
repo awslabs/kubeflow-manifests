@@ -283,32 +283,27 @@ def configure_kubeflow_pipelines(
 ):
     if credentials_option == "static":
         return
+    
     cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
     IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
+
     if installation_option == "kustomize":
         CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
-        exec_shell(
-            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
-            + f"-i {CHART_EXPORT_PATH}"
-        )
         USER_NAMESPACE_PATH = "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
-        exec_shell(
-            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
-            + f"-i {USER_NAMESPACE_PATH}"
-        )
+
     else:
-        IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
         CHART_EXPORT_PATH = f"{installation_paths}/templates/ServiceAccount/ml-pipeline-kubeflow-ServiceAccount.yaml"
-        exec_shell(
+        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/templates/Profile/kubeflow-user-example-com-Profile.yaml"
+
+    exec_shell(
             f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {CHART_EXPORT_PATH}"
         )
-        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/templates/Profile/kubeflow-user-example-com-Profile.yaml"
-        exec_shell(
+    exec_shell(
             f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
             + f"-i {USER_NAMESPACE_PATH}"
         )
-
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     INSTALLATION_OPTION_DEFAULT = "kustomize"
