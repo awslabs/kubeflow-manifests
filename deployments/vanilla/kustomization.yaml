@@ -12,7 +12,7 @@ resources:
   # OIDC Authservice
   - ../../upstream/common/oidc-authservice/base
   # Dex
-  - ../../upstream/common/dex/overlays/istio
+  - ../../awsconfigs/common/dex
   # KNative
   - ../../upstream/common/knative/knative-serving/overlays/gateways
   - ../../upstream/common/knative/knative-eventing/base

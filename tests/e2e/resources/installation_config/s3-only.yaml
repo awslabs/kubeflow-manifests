@@ -55,7 +55,7 @@ dex:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/common/dex/overlays/istio
+        - ../../awsconfigs/common/dex
     helm: 
       paths: ../../charts/common/dex
   validations:
