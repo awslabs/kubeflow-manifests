@@ -91,7 +91,7 @@ def install_kubeflow(
         installation_config = load_yaml_file(INSTALLATION_CONFIG_COGNITO_RDS_S3)
 
     print_banner(
-        f"Installing kubeflow {deployment_option} deployment with {installation_option} and {credentials_option}"
+        f"Installing kubeflow {deployment_option} deployment with {installation_option} with {credentials_option}"
     )
 
     for component in Install_Sequence:
@@ -167,7 +167,6 @@ def install_component(
                     crds = installation_config[component_name]["validations"]["crds"]
                     crd_established = False
                 if component_name == "kubeflow-pipelines":
-                    print(credentials_option)
                     configure_kubeflow_pipelines(
                         component_name,
                         installation_paths,
@@ -175,7 +174,6 @@ def install_component(
                         credentials_option,
                     )
                 for kustomize_path in installation_paths:
-                    print(kustomize_path)
                     if not crd_established:
                         apply_kustomize(kustomize_path, crds)
                         crd_established = True
