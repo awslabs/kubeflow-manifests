@@ -319,8 +319,8 @@ user-namespace:
   kustomization_paths:
     - awsconfigs/common/user-namespace/overlay
   output_helm_chart_path: charts/common/user-namespace
-  version: 0.1.0
-  app_version: v1.6.1
+  version: 0.2.0
+  app_version: v1.7.0
   params:
     template_paths: 
       - tools/helmify/template/user-namespace/profile.yaml
