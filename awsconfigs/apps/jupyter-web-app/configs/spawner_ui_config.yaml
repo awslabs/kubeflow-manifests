@@ -20,7 +20,7 @@ spawnerFormDefaults:
     value: public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1
     # The list of available standard container Images
     options:
-    - kubeflownotebookswg/jupyter-scipy:v1.6.1
+    - kubeflownotebookswg/jupyter-scipy:v1.7.0-rc.1
     - public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-gpu-py39-cu112-ubuntu20.04-ec2-v1.1
     - public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1
     - public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2
@@ -30,10 +30,10 @@ spawnerFormDefaults:
     # The annotation `notebooks.kubeflow.org/http-rewrite-uri: /`
     # is applied to notebook in this group, configuring
     # the Istio rewrite for containers that host their web UI at `/`
-    value: kubeflownotebookswg/codeserver-python:v1.6.1
+    value: kubeflownotebookswg/codeserver-python:v1.7.0-rc.1
     # The list of available standard container Images
     options:
-    - kubeflownotebookswg/codeserver-python:v1.6.1
+    - kubeflownotebookswg/codeserver-python:v1.7.0-rc.1
   imageGroupTwo:
     # The container Image for the user's Group Two Server
     # The annotation `notebooks.kubeflow.org/http-rewrite-uri: /`
@@ -42,10 +42,10 @@ spawnerFormDefaults:
     # The annotation `notebooks.kubeflow.org/http-headers-request-set`
     # is applied to notebook in this group, configuring Istio
     # to add the `X-RStudio-Root-Path` header to requests
-    value: kubeflownotebookswg/rstudio-tidyverse:v1.6.1
+    value: kubeflownotebookswg/rstudio-tidyverse:v1.7.0-rc.1
     # The list of available standard container Images
     options:
-    - kubeflownotebookswg/rstudio-tidyverse:v1.6.1
+    - kubeflownotebookswg/rstudio-tidyverse:v1.7.0-rc.1
   # If true, hide registry and/or tag name in the image selection dropdown
   hideRegistry: true
   hideTag: false
