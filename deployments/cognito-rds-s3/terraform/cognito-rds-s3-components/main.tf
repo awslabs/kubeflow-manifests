@@ -59,6 +59,12 @@ data "aws_iam_role" "pipeline_irsa_iam_role" {
   depends_on = [module.kubeflow_pipeline_irsa]
 }
 
+data "aws_iam_role" "user_namespace_irsa_iam_role" {
+  count = var.use_static ? 0 : 1
+  name = try(module.user_namespace_irsa[0].irsa_iam_role_name, null)
+  depends_on = [module.user_namespace_irsa]
+}
+
 module "kubeflow_secrets_manager_irsa" {
   source            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
   kubernetes_namespace = kubernetes_namespace.kubeflow.metadata[0].name
@@ -81,6 +87,21 @@ module "kubeflow_pipeline_irsa" {
   create_kubernetes_service_account = false
   kubernetes_service_account        = "ml-pipeline"
   irsa_iam_role_name                = format("%s-%s-%s-%s", "ml-pipeline", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
+  irsa_iam_policies                 = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+  irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
+  irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
+  eks_cluster_id                    = var.addon_context.eks_cluster_id
+  eks_oidc_provider_arn             = var.addon_context.eks_oidc_provider_arn
+}
+
+module "user_namespace_irsa" {
+  count                             = var.use_static ? 0 : 1
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
+  kubernetes_namespace              = "kubeflow-user-example-com"
+  create_kubernetes_namespace       = false
+  create_kubernetes_service_account = false
+  kubernetes_service_account        = "default-editor"
+  irsa_iam_role_name                = format("%s-%s-%s-%s", "ml-pipeline-user-namespace", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
   irsa_iam_policies                 = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
@@ -432,13 +453,21 @@ module "kubeflow_aws_telemetry" {
   depends_on = [module.kubeflow_training_operator]
 }
 
+module "filter_kubeflow_user_namespace_set_values" {
+  source = "../../../../iaac/terraform/utils/set-values-filter"
+  set_values = {
+    "irsa.roleArn" = try(data.aws_iam_role.user_namespace_irsa_iam_role[0].arn, null)
+  }
+}
+
 module "kubeflow_user_namespace" {
-  source            = "../../../../iaac/terraform/common/user-namespace"
+  source = "../../../../iaac/terraform/common/user-namespace"
   helm_config = {
-    chart = "${var.kf_helm_repo_path}/charts/common/user-namespace"
-  }  
+    chart = "${var.kf_helm_repo_path}/charts/common/user-namespace",
+    set   = module.filter_kubeflow_user_namespace_set_values.set_values
+  }
   addon_context = var.addon_context
-  depends_on = [module.kubeflow_aws_telemetry]
+  depends_on    = [module.kubeflow_aws_telemetry, module.user_namespace_irsa]
 }
 
 module "ack_sagemaker" {
