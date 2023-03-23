@@ -2,11 +2,11 @@ locals {
   katib_chart_vanilla = "${var.kf_helm_repo_path}/charts/apps/katib/vanilla"
   katib_chart_rds     = "${var.kf_helm_repo_path}/charts/apps/katib/katib-external-db-with-kubeflow"
 
-  kfp_chart_vanilla    = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/vanilla"
-  kfp_chart_rds_only   = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-only"
-  kfp_chart_s3_only    = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/s3-only"
-  kfp_chart_rds_and_s3 = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-s3"
-  kfp_chart_s3_only_static = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/s3-only-static"
+  kfp_chart_vanilla           = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/vanilla"
+  kfp_chart_rds_only          = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-only"
+  kfp_chart_s3_only           = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/s3-only"
+  kfp_chart_rds_and_s3        = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-s3"
+  kfp_chart_s3_only_static    = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/s3-only-static"
   kfp_chart_rds_and_s3_static = "${var.kf_helm_repo_path}/charts/apps/kubeflow-pipelines/rds-s3-static"
 
   secrets_manager_chart_rds    = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-only"
@@ -14,11 +14,11 @@ locals {
   secrets_manager_chart_rds_s3 = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-s3"
 
   kfp_chart_map = {
-    (local.kfp_chart_vanilla)    = !var.use_rds && !var.use_s3,
-    (local.kfp_chart_rds_only)   = var.use_rds && !var.use_s3,
-    (local.kfp_chart_s3_only)    = !var.use_rds && var.use_s3 && !var.use_static,
-    (local.kfp_chart_rds_and_s3) = var.use_rds && var.use_s3 && !var.use_static,
-    (local.kfp_chart_s3_only_static) = !var.use_rds && var.use_s3 && var.use_static,
+    (local.kfp_chart_vanilla)           = !var.use_rds && !var.use_s3,
+    (local.kfp_chart_rds_only)          = var.use_rds && !var.use_s3,
+    (local.kfp_chart_s3_only)           = !var.use_rds && var.use_s3 && !var.use_static,
+    (local.kfp_chart_rds_and_s3)        = var.use_rds && var.use_s3 && !var.use_static,
+    (local.kfp_chart_s3_only_static)    = !var.use_rds && var.use_s3 && var.use_static,
     (local.kfp_chart_rds_and_s3_static) = var.use_rds && var.use_s3 && var.use_static
   }
 
@@ -46,14 +46,14 @@ resource "kubernetes_namespace" "kubeflow" {
 }
 
 data "aws_iam_role" "pipeline_irsa_iam_role" {
-  count = var.use_static ? 0 : 1
-  name = try(module.kubeflow_pipeline_irsa[0].irsa_iam_role_name, null)
+  count      = var.use_static ? 0 : 1
+  name       = try(module.kubeflow_pipeline_irsa[0].irsa_iam_role_name, null)
   depends_on = [module.kubeflow_pipeline_irsa]
 }
 
 data "aws_iam_role" "user_namespace_irsa_iam_role" {
-  count = var.use_static ? 0 : 1
-  name = try(module.user_namespace_irsa[0].irsa_iam_role_name, null)
+  count      = var.use_static ? 0 : 1
+  name       = try(module.user_namespace_irsa[0].irsa_iam_role_name, null)
   depends_on = [module.user_namespace_irsa]
 }
 
@@ -79,7 +79,7 @@ module "kubeflow_pipeline_irsa" {
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_service_account        = "ml-pipeline"
-  irsa_iam_role_name                = format("%s-%s-%s-%s", "ml-pipeline", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
+  irsa_iam_role_name                = format("%s-%s-%.22s-%.16s", "ml-pipeline", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
   irsa_iam_policies                 = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
@@ -94,7 +94,7 @@ module "user_namespace_irsa" {
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_service_account        = "default-editor"
-  irsa_iam_role_name                = format("%s-%s-%s-%s", "ml-pipeline-user-namespace", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
+  irsa_iam_role_name                = format("%s-%s-%.22s-%.16s", "user-namespace", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
   irsa_iam_policies                 = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
@@ -248,7 +248,7 @@ module "filter_kfp_set_values" {
     "s3.minioServiceRegion" = coalesce(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb"            = var.mlmdb_name,
     "s3.minioServiceHost"   = var.minio_service_host
-    "irsa.roleArn"         = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
+    "irsa.roleArn"          = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
   }
 }
 
