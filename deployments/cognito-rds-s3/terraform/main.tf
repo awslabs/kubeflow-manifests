@@ -222,6 +222,7 @@ module "kubeflow_components" {
 
   # s3
   use_s3 = var.use_s3
+  use_static =  var.use_static
   minio_service_region = var.minio_service_region
   force_destroy_s3_bucket = var.force_destroy_s3_bucket
   minio_aws_access_key_id = var.minio_aws_access_key_id

@@ -36,6 +36,11 @@ variable "use_s3" {
   default = true
 }
 
+variable "use_static" {
+  type = bool
+  default = false
+}
+
 variable "vpc_id" {
   type        = string
   description = "VPC of the EKS cluster"
