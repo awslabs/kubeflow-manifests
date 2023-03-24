@@ -8,7 +8,7 @@ layout: "list"
 
 In this section, we share posts, articles, and videos illustrating how some of our customers have leveraged AWS distribution of Kubeflow to optimize large-scale and compute-intensive machine learning workloads, we provide ML infrastructure recommendations and best practices, and we inform you on Kubelow on AWS coming training sessions and available recordings.
 
-Want to try the latest version of Kubeflow on AWS? Follow the steps in [Kubeflow on AWS documentation](http://localhost:1313/kubeflow-manifests/main/docs/deployment/prerequisites/).
+Want to try the latest version of Kubeflow on AWS? Follow the steps in [Kubeflow on AWS documentation](/kubeflow-manifests/main/docs/deployment/prerequisites/).
 
 [Read](#read) from our curated list of posts or [Watch](#watch) a recorded session.
 
@@ -30,8 +30,6 @@ Find case studies, use cases, best practices, benchmarks, and more.
 1. [Build an hybrid distributed training architecture using Kubeflow on AWS and Amazon SageMaker](https://aws.amazon.com/blogs/machine-learning/build-flexible-and-scalable-distributed-training-architectures-using-kubeflow-on-aws-and-amazon-sagemaker/). This post further illustrates how you can use open-source libraries in your deep learning training script and still make it compatible to run on both Kubernetes and SageMaker in a platform agnostic way.
 
 1. [Use Amazon SageMaker Operators for Kubernetes (ACK) to train and deploy machine learning models](https://aws.amazon.com/blogs/machine-learning/use-amazon-sagemaker-ack-operators-to-train-and-deploy-machine-learning-models/).
-
-1. [Scaling distributed training with AWS Trainium and Amazon EKS](https://aws.amazon.com/blogs/machine-learning/scaling-distributed-training-with-aws-trainium-and-amazon-eks/). Details about official support for distributed training jobs using Amazon EKS and EC2 Trn1 instances. You can now easily run large-scale containerized training jobs within Amazon EKS while taking full advantage of the price-performance, scalability, and ease of use offered by Trn1 instances.
 
 ## Watch 
 
