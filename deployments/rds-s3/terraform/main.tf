@@ -195,6 +195,7 @@ module "kubeflow_components" {
   
   use_rds = var.use_rds
   use_s3 = var.use_s3
+  use_static =  var.use_static
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = var.publicly_accessible ? module.vpc.public_subnets : module.vpc.private_subnets
