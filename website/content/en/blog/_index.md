@@ -8,7 +8,7 @@ layout: "list"
 
 In this section, we share posts, articles, and videos illustrating how some of our customers have leveraged AWS distribution of Kubeflow to optimize large-scale and compute-intensive machine learning workloads, we provide ML infrastructure recommendations and best practices, and we inform you on Kubelow on AWS coming training sessions and available recordings.
 
-Want to try the latest version of Kubeflow on AWS? Follow the steps in [Kubeflow on AWS documentation](http://localhost:1313/kubeflow-manifests/main/docs/deployment/prerequisites/).
+Want to try the latest version of Kubeflow on AWS? Follow the steps in [Kubeflow on AWS documentation](/kubeflow-manifests/main/docs/deployment/prerequisites/).
 
 [Read](#read) from our curated list of posts or [Watch](#watch) a recorded session.
 
