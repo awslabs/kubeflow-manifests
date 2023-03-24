@@ -18,5 +18,14 @@ phases:
       
       # Push test image to cache ECR repo
       - docker push ${ECR_CACHE_URI}:latest || true
-      
+  post_build:
+    commands:
+      - docker cp integration-test-container:./tests/canary/integration_tests.log /tmp/results.xml
+      - docker rm -f integration-test-container
+
+reports:
+  IntegrationTestReport:
+    files:
+      - "results.xml"
+    base-directory: "/tmp"    
       
