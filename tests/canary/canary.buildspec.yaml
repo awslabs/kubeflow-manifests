@@ -20,8 +20,8 @@ phases:
       - docker push ${ECR_CACHE_URI}:latest || true
   post_build:
     commands:
-      - docker cp integration-test-container:./tests/canary/integration_tests.log /tmp/results.xml
-      - docker rm -f integration-test-container
+      - docker exec -it kf-distro-canary ls ./tests/canary
+      - docker cp kf-distro-canary:./tests/canary/integration_tests.log /tmp/results.xml
 
 reports:
   IntegrationTestReport:
