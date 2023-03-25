@@ -13,8 +13,8 @@ phases:
   build:
     commands:
       # Run tests
-      - docker run --name kf-distro-canary -d $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
-
+      - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
+      - sleep 30
   post_build:
     commands:
       - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
