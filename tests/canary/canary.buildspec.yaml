@@ -20,8 +20,8 @@ phases:
       - docker push ${ECR_CACHE_URI}:latest || true
   post_build:
     commands:
-      - docker exec kf-distro-canary ls
-      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
+      - docker exec kf-distro-canary tree /
+      #- docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
 
 reports:
   IntegrationTestReport:
