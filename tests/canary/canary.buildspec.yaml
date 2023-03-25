@@ -17,10 +17,6 @@ phases:
 
   post_build:
     commands:
-      - docker run --rm --entrypoint pwd kf-distro-canary
-      - docker run --rm --entrypoint tree / kf-distro-canary
-      
-
       - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
 
         # Push test image to cache ECR repo
