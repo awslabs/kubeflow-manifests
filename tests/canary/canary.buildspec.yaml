@@ -15,14 +15,18 @@ phases:
     commands:
       # Run tests
       - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
-      
+
+  run:
+    commands:
+      # Execute commands inside running container
+      - docker exec kf-distro-canary pwd
+      - docker exec kf-distro-canary tree /
+      # Copy file from container
+      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
 
   post_build:
     commands:
-      - docker exec kf-distro-canary pwd
-      - docker exec kf-distro-canary tree /
-      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
-        # Push test image to cache ECR repo
+      # Push test image to cache ECR repo
       - docker push ${ECR_CACHE_URI}:latest || true
 reports:
   IntegrationTestReport:
