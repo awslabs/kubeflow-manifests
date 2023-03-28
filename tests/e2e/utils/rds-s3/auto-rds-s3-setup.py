@@ -24,9 +24,9 @@ from e2e.utils.utils import (
 
 from shutil import which
 
-INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
+INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3-static.yaml"
 INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
-INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only-static.yaml"
 path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
 path_dic_rds_only = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
 path_dic_s3_only = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
@@ -100,7 +100,8 @@ def verify_kubectl_is_installed():
 def setup_s3(s3_client, secrets_manager_client):
     print_banner("S3 Setup")
     setup_s3_bucket(s3_client)
-    setup_s3_secrets(secrets_manager_client)
+    if CREDENTIALS_OPTION == "static":
+        setup_s3_secrets(secrets_manager_client)
 
 
 def setup_s3_bucket(s3_client):
@@ -638,7 +639,7 @@ parser.add_argument(
     This parameter allows to explicitly specify the access key ID to use for the setup.
     The access key ID is used to create the S3 bucket and is saved using the secrets manager.
     """,
-    required=True,
+    required=False,
 )
 parser.add_argument(
     "--s3_aws_secret_access_key",
@@ -647,7 +648,7 @@ parser.add_argument(
     This parameter allows to explicitly specify the secret access key to use for the setup.
     The secret access key is used to create the S3 bucket and is saved using the secrets manager.
     """,
-    required=True,
+    required=False,
 )
 RDS_SECRET_NAME = "rds-secret"
 parser.add_argument(
@@ -665,7 +666,12 @@ parser.add_argument(
     help=f"Name of the secret containing S3 related credentials. Default is set to {S3_SECRET_NAME}",
     required=False,
 )
-
+CREDENTIALS_OPTION = "irsa"
+parser.add_argument(
+    "--credentials_option",
+    type=str,default=CREDENTIALS_OPTION,help=f"S3 object storage credentials method. Default is set to {CREDENTIALS_OPTION}",
+    required=False,
+)
 args, _ = parser.parse_known_args()
 
 if __name__ == "__main__":
@@ -686,5 +692,6 @@ if __name__ == "__main__":
     DB_SUBNET_GROUP_NAME = args.db_subnet_group_name
     RDS_SECRET_NAME = args.rds_secret_name
     S3_SECRET_NAME = args.s3_secret_name
+    CREDENTIALS_OPTION = args.credentials_option
 
     main()
