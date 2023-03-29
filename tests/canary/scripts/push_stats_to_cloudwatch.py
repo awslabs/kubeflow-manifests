@@ -7,13 +7,13 @@ xml_path = "../canary/integration_tests.xml"
 
 def readXML_and_publish_metrics_to_cw():
     tree = ET.parse(xml_path)
-    root = tree.getroot
+    root = tree.getroot()
     failures = root.attrib['failures']
     errors = root.attrib['errors']
     tests = root.attrib['tests']
     timestamp = root.attrib['timestamp']
 
-    success_rate = 1 - (failures/tests)
+    success_rate = 1 - (int(failures)/int(tests))
 
     print (f"Failures: {failures}")
     print (f"Errors: {errors}")
@@ -29,26 +29,26 @@ def readXML_and_publish_metrics_to_cw():
         {
             'MetricName': 'failures',
             'Timestamp': timestamp,
-            'Value': failures,
+            'Value': int(failures),
             'Unit': 'Count'
         },
         {
             'MetricName': 'errors',
             'Timestamp': timestamp,
-            'Value': errors,
+            'Value': int(errors),
             'Unit': 'Count'
         },
         {
             'MetricName': 'total_tests',
             'Timestamp': timestamp,
-            'Value': tests,
+            'Value': int(tests),
             'Unit': 'Count'
         },
         {
             'MetricName': 'successes_rate',
             'Timestamp': timestamp,
             'Value': success_rate,
-            'Unit': 'Count'
+            'Unit': 'Percent'
         }
     ]
 
