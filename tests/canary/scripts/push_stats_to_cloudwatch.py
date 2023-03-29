@@ -33,8 +33,9 @@ def readXML_and_publish_metrics_to_cw():
     codebuild_client = boto3.client("codebuild")
     region = codebuild_client.meta.region_name
 
-    codebuild_info = codebuild_client.describe_projects(names=["CodeBuild-Run-All-Tests"])
-    project_name = codebuild_info['projects'][0]['name']
+    codebuild_projects = codebuild_client.list_projects()['project']
+    print(codebuild_projects)
+    project_name = codebuild_projects[0]
 
     # Define the metric data
     metric_data = [
