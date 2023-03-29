@@ -12,7 +12,6 @@ def readXML_and_publish_metrics_to_cw():
     errors = testsuite.attrib['errors']
     tests = testsuite.attrib['tests']
     timestamp = testsuite.attrib['timestamp']
-
     success_rate = 1 - (int(failures)/int(tests))
 
     print (f"Failures: {failures}")
@@ -22,29 +21,51 @@ def readXML_and_publish_metrics_to_cw():
 
     #push to cloudwatch
     cw_client = boto3.client("cloudwatch")
+    codebuild_client = boto3.client("codebuild")
+    region = codebuild_client.meta.region_name
+
+    codebuild_info = codebuild_client.describe_projects(names=["CodeBuild-Run-All-Tests"])
+    project_name = codebuild_info['projects'][0]['name']
+
     # Define the metric data
     metric_data = [
         {
             'MetricName': 'failures',
             'Timestamp': timestamp,
+            'Dimensions': [
+                {'Name': "CodeBuild Project Name", "Value": project_name},
+                {'Name': "region", "Value": region},
+            ],
             'Value': int(failures),
             'Unit': 'Count'
         },
         {
             'MetricName': 'errors',
             'Timestamp': timestamp,
+            'Dimensions': [
+                {'Name': "CodeBuild Project Name", "Value": project_name},
+                {'Name': "region", "Value": region},
+            ],
             'Value': int(errors),
             'Unit': 'Count'
         },
         {
             'MetricName': 'total_tests',
             'Timestamp': timestamp,
+            'Dimensions': [
+                {'Name': "CodeBuild Project Name", "Value": project_name},
+                {'Name': "region", "Value": region},
+            ],
             'Value': int(tests),
             'Unit': 'Count'
         },
         {
             'MetricName': 'successes_rate',
             'Timestamp': timestamp,
+            'Dimensions': [
+                {'Name': "CodeBuild Project Name", "Value": project_name},
+                {'Name': "region", "Value": region},
+            ],
             'Value': success_rate,
             'Unit': 'Percent'
         }
