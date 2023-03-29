@@ -16,7 +16,7 @@ phases:
       - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
   post_build:
     commands:
-      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.log /tmp/results.xml
+      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.xml /tmp/results.xml
         # Push test image to cache ECR repo
       - docker push ${ECR_CACHE_URI}:latest || true
 
