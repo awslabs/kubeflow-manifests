@@ -1,18 +1,27 @@
 import boto3
 import datetime
 import xml.etree.ElementTree as ET
+import os
 
 
 xml_path = "../canary/integration_tests.xml"
 
 def readXML_and_publish_metrics_to_cw():
-    tree = ET.parse(xml_path)
-    testsuite = tree.find('testsuite')
-    failures = testsuite.attrib['failures']
-    errors = testsuite.attrib['errors']
-    tests = testsuite.attrib['tests']
-    timestamp = testsuite.attrib['timestamp']
-    success_rate = 1 - (int(failures)/int(tests))
+    if os.path.isfile(xml_path):
+        tree = ET.parse(xml_path)
+        testsuite = tree.find('testsuite')
+        failures = testsuite.attrib['failures']
+        errors = testsuite.attrib['errors']
+        tests = testsuite.attrib['tests']
+        success_rate = 1 - (int(failures)/int(tests))
+    else:
+        failures = 0
+        errors = 0
+        tests = 0
+        success_rate = 0
+    
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
 
     print (f"Failures: {failures}")
     print (f"Errors: {errors}")
