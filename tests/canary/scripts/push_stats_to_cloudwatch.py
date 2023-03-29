@@ -7,11 +7,11 @@ xml_path = "../canary/integration_tests.xml"
 
 def readXML_and_publish_metrics_to_cw():
     tree = ET.parse(xml_path)
-    root = tree.getroot()
-    failures = root.attrib['failures']
-    errors = root.attrib['errors']
-    tests = root.attrib['tests']
-    timestamp = root.attrib['timestamp']
+    testsuite = tree.find('testsuite')
+    failures = testsuite.attrib['failures']
+    errors = testsuite.attrib['errors']
+    tests = testsuite.attrib['tests']
+    timestamp = testsuite.attrib['timestamp']
 
     success_rate = 1 - (int(failures)/int(tests))
 
@@ -21,8 +21,6 @@ def readXML_and_publish_metrics_to_cw():
     print (f"Success_rate: {success_rate}")
 
     #push to cloudwatch
-    # We can only push a max of 20 metrics at a time
-        # Split metrics into chunks of 20 so that we have minimum number of put_metric_data calls
     cw_client = boto3.client("cloudwatch")
     # Define the metric data
     metric_data = [
