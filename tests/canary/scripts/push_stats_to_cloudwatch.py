@@ -1,5 +1,5 @@
 import boto3
-import datetime
+from datetime import datetime
 import xml.etree.ElementTree as ET
 import os
 
