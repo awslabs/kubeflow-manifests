@@ -31,9 +31,8 @@ def readXML_and_publish_metrics_to_cw():
     #push to cloudwatch
     cw_client = boto3.client("cloudwatch")
     codebuild_client = boto3.client("codebuild")
-    region = codebuild_client.meta.region_name
 
-    codebuild_projects = codebuild_client.list_projects()['project']
+    codebuild_projects = codebuild_client.list_projects()['projects']
     print(codebuild_projects)
     project_name = codebuild_projects[0]
 
@@ -44,7 +43,6 @@ def readXML_and_publish_metrics_to_cw():
             'Timestamp': timestamp,
             'Dimensions': [
                 {'Name': "CodeBuild Project Name", "Value": project_name},
-                {'Name': "region", "Value": region},
             ],
             'Value': int(failures),
             'Unit': 'Count'
@@ -54,7 +52,6 @@ def readXML_and_publish_metrics_to_cw():
             'Timestamp': timestamp,
             'Dimensions': [
                 {'Name': "CodeBuild Project Name", "Value": project_name},
-                {'Name': "region", "Value": region},
             ],
             'Value': int(errors),
             'Unit': 'Count'
@@ -64,7 +61,6 @@ def readXML_and_publish_metrics_to_cw():
             'Timestamp': timestamp,
             'Dimensions': [
                 {'Name': "CodeBuild Project Name", "Value": project_name},
-                {'Name': "region", "Value": region},
             ],
             'Value': int(tests),
             'Unit': 'Count'
@@ -74,7 +70,6 @@ def readXML_and_publish_metrics_to_cw():
             'Timestamp': timestamp,
             'Dimensions': [
                 {'Name': "CodeBuild Project Name", "Value": project_name},
-                {'Name': "region", "Value": region},
             ],
             'Value': success_rate,
             'Unit': 'Percent'
