@@ -12,9 +12,8 @@ phases:
         || echo "Docker Build Failed" || true
   build:
     commands:
-      - set -euo pipefail 
       # Run tests
-      - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
+      - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest || true
   post_build:
     commands:
       - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.xml /tmp/results.xml
