@@ -65,7 +65,7 @@ def readXML_and_publish_metrics_to_cw():
     # Use the put_metric_data method to push the metric data to CloudWatch
     try:
         response = cw_client.put_metric_data(
-            Namespace="Canary_Telemetry", MetricData=metric_data
+            Namespace="Canary_Metrics", MetricData=metric_data
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
             print("Successfully pushed data to CloudWatch")
