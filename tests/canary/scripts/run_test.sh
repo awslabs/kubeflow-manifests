@@ -34,5 +34,5 @@ function push_to_cloudwatch {
   python ../canary/scripts/push_stats_to_cloudwatch.py
 }
 
-trap push_to_cloudwatch ERR
+trap push_to_cloudwatch EXIT
 
