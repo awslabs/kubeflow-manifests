@@ -43,6 +43,7 @@ def profile_trust_policy(cluster, region, account_id):
                         f"{oidc_url}:aud": "sts.amazonaws.com",
                         f"{oidc_url}:sub": [
                             "system:serviceaccount:kubeflow:ml-pipeline",
+                            "system:serviceaccount:kubeflow-user-example-com:default-editor"
                         ],
                     }
                 },
