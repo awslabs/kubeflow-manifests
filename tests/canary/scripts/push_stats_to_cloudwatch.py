@@ -58,7 +58,7 @@ def readXML_and_publish_metrics_to_cw():
             "Dimensions": [
                 {"Name": "CodeBuild Project Name", "Value": project_name},
             ],
-            "Value": successes,
+            "Value": int(successes),
             "Unit": "Count",
         },
     ]
