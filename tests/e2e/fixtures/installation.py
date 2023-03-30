@@ -60,10 +60,12 @@ def installation(
     """
 
     def on_create():
-        install_kubeflow(installation_option, deployment_option, cluster)
+        print("intent for testing...")
+        #install_kubeflow(installation_option, deployment_option, cluster)
         
     def on_delete():
-        uninstall_kubeflow(installation_option, deployment_option)
+        print("intent for testing...")
+        #uninstall_kubeflow(installation_option, deployment_option)
 
 
 
