@@ -13,7 +13,7 @@ def readXML_and_publish_metrics_to_cw():
         testsuite = tree.find("testsuite")
         failures = testsuite.attrib["failures"]
         tests = testsuite.attrib["tests"]
-        successes = tests - failures
+        successes = int(tests) - int(failures)
     else:
         failures = 0
         successes = 0
