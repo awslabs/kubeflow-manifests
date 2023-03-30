@@ -9,11 +9,6 @@
 # Script configuration
 set -euo pipefail
 
-function onError {
-
-  echo "Run test FAILED. Exiting."
-}
-trap onError ERR
 
 export CANARY_TEST_DIR=${REPO_PATH}/tests/canary
 export E2E_TEST_DIR=${REPO_PATH}/tests/e2e
@@ -39,5 +34,5 @@ function push_to_cloudwatch {
   python ../canary/scripts/push_stats_to_cloudwatch.py
 }
 
-trap push_to_cloudwatch EXIT
+trap push_to_cloudwatch ERR
 
