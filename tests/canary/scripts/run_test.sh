@@ -10,6 +10,7 @@
 set -euo pipefail
 
 function onError {
+
   echo "Run test FAILED. Exiting."
 }
 trap onError ERR
@@ -32,5 +33,11 @@ cp metadata-canary $E2E_TEST_DIR/.metadata/
 
 cd $E2E_TEST_DIR
 pytest tests/test_sanity_portforward.py -s -q --metadata .metadata/metadata-canary --region $CLUSTER_REGION --installation_option $INSTALLATION_OPTION --junitxml ../canary/integration_tests.xml
-trap 'python ../canary/scripts/push_stats_to_cloudwatch.py' EXIT
+
+function push_to_cloudwatch {
+  echo "Pushing Codebuild stats to Cloudwatch."
+  python ../canary/scripts/push_stats_to_cloudwatch.py
+}
+
+trap push_to_cloudwatch EXIT
 
