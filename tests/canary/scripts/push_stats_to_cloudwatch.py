@@ -26,11 +26,8 @@ def readXML_and_publish_metrics_to_cw():
 
     # push to cloudwatch
     cw_client = boto3.client("cloudwatch")
-    codebuild_client = boto3.client("codebuild")
-
-    codebuild_projects = codebuild_client.list_projects()["projects"]
-    print(codebuild_projects)
-    project_name = codebuild_projects[0]
+    project_name = os.getenv("codeBuildProjectName")
+    print(f"Codebuild_project: {project_name}")
 
     # Define the metric data
     metric_data = [
