@@ -6,7 +6,6 @@ phases:
       # Get cached test image
       - aws ecr get-login-password --region $CLUSTER_REGION | docker login --username AWS --password-stdin $ECR_CACHE_URI || true
       - docker pull ${ECR_CACHE_URI}:latest --quiet || true
-
       # Build test image
       - >
         docker build -f ./tests/canary/Dockerfile.canary . -t ${ECR_CACHE_URI}:latest --quiet
@@ -15,8 +14,15 @@ phases:
     commands:
       # Run tests
       - docker run --name kf-distro-canary $(env | cut -f1 -d= | sed 's/^/-e /') --mount type=bind,source="$(pwd)/",target="/kubeflow-manifests/" ${ECR_CACHE_URI}:latest
-      
-      # Push test image to cache ECR repo
+  post_build:
+    commands:
+      - docker cp kf-distro-canary:/kubeflow-manifests/tests/canary/integration_tests.xml /tmp/results.xml || true
+        # Push test image to cache ECR repo
       - docker push ${ECR_CACHE_URI}:latest || true
-      
+
+reports:
+  IntegrationTestReport:
+    files:
+      - "results.xml"
+    base-directory: "/tmp"    
       

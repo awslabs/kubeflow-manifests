@@ -63,7 +63,6 @@ def installation(
         install_kubeflow(installation_option, deployment_option, cluster)
         
     def on_delete():
-        
         uninstall_kubeflow(installation_option, deployment_option)
 
 
