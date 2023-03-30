@@ -27,12 +27,10 @@ mkdir -p $E2E_TEST_DIR/.metadata/
 cp metadata-canary $E2E_TEST_DIR/.metadata/
 
 cd $E2E_TEST_DIR
-pytest tests/test_sanity_portforward.py -s -q --metadata .metadata/metadata-canary --region $CLUSTER_REGION --installation_option $INSTALLATION_OPTION --junitxml ../canary/integration_tests.xml
-
 function push_to_cloudwatch {
   echo "Pushing Codebuild stats to Cloudwatch."
   python ../canary/scripts/push_stats_to_cloudwatch.py
 }
-
 trap push_to_cloudwatch EXIT
+pytest tests/test_sanity_portforward.py -s -q --metadata .metadata/metadata-canary --region $CLUSTER_REGION --installation_option $INSTALLATION_OPTION --junitxml ../canary/integration_tests.xml
 
