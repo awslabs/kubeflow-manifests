@@ -115,7 +115,7 @@ deploy-kubeflow: bootstrap-ack
 	if [ "$(CREDENTIALS_OPTION)" = "irsa" ]; then \
 		make bootstrap-pipelines; \
 	fi
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credential_option $(CREDENTIALS_OPTION) --cluster_name $(CLUSTER_NAME)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credentials_option $(CREDENTIALS_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)
