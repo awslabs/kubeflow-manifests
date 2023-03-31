@@ -7,7 +7,12 @@ from e2e.utils.config import metadata, configure_resource_fixture
 from e2e.conftest import region
 
 from e2e.fixtures.cluster import cluster
-from e2e.fixtures.installation import installation, clone_upstream, configure_manifests, ebs_addon
+from e2e.fixtures.installation import (
+    installation,
+    clone_upstream,
+    configure_manifests,
+    ebs_addon,
+)
 from e2e.fixtures.clients import (
     account_id,
     kfp_client,
@@ -23,7 +28,7 @@ TO_ROOT_PATH = "../../"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 
 NOTEBOOK_IMAGES = [
-    "kubeflownotebookswg/jupyter-scipy:v1.7.0-rc.1",
+    "kubeflownotebookswg/jupyter-scipy:v1.7.0",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-gpu-py39-cu112-ubuntu20.04-ec2-v1.1",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.10.0-cpu-py39-ubuntu20.04-ec2-v1.1",
     "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2",
@@ -50,9 +55,11 @@ testdata = [
 
 INSTALLATION_PATH_FILE = "./resources/installation_config/vanilla.yaml"
 
+
 @pytest.fixture(scope="class")
 def installation_path():
     return INSTALLATION_PATH_FILE
+
 
 class TestNotebookImages:
     @pytest.fixture(scope="function")
@@ -66,7 +73,7 @@ class TestNotebookImages:
     )
     def test_notebook_container(
         self,
-        setup, 
+        setup,
         region,
         metadata,
         notebook_server,
