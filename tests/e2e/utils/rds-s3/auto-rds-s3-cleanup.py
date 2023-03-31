@@ -35,9 +35,10 @@ def delete_s3_bucket(metadata, secrets_manager_client, region):
     else:
         print("Skip deleting S3 bucket...")
 
-    secrets_manager_client.delete_secret(
-        SecretId=metadata["S3"]["secretName"], ForceDeleteWithoutRecovery=True
-    )
+    if metadata["S3"]["secretName"]:
+        secrets_manager_client.delete_secret(
+            SecretId=metadata["S3"]["secretName"], ForceDeleteWithoutRecovery=True
+        )
 
 def check_bucket(bucket_name,s3_client):
     try:
