@@ -29,7 +29,7 @@ spec:
               fieldPath: metadata.namespace
         - name: APP_DISABLE_AUTH
           value: 'false'
-        image: docker.io/kubeflowkatib/katib-ui:v0.15.0-rc.1
+        image: docker.io/kubeflowkatib/katib-ui:v0.15.0
         name: katib-ui
         ports:
         - containerPort: 8080

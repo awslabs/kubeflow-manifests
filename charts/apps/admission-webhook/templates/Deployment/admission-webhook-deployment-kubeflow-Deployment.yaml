@@ -29,7 +29,7 @@ spec:
       - args:
         - --tlsCertFile=/etc/webhook/certs/tls.crt
         - --tlsKeyFile=/etc/webhook/certs/tls.key
-        image: docker.io/kubeflownotebookswg/poddefaults-webhook:v1.7.0-rc.1
+        image: docker.io/kubeflownotebookswg/poddefaults-webhook:v1.7.0
         name: admission-webhook
         ports:
         - containerPort: 4443

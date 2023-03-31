@@ -10,5 +10,5 @@ metadata:
   labels:
     app: volumes-web-app
     kustomize.component: volumes-web-app
-  name: volumes-web-app-parameters-dbh9dmt5gt
+  name: volumes-web-app-parameters-57h65c44mg
   namespace: kubeflow
