@@ -50,8 +50,8 @@ istio:
     - upstream/common/istio-1-16/istio-namespace/base
     - upstream/common/istio-1-16/istio-install/base
   output_helm_chart_path: charts/common/istio
-  version: 0.2.0
-  app_version: 1.16.0
+  version: 0.2.1
+  app_version: 1.16.1
 
 
 kubeflow-issuer:
