@@ -102,7 +102,7 @@ spec:
         envFrom:
         - configMapRef:
             name: pipeline-api-server-config-dc9hkg52h6
-        image: public.ecr.aws/c9e4w0g3/ml-pipeline/api-server:2.0.0-alpha.5
+        image: public.ecr.aws/kubeflow-on-aws/ml-pipeline/api-server:2.0.0-alpha.7
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

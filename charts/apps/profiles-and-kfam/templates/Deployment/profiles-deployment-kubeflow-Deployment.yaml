@@ -28,8 +28,8 @@ spec:
         - $(USERID_PREFIX)
         envFrom:
         - configMapRef:
-            name: profiles-config-2g29dd2mbd
-        image: docker.io/kubeflownotebookswg/kfam:v1.7.0-rc.1
+            name: profiles-config-46c7tgh6fd
+        image: docker.io/kubeflownotebookswg/kfam:v1.7.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -52,8 +52,8 @@ spec:
         - $(WORKLOAD_IDENTITY)
         envFrom:
         - configMapRef:
-            name: profiles-config-2g29dd2mbd
-        image: docker.io/kubeflownotebookswg/profile-controller:v1.7.0-rc.1
+            name: profiles-config-46c7tgh6fd
+        image: docker.io/kubeflownotebookswg/profile-controller:v1.7.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -77,5 +77,5 @@ spec:
       serviceAccountName: profiles-controller-service-account
       volumes:
       - configMap:
-          name: namespace-labels-data-54d54k5788
+          name: namespace-labels-data-4df5t8mdgf
         name: namespace-labels

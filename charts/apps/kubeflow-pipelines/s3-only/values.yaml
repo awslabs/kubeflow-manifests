@@ -1,6 +1,6 @@
 s3:
-  bucketName: 
+  bucketName:
   minioServiceHost: s3.amazonaws.com
-  minioServiceRegion: 
+  minioServiceRegion:
 irsa:
   roleArn:

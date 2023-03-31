@@ -4,19 +4,19 @@ data:
   DEFAULT_CACHE_STALENESS: ''
   MAXIMUM_CACHE_STALENESS: ''
   appName: pipeline
-  appVersion: 2.0.0-alpha.6
+  appVersion: 2.0.0-alpha.7
   autoUpdatePipelineDefaultVersion: 'true'
   bucketName: '{{ .Values.s3.bucketName }}'
   cacheDb: cachedb
   cacheImage: gcr.io/google-containers/busybox
   cacheNodeRestrictions: 'false'
   cronScheduleTimezone: UTC
-  dbHost: testa.c6uzclpednto.ca-central-1.rds.amazonaws.com
+  dbHost: '{{ .Values.rds.dbHost }}'
   dbPort: '3306'
   defaultPipelineRoot: ''
   minioServiceHost: '{{ .Values.s3.minioServiceHost }}'
   minioServiceRegion: '{{ .Values.s3.minioServiceRegion }}'
-  mlmdDb: metadb
+  mlmdDb: '{{ .Values.rds.mlmdDb }}'
   pipelineDb: mlpipeline
   warning: '1. Do not use kubectl to edit this configmap, because some values are
     used

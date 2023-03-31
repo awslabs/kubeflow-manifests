@@ -10,5 +10,5 @@ metadata:
   labels:
     app: tensorboards-web-app
     kustomize.component: tensorboards-web-app
-  name: tensorboards-web-app-parameters-c8ttmfh2f8
+  name: tensorboards-web-app-parameters-642bbg7t66
   namespace: kubeflow

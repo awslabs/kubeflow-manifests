@@ -48,7 +48,7 @@ spec:
             secretKeyRef:
               key: port
               name: mysql-secret
-        image: docker.io/kubeflowkatib/katib-db-manager:v0.15.0-rc.1
+        image: docker.io/kubeflowkatib/katib-db-manager:v0.15.0
         livenessProbe:
           exec:
             command:

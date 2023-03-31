@@ -28,7 +28,7 @@ spec:
           value: ''
         - name: APP_SECURE_COOKIES
           value: 'true'
-        image: docker.io/kubeflownotebookswg/volumes-web-app:v1.7.0-rc.1
+        image: docker.io/kubeflownotebookswg/volumes-web-app:v1.7.0
         name: volumes-web-app
         ports:
         - containerPort: 5000

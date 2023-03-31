@@ -4,7 +4,7 @@ data:
   DEFAULT_CACHE_STALENESS: ''
   MAXIMUM_CACHE_STALENESS: ''
   appName: pipeline
-  appVersion: 2.0.0-alpha.6
+  appVersion: 2.0.0-alpha.7
   autoUpdatePipelineDefaultVersion: 'true'
   bucketName: mlpipeline
   cacheDb: cachedb
@@ -32,7 +32,6 @@ data:
     '
 kind: ConfigMap
 metadata:
-  annotations: {}
   labels:
     app.kubernetes.io/component: ml-pipeline
     app.kubernetes.io/name: kubeflow-pipelines

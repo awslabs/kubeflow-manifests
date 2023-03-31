@@ -4,9 +4,9 @@ data:
   DEFAULT_CACHE_STALENESS: ''
   MAXIMUM_CACHE_STALENESS: ''
   appName: pipeline
-  appVersion: 2.0.0-alpha.6
+  appVersion: 2.0.0-alpha.7
   autoUpdatePipelineDefaultVersion: 'true'
-  bucketName: '{{ .Values.s3.bucketName }}' 
+  bucketName: '{{ .Values.s3.bucketName }}'
   cacheDb: cachedb
   cacheImage: gcr.io/google-containers/busybox
   cacheNodeRestrictions: 'false'

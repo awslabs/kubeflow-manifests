@@ -5,5 +5,5 @@ data:
   TENSORBOARD_IMAGE: tensorflow/tensorflow:2.5.1
 kind: ConfigMap
 metadata:
-  name: tensorboard-controller-config-c2894t4ft8
+  name: tensorboard-controller-config-b98cb9gk9k
   namespace: kubeflow
