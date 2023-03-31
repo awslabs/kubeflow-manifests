@@ -1,5 +1,5 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/awslabs/kubeflow-manifests/issues)
-![current development version](https://img.shields.io/badge/Kubeflow-v1.7.0--rc.2-green)
+![current development version](https://img.shields.io/badge/Kubeflow-v1.7.0-green)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 # Kubeflow on AWS
 
