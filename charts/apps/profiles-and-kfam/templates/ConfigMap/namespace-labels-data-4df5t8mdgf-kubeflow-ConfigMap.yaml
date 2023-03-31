@@ -41,5 +41,5 @@ kind: ConfigMap
 metadata:
   labels:
     kustomize.component: profiles
-  name: namespace-labels-data-54d54k5788
+  name: namespace-labels-data-4df5t8mdgf
   namespace: kubeflow

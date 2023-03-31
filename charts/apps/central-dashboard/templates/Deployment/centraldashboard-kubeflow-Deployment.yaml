@@ -40,7 +40,7 @@ spec:
           value: centraldashboard-config
         - name: LOGOUT_URL
           value: /authservice/logout
-        image: docker.io/kubeflownotebookswg/centraldashboard:v1.7.0-rc.1
+        image: docker.io/kubeflownotebookswg/centraldashboard:v1.7.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

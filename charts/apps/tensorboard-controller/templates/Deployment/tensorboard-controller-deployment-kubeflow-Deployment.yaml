@@ -25,32 +25,14 @@ spec:
     spec:
       containers:
       - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=0
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: https
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 500m
-            memory: 128Mi
-          requests:
-            cpu: 5m
-            memory: 64Mi
-      - args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         command:
         - /manager
         envFrom:
         - configMapRef:
-            name: tensorboard-controller-config-c2894t4ft8
-        image: docker.io/kubeflownotebookswg/tensorboard-controller:v1.7.0-rc.1
+            name: tensorboard-controller-config-b98cb9gk9k
+        image: docker.io/kubeflownotebookswg/tensorboard-controller:v1.7.0
         livenessProbe:
           httpGet:
             path: /healthz
@@ -73,6 +55,24 @@ spec:
             memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
+      - args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=0
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 5m
+            memory: 64Mi
       securityContext:
         runAsNonRoot: true
         runAsUser: 999

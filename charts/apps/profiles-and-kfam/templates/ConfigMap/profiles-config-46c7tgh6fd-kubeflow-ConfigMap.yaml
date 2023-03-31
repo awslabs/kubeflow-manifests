@@ -8,5 +8,5 @@ kind: ConfigMap
 metadata:
   labels:
     kustomize.component: profiles
-  name: profiles-config-2g29dd2mbd
+  name: profiles-config-46c7tgh6fd
   namespace: kubeflow
