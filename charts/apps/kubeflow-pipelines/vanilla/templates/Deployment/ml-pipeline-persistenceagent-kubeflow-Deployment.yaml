@@ -29,18 +29,18 @@ spec:
       - env:
         - name: NAMESPACE
           value: ''
-        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
-          value: '86400'
-        - name: NUM_WORKERS
-          value: '2'
         - name: KUBEFLOW_USERID_HEADER
           value: kubeflow-userid
         - name: KUBEFLOW_USERID_PREFIX
           value: ''
+        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
+          value: '86400'
+        - name: NUM_WORKERS
+          value: '2'
         envFrom:
         - configMapRef:
-            name: persistenceagent-config-56mkmd426t
-        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.6
+            name: persistenceagent-config-hkgkmd64bh
+        image: gcr.io/ml-pipeline/persistenceagent:2.0.0-alpha.7
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
         resources:
