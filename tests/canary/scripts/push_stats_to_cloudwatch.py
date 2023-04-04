@@ -5,11 +5,8 @@ import os
 import subprocess
 
 xml_path = "../canary/integration_tests.xml"
-test_file_name = "../e2e/tests/test_sanity_portforward.py"
 
 def readXML_and_publish_metrics_to_cw():
-    tests = get_num_collected_tests(test_file_name)
-    print(f"number of tests: {tests}")
     if os.path.isfile(xml_path):
         tree = ET.parse(xml_path)
         testsuite = tree.find("testsuite")
@@ -19,6 +16,7 @@ def readXML_and_publish_metrics_to_cw():
     else:
         failures = 0
         successes = 0
+        tests = 0
         
 
     timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
@@ -82,17 +80,6 @@ def readXML_and_publish_metrics_to_cw():
         print("Error pushing data to CloudWatch: {}".format(e))
         # raise exception if there was an error pushing data to CloudWatch
         raise
-
-
-def get_num_collected_tests(test_file_name):
-    # Run the pytest command and capture its output
-    result = subprocess.run(["pytest", "-q", "--collect-only", test_file_name], capture_output=True, text=True)
-
-    # Extract the number of collected tests from the output
-    num_tests = int(result.stdout.splitlines()[-1].split()[0])
-
-    # Return the number of collected tests as an integer
-    return num_tests
 
 
 def main():
