@@ -17,7 +17,7 @@ def readXML_and_publish_metrics_to_cw():
     else:
         failures = 0
         successes = 0
-        tests = 1
+        tests = 0
 
     timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
