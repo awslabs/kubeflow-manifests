@@ -101,6 +101,7 @@ def installation(
     ebs_addon,
     installation_path,
     installation_option,
+    credentials_option,
     request,
 ):
     """
@@ -114,7 +115,7 @@ def installation(
     """
 
     def on_create():
-        install_kubeflow(installation_option, deployment_option, cluster)
+        install_kubeflow(installation_option, deployment_option, cluster, credentials_option)
 
     def on_delete():
         uninstall_kubeflow(installation_option, deployment_option)

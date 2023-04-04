@@ -58,6 +58,12 @@ def pytest_addoption(parser):
         action="store",
         help="vanilla/cognito/rds-and-s3/rds-only/s3-only, default is set to vanilla"
     )
+    parser.addoption(
+        "--credentials_option",
+        action="store",
+        help="irsa or static, default is set to static"
+    )
+
 
 
 
@@ -143,6 +149,21 @@ def deployment_option(metadata, request):
     metadata.insert("deployment_option", deployment_option)
     
     return deployment_option
+
+@pytest.fixture(scope="class")
+def credentials_option(metadata, request):
+    """
+    Test credentials option.
+    """
+    if metadata.get("credentials_option"):
+        return metadata.get("credentials_option")
+
+    credentials_option = request.config.getoption("--credentials_option")
+    if not credentials_option:
+        credentials_option = 'static'
+    metadata.insert("credentials_option", credentials_option)
+    
+    return credentials_option
 
 
 @pytest.fixture(scope="class")
