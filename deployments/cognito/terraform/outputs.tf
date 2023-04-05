@@ -54,5 +54,5 @@ output "region" {
 }
 
 output "kubelow_platform_domain" {
-    value = module.kubeflow_components.kubelow_platform_domain
+  value = module.kubeflow_components.kubelow_platform_domain
 }

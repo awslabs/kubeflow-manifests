@@ -1,7 +1,7 @@
 locals {
   cluster_name = var.cluster_name
   region       = var.cluster_region
-  eks_version = var.eks_version
+  eks_version  = var.eks_version
 
   vpc_cidr = "10.0.0.0/16"
 
@@ -17,9 +17,9 @@ locals {
   azs      = slice(local.available_azs, 0, local.az_count)
 
   tags = {
-    Blueprint  = local.cluster_name
-    GithubRepo = "github.com/awslabs/kubeflow-manifests"
-    Platform = "kubeflow-on-aws"
+    Blueprint       = local.cluster_name
+    GithubRepo      = "github.com/awslabs/kubeflow-manifests"
+    Platform        = "kubeflow-on-aws"
     KubeflowVersion = "1.6"
   }
 
@@ -50,7 +50,7 @@ locals {
     mg_gpu = local.managed_node_group_gpu
   }
 
-  managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null}
+  managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null }
 }
 
 provider "aws" {
@@ -117,7 +117,7 @@ module "eks_blueprints" {
 
   # configuration settings: https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/modules/aws-eks-managed-node-groups/locals.tf
   managed_node_groups = local.managed_node_groups
-  tags = local.tags
+  tags                = local.tags
 }
 
 module "eks_blueprints_kubernetes_addons" {
@@ -129,16 +129,16 @@ module "eks_blueprints_kubernetes_addons" {
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
   # EKS Managed Add-ons
-  enable_amazon_eks_vpc_cni    = true
-  enable_amazon_eks_coredns    = true
-  enable_amazon_eks_kube_proxy = true
+  enable_amazon_eks_vpc_cni            = true
+  enable_amazon_eks_coredns            = true
+  enable_amazon_eks_kube_proxy         = true
   enable_amazon_eks_aws_ebs_csi_driver = true
 
   # EKS Blueprints Add-ons
-  enable_cert_manager = true
+  enable_cert_manager                 = true
   enable_aws_load_balancer_controller = true
-  enable_aws_efs_csi_driver = true
-  enable_aws_fsx_csi_driver = true
+  enable_aws_efs_csi_driver           = true
+  enable_aws_fsx_csi_driver           = true
 
   enable_nvidia_device_plugin = local.using_gpu
 
@@ -161,11 +161,11 @@ module "eks_blueprints_outputs" {
 module "kubeflow_components" {
   source = "./vanilla-components"
 
-  kf_helm_repo_path = local.kf_helm_repo_path
-  addon_context = module.eks_blueprints_outputs.addon_context
-  enable_aws_telemetry = var.enable_aws_telemetry
-  notebook_enable_culling = var.notebook_enable_culling
-  notebook_cull_idle_time = var.notebook_cull_idle_time
+  kf_helm_repo_path              = local.kf_helm_repo_path
+  addon_context                  = module.eks_blueprints_outputs.addon_context
+  enable_aws_telemetry           = var.enable_aws_telemetry
+  notebook_enable_culling        = var.notebook_enable_culling
+  notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
 }
 
