@@ -1,5 +1,5 @@
 output "kubelow_platform_domain" {
-    value = module.ingress_cognito[0].kubelow_platform_domain
+  value = module.ingress_cognito[0].kubelow_platform_domain
 }
 
 output "rds_endpoint" {
@@ -13,11 +13,11 @@ output "s3_bucket_name" {
 }
 
 output "irsa_kubeflow_pipeline_role_name" {
-  value = try(module.kubeflow_pipeline_irsa[0].irsa_iam_role_name,null)
+  value       = try(module.kubeflow_pipeline_irsa[0].irsa_iam_role_name, null)
   description = " The irsa role name for KFP"
 }
 
 output "irsa_user_namespace_role_name" {
-  value = try(module.user_namespace_irsa[0].irsa_iam_role_name,null)
+  value       = try(module.user_namespace_irsa[0].irsa_iam_role_name, null)
   description = " The irsa role name for kubeflow-user-example-com"
 }
