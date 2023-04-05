@@ -1,7 +1,7 @@
 locals {
   cluster_name = var.cluster_name
   region       = var.cluster_region
-  eks_version = var.eks_version
+  eks_version  = var.eks_version
 
   vpc_cidr = "10.0.0.0/16"
 
@@ -17,9 +17,9 @@ locals {
   azs      = slice(local.available_azs, 0, local.az_count)
 
   tags = {
-    Blueprint  = local.cluster_name
-    GithubRepo = "github.com/awslabs/kubeflow-manifests"
-    Platform = "kubeflow-on-aws"
+    Blueprint       = local.cluster_name
+    GithubRepo      = "github.com/awslabs/kubeflow-manifests"
+    Platform        = "kubeflow-on-aws"
     KubeflowVersion = "1.6"
   }
 
@@ -50,7 +50,7 @@ locals {
     mg_gpu = local.managed_node_group_gpu
   }
 
-  managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null}
+  managed_node_groups = { for k, v in local.potential_managed_node_groups : k => v if v != null }
 }
 
 provider "aws" {
@@ -61,7 +61,7 @@ provider "aws" {
 # https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html
 provider "aws" {
   region = "us-east-1"
-  alias = "virginia"
+  alias  = "virginia"
 }
 
 provider "kubernetes" {
@@ -137,24 +137,24 @@ module "eks_blueprints_kubernetes_addons" {
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
   # EKS Managed Add-ons
-  enable_amazon_eks_vpc_cni    = true
-  enable_amazon_eks_coredns    = true
-  enable_amazon_eks_kube_proxy = true
+  enable_amazon_eks_vpc_cni            = true
+  enable_amazon_eks_coredns            = true
+  enable_amazon_eks_kube_proxy         = true
   enable_amazon_eks_aws_ebs_csi_driver = true
 
   # EKS Blueprints Add-ons
-  enable_cert_manager = true
+  enable_cert_manager                 = true
   enable_aws_load_balancer_controller = true
-  enable_aws_efs_csi_driver = true
-  enable_aws_fsx_csi_driver = true
+  enable_aws_efs_csi_driver           = true
+  enable_aws_fsx_csi_driver           = true
 
   enable_nvidia_device_plugin = local.using_gpu
 
   secrets_store_csi_driver_helm_config = {
-    namespace   = "kube-system"
+    namespace = "kube-system"
     set = [
       {
-        name = "syncSecret.enabled",
+        name  = "syncSecret.enabled",
         value = "true"
       }
     ]
@@ -166,7 +166,7 @@ module "eks_blueprints_kubernetes_addons" {
     namespace = "kube-system"
     set = [
       {
-        name = "secrets-store-csi-driver.install",
+        name  = "secrets-store-csi-driver.install",
         value = "false"
       }
     ]
@@ -192,52 +192,52 @@ module "eks_blueprints_outputs" {
 module "kubeflow_components" {
   source = "./cognito-rds-s3-components"
 
-  kf_helm_repo_path = local.kf_helm_repo_path
-  addon_context = module.eks_blueprints_outputs.addon_context
-  enable_aws_telemetry = var.enable_aws_telemetry
-  notebook_enable_culling = var.notebook_enable_culling
-  notebook_cull_idle_time = var.notebook_cull_idle_time
+  kf_helm_repo_path              = local.kf_helm_repo_path
+  addon_context                  = module.eks_blueprints_outputs.addon_context
+  enable_aws_telemetry           = var.enable_aws_telemetry
+  notebook_enable_culling        = var.notebook_enable_culling
+  notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
 
   # rds
-  use_rds = var.use_rds
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = var.publicly_accessible ? module.vpc.public_subnets : module.vpc.private_subnets
-  security_group_id = module.eks_blueprints.cluster_primary_security_group_id
-  db_name = var.db_name
-  db_username = var.db_username
-  db_password = var.db_password
-  db_class = var.db_class
-  mlmdb_name = var.mlmdb_name
-  db_allocated_storage = var.db_allocated_storage
-  mysql_engine_version = var.mysql_engine_version
-  backup_retention_period = var.backup_retention_period
-  storage_type = var.storage_type
-  deletion_protection = var.deletion_protection
-  max_allocated_storage = var.max_allocated_storage
-  publicly_accessible = var.publicly_accessible
-  multi_az = var.multi_az
+  use_rds                        = var.use_rds
+  vpc_id                         = module.vpc.vpc_id
+  subnet_ids                     = var.publicly_accessible ? module.vpc.public_subnets : module.vpc.private_subnets
+  security_group_id              = module.eks_blueprints.cluster_primary_security_group_id
+  db_name                        = var.db_name
+  db_username                    = var.db_username
+  db_password                    = var.db_password
+  db_class                       = var.db_class
+  mlmdb_name                     = var.mlmdb_name
+  db_allocated_storage           = var.db_allocated_storage
+  mysql_engine_version           = var.mysql_engine_version
+  backup_retention_period        = var.backup_retention_period
+  storage_type                   = var.storage_type
+  deletion_protection            = var.deletion_protection
+  max_allocated_storage          = var.max_allocated_storage
+  publicly_accessible            = var.publicly_accessible
+  multi_az                       = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
-  generate_db_password = var.generate_db_password
+  generate_db_password           = var.generate_db_password
 
   # s3
-  use_s3 = var.use_s3
-  use_static =  var.use_static
-  minio_service_region = var.minio_service_region
-  force_destroy_s3_bucket = var.force_destroy_s3_bucket
-  minio_aws_access_key_id = var.minio_aws_access_key_id
+  use_s3                      = var.use_s3
+  use_static                  = var.use_static
+  minio_service_region        = var.minio_service_region
+  force_destroy_s3_bucket     = var.force_destroy_s3_bucket
+  minio_aws_access_key_id     = var.minio_aws_access_key_id
   minio_aws_secret_access_key = var.minio_aws_secret_access_key
 
   # cognito
-  use_cognito = var.use_cognito
-  aws_route53_root_zone_name = var.aws_route53_root_zone_name
+  use_cognito                     = var.use_cognito
+  aws_route53_root_zone_name      = var.aws_route53_root_zone_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
-  create_subdomain = var.create_subdomain
-  cognito_user_pool_name = var.cognito_user_pool_name
-  load_balancer_scheme = var.load_balancer_scheme
+  create_subdomain                = var.create_subdomain
+  cognito_user_pool_name          = var.cognito_user_pool_name
+  load_balancer_scheme            = var.load_balancer_scheme
 
   providers = {
-    aws = aws
+    aws          = aws
     aws.virginia = aws.virginia
   }
 

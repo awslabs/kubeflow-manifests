@@ -39,15 +39,15 @@ resource "kubernetes_ingress_v1" "istio_ingress" {
 
   metadata {
     annotations = {
-        "alb.ingress.kubernetes.io/auth-type": "cognito",
-        "alb.ingress.kubernetes.io/auth-idp-cognito": "{\"UserPoolArn\":\"${var.cognito_user_pool_arn}\",\"UserPoolClientId\":\"${var.cognito_app_client_id}\", \"UserPoolDomain\":\"${var.cognito_user_pool_domain}\"}"
-        "alb.ingress.kubernetes.io/certificate-arn": "${aws_acm_certificate.deployment_region.arn}"
-        "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTPS\":443}]",
-        "alb.ingress.kubernetes.io/target-type": "ip",
-        "alb.ingress.kubernetes.io/load-balancer-attributes": "routing.http.drop_invalid_header_fields.enabled=true",
-        "alb.ingress.kubernetes.io/scheme": "${var.load_balancer_scheme}"
+      "alb.ingress.kubernetes.io/auth-type" : "cognito",
+      "alb.ingress.kubernetes.io/auth-idp-cognito" : "{\"UserPoolArn\":\"${var.cognito_user_pool_arn}\",\"UserPoolClientId\":\"${var.cognito_app_client_id}\", \"UserPoolDomain\":\"${var.cognito_user_pool_domain}\"}"
+      "alb.ingress.kubernetes.io/certificate-arn" : "${aws_acm_certificate.deployment_region.arn}"
+      "alb.ingress.kubernetes.io/listen-ports" : "[{\"HTTPS\":443}]",
+      "alb.ingress.kubernetes.io/target-type" : "ip",
+      "alb.ingress.kubernetes.io/load-balancer-attributes" : "routing.http.drop_invalid_header_fields.enabled=true",
+      "alb.ingress.kubernetes.io/scheme" : "${var.load_balancer_scheme}"
     }
-    name = "istio-ingress"
+    name      = "istio-ingress"
     namespace = "istio-system"
   }
 
@@ -95,11 +95,11 @@ resource "aws_route53_record" "cname_record" {
 resource "aws_route53_record" "a_record" {
   allow_overwrite = true
   zone_id         = data.aws_route53_zone.platform.zone_id
-  name            = "${data.aws_route53_zone.platform.name}"
+  name            = data.aws_route53_zone.platform.name
   type            = "A"
 
   alias {
-    name                   = "${data.aws_lb.istio_ingress.dns_name}"
+    name                   = data.aws_lb.istio_ingress.dns_name
     zone_id                = data.aws_lb.istio_ingress.zone_id
     evaluate_target_health = false
   }

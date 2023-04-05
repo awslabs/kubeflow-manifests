@@ -14,10 +14,10 @@ data "aws_route53_zone" "platform" {
 # In order to use a custom domain, its root(i.e. platform.example.com) must have an valid A type record
 resource "aws_route53_record" "pre_cognito_domain_a_record" {
   allow_overwrite = true
-  zone_id = data.aws_route53_zone.platform.zone_id
-  name    = data.aws_route53_zone.platform.name
-  type    = "A"
-  ttl     = "300"
+  zone_id         = data.aws_route53_zone.platform.zone_id
+  name            = data.aws_route53_zone.platform.name
+  type            = "A"
+  ttl             = "300"
   # This record will be updated after ALB creation
   records = ["127.0.0.1"]
 
@@ -73,9 +73,9 @@ resource "aws_cognito_user_pool_domain" "platform" {
 
 resource "aws_route53_record" "auth_cognito_domain_record" {
   allow_overwrite = true
-  name    = aws_cognito_user_pool_domain.platform.domain
-  type    = "A"
-  zone_id = data.aws_route53_zone.platform.zone_id
+  name            = aws_cognito_user_pool_domain.platform.domain
+  type            = "A"
+  zone_id         = data.aws_route53_zone.platform.zone_id
   alias {
     evaluate_target_health = false
     name                   = aws_cognito_user_pool_domain.platform.cloudfront_distribution_arn
