@@ -184,7 +184,7 @@ def install_efs_driver():
     print("Installing EFS driver...")
 
     kubectl_kustomize_apply(
-        "https://github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.5.4"
+        "https://github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.5"
     )
 
     print("EFS driver installed!")

@@ -84,7 +84,7 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 We recommend installing the EFS CSI Driver v1.5.4 directly from the [the aws-efs-csi-driver github repo](https://github.com/kubernetes-sigs/aws-efs-csi-driver) as follows:
 
 ```bash
-kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.5.4"
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/release-1.5"
 ```
 
 You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:
