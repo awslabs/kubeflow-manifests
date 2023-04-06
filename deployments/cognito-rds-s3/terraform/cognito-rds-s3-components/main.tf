@@ -49,9 +49,9 @@ resource "kubernetes_namespace" "kubeflow" {
 }
 
 module "kubeflow_secrets_manager_irsa" {
-  source            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
-  kubernetes_namespace = kubernetes_namespace.kubeflow.metadata[0].name
-  create_kubernetes_namespace = false
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
+  kubernetes_namespace              = kubernetes_namespace.kubeflow.metadata[0].name
+  create_kubernetes_namespace       = false
   create_kubernetes_service_account = true
   kubernetes_service_account        = "kubeflow-secrets-manager-sa"
   irsa_iam_role_name = format("%s-%s-%s-%s", "kf-secrets-manager", "irsa", var.addon_context.eks_cluster_id, var.addon_context.aws_region_name)
