@@ -22,27 +22,27 @@ variable "addon_context" {
 
 variable "enable_aws_telemetry" {
   description = "Enable AWS telemetry component"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "use_rds" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "use_s3" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "use_static" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "use_cognito" {
-  type = bool
+  type    = bool
   default = true
 }
 
@@ -66,67 +66,67 @@ variable "security_group_id" {
 variable "db_name" {
   type        = string
   description = "Database name"
-  default = "kubeflow"
+  default     = "kubeflow"
 }
 
 variable "db_username" {
   type        = string
   description = "Database admin account username"
-  default = "admin"
+  default     = "admin"
 }
 
 variable "db_password" {
   type        = string
   description = "Database admin account password"
-  default = null
+  default     = null
 }
 
 variable "db_class" {
   type        = string
   description = "Database instance type"
-  default = "db.m5.large"
+  default     = "db.m5.large"
 }
 
 variable "db_allocated_storage" {
   type        = string
   description = "The size of the database (Gb)"
-  default = "20"
+  default     = "20"
 }
 
 variable "mysql_engine_version" {
   type        = string
   description = "The engine version of MySQL"
-  default = "8.0.32"
+  default     = "8.0.32"
 }
 
 variable "backup_retention_period" {
   type        = number
   description = "Number of days to retain backups for"
-  default = 7
+  default     = 7
 }
 
 variable "storage_type" {
   type        = string
   description = "Instance storage type: standard, gp2, or io1"
-  default = "gp2"
+  default     = "gp2"
 }
 
 variable "deletion_protection" {
   type        = bool
   description = "Prevents the deletion of the instance when set to true"
-  default = true
+  default     = true
 }
 
 variable "max_allocated_storage" {
   type        = number
   description = "The upper limit of scalable storage (Gb)"
-  default = 1000
+  default     = 1000
 }
 
 variable "publicly_accessible" {
   type        = bool
   description = "Makes the instance publicly accessible when true"
-  default = false
+  default     = false
 }
 
 variable "multi_az" {
@@ -137,39 +137,39 @@ variable "multi_az" {
 
 variable "mlmdb_name" {
   type        = string
-  default = "metadb"
+  default     = "metadb"
   description = "Name of the mlm DB to create"
 }
 
 variable "generate_db_password" {
   description = "Generates a random admin password for the RDS database. Is overriden by db_password"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 # S3
 
 variable "minio_service_region" {
   type        = string
-  default = null
+  default     = null
   description = "S3 service region. Change this field if the S3 bucket will be in a different region than the EKS cluster"
 }
 
 variable "minio_service_host" {
   type        = string
-  default = "s3.amazonaws.com"
+  default     = "s3.amazonaws.com"
   description = "S3 service host DNS. This field will need to be changed when making requests from other partitions e.g. China Regions"
 }
 
 variable "secret_recovery_window_in_days" {
-  type = number
+  type    = number
   default = 7
 }
 
 variable "force_destroy_s3_bucket" {
-  type = bool
+  type        = bool
   description = "Destroys s3 bucket even when the bucket is not empty"
-  default = false
+  default     = false
 }
 
 variable "minio_aws_access_key_id" {
@@ -201,30 +201,30 @@ variable "aws_route53_subdomain_zone_name" {
 
 variable "create_subdomain" {
   description = "Creates a subdomain with the name provided in var.aws_route53_subdomain_zone_name"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "load_balancer_scheme" {
   description = "Load Balancer Scheme"
   type        = string
-  default = "internet-facing"
+  default     = "internet-facing"
 }
 
 variable "notebook_enable_culling" {
   description = "Enable Notebook culling feature. If set to true then the Notebook Controller will scale all Notebooks with Last activity older than the notebook_cull_idle_time to zero"
-  type = string
-  default = false
+  type        = string
+  default     = false
 }
 
 variable "notebook_cull_idle_time" {
   description = "If a Notebook's LAST_ACTIVITY_ANNOTATION from the current timestamp exceeds this value then the Notebook will be scaled to zero (culled). ENABLE_CULLING must be set to 'true' for this setting to take effect.(minutes)"
-  type = string
-  default = 30
+  type        = string
+  default     = 30
 }
 
 variable "notebook_idleness_check_period" {
   description = "How frequently the controller should poll each Notebook to update its LAST_ACTIVITY_ANNOTATION (minutes)"
-  type = string
-  default = 5
+  type        = string
+  default     = 5
 }

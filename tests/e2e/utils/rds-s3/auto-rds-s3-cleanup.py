@@ -40,7 +40,8 @@ def delete_s3_bucket(metadata, secrets_manager_client, region):
             SecretId=metadata["S3"]["secretName"], ForceDeleteWithoutRecovery=True
         )
 
-def check_bucket(bucket_name,s3_client):
+
+def check_bucket(bucket_name, s3_client):
     try:
         s3_client.head_bucket(Bucket=bucket_name)
         print("Bucket Exists!")
@@ -48,7 +49,7 @@ def check_bucket(bucket_name,s3_client):
     except botocore.exceptions.ClientError as e:
         # If a client error is thrown, then check that it was a 404 error.
         # If it was a 404 error, then the bucket does not exist.
-        error_code = int(e.response['Error']['Code'])
+        error_code = int(e.response["Error"]["Code"])
         if error_code == 403:
             print("Private Bucket. Forbidden Access!")
             return True
@@ -61,7 +62,7 @@ def delete_rds(metadata, secrets_manager_client, region):
     rds_client = get_rds_client(region)
     db_instance_name = metadata["RDS"]["instanceName"]
     db_subnet_group_name = metadata["RDS"]["subnetGroupName"]
-    
+
     print("Deleting RDS instance...")
 
     rds_client.modify_db_instance(
@@ -84,13 +85,11 @@ def delete_rds(metadata, secrets_manager_client, region):
         except:
             print("RDS instance has been successfully deleted")
             break
-  
 
     print("Deleting DB Subnet Group...")
- 
+
     rds_client.delete_db_subnet_group(DBSubnetGroupName=db_subnet_group_name)
     print("DB Subnet Group has been successfully deleted")
-
 
     secrets_manager_client.delete_secret(
         SecretId=metadata["RDS"]["secretName"], ForceDeleteWithoutRecovery=True
@@ -99,22 +98,22 @@ def delete_rds(metadata, secrets_manager_client, region):
 
 def uninstall_secrets_manager(region, cluster_name):
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretproviderclass.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretproviderclass.yaml"
     )
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/csidriver.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/csidriver.yaml"
     )
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml"
     )
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml"
     )
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/secrets-store-csi-driver.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store-csi-driver.yaml"
     )
     kubectl_delete(
-        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.0.0/deploy/rbac-secretprovidersyncing.yaml"
+        "https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretprovidersyncing.yaml"
     )
     kubectl_delete(
         "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml"
