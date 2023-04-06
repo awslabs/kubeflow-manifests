@@ -66,7 +66,7 @@ data "aws_iam_role" "user_namespace_irsa_iam_role" {
 }
 
 module "kubeflow_secrets_manager_irsa" {
-  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = kubernetes_namespace.kubeflow.metadata[0].name
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = true
@@ -81,7 +81,7 @@ module "kubeflow_secrets_manager_irsa" {
 
 module "kubeflow_pipeline_irsa" {
   count                             = var.use_static ? 0 : 1
-  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = kubernetes_namespace.kubeflow.metadata[0].name
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
@@ -96,7 +96,7 @@ module "kubeflow_pipeline_irsa" {
 
 module "user_namespace_irsa" {
   count                             = var.use_static ? 0 : 1
-  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = "kubeflow-user-example-com"
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
