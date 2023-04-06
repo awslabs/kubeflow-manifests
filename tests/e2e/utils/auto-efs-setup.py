@@ -136,7 +136,7 @@ def create_efs_iam_policy():
 
 
 def get_efs_iam_policy_document():
-    url = "https://https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.5.4/docs/iam-policy-example.json"
+    url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.5.4/docs/iam-policy-example.json"
     response = urllib.request.urlopen(url)
     data = response.read()
     return data.decode("utf-8")
