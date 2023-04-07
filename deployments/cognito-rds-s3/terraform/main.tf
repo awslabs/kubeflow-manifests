@@ -146,7 +146,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cert_manager                 = true
   enable_aws_load_balancer_controller = true
 
-  aws-efs-csi-driver_helm_config = {
+  aws_efs_csi_driver_helm_config = {
     namespace = "kube-system"
     version = "2.4.1"
   }
