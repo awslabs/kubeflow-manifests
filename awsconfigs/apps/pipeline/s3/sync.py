@@ -27,7 +27,7 @@ def main():
 def get_settings_from_env(controller_port=None,
                           visualization_server_image=None, frontend_image=None,
                           visualization_server_tag=None, frontend_tag=None, disable_istio_sidecar=None,
-                          minio_access_key=None, minio_secret_key=None, minio_service_region=None, kfp_default_pipeline_root=None):
+                          minio_access_key=None, minio_secret_key=None, minio_service_region=None, minio_service_host=None, kfp_default_pipeline_root=None):
     """
     Returns a dict of settings from environment variables relevant to the controller
 
@@ -86,6 +86,9 @@ def get_settings_from_env(controller_port=None,
         minio_service_region or \
         os.environ.get("MINIO_SERVICE_REGION", "us-east-1")
 
+    settings["minio_service_host"]  = \
+        minio_service_host or \
+        os.environ.get("MINIO_SERVICE_HOST", "s3.amazonaws.com")
 
     # KFP_DEFAULT_PIPELINE_ROOT is optional
     settings["kfp_default_pipeline_root"] = \
@@ -94,11 +97,10 @@ def get_settings_from_env(controller_port=None,
 
     return settings
 
-
 def server_factory(visualization_server_image,
                    visualization_server_tag, frontend_image, frontend_tag,
                    disable_istio_sidecar, minio_access_key,
-                   minio_secret_key, minio_service_region, kfp_default_pipeline_root=None,
+                   minio_secret_key, minio_service_region, minio_service_host, kfp_default_pipeline_root=None,
                    url="", controller_port=8080):
     """
     Returns an HTTPServer populated with Handler with customized settings
@@ -345,6 +347,10 @@ def server_factory(visualization_server_image,
                                             "name": "AWS_REGION",
                                             "value": f"{minio_service_region}"
                                         },
+                                        {
+                                            "name": "AWS_S3_ENDPOINT",
+                                            "value": f"{minio_service_host}"
+                                        }
                                     ],
                                     "resources": {
                                         "requests": {
