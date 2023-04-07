@@ -81,10 +81,10 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 ```
 
 #### 1. Install the EFS CSI driver
-We recommend installing the EFS CSI Driver v1.3.4 directly from the [the aws-efs-csi-driver github repo](https://github.com/kubernetes-sigs/aws-efs-csi-driver) as follows:
+We recommend installing the EFS CSI Driver v1.5.4 directly from the [the aws-efs-csi-driver github repo](https://github.com/kubernetes-sigs/aws-efs-csi-driver) as follows:
 
 ```bash
-kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.4"
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.5.4"
 ```
 
 You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:
@@ -101,7 +101,7 @@ The CSI driver's service account (created during installation) requires IAM perm
 1. Download the IAM policy document from GitHub as follows.
 
 ```bash
-curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json
+curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.5.4/docs/iam-policy-example.json
 ```
 
 2. Create the policy.

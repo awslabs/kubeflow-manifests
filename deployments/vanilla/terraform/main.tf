@@ -137,6 +137,12 @@ module "eks_blueprints_kubernetes_addons" {
   # EKS Blueprints Add-ons
   enable_cert_manager                 = true
   enable_aws_load_balancer_controller = true
+
+  aws_efs_csi_driver_helm_config = {
+    namespace = "kube-system"
+    version = "2.4.1"
+  }
+
   enable_aws_efs_csi_driver           = true
   enable_aws_fsx_csi_driver           = true
 
@@ -145,6 +151,7 @@ module "eks_blueprints_kubernetes_addons" {
   tags = local.tags
 
 }
+
 
 # todo: update the blueprints repo code to export the desired values as outputs
 module "eks_blueprints_outputs" {
