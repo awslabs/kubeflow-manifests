@@ -52,10 +52,10 @@ Launch Ubuntu 18.04 cloud9 instance
 
 Clone the [`awslabs/kubeflow-manifests`](https://github.com/awslabs/kubeflow-manifests) and the [`kubeflow/manifests`](https://github.com/kubeflow/manifests) repositories and check out the release branches of your choosing.
 
-Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.6.1) and `AWS_RELEASE_VERSION`(e.g. v1.6.1-aws-b1.0.1) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
+Substitute the value for `KUBEFLOW_RELEASE_VERSION`(e.g. v1.6.1) and `AWS_RELEASE_VERSION`(e.g. v1.6.1-aws-b1.0.2) with the tag or branch you want to use below. Read more about [releases and versioning]({{< ref "/docs/about/releases.md" >}}) if you are unsure about what these values should be.
 ```bash
 export KUBEFLOW_RELEASE_VERSION=v1.6.1
-export AWS_RELEASE_VERSION=v1.6.1-aws-b1.0.1
+export AWS_RELEASE_VERSION=v1.6.1-aws-b1.0.2
 git clone https://github.com/awslabs/kubeflow-manifests.git && cd kubeflow-manifests
 git checkout ${AWS_RELEASE_VERSION}
 git clone --branch ${KUBEFLOW_RELEASE_VERSION} https://github.com/kubeflow/manifests.git upstream
