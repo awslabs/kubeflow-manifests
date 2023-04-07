@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/storage/efs/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-06T10:27:41-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-07T12:36:34-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="EFS">
 <meta itemprop="description" content="Use Amazon EFS as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-04-06T10:27:41-07:00" />
+<meta itemprop="dateModified" content="2023-04-07T12:36:34-07:00" />
 <meta itemprop="wordCount" content="2690">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="EFS"/>
@@ -564,8 +564,8 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 <p>If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between <strong>Static and Dynamic provisioing</strong> later in step 4 of this section.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --query <span class="s2">&#34;Account&#34;</span> --output text<span class="k">)</span>
 </span></span></code></pre></div><h4 id="1-install-the-efs-csi-driver">1. Install the EFS CSI driver</h4>
-<p>We recommend installing the EFS CSI Driver v1.3.4 directly from the <a href="https://github.com/kubernetes-sigs/aws-efs-csi-driver">the aws-efs-csi-driver github repo</a> as follows:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -k <span class="s2">&#34;github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.3.4&#34;</span>
+<p>We recommend installing the EFS CSI Driver v1.5.4 directly from the <a href="https://github.com/kubernetes-sigs/aws-efs-csi-driver">the aws-efs-csi-driver github repo</a> as follows:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -k <span class="s2">&#34;github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.5.4&#34;</span>
 </span></span></code></pre></div><p>You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get csidriver
 </span></span><span class="line"><span class="cl">
@@ -576,7 +576,7 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 <ol>
 <li>Download the IAM policy document from GitHub as follows.</li>
 </ol>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -o iam-policy-example.json https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.5.4/docs/iam-policy-example.json
 </span></span></code></pre></div><ol start="2">
 <li>Create the policy.</li>
 </ol>
@@ -755,7 +755,7 @@ b. Delete the <code>efs-csi-controller-sa</code> service account and then re-run
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 6, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/9ffa5d8f84e49d63ab496270ba8cf3a0b9f0f962">update to v1.3.2 secrets sync (#651) (9ffa5d8)</a>
+  Last modified April 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/244be6e97c0e3bfd609176d52962200ef9d9f321">Update EFS Driver Version to v1.5.4 (#664) (244be6e)</a>
 </div>
 
 </div>
