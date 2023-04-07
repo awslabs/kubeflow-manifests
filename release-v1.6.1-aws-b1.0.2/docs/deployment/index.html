@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.93.0" />
+<link rel="alternate" type="application/rss&#43;xml" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/index.xml">
+<meta name="robots" content="index, follow">
+
+<script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.2"
+      },
+      "articleSection" : "docs",
+      "name" : "Deployment Options",
+      "headline" : "Deployment Options",
+      "description" : "Deploy Kubeflow on AWS",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "0001",
+      "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
+      "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.6.1-aws-b1.0.2\/docs\/deployment\/",
+      "wordCount" : "287",
+      "keywords" : [ "Kubeflow" ]
+  }
+  </script>
+
+<link rel="shortcut icon" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="manifest" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/manifest.json">
+<meta name="msapplication-config" content="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/favicons/browserconfig.xml" />
+<meta name="msapplication-TileColor" content="#4279f4">
+<meta name="theme-color" content="#4279f4">
+
+<title>Deployment Options | Kubeflow on AWS</title>
+<meta name="description" content="Deploy Kubeflow on AWS">
+<meta property="og:title" content="Deployment Options" />
+<meta property="og:description" content="Deploy Kubeflow on AWS" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="Deployment Options">
+<meta itemprop="description" content="Deploy Kubeflow on AWS"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Deployment Options"/>
+<meta name="twitter:description" content="Deploy Kubeflow on AWS"/>
+
+
+
+
+<link rel="preload" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/scss/main.min.d4cdf056e7fec167a88188ac189ff1d0c621bc679a1c21f94903c8e057677df2.css" as="style">
+<link href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/scss/main.min.d4cdf056e7fec167a88188ac189ff1d0c621bc679a1c21f94903c8e057677df2.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
+
+  </head>
+  <body class="td-section">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
+        <a class="navbar-brand" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/">
+		<span class="navbar-logo"></span><span class="text-uppercase font-weight-bold">Kubeflow on AWS</span>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
+			
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/" ><i class='fas fa-book pr-2'></i><span>Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/blog/" ><i class='fas fa-blog pr-2'></i><span>Blog</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/awslabs/kubeflow-manifests" target="_blank" ><i class='fab fa-github pr-2'></i><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown mt-1 mt-lg-0 mr-2">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.0/docs">v1.6</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+	
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b102docs-li">
+  <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-kubeflow-manifestsrelease-v161-aws-b102docs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabout-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabout-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsabout-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabout"><span class="">About</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutfeatures-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutfeatures-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutfeatures-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/features/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutfeatures"><span class="">AWS Features for Kubeflow</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutreleases-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutreleases-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutreleases-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/releases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutreleases"><span class="">Releases and Versioning</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabouteks-compatibility-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabouteks-compatibility-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsabouteks-compatibility-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/eks-compatibility/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsabouteks-compatibility"><span class="">Amazon EKS and Kubeflow Compatibility</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutsecurity-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutsecurity-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutsecurity-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/security/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutsecurity"><span class="">Security</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutusage-tracking-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutusage-tracking-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutusage-tracking-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/about/usage-tracking/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsaboutusage-tracking"><span class="">Usage Tracking</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeployment-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeployment-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeployment"><span class="td-sidebar-nav-active-item">Deployment Options</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentprerequisites-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentprerequisites-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcreate-eks-cluster-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcreate-eks-cluster-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcreate-eks-cluster-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/create-eks-cluster/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcreate-eks-cluster"><span class="">Create an EKS Cluster</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanilla-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanilla-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanilla-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/vanilla/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanilla"><span class="">Vanilla Installation</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide"><span class="">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-terraform-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/vanilla/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentvanillaguide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3"><span class="">RDS and S3</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide"><span class="">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-terraform-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentrds-s3guide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito"><span class="">Cognito</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifest-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifest-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifest-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/manifest/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifest"><span class="">Manifest Deployment Guides</span></a></label>
+  
+  <ul class="ul-4 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-automated-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-automated-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/manifest/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/manifest/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitomanifestguide"><span class="">Manual Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitoguide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitoguide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitoguide-terraform-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognitoguide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3"><span class="">Cognito, RDS, and S3</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide"><span class="">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-terraform-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentcognito-rds-s3guide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconnect-kubeflow-dashboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconnect-kubeflow-dashboard-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-ons-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-ons-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-ons"><span class="">Deployment Add-ons</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstorageefsguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstorageefsguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstorageefsguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstorageefsguide"><span class="">EFS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstoragefsx-for-lustreguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstoragefsx-for-lustreguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsprometheusguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsprometheusguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsprometheusguide-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/add-ons/prometheus/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsadd-onsprometheusguide"><span class="">Prometheus</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guides-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guides-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guides"><span class="">Component Guides</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesnotebooks-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesnotebooks-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskatib-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskatib-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskatib-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskatib"><span class="">Katib</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidespipelines-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidespipelines-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidespipelines"><span class="">Pipelines</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidestraining-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidestraining-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidestraining-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/training/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidestraining"><span class="">Training Operators</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserve-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserve-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserve"><span class="">KServe</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskservetutorial-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskservetutorial-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskservetutorial-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/kserve/tutorial/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskservetutorial"><span class="">KServe with Kubeflow on AWS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaws-deep-learning-containers-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaws-deep-learning-containers-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaws-deep-learning-containers-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/kserve/aws-deep-learning-containers/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guideskserveaws-deep-learning-containers"><span class="">KServe with AWS Deep Learning Containers</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesprofiles-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesprofiles-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesprofiles-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/component-guides/profiles/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docscomponent-guidesprofiles"><span class="">Profiles</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integration-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integration-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integration-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/amazon-sagemaker-integration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integration"><span class="">Amazon SageMaker Integration</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-operators-ack-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-operators-ack-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-operators-ack-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/amazon-sagemaker-integration/sagemaker-operators-ack/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-operators-ack"><span class="">SageMaker Operators for Kubernetes (ACK)</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines"><span class="">SageMaker Components for Kubeflow Pipelines</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v161-aws-b102docstroubleshooting-aws-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v161-aws-b102docstroubleshooting-aws-check"/>
+  <label for="m-kubeflow-manifestsrelease-v161-aws-b102docstroubleshooting-aws-check"><a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/troubleshooting-aws/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v161-aws-b102docstroubleshooting-aws"><span class="">Troubleshooting</span></a></label>
+  
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/_index.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/_index.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Deployment%20Options" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+  
+</div>
+
+            
+
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/">Documentation</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/">Deployment Options</a>
+  </li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>Deployment Options</h1>
+  <div class="lead">Deploy Kubeflow on AWS</div>
+	<header class="article-meta">
+		
+
+  
+    
+
+
+  
+    
+
+
+  
+
+		
+	</header>
+	<p>Kubeflow on AWS provides its own Kubeflow manifests that support integrations with various AWS services that are highly available and scalable. This reduces the operational overhead of maintaining the Kubeflow platform.</p>
+<p>If you want to deploy Kubeflow with minimal changes, but optimized for <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service</a> (Amazon EKS), then consider the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/vanilla/guide/">vanilla</a> deployment option. The Kubeflow control plane is installed on top of Amazon EKS, which is a managed container service used to run and scale Kubernetes applications in the cloud.</p>
+<p>All available deployment options can be installed using Kustomize, Helm, or Terraform.</p>
+<blockquote>
+<p>Note: Terraform deployment options are still in preview.</p>
+</blockquote>
+<p>To take greater advantage of the distribution and make use of the AWS managed services, choose one of the following deployment options according to your organization&rsquo;s requirements:</p>
+<ul>
+<li><strong>RDS</strong>: Kubeflow on AWS provides integration with the <a href="https://aws.amazon.com/rds/">Amazon Relational Database Service</a> (RDS) for highly scalable and available pipelines and metadata store. RDS removes the need to manage a local MYSQL database service and storage. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">RDS deployment guide</a>.</li>
+<li><strong>S3</strong>: Integrate your deployment with <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a> (S3) for an easy-to-use pipeline artifacts store. S3 removes the need to host the local object storage MinIO. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/guide/#using-only-rds-or-only-s3">S3 deployment guide</a>.</li>
+<li><strong>RDS and S3</strong>: You can also deploy Kubeflow on AWS with both RDS and S3 integrations using the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/">RDS and S3 deployment guide</a>.</li>
+<li><strong>Cognito</strong>: Use <a href="https://aws.amazon.com/cognito/">AWS Cognito</a> for Kubeflow user authentication, which removes the complexity of managing users or <a href="https://dexidp.io/docs/connectors/">Dex connectors</a> in Kubeflow’s native Dex authentication service. For more information, see the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/">Cognito deployment guides</a>.</li>
+<li><strong>Cognito, RDS, and S3</strong>: You can also deploy Kubeflow on AWS with all three service integrations by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/">Cognito, RDS, and S3 deployment guide</a>.</li>
+</ul>
+
+        <div class="section-index">
+    
+    
+    
+    
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/prerequisites/">Prerequisites</a>
+                </h5>
+                <p>Set up your environment for deploying Kubeflow on AWS</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/create-eks-cluster/">Create an EKS Cluster</a>
+                </h5>
+                <p>Create an EKS cluster before you deploy Kubeflow on AWS using Kustomize or Helm</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/vanilla/">Vanilla Installation</a>
+                </h5>
+                <p>Deploy the vanilla version of Kubeflow on AWS.</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/rds-s3/">RDS and S3</a>
+                </h5>
+                <p>Deploying Kubeflow with RDS and S3</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito/">Cognito</a>
+                </h5>
+                <p>Deploying Kubeflow with AWS Cognito as identity provider</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/cognito-rds-s3/">Cognito, RDS, and S3</a>
+                </h5>
+                <p>Deploying Kubeflow with Cognito, RDS, and S3</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/connect-kubeflow-dashboard/">Connect to your Kubeflow Dashboard</a>
+                </h5>
+                <p>Start experimenting and running your end-to-end ML workflows with Kubeflow on AWS</p>
+            </div>
+        
+            
+            <div class="entry">
+                <h5>
+                    <a href="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs/deployment/configure-notebook-culling/">Configure Culling for Notebooks</a>
+                </h5>
+                <p>Automatically stop your notebooks based on idleness</p>
+            </div>
+        
+    
+</div>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+  Last modified April 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/38edf2becf9cfac3ed5c82d8401a9ad90a9bd9b7">Release v1.6.1 aws b1.0.2 (#666) (38edf2b)</a>
+</div>
+
+</div>
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark pt-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/js/main.min.3f521fc0822cbb80e55a837721995f7dcf11faa5efe8aa44fd8f512a2b128932.js" integrity="sha256-P1IfwIIsu4DlWoN3IZlffc8R&#43;qXv6KpE/Y9RKisSiTI=" crossorigin="anonymous"></script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ["version: latest "],
+  },
+debug: true 
+
+});
+</script>
+
+
+
+  </body>
+</html>
