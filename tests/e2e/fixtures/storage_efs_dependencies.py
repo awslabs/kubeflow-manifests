@@ -99,7 +99,7 @@ def wait_on_mount_target_status(desired_status, efs_client, file_system_id):
 @pytest.fixture(scope="class")
 def install_efs_csi_driver(metadata, region, request, cluster, installation):
     efs_driver = {}
-    EFS_DRIVER_VERSION = "v1.3.4"
+    EFS_DRIVER_VERSION = "v1.5.4"
     EFS_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{EFS_DRIVER_VERSION}"
 
     def on_create():
@@ -122,7 +122,7 @@ def create_efs_driver_sa(
     efs_deps = {}
     iam_client = boto3.client("iam")
 
-    EFS_IAM_POLICY = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.3.4/docs/iam-policy-example.json"
+    EFS_IAM_POLICY = "https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/v1.5.4/docs/iam-policy-example.json"
     policy_name = rand_name("efs-iam-policy-")
     policy_arn = [f"arn:aws:iam::{account_id}:policy/{policy_name}"]
 

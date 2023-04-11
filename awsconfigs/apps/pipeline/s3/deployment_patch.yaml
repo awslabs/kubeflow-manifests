@@ -14,3 +14,8 @@ spec:
             configMapKeyRef:
               name: pipeline-install-config
               key: minioServiceRegion
+        - name: MINIO_SERVICE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: minioServiceHost

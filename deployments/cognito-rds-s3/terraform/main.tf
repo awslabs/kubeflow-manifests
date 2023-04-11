@@ -114,7 +114,7 @@ data "aws_ec2_instance_type_offerings" "availability_zones_gpu" {
 # EKS Blueprints
 #---------------------------------------------------------------
 module "eks_blueprints" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.12.1"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.28.0"
 
   cluster_name    = local.cluster_name
   cluster_version = local.eks_version
@@ -129,7 +129,7 @@ module "eks_blueprints" {
 }
 
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.12.1"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.28.0"
 
   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
@@ -145,6 +145,12 @@ module "eks_blueprints_kubernetes_addons" {
   # EKS Blueprints Add-ons
   enable_cert_manager                 = true
   enable_aws_load_balancer_controller = true
+
+  aws_efs_csi_driver_helm_config = {
+    namespace = "kube-system"
+    version = "2.4.1"
+  }
+
   enable_aws_efs_csi_driver           = true
   enable_aws_fsx_csi_driver           = true
 
@@ -152,6 +158,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   secrets_store_csi_driver_helm_config = {
     namespace = "kube-system"
+    version = "1.3.2"
     set = [
       {
         name  = "syncSecret.enabled",

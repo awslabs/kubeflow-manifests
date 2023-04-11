@@ -5,7 +5,7 @@ resource "aws_iam_policy" "sagemaker_ack_controller_studio_access" {
 }
 
 module "irsa" {
-  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.12.1"
+  source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = local.namespace
   create_kubernetes_namespace       = true
   create_kubernetes_service_account = false
@@ -19,7 +19,7 @@ module "irsa" {
 }
 
 module "helm_addon" {
-  source            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons/helm-addon?ref=v4.12.1"
+  source            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons/helm-addon?ref=v4.28.0"
   manage_via_gitops = false
   helm_config       = local.helm_config
   set_values = [
