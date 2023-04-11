@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/storage/fsx-for-lustre/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-07T12:36:34-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-11T16:16:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="FSx for Lustre">
 <meta itemprop="description" content="Use Amazon FSx as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-04-07T12:36:34-07:00" />
+<meta itemprop="dateModified" content="2023-04-11T16:16:53-07:00" />
 <meta itemprop="wordCount" content="2080">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="FSx for Lustre"/>
@@ -564,8 +564,8 @@ It performs the required cluster configuration, creates an FSx file system and i
 <h3 id="22-option-2-manual-setup">2.2 [Option 2] Manual setup</h3>
 <p>If you prefer to manually setup each component then you can follow this manual guide.</p>
 <h4 id="1-install-the-fsx-csi-driver">1. Install the FSx CSI Driver</h4>
-<p>We recommend installing the FSx CSI Driver v0.7.1 directly from the <a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">the aws-fsx-csi-driver GitHub repository</a> as follows:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -k <span class="s2">&#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.7.1&#34;</span>
+<p>We recommend installing the FSx CSI Driver v0.9.0 directly from the <a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">the aws-fsx-csi-driver GitHub repository</a> as follows:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -k <span class="s2">&#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.9.0&#34;</span>
 </span></span></code></pre></div><p>You can confirm that FSx CSI Driver was installed using the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl get csidriver -A
 </span></span><span class="line"><span class="cl">
@@ -715,7 +715,7 @@ Source: <a href="https://www.tensorflow.org/tutorials/load_data/images">https://
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/244be6e97c0e3bfd609176d52962200ef9d9f321">Update EFS Driver Version to v1.5.4 (#664) (244be6e)</a>
+  Last modified April 11, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/a7b8a94837936714d889a1e4015f2a276430251c">Update FSx Driver Version to v0.9.0 (#668) (a7b8a94)</a>
 </div>
 
 </div>

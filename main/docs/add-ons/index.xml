@@ -557,8 +557,8 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 [Option 2] Manual setup&lt;/h3&gt;
 &lt;p&gt;If you prefer to manually setup each component then you can follow this manual guide.&lt;/p&gt;
 &lt;h4 id=&#34;1-install-the-fsx-csi-driver&#34;&gt;1. Install the FSx CSI Driver&lt;/h4&gt;
-&lt;p&gt;We recommend installing the FSx CSI Driver v0.7.1 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;the aws-fsx-csi-driver GitHub repository&lt;/a&gt; as follows:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.7.1&amp;#34;&lt;/span&gt;
+&lt;p&gt;We recommend installing the FSx CSI Driver v0.9.0 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;the aws-fsx-csi-driver GitHub repository&lt;/a&gt; as follows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.9.0&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can confirm that FSx CSI Driver was installed using the following command:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl get csidriver -A
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
