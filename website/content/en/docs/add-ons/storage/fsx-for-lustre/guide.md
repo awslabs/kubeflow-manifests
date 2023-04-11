@@ -75,10 +75,10 @@ The script applies some default values for the file system name, performance mod
 If you prefer to manually setup each component then you can follow this manual guide.  
 
 #### 1. Install the FSx CSI Driver
-We recommend installing the FSx CSI Driver v0.7.1 directly from the [the aws-fsx-csi-driver GitHub repository](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows:
+We recommend installing the FSx CSI Driver v0.9.0 directly from the [the aws-fsx-csi-driver GitHub repository](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows:
 
 ```bash
-kubectl apply -k "github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.7.1"
+kubectl apply -k "github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.9.0"
 ```
 
 You can confirm that FSx CSI Driver was installed using the following command:
