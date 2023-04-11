@@ -15,7 +15,8 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 3. Create an EKS cluster
 4. Create an S3 Bucket
 5. Create an RDS Instance
-6. Configure AWS Secrets for RDS and S3
+<!-- For old credentials method should still read for RDS and S3 -->
+6. Configure AWS Secrets for RDS
 7. Install AWS Secrets and Kubernetes Secrets Store CSI driver
 8. Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines
 
@@ -32,12 +33,14 @@ Enable culling for notebooks by following the [instructions]({{< ref "/docs/depl
 
 2. Deploy Kubeflow.
     1. Install Kubeflow using the following command:
+    <!-- If using old credentials method then CREDENTIALS_OPTION=static -->
+
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3 CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< /tabpane >}}
 

@@ -65,7 +65,7 @@ There are two ways to create RDS and S3 resources before you deploy the Kubeflow
 
 This setup performs all the manual steps in an automated fashion.  
 
-The script takes care of creating the S3 bucket, creating the S3 Secrets using the Secrets manager, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.
+The script takes care of creating the S3 bucket, creating the S3 Secrets if using static credentials using the Secrets manager or setting up IRSA to access to S3, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.
 
 > Note: The script will **not** delete any resource. Therefore, if a resource already exists (eg: Secret, database with the same name, or S3 bucket), **it will skip the creation of those resources and use the existing resources instead**. This is by design in order to prevent unwanted results, such as accidental deletion. For example, if a database with the same name already exists, the script will skip the database creation setup. If you forgot to change the database name used for creation, then this gives you the chance to retry the script with the proper value. See `python auto-rds-s3-setup.py --help` for the list of parameters, as well as their default values.
 
@@ -73,22 +73,42 @@ The script takes care of creating the S3 bucket, creating the S3 Secrets using t
    ```bash
    cd tests/e2e
    ```
-1. [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
-1. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`, `MINIO_AWS_ACCESS_KEY_ID`, and `MINIO_AWS_SECRET_ACCESS_KEY`.
+<!-- This only applies to old Credential Method which is still allowed in 1.7 but deprecated after. 
+
+1. Create an IAM user to use with the Minio Client
+
+    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively. -->
+
+Not sure where to place this for all the guides to explain what IRSA is 
+<!-- IRSA allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+
+For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). -->
+
+1. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`.
+
+   <!-- 
+   export MINIO_AWS_ACCESS_KEY_ID=<>
+   export MINIO_AWS_SECRET_ACCESS_KEY=<>
+   
+   Still need to include these above exports if using old credentials method
+    -->
    ```bash
    export CLUSTER_REGION=<>
    export CLUSTER_NAME=<>
    export S3_BUCKET=<>
    export DB_INSTANCE_NAME=<>
    export DB_SUBNET_GROUP_NAME=<>
-   export MINIO_AWS_ACCESS_KEY_ID=<>
-   export MINIO_AWS_SECRET_ACCESS_KEY=<>
    export RDS_SECRET_NAME=<>
-   export S3_SECRET_NAME=<>
    ```
 1. Run the `auto-rds-s3-setup.py` script
+
+   <!-- 
+   Need to include these command-line args if using old credentials methods still
+   --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --s3_secret_name $S3_SECRET_NAME
+   
+    -->
    ```
-   PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
+   PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --db_instance_name $DB_INSTANCE_NAME  --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
    ```  
 
 ### Advanced customization
@@ -125,18 +145,27 @@ Follow this step if you prefer to manually set up each component.
 
 3. [S3] Create IAM User With Permissions To S3 Bucket
 
-   [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively.
+   <!-- 
+   This only applies to old Credential Method which is still allowed in 1.7 but deprecated after. 
+
+   [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` of the IAM user that you created to use in the following step, which will be referenced as `MINIO_AWS_ACCESS_KEY_ID` and `MINIO_AWS_SECRET_ACCESS_KEY` respectively. -->
 
 1. Export values:
+
+   <!-- 
+   Still need this if using old credentials method
+    export S3_SECRET="<your s3 secret name>"
+    export MINIO_AWS_ACCESS_KEY_ID="<your s3 user access key>"
+    export MINIO_AWS_SECRET_ACCESS_KEY="<your s3 user secret key>"
+    -->
+
     ```bash
     export RDS_SECRET="<your rds secret name>"
-    export S3_SECRET="<your s3 secret name>"
     export DB_HOST="<your rds db host>"
     export MLMD_DB=metadata_db
     export S3_BUCKET="<your s3 bucket name>"
     export MINIO_SERVICE_HOST=s3.amazonaws.com
-    export MINIO_AWS_ACCESS_KEY_ID="<your s3 user access key>"
-    export MINIO_AWS_SECRET_ACCESS_KEY="<your s3 user secret key>"
+
     ```
 
 3. Create Secrets in AWS Secrets Manager
@@ -161,7 +190,8 @@ yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rd
             {{< /tabpane >}} 
 
          
-   1. [S3] Create the S3 Secret and configure the Secret provider:
+   <!-- This entire section only pertains to Old Credentials Method 
+         1. [S3] Create the S3 Secret and configure the Secret provider:
       1. Configure a Secret (e.g. `s3-secret`) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
          - For more details about configuring or finding your AWS credentials, see [AWS security credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
          - ```bash
@@ -178,7 +208,7 @@ yq e -i '.spec.parameters.objects |= sub("s3-secret",env(S3_SECRET))' awsconfigs
 yq e '.s3.secretName = env(S3_SECRET)' -i charts/common/aws-secrets-manager/s3-only/values.yaml
 yq e '.s3.secretName = env(S3_SECRET)' -i charts/common/aws-secrets-manager/rds-s3/values.yaml
             {{< /tab >}}
-            {{< /tabpane >}}
+            {{< /tabpane >}} -->
 
 
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
@@ -263,13 +293,15 @@ cd $REPO_ROOT
 
 #### [RDS and S3] Deploy both RDS and S3
 
+<!-- If using old credentials method then CREDENTIALS_OPTION=static -->
+
 Use the following command to deploy the Kubeflow manifests for both RDS and S3:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3 CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -278,10 +310,10 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3
 Use the following command to deploy the Kubeflow manifests for RDS only:
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-only
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-only CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only CREDENTIALS_OPTION=irsa
 {{< /tab >}}
 {{< /tabpane >}}
 

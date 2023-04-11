@@ -48,21 +48,27 @@ pwd
             export TF_VAR_create_subdomain="false"
             ```
 
+<!-- This only applies to old Credential Method which is still allowed in 1.7 but deprecated after. 
+
 1. Create an IAM user to use with the Minio Client
 
-    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively.
+    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively. -->
 
 1. Define the following environment variables:
-
+    <!-- These need to be part of the below export list if using old Credential Method which is still allowed in 1.7 but deprecated after. 
+    # AWS access key id of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_access_key_id=
+    # AWS secret access key of the static credentials used to authenticate the Minio Client
+    export TF_VAR_minio_aws_secret_access_key=
+    THIS BELOW FIELD IS NEW to allow for old credential method
+    # true/false flag to configure to use static credentials
+    export USE_STATIC="true"
+    -->
     ```sh
     # Region to create the cluster in
     export CLUSTER_REGION=
     # Name of the cluster to create
     export CLUSTER_NAME=
-    # AWS access key id of the static credentials used to authenticate the Minio Client
-    export TF_VAR_minio_aws_access_key_id=
-    # AWS secret access key of the static credentials used to authenticate the Minio Client
-    export TF_VAR_minio_aws_secret_access_key=
     # Name of an existing Route53 root domain (e.g. example.com)
     export ROOT_DOMAIN=
     # Name of the subdomain to create (e.g. platform.example.com)
@@ -80,6 +86,8 @@ pwd
     ```
 
     > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
+
+    <!-- Will have to save the new USE_STATIC="${USE_STATIC}" below  export if they are using the old credentials method which was mentioned above. -->
 
 1. Save the variables to a `.tfvars` file:
     ```sh
