@@ -5,7 +5,7 @@ metadata:
   namespace: ack-system
 spec:
   selector:
-    control-plane: controller
+    app.kubernetes.io/name: ack-sagemaker-controller
   ports:
     - name: metricsport
       port: 8080

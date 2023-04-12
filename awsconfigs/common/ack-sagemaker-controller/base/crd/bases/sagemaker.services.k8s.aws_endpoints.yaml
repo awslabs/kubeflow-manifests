@@ -44,6 +44,73 @@ spec:
             description: "EndpointSpec defines the desired state of Endpoint. \n A
               hosted endpoint for real-time inference."
             properties:
+              deploymentConfig:
+                description: The deployment configuration for an endpoint, which contains
+                  the desired deployment strategy and rollback configurations.
+                properties:
+                  autoRollbackConfiguration:
+                    description: Automatic rollback configuration for handling endpoint
+                      deployment failures and recovery.
+                    properties:
+                      alarms:
+                        items:
+                          description: An Amazon CloudWatch alarm configured to monitor
+                            metrics on an endpoint.
+                          properties:
+                            alarmName:
+                              type: string
+                          type: object
+                        type: array
+                    type: object
+                  blueGreenUpdatePolicy:
+                    description: Update policy for a blue/green deployment. If this
+                      update policy is specified, SageMaker creates a new fleet during
+                      the deployment while maintaining the old fleet. SageMaker flips
+                      traffic to the new fleet according to the specified traffic
+                      routing configuration. Only one update policy should be used
+                      in the deployment configuration. If no update policy is specified,
+                      SageMaker uses a blue/green deployment strategy with all at
+                      once traffic shifting by default.
+                    properties:
+                      maximumExecutionTimeoutInSeconds:
+                        format: int64
+                        type: integer
+                      terminationWaitInSeconds:
+                        format: int64
+                        type: integer
+                      trafficRoutingConfiguration:
+                        description: Defines the traffic routing strategy during an
+                          endpoint deployment to shift traffic from the old fleet
+                          to the new fleet.
+                        properties:
+                          canarySize:
+                            description: Specifies the endpoint capacity to activate
+                              for production.
+                            properties:
+                              type_:
+                                type: string
+                              value:
+                                format: int64
+                                type: integer
+                            type: object
+                          linearStepSize:
+                            description: Specifies the endpoint capacity to activate
+                              for production.
+                            properties:
+                              type_:
+                                type: string
+                              value:
+                                format: int64
+                                type: integer
+                            type: object
+                          type_:
+                            type: string
+                          waitIntervalInSeconds:
+                            format: int64
+                            type: integer
+                        type: object
+                    type: object
+                type: object
               endpointConfigName:
                 description: The name of an endpoint configuration. For more information,
                   see CreateEndpointConfig.
@@ -181,6 +248,100 @@ spec:
                 description: A timestamp that shows when the endpoint was last modified.
                 format: date-time
                 type: string
+              pendingDeploymentSummary:
+                description: Returns the summary of an in-progress deployment. This
+                  field is only returned when the endpoint is creating or updating
+                  with a new endpoint configuration.
+                properties:
+                  endpointConfigName:
+                    type: string
+                  productionVariants:
+                    items:
+                      description: The production variant summary for a deployment
+                        when an endpoint is creating or updating with the CreateEndpoint
+                        or UpdateEndpoint operations. Describes the VariantStatus
+                        , weight and capacity for a production variant associated
+                        with an endpoint.
+                      properties:
+                        acceleratorType:
+                          type: string
+                        currentInstanceCount:
+                          format: int64
+                          type: integer
+                        currentServerlessConfig:
+                          description: Specifies the serverless configuration for
+                            an endpoint variant.
+                          properties:
+                            maxConcurrency:
+                              format: int64
+                              type: integer
+                            memorySizeInMB:
+                              format: int64
+                              type: integer
+                          type: object
+                        currentWeight:
+                          type: number
+                        deployedImages:
+                          items:
+                            description: "Gets the Amazon EC2 Container Registry path
+                              of the docker image of the model that is hosted in this
+                              ProductionVariant. \n If you used the registry/repository[:tag]
+                              form to specify the image path of the primary container
+                              when you created the model hosted in this ProductionVariant,
+                              the path resolves to a path of the form registry/repository[@digest].
+                              A digest is a hash value that identifies a specific
+                              version of an image. For information about Amazon ECR
+                              paths, see Pulling an Image (https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-pull-ecr-image.html)
+                              in the Amazon ECR User Guide."
+                            properties:
+                              resolutionTime:
+                                format: date-time
+                                type: string
+                              resolvedImage:
+                                type: string
+                              specifiedImage:
+                                type: string
+                            type: object
+                          type: array
+                        desiredInstanceCount:
+                          format: int64
+                          type: integer
+                        desiredServerlessConfig:
+                          description: Specifies the serverless configuration for
+                            an endpoint variant.
+                          properties:
+                            maxConcurrency:
+                              format: int64
+                              type: integer
+                            memorySizeInMB:
+                              format: int64
+                              type: integer
+                          type: object
+                        desiredWeight:
+                          type: number
+                        instanceType:
+                          type: string
+                        variantName:
+                          type: string
+                        variantStatus:
+                          items:
+                            description: Describes the status of the production variant.
+                            properties:
+                              startTime:
+                                format: date-time
+                                type: string
+                              status:
+                                type: string
+                              statusMessage:
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    type: array
+                  startTime:
+                    format: date-time
+                    type: string
+                type: object
               productionVariants:
                 description: An array of ProductionVariantSummary objects, one for
                   each model hosted behind this endpoint.
@@ -193,6 +354,17 @@ spec:
                     currentInstanceCount:
                       format: int64
                       type: integer
+                    currentServerlessConfig:
+                      description: Specifies the serverless configuration for an endpoint
+                        variant.
+                      properties:
+                        maxConcurrency:
+                          format: int64
+                          type: integer
+                        memorySizeInMB:
+                          format: int64
+                          type: integer
+                      type: object
                     currentWeight:
                       type: number
                     deployedImages:
@@ -220,6 +392,17 @@ spec:
                     desiredInstanceCount:
                       format: int64
                       type: integer
+                    desiredServerlessConfig:
+                      description: Specifies the serverless configuration for an endpoint
+                        variant.
+                      properties:
+                        maxConcurrency:
+                          format: int64
+                          type: integer
+                        memorySizeInMB:
+                          format: int64
+                          type: integer
+                      type: object
                     desiredWeight:
                       type: number
                     variantName:

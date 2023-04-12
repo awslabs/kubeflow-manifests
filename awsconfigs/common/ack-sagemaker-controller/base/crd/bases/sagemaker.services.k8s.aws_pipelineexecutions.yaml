@@ -5,24 +5,28 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
-  name: apps.sagemaker.services.k8s.aws
+  name: pipelineexecutions.sagemaker.services.k8s.aws
 spec:
   group: sagemaker.services.k8s.aws
   names:
-    kind: App
-    listKind: AppList
-    plural: apps
-    singular: app
+    kind: PipelineExecution
+    listKind: PipelineExecutionList
+    plural: pipelineexecutions
+    singular: pipelineexecution
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.status
+    - jsonPath: .status.failureReason
+      name: FAILURE-REASON
+      priority: 1
+      type: string
+    - jsonPath: .status.pipelineExecutionStatus
       name: STATUS
       type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: App is the Schema for the Apps API
+        description: PipelineExecution is the Schema for the PipelineExecutions API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -37,69 +41,43 @@ spec:
           metadata:
             type: object
           spec:
-            description: AppSpec defines the desired state of App.
+            description: "PipelineExecutionSpec defines the desired state of PipelineExecution.
+              \n An execution of a pipeline."
             properties:
-              appName:
-                description: The name of the app.
-                type: string
-              appType:
-                description: The type of app.
-                type: string
-              domainID:
-                description: The domain ID.
-                type: string
-              resourceSpec:
-                description: "The instance type and the Amazon Resource Name (ARN)
-                  of the SageMaker image created on the instance. \n The value of
-                  InstanceType passed as part of the ResourceSpec in the CreateApp
-                  call overrides the value passed as part of the ResourceSpec configured
-                  for the user profile or the domain. If InstanceType is not specified
-                  in any of those three ResourceSpec values for a KernelGateway app,
-                  the CreateApp call fails with a request validation error."
+              parallelismConfiguration:
+                description: This configuration, if specified, overrides the parallelism
+                  configuration of the parent pipeline for this specific run.
                 properties:
-                  instanceType:
-                    type: string
-                  lifecycleConfigARN:
-                    type: string
-                  sageMakerImageARN:
-                    type: string
-                  sageMakerImageVersionARN:
-                    type: string
+                  maxParallelExecutionSteps:
+                    format: int64
+                    type: integer
                 type: object
-              tags:
-                description: Each tag consists of a key and an optional value. Tag
-                  keys must be unique per resource.
+              pipelineExecutionDescription:
+                description: The description of the pipeline execution.
+                type: string
+              pipelineExecutionDisplayName:
+                description: The display name of the pipeline execution.
+                type: string
+              pipelineName:
+                description: The name of the pipeline.
+                type: string
+              pipelineParameters:
+                description: Contains a list of pipeline parameters. This list can
+                  be empty.
                 items:
-                  description: "A tag object that consists of a key and an optional
-                    value, used to manage metadata for SageMaker Amazon Web Services
-                    resources. \n You can add tags to notebook instances, training
-                    jobs, hyperparameter tuning jobs, batch transform jobs, models,
-                    labeling jobs, work teams, endpoint configurations, and endpoints.
-                    For more information on adding tags to SageMaker resources, see
-                    AddTags. \n For more information on adding metadata to your Amazon
-                    Web Services resources with tagging, see Tagging Amazon Web Services
-                    resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).
-                    For advice on best practices for managing Amazon Web Services
-                    resources with tagging, see Tagging Best Practices: Implement
-                    an Effective Amazon Web Services Resource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf)."
+                  description: Assigns a value to a named Pipeline parameter.
                   properties:
-                    key:
+                    name:
                       type: string
                     value:
                       type: string
                   type: object
                 type: array
-              userProfileName:
-                description: The user profile name. If this value is not set, then
-                  SpaceName must be set.
-                type: string
             required:
-            - appName
-            - appType
-            - domainID
+            - pipelineName
             type: object
           status:
-            description: AppStatus defines the observed state of App
+            description: PipelineExecutionStatus defines the observed state of PipelineExecution
             properties:
               ackResourceMetadata:
                 description: All CRs managed by ACK have a common `Status.ACKResourceMetadata`
@@ -162,8 +140,19 @@ spec:
                   - type
                   type: object
                 type: array
-              status:
-                description: The status.
+              creationTime:
+                description: The time when the pipeline execution was created.
+                format: date-time
+                type: string
+              failureReason:
+                description: If the execution failed, a message describing why.
+                type: string
+              lastModifiedTime:
+                description: The time when the pipeline execution was modified last.
+                format: date-time
+                type: string
+              pipelineExecutionStatus:
+                description: The status of the pipeline execution.
                 type: string
             type: object
         type: object

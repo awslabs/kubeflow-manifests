@@ -133,13 +133,14 @@ spec:
                   see SSD Instance Store Volumes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ssd-instance-store.html)."
                 type: string
               productionVariants:
-                description: An list of ProductionVariant objects, one for each model
+                description: An array of ProductionVariant objects, one for each model
                   that you want to host at this endpoint.
                 items:
                   description: Identifies a model that you want to host and the resources
                     chosen to deploy for hosting it. If you are deploying multiple
                     models, tell SageMaker how to distribute traffic among the models
-                    by specifying variant weights.
+                    by specifying variant weights. For more information on production
+                    variants, check Production variants (https://docs.aws.amazon.com/sagemaker/latest/dg/model-ab-testing.html).
                   properties:
                     acceleratorType:
                       type: string
@@ -155,6 +156,8 @@ spec:
                         kmsKeyID:
                           type: string
                       type: object
+                    enableSSMAccess:
+                      type: boolean
                     initialInstanceCount:
                       format: int64
                       type: integer
@@ -167,6 +170,17 @@ spec:
                       type: integer
                     modelName:
                       type: string
+                    serverlessConfig:
+                      description: Specifies the serverless configuration for an endpoint
+                        variant.
+                      properties:
+                        maxConcurrency:
+                          format: int64
+                          type: integer
+                        memorySizeInMB:
+                          format: int64
+                          type: integer
+                      type: object
                     variantName:
                       type: string
                     volumeSizeInGB:
