@@ -188,7 +188,7 @@ def setup_fsx_driver():
 def install_fsx_driver():
     print("Installing FSx driver...")
 
-    FSx_DRIVER_VERSION = "v0.7.1"
+    FSx_DRIVER_VERSION = "v0.9.0"
     FSx_CSI_DRIVER = f"github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/{FSx_DRIVER_VERSION}"
 
     kubectl_apply_kustomize(FSx_CSI_DRIVER)
