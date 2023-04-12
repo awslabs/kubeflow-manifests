@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: kube-system
 resources:
 # Manifests downloaded from:
-# https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.4.1/v2_4_1_full.yaml
+# https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.4.7/v2_4_7_full.yaml
 # change from original manifest is in Deployment named aws-load-balancer-controller for controller container args: --cluster-name=$(CLUSTER_NAME)
 - load_balancer_controller.yaml
 commonLabels:
