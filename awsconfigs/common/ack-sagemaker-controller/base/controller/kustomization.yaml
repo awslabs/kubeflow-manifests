@@ -6,4 +6,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: public.ecr.aws/aws-controllers-k8s/sagemaker-controller
-  newTag: v0.4.5
+  newTag: v1.2.1
