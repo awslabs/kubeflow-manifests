@@ -99,7 +99,9 @@ spec:
                   we encrypt all data at rest using Amazon Web Services KMS key. By
                   defining your bucket-level key (https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html)
                   for SSE, you can reduce Amazon Web Services KMS requests costs by
-                  up to 99 percent. \n To learn more about this parameter, see OfflineStoreConfig."
+                  up to 99 percent. \n * Format for the offline store table. Supported
+                  formats are Glue (Default) and Apache Iceberg (https://iceberg.apache.org/).
+                  \n To learn more about this parameter, see OfflineStoreConfig."
                 properties:
                   dataCatalogConfig:
                     description: The meta data of the Glue table which serves as data

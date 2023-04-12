@@ -242,7 +242,7 @@ def install_alb_controller(cluster_name):
 
 def install_ack_controller():
     SERVICE = "sagemaker"
-    RELEASE_VERSION = "v0.4.5"
+    RELEASE_VERSION = "v1.2.1"
     CHART_EXPORT_PATH = "../../charts/common/ack-controller"
     CHART_REF = f"{SERVICE}-chart"
     CHART_REPO = f"public.ecr.aws/aws-controllers-k8s/{CHART_REF}"

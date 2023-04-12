@@ -133,8 +133,7 @@ spec:
                     type: object
                   strategy:
                     description: The strategy hyperparameter tuning uses to find the
-                      best combination of hyperparameters for your model. Currently,
-                      the only supported value is Bayesian.
+                      best combination of hyperparameters for your model.
                     type: string
                   trainingJobEarlyStoppingType:
                     type: string
@@ -346,6 +345,10 @@ spec:
                                   items:
                                     type: string
                                   type: array
+                                instanceGroupNames:
+                                  items:
+                                    type: string
+                                  type: array
                                 s3DataDistributionType:
                                   type: string
                                 s3DataType:
@@ -423,17 +426,48 @@ spec:
                         type: string
                     type: object
                   resourceConfig:
-                    description: Describes the resources, including ML compute instances
-                      and ML storage volumes, to use for model training.
+                    description: Describes the resources, including machine learning
+                      (ML) compute instances and ML storage volumes, to use for model
+                      training.
                     properties:
                       instanceCount:
                         format: int64
                         type: integer
+                      instanceGroups:
+                        items:
+                          description: Defines an instance group for heterogeneous
+                            cluster training. When requesting a training job using
+                            the CreateTrainingJob (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateTrainingJob.html)
+                            API, you can configure multiple instance groups .
+                          properties:
+                            instanceCount:
+                              format: int64
+                              type: integer
+                            instanceGroupName:
+                              type: string
+                            instanceType:
+                              type: string
+                          type: object
+                        type: array
                       instanceType:
                         type: string
+                      keepAlivePeriodInSeconds:
+                        format: int64
+                        type: integer
                       volumeKMSKeyID:
                         type: string
                       volumeSizeInGB:
+                        format: int64
+                        type: integer
+                    type: object
+                  retryStrategy:
+                    description: The retry strategy to use when a training job fails
+                      due to an InternalServerError. RetryStrategy is specified as
+                      part of the CreateTrainingJob and CreateHyperParameterTuningJob
+                      requests. You can add the StoppingCondition parameter to the
+                      request to limit the training time for the complete job.
+                    properties:
+                      maximumRetryAttempts:
                         format: int64
                         type: integer
                     type: object
@@ -673,6 +707,10 @@ spec:
                                     items:
                                       type: string
                                     type: array
+                                  instanceGroupNames:
+                                    items:
+                                      type: string
+                                    type: array
                                   s3DataDistributionType:
                                     type: string
                                   s3DataType:
@@ -752,17 +790,48 @@ spec:
                           type: string
                       type: object
                     resourceConfig:
-                      description: Describes the resources, including ML compute instances
-                        and ML storage volumes, to use for model training.
+                      description: Describes the resources, including machine learning
+                        (ML) compute instances and ML storage volumes, to use for
+                        model training.
                       properties:
                         instanceCount:
                           format: int64
                           type: integer
+                        instanceGroups:
+                          items:
+                            description: Defines an instance group for heterogeneous
+                              cluster training. When requesting a training job using
+                              the CreateTrainingJob (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateTrainingJob.html)
+                              API, you can configure multiple instance groups .
+                            properties:
+                              instanceCount:
+                                format: int64
+                                type: integer
+                              instanceGroupName:
+                                type: string
+                              instanceType:
+                                type: string
+                            type: object
+                          type: array
                         instanceType:
                           type: string
+                        keepAlivePeriodInSeconds:
+                          format: int64
+                          type: integer
                         volumeKMSKeyID:
                           type: string
                         volumeSizeInGB:
+                          format: int64
+                          type: integer
+                      type: object
+                    retryStrategy:
+                      description: The retry strategy to use when a training job fails
+                        due to an InternalServerError. RetryStrategy is specified
+                        as part of the CreateTrainingJob and CreateHyperParameterTuningJob
+                        requests. You can add the StoppingCondition parameter to the
+                        request to limit the training time for the complete job.
+                      properties:
+                        maximumRetryAttempts:
                           format: int64
                           type: integer
                       type: object
@@ -909,9 +978,9 @@ spec:
                   failureReason:
                     type: string
                   finalHyperParameterTuningJobObjectiveMetric:
-                    description: Shows the final value for the objective metric for
-                      a training job that was launched by a hyperparameter tuning
-                      job. You define the objective metric in the HyperParameterTuningJobObjective
+                    description: Shows the latest objective metric emitted by a training
+                      job that was launched by a hyperparameter tuning job. You define
+                      the objective metric in the HyperParameterTuningJobObjective
                       parameter of HyperParameterTuningJobConfig.
                     properties:
                       metricName:
@@ -997,9 +1066,9 @@ spec:
                   failureReason:
                     type: string
                   finalHyperParameterTuningJobObjectiveMetric:
-                    description: Shows the final value for the objective metric for
-                      a training job that was launched by a hyperparameter tuning
-                      job. You define the objective metric in the HyperParameterTuningJobObjective
+                    description: Shows the latest objective metric emitted by a training
+                      job that was launched by a hyperparameter tuning job. You define
+                      the objective metric in the HyperParameterTuningJobObjective
                       parameter of HyperParameterTuningJobConfig.
                     properties:
                       metricName:

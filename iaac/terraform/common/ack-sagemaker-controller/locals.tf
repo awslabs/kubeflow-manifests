@@ -9,7 +9,7 @@ locals {
     name        = local.name
     chart       = "${local.service}-chart"
     repository  = "oci://public.ecr.aws/aws-controllers-k8s"
-    version     = "v0.4.5"
+    version     = "v1.2.1"
     namespace   = local.namespace
     description = "SageMaker Operator for Kubernetes (ACK)"
     values      = []

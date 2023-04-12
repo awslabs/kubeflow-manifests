@@ -115,16 +115,16 @@ spec:
                     type: string
                 type: object
               debugHookConfig:
-                description: Configuration information for the Debugger hook parameters,
-                  metric and tensor collections, and storage paths. To learn more
-                  about how to configure the DebugHookConfig parameter, see Use the
-                  SageMaker and Debugger Configuration API Operations to Create, Update,
-                  and Debug Your Training Job (https://docs.aws.amazon.com/sagemaker/latest/dg/debugger-createtrainingjob-api.html).
+                description: Configuration information for the Amazon SageMaker Debugger
+                  hook parameters, metric and tensor collections, and storage paths.
+                  To learn more about how to configure the DebugHookConfig parameter,
+                  see Use the SageMaker and Debugger Configuration API Operations
+                  to Create, Update, and Debug Your Training Job (https://docs.aws.amazon.com/sagemaker/latest/dg/debugger-createtrainingjob-api.html).
                 properties:
                   collectionConfigurations:
                     items:
-                      description: Configuration information for the Debugger output
-                        tensor collections.
+                      description: Configuration information for the Amazon SageMaker
+                        Debugger output tensor collections.
                       properties:
                         collectionName:
                           type: string
@@ -144,8 +144,8 @@ spec:
                     type: string
                 type: object
               debugRuleConfigurations:
-                description: Configuration information for Debugger rules for debugging
-                  output tensors.
+                description: Configuration information for Amazon SageMaker Debugger
+                  rules for debugging output tensors.
                 items:
                   description: Configuration information for SageMaker Debugger rules
                     for debugging. To learn more about how to configure the DebugRuleConfiguration
@@ -227,7 +227,11 @@ spec:
                   provided by SageMaker, see Algorithms (https://docs.aws.amazon.com/sagemaker/latest/dg/algos.html).
                   \n You can specify a maximum of 100 hyperparameters. Each hyperparameter
                   is a key-value pair. Each key and value is limited to 256 characters,
-                  as specified by the Length Constraint."
+                  as specified by the Length Constraint. \n Do not include any security-sensitive
+                  information including account access IDs, secrets or tokens in any
+                  hyperparameter field. If the use of security-sensitive credentials
+                  are detected, SageMaker will reject your training job request and
+                  return an exception error."
                 type: object
               inputDataConfig:
                 description: "An array of Channel objects. Each channel is a named
@@ -273,6 +277,10 @@ spec:
                           description: Describes the S3 data source.
                           properties:
                             attributeNames:
+                              items:
+                                type: string
+                              type: array
+                            instanceGroupNames:
                               items:
                                 type: string
                               type: array
@@ -349,8 +357,8 @@ spec:
                     type: string
                 type: object
               profilerConfig:
-                description: Configuration information for Debugger system monitoring,
-                  framework profiling, and storage paths.
+                description: Configuration information for Amazon SageMaker Debugger
+                  system monitoring, framework profiling, and storage paths.
                 properties:
                   profilingIntervalInMilliseconds:
                     format: int64
@@ -363,8 +371,8 @@ spec:
                     type: string
                 type: object
               profilerRuleConfigurations:
-                description: Configuration information for Debugger rules for profiling
-                  system and framework metrics.
+                description: Configuration information for Amazon SageMaker Debugger
+                  rules for profiling system and framework metrics.
                 items:
                   description: Configuration information for profiling rules.
                   properties:
@@ -400,11 +408,38 @@ spec:
                   instanceCount:
                     format: int64
                     type: integer
+                  instanceGroups:
+                    items:
+                      description: Defines an instance group for heterogeneous cluster
+                        training. When requesting a training job using the CreateTrainingJob
+                        (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateTrainingJob.html)
+                        API, you can configure multiple instance groups .
+                      properties:
+                        instanceCount:
+                          format: int64
+                          type: integer
+                        instanceGroupName:
+                          type: string
+                        instanceType:
+                          type: string
+                      type: object
+                    type: array
                   instanceType:
                     type: string
+                  keepAlivePeriodInSeconds:
+                    format: int64
+                    type: integer
                   volumeKMSKeyID:
                     type: string
                   volumeSizeInGB:
+                    format: int64
+                    type: integer
+                type: object
+              retryStrategy:
+                description: The number of times to retry the job when the job fails
+                  due to an InternalServerError.
+                properties:
+                  maximumRetryAttempts:
                     format: int64
                     type: integer
                 type: object
@@ -463,8 +498,8 @@ spec:
                   type: object
                 type: array
               tensorBoardOutputConfig:
-                description: Configuration of storage locations for the Debugger TensorBoard
-                  output data.
+                description: Configuration of storage locations for the Amazon SageMaker
+                  Debugger TensorBoard output data.
                 properties:
                   localPath:
                     type: string
@@ -563,9 +598,14 @@ spec:
                   - type
                   type: object
                 type: array
+              creationTime:
+                description: A timestamp that indicates when the training job was
+                  created.
+                format: date-time
+                type: string
               debugRuleEvaluationStatuses:
-                description: Evaluation status of Debugger rules for debugging on
-                  a training job.
+                description: Evaluation status of Amazon SageMaker Debugger rules
+                  for debugging on a training job.
                 items:
                   description: Information about the status of the rule evaluation.
                   properties:
@@ -585,6 +625,11 @@ spec:
               failureReason:
                 description: If the training job failed, the reason it failed.
                 type: string
+              lastModifiedTime:
+                description: A timestamp that indicates when the status of the training
+                  job was last modified.
+                format: date-time
+                type: string
               modelArtifacts:
                 description: Information about the Amazon S3 location that is configured
                   for storing model artifacts.
@@ -593,8 +638,8 @@ spec:
                     type: string
                 type: object
               profilerRuleEvaluationStatuses:
-                description: Evaluation status of Debugger rules for profiling on
-                  a training job.
+                description: Evaluation status of Amazon SageMaker Debugger rules
+                  for profiling on a training job.
                 items:
                   description: Information about the status of the rule evaluation.
                   properties:
@@ -611,6 +656,9 @@ spec:
                       type: string
                   type: object
                 type: array
+              profilingStatus:
+                description: Profiling status of a training job.
+                type: string
               secondaryStatus:
                 description: "Provides detailed information about the state of the
                   training job. For detailed information on the secondary status of
@@ -645,6 +693,18 @@ spec:
                   - The training job has stopped. \n For more detailed information,
                   see SecondaryStatus."
                 type: string
+              warmPoolStatus:
+                description: The status of the warm pool associated with the training
+                  job.
+                properties:
+                  resourceRetainedBillableTimeInSeconds:
+                    format: int64
+                    type: integer
+                  reusedByJob:
+                    type: string
+                  status:
+                    type: string
+                type: object
             type: object
         type: object
     served: true
