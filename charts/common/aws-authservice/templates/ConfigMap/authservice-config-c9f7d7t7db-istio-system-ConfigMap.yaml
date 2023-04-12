@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  LOGOUT_URL: {{ .Values.LOGOUT_URL }}
+kind: ConfigMap
+metadata:
+  name: authservice-config-c9f7d7t7db
+  namespace: istio-system
