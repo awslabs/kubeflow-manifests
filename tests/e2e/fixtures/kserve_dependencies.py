@@ -80,9 +80,9 @@ def kserve_iam_service_account(metadata, cluster, region, request):
 
 
 @pytest.fixture(scope="class")
-def s3_bucket_with_data(metadata, kserve_secret, request):
+def s3_bucket_with_data_kserve(metadata, kserve_secret, request):
     metadata_key = "s3-bucket"
-    bucket_name = "s3-" + RANDOM_PREFIX
+    bucket_name = "s3-kserve-" + RANDOM_PREFIX
     bucket = S3BucketWithTrainingData(
         name=bucket_name,
         time_to_sleep=60,
@@ -138,7 +138,7 @@ def kserve_secret(metadata, region, kserve_iam_service_account, request):
 def kserve_inference_service(
     metadata,
     kserve_iam_service_account,
-    s3_bucket_with_data,
+    s3_bucket_with_data_kserve,
     kserve_secret,
     cluster,
     region,
