@@ -100,5 +100,4 @@ class TestNotebookImages:
         cmd.append(sub_cmd)
 
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
-        print(output)
         assert expected_output in output
