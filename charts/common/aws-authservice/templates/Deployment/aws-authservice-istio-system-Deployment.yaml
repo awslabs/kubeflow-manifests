@@ -23,8 +23,8 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: LOGOUT_URL
-              name: authservice-config-ck6577dfkd
-        image: public.ecr.aws/c9e4w0g3/cognito/aws-authservice:v1.0.0
+              name: authservice-config-c9f7d7t7db
+        image: public.ecr.aws/c9e4w0g3/cognito/aws-authservice:v2.0.0
         imagePullPolicy: IfNotPresent
         name: aws-authservice
         ports:

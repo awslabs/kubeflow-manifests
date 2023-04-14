@@ -9,7 +9,7 @@ resources:
 images:
   - name: public.ecr.aws/c9e4w0g3/cognito/aws-authservice
     newName: public.ecr.aws/c9e4w0g3/cognito/aws-authservice
-    newTag: v1.0.0
+    newTag: v2.0.0
 configMapGenerator:
 - name: authservice-config
   env: params.env
