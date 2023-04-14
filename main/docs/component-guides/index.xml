@@ -34,17 +34,15 @@
 &lt;h2 id=&#34;aws-optimized-kubeflow-notebook-servers&#34;&gt;AWS-optimized Kubeflow Notebook servers&lt;/h2&gt;
 &lt;p&gt;Use AWS-optimized Kubeflow Notebook server images to quickly get started with a range of framework, library, and hardware options. These images are built on top of the &lt;a href=&#34;https://docs.aws.amazon.com/deep-learning-containers/latest/devguide/what-is-dlc.html&#34;&gt;AWS Deep Learning Containers&lt;/a&gt; along with other Kubeflow specific packages.&lt;/p&gt;
 &lt;p&gt;These container images are available on the &lt;a href=&#34;https://gallery.ecr.aws/kubeflow-on-aws/&#34;&gt;Amazon Elastic Container Registry (Amazon ECR)&lt;/a&gt;. The following images are available as part of this release, however you can always find the latest updated images in the linked ECR repository.&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.12.0-gpu-py310-cu118-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.12.0-cpu-py310-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-gpu-py310-cu118-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-cpu-py310-ubuntu20.04-ec2-v1.0
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see &lt;a href=&#34;https://github.com/aws/deep-learning-containers/blob/master/available_images.md&#34;&gt;Available Deep Learning Containers Images&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Along with specific machine learning frameworks, these container images have additional pre-installed packages:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;kfp&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;kfserving&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;h5py&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;pandas&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;awscli&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;boto3&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
