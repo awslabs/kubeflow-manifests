@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-14T08:57:23-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-14T11:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Configure Culling for Notebooks">
 <meta itemprop="description" content="Automatically stop your notebooks based on idleness">
-<meta itemprop="dateModified" content="2023-04-14T08:57:23-07:00" />
+<meta itemprop="dateModified" content="2023-04-14T11:45:09-07:00" />
 <meta itemprop="wordCount" content="232">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configure Culling for Notebooks"/>
@@ -543,9 +543,9 @@ Select the package manager of your choice.</p>
 
 <div class="tab-content" id="tabs-0-content"><div class="tab-pane fade show active"
         id="tabs-0-0" role="tabpanel" aria-labelled-by="tabs-0-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">enableCulling=&#39;</span><span class="nv">$ENABLE_CULLING</span><span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">cullIdleTime=&#39;</span><span class="nv">$CULL_IDLE_TIMEOUT</span><span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">idlenessCheckPeriod=&#39;</span><span class="nv">$IDLENESS_CHECK_PERIOD</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">ENABLE_CULLING=&#39;</span><span class="nv">$ENABLE_CULLING</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">CULL_IDLE_TIME=&#39;</span><span class="nv">$CULL_IDLE_TIMEOUT</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">IDLENESS_CHECK_PERIOD=&#39;</span><span class="nv">$IDLENESS_CHECK_PERIOD</span><span class="s1">&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> &gt; awsconfigs/apps/notebook-controller/params.env
 </span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
   <div class="tab-pane fade"
@@ -575,7 +575,7 @@ Select the package manager of your choice.</p>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 14, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8c71aa2272d16f7f3cf7c4acff9593ebf25db8a9">Use latest dlc images for pytorch and tensorflow  (#676) (8c71aa2)</a>
+  Last modified April 14, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/0d7acefcbb626e1483456aee47c531c8d5c9f0cb">Notebook Culling doc change (#679) (0d7acef)</a>
 </div>
 
 </div>
