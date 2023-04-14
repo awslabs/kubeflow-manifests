@@ -20,10 +20,10 @@ Use AWS-optimized Kubeflow Notebook server images to quickly get started with a 
 These container images are available on the [Amazon Elastic Container Registry (Amazon ECR)](https://gallery.ecr.aws/kubeflow-on-aws/). The following images are available as part of this release, however you can always find the latest updated images in the linked ECR repository. 
 
 ```
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-gpu-py39-cu112-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.9.1-cpu-py39-ubuntu20.04-e3-v1.2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-gpu-py38-cu116-ubuntu20.04-ec2-2022-09-20
-public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:1.12.0-cpu-py38-ubuntu20.04-ec2-2022-09-20
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.12.0-gpu-py310-cu118-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.12.0-cpu-py310-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-gpu-py310-cu118-ubuntu20.04-ec2-v1.0
+public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-cpu-py310-ubuntu20.04-ec2-v1.0
 ```
 
 AWS Deep Learning Containers provide optimized environments with popular machine learning frameworks such as TensorFlow and PyTorch, and are available in the Amazon ECR. For more information on AWS Deep Learning Container options, see [Available Deep Learning Containers Images](https://github.com/aws/deep-learning-containers/blob/master/available_images.md).
@@ -31,8 +31,6 @@ AWS Deep Learning Containers provide optimized environments with popular machine
 Along with specific machine learning frameworks, these container images have additional pre-installed packages:
 - `kfp`
 - `kfserving` 
-- `h5py`
-- `pandas`
 - `awscli`
 - `boto3`
 
