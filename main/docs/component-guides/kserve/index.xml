@@ -45,7 +45,7 @@
 &lt;/ol&gt;
 &lt;h3 id=&#34;deploy-models-from-s3-bucket&#34;&gt;Deploy models from S3 Bucket&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;Create Secret with empty AWS Credential:&lt;/li&gt;
+&lt;li&gt;Create Secret:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; secret.yaml
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;apiVersion: v1
@@ -58,16 +58,10 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        serving.kserve.io/s3-usehttps: &amp;#34;1&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        serving.kserve.io/s3-region: ${CLUSTER_REGION}
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    type: Opaque
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    data:
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;      AWS_ACCESS_KEY_ID: &amp;#34;&amp;#34;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;      AWS_SECRET_ACCESS_KEY: &amp;#34;&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f secret.yaml
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
-&lt;p&gt;NOTE: The &lt;strong&gt;empty&lt;/strong&gt; keys for &lt;code&gt;AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY&lt;/code&gt; force it to add the env vars to the init containers but don&amp;rsquo;t override the actual credentials from the IAM role (which happens if you add dummy values). These &lt;strong&gt;empty&lt;/strong&gt; keys are needed for IRSA to work in current version and will not be needed in future release.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ol&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol&gt;
 &lt;li&gt;Attach secret to IRSA in your profile namespace:
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;kubectl patch serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${PROFILE_NAMESPACE} -p &amp;#39;{&amp;#34;secrets&amp;#34;: [{&amp;#34;name&amp;#34;: &amp;#34;aws-secret&amp;#34;}]}&amp;#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;

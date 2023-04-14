@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/component-guides\/kserve\/access-aws-services-from-kserve\/",
-      "wordCount" : "305",
+      "wordCount" : "242",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-13T14:43:30-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-13T21:37:52-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Configure inferenceService to Access AWS Services from KServe">
 <meta itemprop="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
-<meta itemprop="dateModified" content="2023-04-13T14:43:30-07:00" />
-<meta itemprop="wordCount" content="305">
+<meta itemprop="dateModified" content="2023-04-13T21:37:52-07:00" />
+<meta itemprop="wordCount" content="242">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configure inferenceService to Access AWS Services from KServe"/>
 <meta name="twitter:description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket."/>
@@ -511,7 +511,7 @@
 </ol>
 <h3 id="deploy-models-from-s3-bucket">Deploy models from S3 Bucket</h3>
 <ol>
-<li>Create Secret with empty AWS Credential:</li>
+<li>Create Secret:</li>
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; secret.yaml
 </span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: v1
@@ -524,16 +524,10 @@
 </span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-usehttps: &#34;1&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-region: ${CLUSTER_REGION}
 </span></span></span><span class="line"><span class="cl"><span class="s">    type: Opaque
-</span></span></span><span class="line"><span class="cl"><span class="s">    data:
-</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_ACCESS_KEY_ID: &#34;&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s">      AWS_SECRET_ACCESS_KEY: &#34;&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">kubectl apply -f secret.yaml
-</span></span></code></pre></div><blockquote>
-<p>NOTE: The <strong>empty</strong> keys for <code>AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY</code> force it to add the env vars to the init containers but don&rsquo;t override the actual credentials from the IAM role (which happens if you add dummy values). These <strong>empty</strong> keys are needed for IRSA to work in current version and will not be needed in future release.</p>
-</blockquote>
-<ol>
+</span></span></code></pre></div><ol>
 <li>Attach secret to IRSA in your profile namespace:
 <pre tabindex="0"><code>kubectl patch serviceaccount ${SERVICE_ACCOUNT_NAME} -n ${PROFILE_NAMESPACE} -p &#39;{&#34;secrets&#34;: [{&#34;name&#34;: &#34;aws-secret&#34;}]}&#39;
 </code></pre></li>
@@ -574,7 +568,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 13, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/6f567fecfdc91539ccc3f493eedf2140bc7ec88d">Add Terraform S3 backend support (#674) (6f567fe)</a>
+  Last modified April 13, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/bd7d3e645fedad0af5e8fadfe60e67681026fe50">Remove Empty Credential Strings in Kserve IRSA configuration (#673) (bd7d3e6)</a>
 </div>
 
 </div>
