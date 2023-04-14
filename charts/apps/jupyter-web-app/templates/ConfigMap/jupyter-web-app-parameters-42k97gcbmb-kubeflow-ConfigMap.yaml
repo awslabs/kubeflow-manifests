@@ -11,5 +11,5 @@ metadata:
   labels:
     app: jupyter-web-app
     kustomize.component: jupyter-web-app
-  name: jupyter-web-app-parameters-dhcbt5dtdf
+  name: jupyter-web-app-parameters-42k97gcbmb
   namespace: kubeflow
