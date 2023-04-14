@@ -236,9 +236,9 @@ def port_forward(installation):
 
 @pytest.fixture(scope="class")
 def s3_bucket_with_data_sagemaker(region):
-    bucket_name = "s3-sagemaker-" + RANDOM_PREFIX
+    bucket_name = "s3-" + RANDOM_PREFIX
     bucket = S3BucketWithTrainingData(name=bucket_name, cmd=f"python utils/s3_for_training/sync.py {bucket_name} {region}",
-                                       time_to_sleep=120)
+                                       time_to_sleep=180)
     bucket.create()
 
     yield

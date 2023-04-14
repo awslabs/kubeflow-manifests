@@ -81,8 +81,8 @@ def kserve_iam_service_account(metadata, cluster, region, request):
 
 @pytest.fixture(scope="class")
 def s3_bucket_with_data_kserve(metadata, kserve_secret, request):
-    metadata_key = "s3-bucket"
-    bucket_name = "s3-kserve-" + RANDOM_PREFIX
+    metadata_key = "s3-bucket-kserve"
+    bucket_name = "s3-" + RANDOM_PREFIX
     bucket = S3BucketWithTrainingData(
         name=bucket_name,
         time_to_sleep=60,
@@ -156,7 +156,7 @@ def kserve_inference_service(
         print("creating allow-predictor-transformer AuthorizationPolicy...")
         kubectl_apply(AUTHORIZATION_POLICY_CONFIG_FILE)
         print("creating inference service...")
-        bucket_name = metadata.get("s3-bucket")
+        bucket_name = metadata.get("s3-bucket-kserve")
 
         inference_config = load_yaml_file(INFERENCE_CONFIG_FILE)
         inference_config["spec"]["predictor"]["model"][
