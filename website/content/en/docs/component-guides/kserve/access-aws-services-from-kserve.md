@@ -25,7 +25,7 @@ weight = 10
      > NOTE: You can use ECR (`AmazonEC2ContainerRegistryReadOnly`) and S3 (`AmazonS3ReadOnlyAccess`) ReadOnly managed policies. We recommend creating fine grained policy for production usecase. 
 
 ### Deploy models from S3 Bucket 
-1. Create Secret with empty AWS Credential:
+1. Create Secret:
   ```sh
   cat <<EOF > secret.yaml
   apiVersion: v1
@@ -38,14 +38,10 @@ weight = 10
           serving.kserve.io/s3-usehttps: "1"
           serving.kserve.io/s3-region: ${CLUSTER_REGION}
       type: Opaque
-      data:
-        AWS_ACCESS_KEY_ID: ""
-        AWS_SECRET_ACCESS_KEY: ""
   EOF
 
   kubectl apply -f secret.yaml
   ```
-  > NOTE: The **empty** keys for `AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY` force it to add the env vars to the init containers but don't override the actual credentials from the IAM role (which happens if you add dummy values). These **empty** keys are needed for IRSA to work in current version and will not be needed in future release.
 
 1. Attach secret to IRSA in your profile namespace:
     ```
