@@ -9,7 +9,7 @@ install-awscli:
 	aws --version
 
 install-eksctl:
-	$(eval EKSCTL_VERSION:=v0.111.0)
+	$(eval EKSCTL_VERSION:=v0.137.0)
 	curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/$(EKSCTL_VERSION)/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
 	sudo mv /tmp/eksctl /usr/local/bin
 	eksctl version
@@ -70,7 +70,7 @@ verify-cluster-variables:
 create-eks-cluster: verify-cluster-variables
 	eksctl create cluster \
 	--name $(CLUSTER_NAME) \
-	--version 1.24 \
+	--version 1.25 \
 	--region $(CLUSTER_REGION) \
 	--nodegroup-name linux-nodes \
 	--node-type m5.xlarge \
