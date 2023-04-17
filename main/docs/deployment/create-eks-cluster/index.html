@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/create-eks-cluster/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-14T11:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-17T16:42:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Create an EKS Cluster">
 <meta itemprop="description" content="Create an EKS cluster before you deploy Kubeflow on AWS using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-04-14T11:45:09-07:00" />
+<meta itemprop="dateModified" content="2023-04-17T16:42:54-07:00" />
 <meta itemprop="wordCount" content="196">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Create an EKS Cluster"/>
@@ -491,7 +491,7 @@
 </span></span></code></pre></div><p>Run the following command to create an EKS cluster:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl create cluster <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--name <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.24 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.25 <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodegroup-name linux-nodes <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--node-type m5.xlarge <span class="se">\
@@ -509,7 +509,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 14, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/0d7acefcbb626e1483456aee47c531c8d5c9f0cb">Notebook Culling doc change (#679) (0d7acef)</a>
+  Last modified April 17, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/34a28de480b724de882b194de1a6e58bf6103dde"> update to latest eksctl version and update eks to 1.25 (#682) (34a28de)</a>
 </div>
 
 </div>
