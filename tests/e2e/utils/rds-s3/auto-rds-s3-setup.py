@@ -474,9 +474,10 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"][
         "installation_options"
     ]["helm"]["paths"]
-    secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"][
-        "installation_options"
-    ]["helm"]["paths"]
+    if CREDENTIALS_OPTION == "static":
+        secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"][
+            "installation_options"
+        ]["helm"]["paths"]
 
     # pipelines values file
     pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml"
@@ -490,9 +491,10 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_values_file = (
         f"{secrets_manager_rds_only_helm_path}/values.yaml"
     )
-    secrets_manager_s3_only_values_file = (
-        f"{secrets_manager_s3_only_helm_path}/values.yaml"
-    )
+    if CREDENTIALS_OPTION == "static":
+        secrets_manager_s3_only_values_file = (
+            f"{secrets_manager_s3_only_helm_path}/values.yaml"
+        )
 
     # kustomize params
     pipeline_rds_params_env_file = "../../awsconfigs/apps/pipeline/rds/params.env"
@@ -532,11 +534,13 @@ def setup_kubeflow_pipeline():
     edit_pipeline_params_env_file(s3_params, pipeline_s3_params_env_file)
     write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
     write_env_to_yaml(s3_params, pipeline_s3_only_values_file, module="s3")
-    write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
-    write_env_to_yaml(
-        s3_secret_params, secrets_manager_s3_only_values_file, module="s3"
-    )
-    update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
+    if CREDENTIALS_OPTION == "static":
+        write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
+        write_env_to_yaml(
+            s3_secret_params, secrets_manager_s3_only_values_file, module="s3"
+        )
+
+        update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
 
     print("Kubeflow pipeline setup done!")
 
