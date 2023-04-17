@@ -12,7 +12,7 @@ variable "cluster_region" {
 variable "eks_version" {
   description = "The EKS version to use"
   type        = string
-  default     = "1.24"
+  default     = "1.25"
 }
 
 variable "node_instance_type" {
