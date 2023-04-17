@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:1.12.1-gpu-py38-cu116-ubuntu20.04-ec2-v1.2
+ARG BASE_IMAGE=763104351884.dkr.ecr.us-west-2.amazonaws.com/pytorch-training:2.0.0-gpu-py310-cu118-ubuntu20.04-ec2-v1.0
 
 FROM $BASE_IMAGE
 
@@ -46,7 +46,7 @@ RUN apt-get update \
 # install -- node.js
 RUN export DEBIAN_FRONTEND=noninteractive \
  && curl -sL "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" | apt-key add - \
- && echo "deb https://deb.nodesource.com/node_14.x focal main" > /etc/apt/sources.list.d/nodesource.list \
+ && echo "deb http://deb.nodesource.com/node_14.x focal main" > /etc/apt/sources.list.d/nodesource.list \
  && apt-get -yq update \
  && apt-get -yq install --no-install-recommends \
     nodejs \
@@ -54,8 +54,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && rm -rf /var/lib/apt/lists/*
 
 # Install kubectl client
-RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list \
- && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+ && echo "deb http://packages.cloud.google.com/apt/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list \
  && apt-get update \
  && apt-get install -y kubectl
 

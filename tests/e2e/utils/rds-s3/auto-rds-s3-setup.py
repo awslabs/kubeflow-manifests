@@ -24,12 +24,7 @@ from e2e.utils.utils import (
 
 from shutil import which
 
-INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3-static.yaml"
-INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
-INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only-static.yaml"
-path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
-path_dic_rds_only = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
-path_dic_s3_only = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
+
 
 
 def main():
@@ -446,9 +441,19 @@ def install_secrets_store_csi_driver():
 # TO DO: decouple kustomize params.env and helm values.yaml write up in future
 def setup_kubeflow_pipeline():
     print("Setting up Kubeflow Pipeline...")
-
     print("Retrieving DB instance info...")
     db_instance_info = get_db_instance_info()
+
+    if CREDENTIALS_OPTION == "irsa":
+        INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
+        INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
+    else:
+        INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3-static.yaml"
+        INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only-static.yaml"
+    INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
+    path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
+    path_dic_rds_only = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
+    path_dic_s3_only = load_yaml_file(INSTALLATION_PATH_FILE_S3_ONLY)
 
     # helm
     # pipelines helm path
