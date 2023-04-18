@@ -1,6 +1,7 @@
 resource "aws_acm_certificate" "root_domain_deployment_region" {
   domain_name       = "*.${data.aws_route53_zone.root.name}"
   validation_method = "DNS"
+  tags              = var.tags
 
   lifecycle {
     create_before_destroy = true

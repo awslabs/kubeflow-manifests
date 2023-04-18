@@ -88,3 +88,9 @@ variable "secret_recovery_window_in_days" {
   type    = number
   default = 7
 }
+
+variable "tags" {
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+  type        = map(string)
+  default     = {}
+}

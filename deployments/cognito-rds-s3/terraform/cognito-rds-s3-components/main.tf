@@ -134,6 +134,7 @@ module "rds" {
   publicly_accessible            = var.publicly_accessible
   multi_az                       = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "s3" {
@@ -143,6 +144,7 @@ module "s3" {
   minio_aws_access_key_id        = var.minio_aws_access_key_id
   minio_aws_secret_access_key    = var.minio_aws_secret_access_key
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "subdomain" {
@@ -150,6 +152,7 @@ module "subdomain" {
   source                          = "../../../../iaac/terraform/aws-infra/subdomain"
   aws_route53_root_zone_name      = var.aws_route53_root_zone_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+  tags                            = var.tags
 }
 
 module "cognito" {
@@ -157,6 +160,7 @@ module "cognito" {
   source                          = "../../../../iaac/terraform/aws-infra/cognito"
   cognito_user_pool_name          = var.cognito_user_pool_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+  tags                            = var.tags
 
   providers = {
     aws          = aws
@@ -234,6 +238,7 @@ module "ingress_cognito" {
   cognito_app_client_id           = module.cognito[0].app_client_id
   cognito_user_pool_domain        = module.cognito[0].user_pool_domain
   load_balancer_scheme            = var.load_balancer_scheme
+  tags                            = var.tags
 
   depends_on = [module.kubeflow_istio, module.cognito]
 }

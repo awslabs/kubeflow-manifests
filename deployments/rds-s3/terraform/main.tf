@@ -20,7 +20,7 @@ locals {
     Blueprint       = local.cluster_name
     GithubRepo      = "github.com/awslabs/kubeflow-manifests"
     Platform        = "kubeflow-on-aws"
-    KubeflowVersion = "1.6"
+    KubeflowVersion = "1.7"
   }
 
   kf_helm_repo_path = var.kf_helm_repo_path
@@ -234,6 +234,7 @@ module "kubeflow_components" {
   minio_aws_access_key_id     = var.minio_aws_access_key_id
   minio_aws_secret_access_key = var.minio_aws_secret_access_key
 
+  tags                = local.tags
 }
 
 #---------------------------------------------------------------

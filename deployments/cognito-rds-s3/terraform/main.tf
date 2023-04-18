@@ -20,7 +20,7 @@ locals {
     Blueprint       = local.cluster_name
     GithubRepo      = "github.com/awslabs/kubeflow-manifests"
     Platform        = "kubeflow-on-aws"
-    KubeflowVersion = "1.6"
+    KubeflowVersion = "1.7"
   }
 
   kf_helm_repo_path = var.kf_helm_repo_path
@@ -248,6 +248,8 @@ module "kubeflow_components" {
   create_subdomain                = var.create_subdomain
   cognito_user_pool_name          = var.cognito_user_pool_name
   load_balancer_scheme            = var.load_balancer_scheme
+
+  tags                = local.tags
 
   providers = {
     aws          = aws

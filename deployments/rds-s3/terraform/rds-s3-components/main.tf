@@ -127,6 +127,7 @@ module "rds" {
   publicly_accessible            = var.publicly_accessible
   multi_az                       = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "s3" {
@@ -136,6 +137,7 @@ module "s3" {
   minio_aws_access_key_id        = var.minio_aws_access_key_id
   minio_aws_secret_access_key    = var.minio_aws_secret_access_key
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "filter_secrets_manager_set_values" {

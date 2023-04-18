@@ -17,4 +17,5 @@ resource "aws_cognito_user_pool" "platform" {
 
   auto_verified_attributes = ["email"]
 
+  tags = var.tags
 }
