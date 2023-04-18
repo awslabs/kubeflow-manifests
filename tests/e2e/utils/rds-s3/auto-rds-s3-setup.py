@@ -1,4 +1,5 @@
 import argparse
+import os
 import boto3
 import subprocess
 import json
@@ -98,7 +99,15 @@ def setup_s3(s3_client, secrets_manager_client):
     setup_s3_bucket(s3_client)
     if CREDENTIALS_OPTION == "static":
         setup_s3_secrets(secrets_manager_client)
+    else:
+        setup_pipeline_irsa()
 
+
+def setup_pipeline_irsa():
+    script_metadata = {}
+    script_metadata["cluster"] = {"name": CLUSTER_NAME, "region": CLUSTER_REGION}
+    write_env_to_yaml(script_metadata,"utils/pipelines/config.yaml")
+    os.system("python3 utils/pipelines/setup_pipelines_irsa.py")
 
 def setup_s3_bucket(s3_client):
     if not does_bucket_exist(s3_client):
