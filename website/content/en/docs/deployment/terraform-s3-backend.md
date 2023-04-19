@@ -41,9 +41,9 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
 1. Create the S3 bucket:
     ```sh
     if [[ $BUCKET_REGION == "us-east-1" ]]; then
-        aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${BUCKET_REGION}
+        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${BUCKET_REGION}
     else
-        aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${BUCKET_REGION} \
+        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${BUCKET_REGION} \
         --create-bucket-configuration LocationConstraint=${BUCKET_REGION}
     fi
     ```
