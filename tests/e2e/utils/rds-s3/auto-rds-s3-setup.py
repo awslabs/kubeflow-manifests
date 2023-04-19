@@ -23,8 +23,10 @@ from e2e.utils.utils import (
     wait_for,
     WaitForCircuitBreakerError,
     write_env_to_yaml,
-    rand_name
+    rand_name,
 )
+
+from e2e.utils.aws.iam import IAMPolicy
 
 from shutil import which
 
@@ -55,6 +57,7 @@ def main():
     if oidc_role_arn:
         script_metadata["S3"]["backEndRoleArn"] = oidc_role_arn[0]
         script_metadata["S3"]["frontEndRoleArn"] = oidc_role_arn[1]
+        script_metadata["S3"]["policyArn"] = oidc_role_arn[2]
     script_metadata["RDS"] = {
         "instanceName": DB_INSTANCE_NAME,
         "secretName": RDS_SECRET_NAME,
@@ -114,23 +117,37 @@ def setup_pipeline_irsa():
     PIPELINE_OIDC_ROLE_NAME_PREFIX = "kf-pipeline-role"
 
     pipeline_oidc_backend_role_name = rand_name(
-        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-backend-{CLUSTER_NAME}-")[:64]
-    
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-backend-{CLUSTER_NAME}-"
+    )[:64]
+
     pipeline_oidc_frontend_role_name = rand_name(
-        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-frontend-{CLUSTER_NAME}-")[:64]
-    
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-frontend-{CLUSTER_NAME}-"
+    )[:64]
+
     backend_service_account_name = "kubeflow:ml-pipeline"
     frontend_service_account_name = "kubeflow-user-example-com:default-editor"
+    custom_policy_arn = create_pipeline_irsa_s3_policy()
 
     try:
-        create_pipeline_oidc_role(pipeline_oidc_backend_role_name, iam_client, backend_service_account_name)
-        create_pipeline_oidc_role(pipeline_oidc_frontend_role_name, iam_client,frontend_service_account_name)
+        create_pipeline_oidc_role(
+            pipeline_oidc_backend_role_name,
+            iam_client,
+            backend_service_account_name,
+            custom_policy_arn,
+        )
+        create_pipeline_oidc_role(
+            pipeline_oidc_frontend_role_name,
+            iam_client,
+            frontend_service_account_name,
+            custom_policy_arn,
+        )
     except Exception as e:
         raise (e)
 
     oidc_backend_role_arn = get_role_arn(iam_client, pipeline_oidc_backend_role_name)
     oidc_frontend_role_arn = get_role_arn(iam_client, pipeline_oidc_frontend_role_name)
-    return [oidc_backend_role_arn, oidc_frontend_role_arn]
+    return [oidc_backend_role_arn, oidc_frontend_role_arn, custom_policy_arn]
+
 
 def profile_trust_policy(account_id, service_account_name):
     eks_client = get_eks_client(region=CLUSTER_REGION)
@@ -161,19 +178,40 @@ def profile_trust_policy(account_id, service_account_name):
     return json.dumps(trust_policy)
 
 
-def create_pipeline_oidc_role(role_name, iam_client,service_account_name):
+def create_pipeline_irsa_s3_policy():
+    acc_id = get_aws_account_id()
+    policy_name = rand_name("pipeline-irsa-s3-policy-")
+    s3_policy_json = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "s3:*",
+                "Resource": [
+                    f"arn:aws:s3:::{S3_BUCKET_NAME}",
+                    f"arn:aws:s3:::{S3_BUCKET_NAME}/*",
+                ],
+            }
+        ],
+    }
+    policy = IAMPolicy(name=policy_name, region=CLUSTER_REGION)
+    policy.create(policy_document=s3_policy_json)
+    custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
+    return custom_policy_arn
+
+
+def create_pipeline_oidc_role(
+    role_name, iam_client, service_account_name, custom_policy_arn
+):
     acc_id = get_aws_account_id()
     resp = iam_client.create_role(
         RoleName=role_name,
-        AssumeRolePolicyDocument=profile_trust_policy(acc_id,service_account_name),
+        AssumeRolePolicyDocument=profile_trust_policy(acc_id, service_account_name),
     )
     oidc_role_arn = resp["Role"]["Arn"]
 
     print(f"Created IAM Role : {oidc_role_arn}")
-
-    iam_client.attach_role_policy(
-        RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
-    )
+    iam_client.attach_role_policy(RoleName=role_name, PolicyArn=custom_policy_arn)
 
 
 def get_role_arn(iam_client, role_name):
