@@ -17,8 +17,6 @@ locals {
   azs      = slice(local.available_azs, 0, local.az_count)
 
   tags = {
-    Blueprint       = local.cluster_name
-    GithubRepo      = "github.com/awslabs/kubeflow-manifests"
     Platform        = "kubeflow-on-aws"
     KubeflowVersion = "1.7"
   }
