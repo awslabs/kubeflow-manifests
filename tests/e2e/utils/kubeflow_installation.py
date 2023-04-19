@@ -291,19 +291,19 @@ def configure_kubeflow_pipelines(
         return
 
     cfg = load_yaml_file(file_path="./utils/rds-s3/metadata.yaml")
-    IAM_BACKEND_ROLE_ARN_FOR_IRSA = cfg["S3"]["backEndRoleArn"]
-    IAM_FRONTEND_ROLE_ARN_FOR_IRSA = cfg["S3"]["frontEndRoleArn"]
+    BACKEND_ROLE_ARN = cfg["S3"]["backEndRoleArn"]
+    PROFILE_ROLE_ARN = cfg["S3"]["profileRoleArn"]
     if installation_option == "kustomize":
         CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
         USER_NAMESPACE_PATH = (
             "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
         )
         exec_shell(
-            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_BACKEND_ROLE_ARN_FOR_IRSA}"\' '
+            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{BACKEND_ROLE_ARN}"\' '
             + f"-i {CHART_EXPORT_PATH}"
         )
         exec_shell(
-            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_FRONTEND_ROLE_ARN_FOR_IRSA}"\' '
+            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{PROFILE_ROLE_ARN}"\' '
             + f"-i {USER_NAMESPACE_PATH}"
         )
 
@@ -311,11 +311,11 @@ def configure_kubeflow_pipelines(
         CHART_EXPORT_PATH = f"{installation_paths}/values.yaml"
         USER_NAMESPACE_PATH = "../../charts/common/user-namespace/values.yaml"
         exec_shell(
-            f"yq e '.irsa.roleArn=\"{IAM_BACKEND_ROLE_ARN_FOR_IRSA}\"' "
+            f"yq e '.irsa.roleArn=\"{BACKEND_ROLE_ARN}\"' "
             + f"-i {CHART_EXPORT_PATH}"
         )
         exec_shell(
-            f"yq e '.irsa.roleArn=\"{IAM_FRONTEND_ROLE_ARN_FOR_IRSA}\"' "
+            f"yq e '.irsa.roleArn=\"{PROFILE_ROLE_ARN}\"' "
             + f"-i {USER_NAMESPACE_PATH}"
         )
 

@@ -56,7 +56,7 @@ def main():
     script_metadata["S3"] = {"bucket": S3_BUCKET_NAME, "secretName": S3_SECRET_NAME}
     if oidc_role_arn:
         script_metadata["S3"]["backEndRoleArn"] = oidc_role_arn[0]
-        script_metadata["S3"]["frontEndRoleArn"] = oidc_role_arn[1]
+        script_metadata["S3"]["profileRoleArn"] = oidc_role_arn[1]
         script_metadata["S3"]["policyArn"] = oidc_role_arn[2]
     script_metadata["RDS"] = {
         "instanceName": DB_INSTANCE_NAME,
@@ -120,12 +120,12 @@ def setup_pipeline_irsa():
         f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-backend-{CLUSTER_NAME}-"
     )[:64]
 
-    pipeline_oidc_frontend_role_name = rand_name(
-        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-frontend-{CLUSTER_NAME}-"
+    pipeline_oidc_profile_role_name = rand_name(
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-profile-{CLUSTER_NAME}-"
     )[:64]
 
     backend_service_account_name = "kubeflow:ml-pipeline"
-    frontend_service_account_name = "kubeflow-user-example-com:default-editor"
+    profile_service_account_name = "kubeflow-user-example-com:default-editor"
     custom_policy_arn = create_pipeline_irsa_s3_policy()
 
     try:
@@ -136,17 +136,17 @@ def setup_pipeline_irsa():
             custom_policy_arn,
         )
         create_pipeline_oidc_role(
-            pipeline_oidc_frontend_role_name,
+            pipeline_oidc_profile_role_name,
             iam_client,
-            frontend_service_account_name,
+            profile_service_account_name,
             custom_policy_arn,
         )
     except Exception as e:
         raise (e)
 
     oidc_backend_role_arn = get_role_arn(iam_client, pipeline_oidc_backend_role_name)
-    oidc_frontend_role_arn = get_role_arn(iam_client, pipeline_oidc_frontend_role_name)
-    return [oidc_backend_role_arn, oidc_frontend_role_arn, custom_policy_arn]
+    oidc_profile_role_arn = get_role_arn(iam_client, pipeline_oidc_profile_role_name)
+    return [oidc_backend_role_arn, oidc_profile_role_arn, custom_policy_arn]
 
 
 def profile_trust_policy(account_id, service_account_name):
@@ -180,7 +180,7 @@ def profile_trust_policy(account_id, service_account_name):
 
 def create_pipeline_irsa_s3_policy():
     acc_id = get_aws_account_id()
-    policy_name = rand_name("pipeline-irsa-s3-policy-")
+    policy_name = rand_name("kf-pipeline-irsa-s3-policy-")
     s3_policy_json = {
         "Version": "2012-10-17",
         "Statement": [

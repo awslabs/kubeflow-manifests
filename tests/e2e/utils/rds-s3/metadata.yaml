@@ -1,11 +1,11 @@
 RDS:
   instanceName: 
   secretName:
-  subnetGroupName: 
+  subnetGroupName:
 S3:
   bucket: 
   backEndRoleArn: 
-  frontEndRoleArn:
+  profileRoleArn:
   policyArn:
   secretName: 
 CLUSTER:

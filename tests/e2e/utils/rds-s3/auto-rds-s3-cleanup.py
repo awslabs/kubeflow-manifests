@@ -136,7 +136,7 @@ def delete_pipeline_iam_role(metadata, region):
     iam_client = get_iam_client(region=region)
     pipeline_roles = []
     pipeline_roles.append(metadata["S3"]["backEndRoleArn"].split("/")[1])
-    pipeline_roles.append(metadata["S3"]["frontEndRoleArn"].split("/")[1])
+    pipeline_roles.append(metadata["S3"]["profileRoleArn"].split("/")[1])
     policy_arn = metadata["S3"]["policyArn"]
     for role_name in pipeline_roles:
         try:
