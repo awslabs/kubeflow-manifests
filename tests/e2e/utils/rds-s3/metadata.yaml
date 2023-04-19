@@ -4,6 +4,7 @@ RDS:
   subnetGroupName:
 S3:
   bucket: 
+  roleArn:
   secretName: 
 CLUSTER:
   region:

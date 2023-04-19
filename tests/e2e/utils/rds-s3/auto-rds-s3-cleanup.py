@@ -7,6 +7,7 @@ from e2e.utils.utils import (
     get_rds_client,
     get_s3_client,
     get_secrets_manager_client,
+    get_iam_client,
     load_yaml_file,
     kubectl_delete,
 )
@@ -20,6 +21,7 @@ def main():
     delete_s3_bucket(metadata, secrets_manager_client, region)
     delete_rds(metadata, secrets_manager_client, region)
     uninstall_secrets_manager(region, cluster_name)
+    delete_pipeline_iam_role(metadata,region)
 
 
 def delete_s3_bucket(metadata, secrets_manager_client, region):
@@ -128,6 +130,19 @@ def uninstall_secrets_manager(region, cluster_name):
     )
     print("IAM service account kubeflow-secrets-manager-sa successfully deleted")
 
+
+def delete_pipeline_iam_role(metadata,region):
+    iam_client = get_iam_client(region=region)
+    role_name = metadata["S3"]["roleArn"].split("/")[1]
+    try:
+        iam_client.detach_role_policy(
+            RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        )
+    except:
+       print("Failed to detach role policy, it may not exist anymore.")
+    
+    iam_client.delete_role(RoleName=role_name)
+    print(f"Deleted IAM Role : {role_name}")
 
 if __name__ == "__main__":
     main()

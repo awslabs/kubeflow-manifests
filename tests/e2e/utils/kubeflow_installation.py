@@ -284,8 +284,8 @@ def configure_kubeflow_pipelines(
     if credentials_option == "static":
         return
 
-    cfg = load_yaml_file(file_path="./utils/pipelines/config.yaml")
-    IAM_ROLE_ARN_FOR_IRSA = cfg["pipeline_oidc_role"]
+    cfg = load_yaml_file(file_path="./utils/rds-s3/metadata.yaml")
+    IAM_ROLE_ARN_FOR_IRSA = cfg["S3"]["roleArn"]
 
     if installation_option == "kustomize":
         CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"

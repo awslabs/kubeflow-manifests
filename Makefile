@@ -93,20 +93,10 @@ bootstrap-ack: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/setup_sm_controller_req.py
 
-bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
-	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
-	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/setup_pipelines_irsa.py
-
 cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
-
-cleanup-pipelines-req: verify-cluster-variables
-	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
-	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/cleanup_pipelines_irsa.py
 
 deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
