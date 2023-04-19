@@ -23,6 +23,7 @@ from e2e.utils.utils import (
     wait_for,
     WaitForCircuitBreakerError,
     write_env_to_yaml,
+    rand_name
 )
 
 from shutil import which
@@ -52,7 +53,8 @@ def main():
     script_metadata = {}
     script_metadata["S3"] = {"bucket": S3_BUCKET_NAME, "secretName": S3_SECRET_NAME}
     if oidc_role_arn:
-        script_metadata["S3"]["roleArn"] = oidc_role_arn
+        script_metadata["S3"]["backEndRoleArn"] = oidc_role_arn[0]
+        script_metadata["S3"]["frontEndRoleArn"] = oidc_role_arn[1]
     script_metadata["RDS"] = {
         "instanceName": DB_INSTANCE_NAME,
         "secretName": RDS_SECRET_NAME,
@@ -111,17 +113,26 @@ def setup_pipeline_irsa():
     iam_client = get_iam_client(region=CLUSTER_REGION)
     PIPELINE_OIDC_ROLE_NAME_PREFIX = "kf-pipeline-role"
 
-    pipeline_oidc_role_name = f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-{CLUSTER_NAME}"[:64]
+    pipeline_oidc_backend_role_name = rand_name(
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-backend-{CLUSTER_NAME}-")[:64]
+    
+    pipeline_oidc_frontend_role_name = rand_name(
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-frontend-{CLUSTER_NAME}-")[:64]
+    
+    backend_service_account_name = "kubeflow:ml-pipeline"
+    frontend_service_account_name = "kubeflow-user-example-com:default-editor"
+
     try:
-        create_pipeline_oidc_role(pipeline_oidc_role_name, iam_client)
+        create_pipeline_oidc_role(pipeline_oidc_backend_role_name, iam_client, backend_service_account_name)
+        create_pipeline_oidc_role(pipeline_oidc_frontend_role_name, iam_client,frontend_service_account_name)
     except Exception as e:
-        print(e)
+        raise (e)
 
-    oidc_role_arn = get_role_arn(iam_client, pipeline_oidc_role_name)
-    return oidc_role_arn
+    oidc_backend_role_arn = get_role_arn(iam_client, pipeline_oidc_backend_role_name)
+    oidc_frontend_role_arn = get_role_arn(iam_client, pipeline_oidc_frontend_role_name)
+    return [oidc_backend_role_arn, oidc_frontend_role_arn]
 
-
-def profile_trust_policy(account_id):
+def profile_trust_policy(account_id, service_account_name):
     eks_client = get_eks_client(region=CLUSTER_REGION)
 
     resp = eks_client.describe_cluster(name=CLUSTER_NAME)
@@ -140,8 +151,7 @@ def profile_trust_policy(account_id):
                     "StringEquals": {
                         f"{oidc_url}:aud": "sts.amazonaws.com",
                         f"{oidc_url}:sub": [
-                            "system:serviceaccount:kubeflow:ml-pipeline",
-                            "system:serviceaccount:kubeflow-user-example-com:default-editor",
+                            f"system:serviceaccount:{service_account_name}",
                         ],
                     }
                 },
@@ -151,11 +161,11 @@ def profile_trust_policy(account_id):
     return json.dumps(trust_policy)
 
 
-def create_pipeline_oidc_role(role_name, iam_client):
+def create_pipeline_oidc_role(role_name, iam_client,service_account_name):
     acc_id = get_aws_account_id()
     resp = iam_client.create_role(
         RoleName=role_name,
-        AssumeRolePolicyDocument=profile_trust_policy(acc_id),
+        AssumeRolePolicyDocument=profile_trust_policy(acc_id,service_account_name),
     )
     oidc_role_arn = resp["Role"]["Arn"]
 
