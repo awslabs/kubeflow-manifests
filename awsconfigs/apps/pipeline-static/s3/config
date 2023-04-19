@@ -6,15 +6,10 @@ artifactRepository:
         keyPrefix: artifacts,
         endpoint: $(kfp-artifact-storage-endpoint),
         insecure: false,
-        accessKeySecret: {
-            name: mlpipeline-minio-artifact,
-            key: accesskey
-        },
-        secretKeySecret: {
-            name: mlpipeline-minio-artifact,
-            key: secretkey
-        }
+        useSDKCreds: true,
+        keyFormat: "artifacts/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}"
     },
-    archiveLogs: true
+    archiveLogs: true,
+    containerRuntimeExecutor: emissary
 }
 }
