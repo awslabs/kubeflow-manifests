@@ -15,8 +15,8 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/main"
       },
       "articleSection" : "docs",
-      "name" : "Using AWS S3 as a backend for Terraform",
-      "headline" : "Using AWS S3 as a backend for Terraform",
+      "name" : "Configure AWS S3 as a backend for storing Terraform State",
+      "headline" : "Configure AWS S3 as a backend for storing Terraform State",
       "description" : "Backup terraform state to AWS S3",
       "inLanguage" : "en-US",
       "author" : "",
@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/terraform-s3-backend\/",
-      "wordCount" : "346",
+      "wordCount" : "510",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -42,21 +42,21 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Using AWS S3 as a backend for Terraform | Kubeflow on AWS</title>
+<title>Configure AWS S3 as a backend for storing Terraform State | Kubeflow on AWS</title>
 <meta name="description" content="Backup terraform state to AWS S3">
-<meta property="og:title" content="Using AWS S3 as a backend for Terraform" />
+<meta property="og:title" content="Configure AWS S3 as a backend for storing Terraform State" />
 <meta property="og:description" content="Backup terraform state to AWS S3" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-17T16:42:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-19T14:37:30-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
-<meta itemprop="name" content="Using AWS S3 as a backend for Terraform">
+<meta itemprop="name" content="Configure AWS S3 as a backend for storing Terraform State">
 <meta itemprop="description" content="Backup terraform state to AWS S3">
-<meta itemprop="dateModified" content="2023-04-17T16:42:54-07:00" />
-<meta itemprop="wordCount" content="346">
+<meta itemprop="dateModified" content="2023-04-19T14:37:30-07:00" />
+<meta itemprop="wordCount" content="510">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Using AWS S3 as a backend for Terraform"/>
+<meta name="twitter:title" content="Configure AWS S3 as a backend for storing Terraform State"/>
 <meta name="twitter:description" content="Backup terraform state to AWS S3"/>
 
 
@@ -283,13 +283,13 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check" checked/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend"><span class="td-sidebar-nav-active-item">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check" checked/>
-  <label for="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend"><span class="td-sidebar-nav-active-item">Using AWS S3 as a backend for Terraform</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
@@ -407,7 +407,7 @@
 <a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/terraform-s3-backend.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
   <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/terraform-s3-backend.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
   <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/terraform-s3-backend.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Using%20AWS%20S3%20as%20a%20backend%20for%20Terraform" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Configure%20AWS%20S3%20as%20a%20backend%20for%20storing%20Terraform%20State" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -420,7 +420,7 @@
     <li><a href="#local-vs-remote-state">Local vs. Remote state</a></li>
     <li><a href="#permissions">Permissions</a></li>
     <li><a href="#creating-an-initial-backup-of-terraform-state">Creating an initial backup of Terraform state</a></li>
-    <li><a href="#restoring-from-a-terraform-state-backup">Restoring from a Terraform state backup</a></li>
+    <li><a href="#re-using-a-terraform-state-backup">Re-using a Terraform state backup</a></li>
   </ul>
 </nav></div>
 
@@ -460,13 +460,13 @@
     <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/">Deployment Options</a>
   </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/">Using AWS S3 as a backend for Terraform</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/">Configure AWS S3 as a backend for storing Terraform State</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>Using AWS S3 as a backend for Terraform</h1>
+	<h1>Configure AWS S3 as a backend for storing Terraform State</h1>
 	<div class="lead">Backup terraform state to AWS S3</div>
 	<header class="article-meta">
 		
@@ -484,11 +484,17 @@
 		
 	</header>    
 	<h2 id="local-vs-remote-state">Local vs. Remote state</h2>
-<p>While Terraform manages the state of resources it has created through a <code>terraform.tfstate</code>, by default this file only exists locally.
-This means that you will need to manually copy over the original <code>terraform.tfstate</code> file when managing previously created resources on a different host.
-This can become difficult to manage and keep in sync when multiple copies exist between different hosts and users.</p>
-<p>By using a remote backend, such as AWS S3, state is consolidated in one shared remote location and can be re-used between multiple hosts. Additionally, the state will not be lost if the local <code>terraform.tfstate</code> file was accidentally deleted.</p>
+<p>While Terraform manages the state of resources it has created through a <code>terraform.tfstate</code> file, by default this file only exists locally.
+This means that you will need to manually copy over the original <code>terraform.tfstate</code> file when managing previously created resources on a different host. Without having a local copy of the <code>terraform.tfstate</code> file, Terraform will attempt to recreate all the existing resource since it does not know their current state.</p>
+<p>Having multiple copies of the same <code>terraform.tfstate</code> can become difficult to manage and keep in sync between different hosts and users.
+Instead, by using a remote backend, such as AWS S3, state is consolidated in one shared remote location and can be re-used between multiple hosts. Additionally, the state will not be lost if the local <code>terraform.tfstate</code> file was accidentally deleted.</p>
 <p>For additional details on using AWS S3 as a Terraform backend, refer to the following Terraform <a href="https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3">documentation</a>.</p>
+<blockquote>
+<p><strong>Important</strong></p>
+<p>Required Terraform variables will still need to be provided as input when deploying even if a remote state file is being used.</p>
+<p>For example, a cluster name will still need to be provided through the TF_VAR_cluster_name or <code>.tfvar</code> file before deploying.</p>
+<p>Make sure you provide your .tfvars file in the deployment folder and export all the TF_VAR variables when making changes to an existing deployment.</p>
+</blockquote>
 <h2 id="permissions">Permissions</h2>
 <p>The permissions required by the Terraform user to use AWS S3 as a Terraform backend can be found <a href="https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3-bucket-permissions">here</a>.</p>
 <h2 id="creating-an-initial-backup-of-terraform-state">Creating an initial backup of Terraform state</h2>
@@ -504,7 +510,12 @@ This can become difficult to manage and keep in sync when multiple copies exist 
 </span></span></code></pre></div></li>
 <li>
 <p>Create the S3 bucket:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">aws s3api create-bucket --bucket <span class="si">${</span><span class="nv">BUCKET_NAME</span><span class="si">}</span> --region <span class="si">${</span><span class="nv">BUCKET_REGION</span><span class="si">}</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[[</span> <span class="nv">$BUCKET_REGION</span> <span class="o">==</span> <span class="s2">&#34;us-east-1&#34;</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    aws s3api create-bucket --bucket <span class="si">${</span><span class="nv">S3_BUCKET_NAME</span><span class="si">}</span> --region <span class="si">${</span><span class="nv">BUCKET_REGION</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl">    aws s3api create-bucket --bucket <span class="si">${</span><span class="nv">S3_BUCKET_NAME</span><span class="si">}</span> --region <span class="si">${</span><span class="nv">BUCKET_REGION</span><span class="si">}</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --create-bucket-configuration <span class="nv">LocationConstraint</span><span class="o">=</span><span class="si">${</span><span class="nv">BUCKET_REGION</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
 </span></span></code></pre></div></li>
 <li>
 <p>Go to the respective Terraform deployment folder. For example, if Vanilla kubeflow is being deployed:</p>
@@ -523,10 +534,10 @@ This can become difficult to manage and keep in sync when multiple copies exist 
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></div></li>
 <li>
-<p>The above configuration will be used the next time Terraform is deployed.</p>
+<p>If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.</p>
 </li>
 </ol>
-<h2 id="restoring-from-a-terraform-state-backup">Restoring from a Terraform state backup</h2>
+<h2 id="re-using-a-terraform-state-backup">Re-using a Terraform state backup</h2>
 <ol>
 <li>
 <p>Find the name and region for the created bucket, as well as the path in the bucket for where the <code>tfstate</code> file is stored.</p>
@@ -554,14 +565,14 @@ This can become difficult to manage and keep in sync when multiple copies exist 
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></div></li>
 <li>
-<p>The above configuration will be used the next time Terraform is deployed.</p>
+<p>If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.</p>
 </li>
 </ol>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 17, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/34a28de480b724de882b194de1a6e58bf6103dde"> update to latest eksctl version and update eks to 1.25 (#682) (34a28de)</a>
+  Last modified April 19, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/41e87484e79a8fa5d19d1901457490af34916972">Update TF S3 backend guide (#688) (41e8748)</a>
 </div>
 
 </div>

@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/rds-s3\/guide-terraform\/",
-      "wordCount" : "388",
+      "wordCount" : "409",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/rds-s3/guide-terraform/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-17T16:42:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-19T14:37:30-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Terraform Deployment Guide">
 <meta itemprop="description" content="Deploy Kubeflow with RDS and S3 using Terraform">
-<meta itemprop="dateModified" content="2023-04-17T16:42:54-07:00" />
-<meta itemprop="wordCount" content="388">
+<meta itemprop="dateModified" content="2023-04-19T14:37:30-07:00" />
+<meta itemprop="wordCount" content="409">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Terraform Deployment Guide"/>
 <meta name="twitter:description" content="Deploy Kubeflow with RDS and S3 using Terraform"/>
@@ -283,13 +283,13 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
-  
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-li">
-  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"/>
-  <label for="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentterraform-s3-backend"><span class="">Using AWS S3 as a backend for Terraform</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
@@ -423,6 +423,7 @@
       <ul>
         <li><a href="#configure">Configure</a></li>
         <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
+        <li><a href="#recommended-configure-aws-s3-to-backup-terraform-state">(Recommended) Configure AWS S3 to backup Terraform state</a></li>
         <li><a href="#all-configurations">All Configurations</a></li>
         <li><a href="#preview">Preview</a></li>
         <li><a href="#apply">Apply</a></li>
@@ -560,6 +561,8 @@
 </ol>
 <h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
 <p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
+<h3 id="recommended-configure-aws-s3-to-backup-terraform-state">(Recommended) Configure AWS S3 to backup Terraform state</h3>
+<p>Optionally enable AWS S3 as a Terraform backend by following the instructions <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/terraform-s3-backend/">here</a>.</p>
 <h3 id="all-configurations">All Configurations</h3>
 <p>A full list of inputs for the terraform stack can be found <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/rds-s3/terraform/variables.tf">here</a>.</p>
 <h3 id="preview">Preview</h3>
@@ -577,7 +580,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 17, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/34a28de480b724de882b194de1a6e58bf6103dde"> update to latest eksctl version and update eks to 1.25 (#682) (34a28de)</a>
+  Last modified April 19, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/41e87484e79a8fa5d19d1901457490af34916972">Update TF S3 backend guide (#688) (41e8748)</a>
 </div>
 
 </div>
