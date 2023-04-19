@@ -33,7 +33,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
 
 1. Define the following environment variables:
     ```sh
-    export BUCKET_NAME=
+    export S3_BUCKET_NAME=
     export PATH_TO_BACKUP=
     export BUCKET_REGION=
     ```
@@ -41,9 +41,9 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
 1. Create the S3 bucket:
     ```sh
     if [[ $BUCKET_REGION == "us-east-1" ]]; then
-        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${BUCKET_REGION}
+        aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${BUCKET_REGION}
     else
-        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${BUCKET_REGION} \
+        aws s3api create-bucket --bucket ${S3_BUCKET_NAME} --region ${BUCKET_REGION} \
         --create-bucket-configuration LocationConstraint=${BUCKET_REGION}
     fi
     ```
@@ -58,7 +58,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     cat <<EOF > backend.tf
     terraform {
         backend "s3" {
-            bucket = "${BUCKET_NAME}"
+            bucket = "${S3_BUCKET_NAME}"
             key    = "${PATH_TO_BACKUP}"
             region = "${BUCKET_REGION}"
         }
@@ -74,7 +74,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
 
 1. Define the following environment variables:
     ```sh
-    export BUCKET_NAME=
+    export S3_BUCKET_NAME=
     export PATH_TO_BACKUP=
     export BUCKET_REGION=
     ```
@@ -89,7 +89,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     cat <<EOF > backend.tf
     terraform {
         backend "s3" {
-            bucket = "${BUCKET_NAME}"
+            bucket = "${S3_BUCKET_NAME}"
             key    = "${PATH_TO_BACKUP}"
             region = "${BUCKET_REGION}"
         }
