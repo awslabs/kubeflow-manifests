@@ -22,12 +22,14 @@ module "subdomain" {
   source                          = "../../../../iaac/terraform/aws-infra/subdomain"
   aws_route53_root_zone_name      = var.aws_route53_root_zone_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+  tags                            = var.tags
 }
 
 module "cognito" {
   source                          = "../../../../iaac/terraform/aws-infra/cognito"
   cognito_user_pool_name          = var.cognito_user_pool_name
   aws_route53_subdomain_zone_name = var.aws_route53_subdomain_zone_name
+  tags                            = var.tags
 
   providers = {
     aws          = aws

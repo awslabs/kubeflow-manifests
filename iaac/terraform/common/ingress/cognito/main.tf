@@ -5,6 +5,7 @@ data "aws_route53_zone" "platform" {
 resource "aws_acm_certificate" "deployment_region" {
   domain_name       = "*.${data.aws_route53_zone.platform.name}"
   validation_method = "DNS"
+  tags              = var.tags
 
   lifecycle {
     create_before_destroy = true
@@ -46,6 +47,7 @@ resource "kubernetes_ingress_v1" "istio_ingress" {
       "alb.ingress.kubernetes.io/target-type" : "ip",
       "alb.ingress.kubernetes.io/load-balancer-attributes" : "routing.http.drop_invalid_header_fields.enabled=true",
       "alb.ingress.kubernetes.io/scheme" : "${var.load_balancer_scheme}"
+      "alb.ingress.kubernetes.io/tags" : trim(trimspace(replace(replace(jsonencode(var.tags), "\"", ""), ":", "=")), "{}")
     }
     name      = "istio-ingress"
     namespace = "istio-system"

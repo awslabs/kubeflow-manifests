@@ -29,6 +29,7 @@ resource "aws_route53_record" "pre_cognito_domain_a_record" {
 resource "aws_acm_certificate" "cognito_domain_cert" {
   domain_name       = "*.${data.aws_route53_zone.platform.name}"
   validation_method = "DNS"
+  tags              = var.tags
 
   lifecycle {
     create_before_destroy = true
