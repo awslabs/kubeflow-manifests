@@ -232,12 +232,12 @@ module "kubeflow_components" {
   generate_db_password           = var.generate_db_password
 
   # s3
-  use_s3                      = var.use_s3
-  use_static                  = var.use_static
-  minio_service_region        = var.minio_service_region
-  force_destroy_s3_bucket     = var.force_destroy_s3_bucket
-  minio_aws_access_key_id     = var.minio_aws_access_key_id
-  minio_aws_secret_access_key = var.minio_aws_secret_access_key
+  use_s3                        = var.use_s3
+  pipeline_s3_credential_option = var.pipeline_s3_credential_option
+  minio_service_region          = var.minio_service_region
+  force_destroy_s3_bucket       = var.force_destroy_s3_bucket
+  minio_aws_access_key_id       = var.minio_aws_access_key_id
+  minio_aws_secret_access_key   = var.minio_aws_secret_access_key
 
   # cognito
   use_cognito                     = var.use_cognito
