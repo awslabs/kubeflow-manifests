@@ -18,3 +18,9 @@ variable "force_destroy_bucket" {
   description = "Destroys s3 bucket even when the bucket is not empty"
   default     = false
 }
+
+variable "tags" {
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+  type        = map(string)
+  default     = {}
+}

@@ -65,7 +65,7 @@ from e2e.fixtures.kserve_dependencies import (
     kserve_iam_service_account,
     kserve_secret,
     clone_tensorflow_serving,
-    s3_bucket_with_data,
+    s3_bucket_with_data_kserve,
     kserve_inference_service,
 )
 
@@ -235,10 +235,10 @@ def port_forward(installation):
     pass
 
 @pytest.fixture(scope="class")
-def s3_bucket_with_data(region):
+def s3_bucket_with_data_sagemaker(region):
     bucket_name = "s3-" + RANDOM_PREFIX
     bucket = S3BucketWithTrainingData(name=bucket_name, cmd=f"python utils/s3_for_training/sync.py {bucket_name} {region}",
-                                       time_to_sleep=120)
+                                       time_to_sleep=180)
     bucket.create()
 
     yield
@@ -355,7 +355,7 @@ class TestSanity:
         clone_tensorflow_serving,
         kserve_iam_service_account,
         kserve_secret,
-        s3_bucket_with_data,
+        s3_bucket_with_data_kserve,
         kserve_inference_service,
     ):
         # Edit the ConfigMap to change the default domain as per your deployment
@@ -401,7 +401,7 @@ class TestSanity:
         assert retcode == 0
 
     def test_run_kfp_sagemaker_pipeline(
-        self, region, metadata, s3_bucket_with_data, sagemaker_execution_role, kfp_client, clean_up_training_jobs_in_user_ns
+        self, region, metadata, s3_bucket_with_data_sagemaker, sagemaker_execution_role, kfp_client, clean_up_training_jobs_in_user_ns
     ):
 
         experiment_name = "experiment-" + RANDOM_PREFIX

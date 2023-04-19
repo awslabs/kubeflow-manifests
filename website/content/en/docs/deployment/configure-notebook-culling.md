@@ -22,9 +22,9 @@ weight = 80
     {{< tabpane persistLang=false >}}
     {{< tab header="Kustomize" lang="sh" >}}
 printf '
-enableCulling='$ENABLE_CULLING'
-cullIdleTime='$CULL_IDLE_TIMEOUT'
-idlenessCheckPeriod='$IDLENESS_CHECK_PERIOD'
+ENABLE_CULLING='$ENABLE_CULLING'
+CULL_IDLE_TIME='$CULL_IDLE_TIMEOUT'
+IDLENESS_CHECK_PERIOD='$IDLENESS_CHECK_PERIOD'
 ' > awsconfigs/apps/notebook-controller/params.env
     {{< /tab >}}
     {{< tab header="Helm" lang="sh" >}}

@@ -28,3 +28,9 @@ variable "load_balancer_scheme" {
   type        = string
   default     = "internet-facing"
 }
+
+variable "tags" {
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+  type        = map(string)
+  default     = {}
+}
