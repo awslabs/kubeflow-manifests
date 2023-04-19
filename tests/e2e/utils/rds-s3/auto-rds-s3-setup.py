@@ -1,4 +1,5 @@
 import argparse
+import os
 import boto3
 import subprocess
 import json
@@ -12,6 +13,8 @@ from e2e.utils.utils import (
     get_rds_client,
     get_eks_client,
     get_s3_client,
+    get_iam_client,
+    get_aws_account_id,
     get_secrets_manager_client,
     kubectl_apply,
     print_banner,
@@ -20,11 +23,12 @@ from e2e.utils.utils import (
     wait_for,
     WaitForCircuitBreakerError,
     write_env_to_yaml,
+    rand_name,
 )
 
+from e2e.utils.aws.iam import IAMPolicy
+
 from shutil import which
-
-
 
 
 def main():
@@ -33,7 +37,7 @@ def main():
         region=CLUSTER_REGION,
     )
     secrets_manager_client = get_secrets_manager_client(CLUSTER_REGION)
-    setup_s3(s3_client, secrets_manager_client)
+    oidc_role_arn = setup_s3(s3_client, secrets_manager_client)
     rds_client = get_rds_client(CLUSTER_REGION)
     eks_client = get_eks_client(CLUSTER_REGION)
     ec2_client = get_ec2_client(CLUSTER_REGION)
@@ -50,6 +54,10 @@ def main():
     ]
     script_metadata = {}
     script_metadata["S3"] = {"bucket": S3_BUCKET_NAME, "secretName": S3_SECRET_NAME}
+    if oidc_role_arn:
+        script_metadata["S3"]["backEndRoleArn"] = oidc_role_arn[0]
+        script_metadata["S3"]["profileRoleArn"] = oidc_role_arn[1]
+        script_metadata["S3"]["policyArn"] = oidc_role_arn[2]
     script_metadata["RDS"] = {
         "instanceName": DB_INSTANCE_NAME,
         "secretName": RDS_SECRET_NAME,
@@ -96,8 +104,120 @@ def verify_kubectl_is_installed():
 def setup_s3(s3_client, secrets_manager_client):
     print_banner("S3 Setup")
     setup_s3_bucket(s3_client)
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         setup_s3_secrets(secrets_manager_client)
+        return None
+    else:
+        return setup_pipeline_irsa()
+
+
+def setup_pipeline_irsa():
+    print_banner("Create OIDC IAM role for Pipelines")
+    iam_client = get_iam_client(region=CLUSTER_REGION)
+    PIPELINE_OIDC_ROLE_NAME_PREFIX = "kf-pipeline-role"
+
+    pipeline_oidc_backend_role_name = rand_name(
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-backend-{CLUSTER_NAME}-"
+    )[:64]
+
+    pipeline_oidc_profile_role_name = rand_name(
+        f"{PIPELINE_OIDC_ROLE_NAME_PREFIX}-profile-{CLUSTER_NAME}-"
+    )[:64]
+
+    backend_service_account_name = "kubeflow:ml-pipeline"
+    profile_service_account_name = "kubeflow-user-example-com:default-editor"
+    custom_policy_arn = create_pipeline_irsa_s3_policy()
+
+    try:
+        create_pipeline_oidc_role(
+            pipeline_oidc_backend_role_name,
+            iam_client,
+            backend_service_account_name,
+            custom_policy_arn,
+        )
+        create_pipeline_oidc_role(
+            pipeline_oidc_profile_role_name,
+            iam_client,
+            profile_service_account_name,
+            custom_policy_arn,
+        )
+    except Exception as e:
+        raise (e)
+
+    oidc_backend_role_arn = get_role_arn(iam_client, pipeline_oidc_backend_role_name)
+    oidc_profile_role_arn = get_role_arn(iam_client, pipeline_oidc_profile_role_name)
+    return [oidc_backend_role_arn, oidc_profile_role_arn, custom_policy_arn]
+
+
+def profile_trust_policy(account_id, service_account_name):
+    eks_client = get_eks_client(region=CLUSTER_REGION)
+
+    resp = eks_client.describe_cluster(name=CLUSTER_NAME)
+    oidc_url = resp["cluster"]["identity"]["oidc"]["issuer"].split("https://")[1]
+
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                    "StringEquals": {
+                        f"{oidc_url}:aud": "sts.amazonaws.com",
+                        f"{oidc_url}:sub": [
+                            f"system:serviceaccount:{service_account_name}",
+                        ],
+                    }
+                },
+            }
+        ],
+    }
+    return json.dumps(trust_policy)
+
+
+def create_pipeline_irsa_s3_policy():
+    acc_id = get_aws_account_id()
+    policy_name = rand_name("kf-pipeline-irsa-s3-policy-")
+    s3_policy_json = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "s3:*",
+                "Resource": [
+                    f"arn:aws:s3:::{S3_BUCKET_NAME}",
+                    f"arn:aws:s3:::{S3_BUCKET_NAME}/*",
+                ],
+            }
+        ],
+    }
+    policy = IAMPolicy(name=policy_name, region=CLUSTER_REGION)
+    policy.create(policy_document=s3_policy_json)
+    custom_policy_arn = f"arn:aws:iam::{acc_id}:policy/{policy_name}"
+    return custom_policy_arn
+
+
+def create_pipeline_oidc_role(
+    role_name, iam_client, service_account_name, custom_policy_arn
+):
+    acc_id = get_aws_account_id()
+    resp = iam_client.create_role(
+        RoleName=role_name,
+        AssumeRolePolicyDocument=profile_trust_policy(acc_id, service_account_name),
+    )
+    oidc_role_arn = resp["Role"]["Arn"]
+
+    print(f"Created IAM Role : {oidc_role_arn}")
+    iam_client.attach_role_policy(RoleName=role_name, PolicyArn=custom_policy_arn)
+
+
+def get_role_arn(iam_client, role_name):
+    resp = iam_client.get_role(RoleName=role_name)
+    oidc_role_arn = resp["Role"]["Arn"]
+    return oidc_role_arn
 
 
 def setup_s3_bucket(s3_client):
@@ -444,12 +564,16 @@ def setup_kubeflow_pipeline():
     print("Retrieving DB instance info...")
     db_instance_info = get_db_instance_info()
 
-    if CREDENTIALS_OPTION == "irsa":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "irsa":
         INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
         INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
     else:
-        INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3-static.yaml"
-        INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only-static.yaml"
+        INSTALLATION_PATH_FILE_RDS_S3 = (
+            "./resources/installation_config/rds-s3-static.yaml"
+        )
+        INSTALLATION_PATH_FILE_S3_ONLY = (
+            "./resources/installation_config/s3-only-static.yaml"
+        )
     INSTALLATION_PATH_FILE_RDS_ONLY = "./resources/installation_config/rds-only.yaml"
     path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE_RDS_S3)
     path_dic_rds_only = load_yaml_file(INSTALLATION_PATH_FILE_RDS_ONLY)
@@ -474,7 +598,7 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"][
         "installation_options"
     ]["helm"]["paths"]
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"][
             "installation_options"
         ]["helm"]["paths"]
@@ -491,7 +615,7 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_values_file = (
         f"{secrets_manager_rds_only_helm_path}/values.yaml"
     )
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         secrets_manager_s3_only_values_file = (
             f"{secrets_manager_s3_only_helm_path}/values.yaml"
         )
@@ -534,13 +658,17 @@ def setup_kubeflow_pipeline():
     edit_pipeline_params_env_file(s3_params, pipeline_s3_params_env_file)
     write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
     write_env_to_yaml(s3_params, pipeline_s3_only_values_file, module="s3")
-    if CREDENTIALS_OPTION == "static":
-        write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
+        write_env_to_yaml(
+            s3_secret_params, secrets_manager_rds_s3_values_file, module="s3"
+        )
         write_env_to_yaml(
             s3_secret_params, secrets_manager_s3_only_values_file, module="s3"
         )
 
-        update_secret_provider_class(pipeline_s3_secret_provider_class_file, S3_SECRET_NAME)
+        update_secret_provider_class(
+            pipeline_s3_secret_provider_class_file, S3_SECRET_NAME
+        )
 
     print("Kubeflow pipeline setup done!")
 
@@ -699,12 +827,12 @@ parser.add_argument(
     help=f"Name of the secret containing S3 related credentials. Default is set to {S3_SECRET_NAME}",
     required=False,
 )
-CREDENTIALS_OPTION = "irsa"
+PIPELINE_S3_CREDENTIAL_OPTION = "irsa"
 parser.add_argument(
-    "--credentials_option",
+    "--pipeline_s3_credential_option",
     type=str,
-    default=CREDENTIALS_OPTION,
-    help=f"S3 object storage credentials method. Default is set to {CREDENTIALS_OPTION}",
+    default=PIPELINE_S3_CREDENTIAL_OPTION,
+    help=f"S3 object storage credentials method. Default is set to {PIPELINE_S3_CREDENTIAL_OPTION}",
     required=False,
 )
 args, _ = parser.parse_known_args()
@@ -727,6 +855,6 @@ if __name__ == "__main__":
     DB_SUBNET_GROUP_NAME = args.db_subnet_group_name
     RDS_SECRET_NAME = args.rds_secret_name
     S3_SECRET_NAME = args.s3_secret_name
-    CREDENTIALS_OPTION = args.credentials_option
+    PIPELINE_S3_CREDENTIAL_OPTION = args.pipeline_s3_credential_option
 
     main()
