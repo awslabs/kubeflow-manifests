@@ -292,20 +292,26 @@ def configure_kubeflow_pipelines(
         USER_NAMESPACE_PATH = (
             "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
         )
+        exec_shell(
+            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {CHART_EXPORT_PATH}"
+        )
+        exec_shell(
+            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
 
     else:
-        CHART_EXPORT_PATH = f"{installation_paths}/templates/ServiceAccount/ml-pipeline-kubeflow-ServiceAccount.yaml"
-        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/templates/Profile/kubeflow-user-example-com-Profile.yaml"
-
-    exec_shell(
-        f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
-        + f"-i {CHART_EXPORT_PATH}"
-    )
-    exec_shell(
-        f'yq e \'.spec.plugins[0].spec."awsIamRole"="{IAM_ROLE_ARN_FOR_IRSA}"\' '
-        + f"-i {USER_NAMESPACE_PATH}"
-    )
-
+        CHART_EXPORT_PATH = f"{installation_paths}/values.yaml"
+        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/values.yaml"
+        exec_shell(
+            f'yq e \'.irsa.roleArn="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {CHART_EXPORT_PATH}"
+        )
+        exec_shell(
+            f'yq e \'.irsa.roleArn="{IAM_ROLE_ARN_FOR_IRSA}"\' '
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
