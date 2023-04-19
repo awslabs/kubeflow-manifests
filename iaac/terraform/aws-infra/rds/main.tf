@@ -26,7 +26,7 @@ resource "aws_security_group" "public_access" {
 
 resource "aws_db_subnet_group" "rds_db_subnet_group" {
   subnet_ids = var.subnet_ids
-  tags = var.tags
+  tags       = var.tags
 }
 
 resource "random_uuid" "db_snapshot_suffix" {

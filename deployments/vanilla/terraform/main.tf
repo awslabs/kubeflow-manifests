@@ -140,17 +140,17 @@ module "eks_blueprints_kubernetes_addons" {
 
   aws_efs_csi_driver_helm_config = {
     namespace = "kube-system"
-    version = "2.4.1"
+    version   = "2.4.1"
   }
 
-  enable_aws_efs_csi_driver           = true
+  enable_aws_efs_csi_driver = true
 
   aws_fsx_csi_driver_helm_config = {
     namespace = "kube-system"
-    version = "1.5.1"
+    version   = "1.5.1"
   }
 
-  enable_aws_fsx_csi_driver           = true
+  enable_aws_fsx_csi_driver = true
 
   enable_nvidia_device_plugin = local.using_gpu
 
@@ -181,7 +181,7 @@ module "kubeflow_components" {
   notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
 
-  tags                = local.tags
+  tags = local.tags
 }
 
 #---------------------------------------------------------------
