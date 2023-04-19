@@ -1,3 +1,4 @@
+ack_sagemaker_oidc_role: arn:aws:iam::024825446905:role/kf-ack-sm-controller-role-helms
 cluster:
-  name:
-  region:
+  name: helms
+  region: us-west-2

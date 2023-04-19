@@ -101,8 +101,8 @@ cleanup-ack-req: verify-cluster-variables
 deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	$(eval CREDENTIALS_OPTION:=irsa)
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credentials_option $(CREDENTIALS_OPTION) --cluster_name $(CLUSTER_NAME)
+	$(eval PIPELINE_S3_CREDENTIAL_OPTION:=irsa)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --pipeline_s3_credential_option $(PIPELINE_S3_CREDENTIAL_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)

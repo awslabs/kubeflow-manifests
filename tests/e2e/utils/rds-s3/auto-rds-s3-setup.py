@@ -99,7 +99,7 @@ def verify_kubectl_is_installed():
 def setup_s3(s3_client, secrets_manager_client):
     print_banner("S3 Setup")
     setup_s3_bucket(s3_client)
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         setup_s3_secrets(secrets_manager_client)
         return None
     else:
@@ -516,7 +516,7 @@ def setup_kubeflow_pipeline():
     print("Retrieving DB instance info...")
     db_instance_info = get_db_instance_info()
 
-    if CREDENTIALS_OPTION == "irsa":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "irsa":
         INSTALLATION_PATH_FILE_RDS_S3 = "./resources/installation_config/rds-s3.yaml"
         INSTALLATION_PATH_FILE_S3_ONLY = "./resources/installation_config/s3-only.yaml"
     else:
@@ -550,7 +550,7 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_helm_path = path_dic_rds_only["aws-secrets-manager"][
         "installation_options"
     ]["helm"]["paths"]
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"][
             "installation_options"
         ]["helm"]["paths"]
@@ -567,7 +567,7 @@ def setup_kubeflow_pipeline():
     secrets_manager_rds_only_values_file = (
         f"{secrets_manager_rds_only_helm_path}/values.yaml"
     )
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         secrets_manager_s3_only_values_file = (
             f"{secrets_manager_s3_only_helm_path}/values.yaml"
         )
@@ -610,7 +610,7 @@ def setup_kubeflow_pipeline():
     edit_pipeline_params_env_file(s3_params, pipeline_s3_params_env_file)
     write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
     write_env_to_yaml(s3_params, pipeline_s3_only_values_file, module="s3")
-    if CREDENTIALS_OPTION == "static":
+    if PIPELINE_S3_CREDENTIAL_OPTION == "static":
         write_env_to_yaml(
             s3_secret_params, secrets_manager_rds_s3_values_file, module="s3"
         )
@@ -779,12 +779,12 @@ parser.add_argument(
     help=f"Name of the secret containing S3 related credentials. Default is set to {S3_SECRET_NAME}",
     required=False,
 )
-CREDENTIALS_OPTION = "irsa"
+PIPELINE_S3_CREDENTIAL_OPTION = "irsa"
 parser.add_argument(
-    "--credentials_option",
+    "--pipeline_s3_credential_option",
     type=str,
-    default=CREDENTIALS_OPTION,
-    help=f"S3 object storage credentials method. Default is set to {CREDENTIALS_OPTION}",
+    default=PIPELINE_S3_CREDENTIAL_OPTION,
+    help=f"S3 object storage credentials method. Default is set to {PIPELINE_S3_CREDENTIAL_OPTION}",
     required=False,
 )
 args, _ = parser.parse_known_args()
@@ -807,6 +807,6 @@ if __name__ == "__main__":
     DB_SUBNET_GROUP_NAME = args.db_subnet_group_name
     RDS_SECRET_NAME = args.rds_secret_name
     S3_SECRET_NAME = args.s3_secret_name
-    CREDENTIALS_OPTION = args.credentials_option
+    PIPELINE_S3_CREDENTIAL_OPTION = args.pipeline_s3_credential_option
 
     main()

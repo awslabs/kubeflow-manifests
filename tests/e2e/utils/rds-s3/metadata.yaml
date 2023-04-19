@@ -1,11 +1,11 @@
-RDS:
-  instanceName: 
-  secretName: 
-  subnetGroupName:
-S3:
-  bucket: 
-  roleArn:
-  secretName: 
 CLUSTER:
-  region:
-  name:
+  name: helms
+  region: us-west-2
+RDS:
+  instanceName: testinstanceapr
+  secretName: aor17
+  subnetGroupName: testaprsub
+S3:
+  bucket: apr17helmtest
+  roleArn: arn:aws:iam::024825446905:role/kf-pipeline-role-helms
+  secretName: s3-secret
