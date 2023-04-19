@@ -53,7 +53,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     EOF
     ```
 
-1. The above configuration will be used the next time Terraform is deployed.
+1. Deploy Terraform to apply the above configuration.
 
 ## Restoring from a Terraform state backup
 
@@ -84,4 +84,4 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     EOF
     ```
 
-1. The above configuration will be used the next time Terraform is deployed.
+1. Deploy Terraform to apply the above configuration.
