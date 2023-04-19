@@ -1,5 +1,5 @@
 +++
-title = "Using AWS S3 as a backend for Terraform"
+title = "Configure AWS S3 as a backend for storing Terraform State"
 description = "Backup terraform state to AWS S3"
 weight = 70
 +++
@@ -19,6 +19,8 @@ For additional details on using AWS S3 as a Terraform backend, refer to the foll
 > Required Terraform variables will still need to be provided as input when deploying even if a remote state file is being used.
 >
 > For example, a cluster name will still need to be provided through the TF_VAR_cluster_name or `.tfvar` file before deploying.
+>
+> Make sure you provide your .tfvars file in the deployment folder and export all the TF_VAR variables when making changes to an existing deployment.
 
 
 ## Permissions
@@ -64,7 +66,7 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     EOF
     ```
 
-1. Deploy Terraform to apply the above configuration.
+1. If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.
 
 ## Re-using a Terraform state backup
 
@@ -95,4 +97,4 @@ The permissions required by the Terraform user to use AWS S3 as a Terraform back
     EOF
     ```
 
-1. Deploy Terraform to apply the above configuration.
+1. If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.
