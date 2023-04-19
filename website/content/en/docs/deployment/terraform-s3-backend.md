@@ -7,11 +7,9 @@ weight = 70
 ## Local vs. Remote state
 
 While Terraform manages the state of resources it has created through a `terraform.tfstate` file, by default this file only exists locally.
-
 This means that you will need to manually copy over the original `terraform.tfstate` file when managing previously created resources on a different host. Without having a local copy of the `terraform.tfstate` file, Terraform will attempt to recreate all the existing resource since it does not know their current state.
 
 Having multiple copies of the same `terraform.tfstate` can become difficult to manage and keep in sync between different hosts and users.
-
 Instead, by using a remote backend, such as AWS S3, state is consolidated in one shared remote location and can be re-used between multiple hosts. Additionally, the state will not be lost if the local `terraform.tfstate` file was accidentally deleted.
 
 For additional details on using AWS S3 as a Terraform backend, refer to the following Terraform [documentation](https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3).
