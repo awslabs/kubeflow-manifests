@@ -323,7 +323,7 @@ user-namespace:
   installation_options:
     kustomize:
       paths: 
-        - ../../awsconfigs/common/user-namespace/overlay
+        - ../../upstream/common/user-namespace/base
     helm: 
       paths: ../../charts/common/user-namespace
 
