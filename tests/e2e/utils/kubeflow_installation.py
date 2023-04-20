@@ -151,13 +151,6 @@ def install_component(
                     ]["kustomize"]["paths"]:
                         apply_kustomize(kustomize_path)
                 else:
-                    if component_name == "kubeflow-pipelines":
-                        configure_kubeflow_pipelines(
-                            component_name,
-                            installation_paths,
-                            installation_option,
-                            pipeline_s3_credential_option,
-                        )
                     install_helm(component_name, installation_paths)
             # kustomize
             else:
@@ -169,13 +162,6 @@ def install_component(
                     print("need to wait for crds....")
                     crds = installation_config[component_name]["validations"]["crds"]
                     crd_established = False
-                if component_name == "kubeflow-pipelines":
-                    configure_kubeflow_pipelines(
-                        component_name,
-                        installation_paths,
-                        installation_option,
-                        pipeline_s3_credential_option,
-                    )
                 for kustomize_path in installation_paths:
                     if not crd_established:
                         apply_kustomize(kustomize_path, crds)
@@ -279,45 +265,6 @@ def install_ack_controller():
         f"helm upgrade --install -n {ACK_K8S_NAMESPACE} --create-namespace ack-{SERVICE}-controller "
         f"{CHART_EXPORT_PATH}/{SERVICE}-chart"
     )
-
-
-def configure_kubeflow_pipelines(
-    component_name,
-    installation_paths,
-    installation_option,
-    pipeline_s3_credential_option,
-):
-    if pipeline_s3_credential_option == "static":
-        return
-
-    cfg = load_yaml_file(file_path="./utils/rds-s3/metadata.yaml")
-    BACKEND_ROLE_ARN = cfg["S3"]["backEndRoleArn"]
-    PROFILE_ROLE_ARN = cfg["S3"]["profileRoleArn"]
-    if installation_option == "kustomize":
-        CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
-        USER_NAMESPACE_PATH = (
-            "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
-        )
-        exec_shell(
-            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{BACKEND_ROLE_ARN}"\' '
-            + f"-i {CHART_EXPORT_PATH}"
-        )
-        exec_shell(
-            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{PROFILE_ROLE_ARN}"\' '
-            + f"-i {USER_NAMESPACE_PATH}"
-        )
-
-    else:
-        CHART_EXPORT_PATH = f"{installation_paths}/values.yaml"
-        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/values.yaml"
-        exec_shell(
-            f"yq e '.irsa.roleArn=\"{BACKEND_ROLE_ARN}\"' "
-            + f"-i {CHART_EXPORT_PATH}"
-        )
-        exec_shell(
-            f"yq e '.irsa.roleArn=\"{PROFILE_ROLE_ARN}\"' "
-            + f"-i {USER_NAMESPACE_PATH}"
-        )
 
 
 if __name__ == "__main__":
