@@ -361,6 +361,15 @@ aws-authservice:
         - key: app
           value: aws-authservice
 
+#user namespace
+user-namespace:
+  installation_options:
+    kustomize:
+      paths: 
+        - ../../awsconfigs/common/user-namespace/overlay
+    helm: 
+      paths: ../../charts/common/user-namespace
+
 #AWS Secrets Manager
 aws-secrets-manager:
   installation_options:
