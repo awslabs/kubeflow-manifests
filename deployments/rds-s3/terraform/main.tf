@@ -204,9 +204,9 @@ module "kubeflow_components" {
   notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
 
-  use_rds    = var.use_rds
-  use_s3     = var.use_s3
-  use_static = var.use_static
+  use_rds                       = var.use_rds
+  use_s3                        = var.use_s3
+  pipeline_s3_credential_option = var.pipeline_s3_credential_option
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = var.publicly_accessible ? module.vpc.public_subnets : module.vpc.private_subnets
