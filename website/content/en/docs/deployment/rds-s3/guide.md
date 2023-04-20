@@ -298,7 +298,7 @@ yq e '.spec.plugins[0].spec."awsIamRole"=env(PROFILE_ROLE_ARN)' -i awsconfigs/co
             {{< tab header="Helm" lang="yaml" >}}
 yq e '.s3.roleArn = env(BACKEND_ROLE_ARN)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
 yq e '.s3.roleArn = env(BACKEND_ROLE_ARN)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
-yq e '.AwsIamForServiceAccount.awsIamRole = env(PROFILE_ROLE_ARN)' -i charts/common/user-namespace/values.yaml
+yq e '.awsIamForServiceAccount.awsIamRole = env(PROFILE_ROLE_ARN)' -i charts/common/user-namespace/values.yaml
 {{< /tab >}}
             {{< /tabpane >}}
 
