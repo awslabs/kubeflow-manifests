@@ -317,6 +317,17 @@ profiles-and-kfam:
         - key: kustomize.component
           value: profiles
 
+
+#user namespace
+user-namespace:
+  installation_options:
+    kustomize:
+      paths: 
+        - ../../awsconfigs/common/user-namespace/overlay
+    helm: 
+      paths: ../../charts/common/user-namespace
+
+
 #Ingress
 ingress:
   installation_options:
