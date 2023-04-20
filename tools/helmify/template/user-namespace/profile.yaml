@@ -10,3 +10,4 @@ spec:
     - kind: AwsIamForServiceAccount
       spec:
         awsIamRole: '{{ .Values.awsIamForServiceAccount.awsIamRole }}'
+        annotateOnly: true
