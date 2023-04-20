@@ -75,7 +75,6 @@ pwd
     export USE_RDS="true"
     # true/false flag to configure and deploy with S3
     export USE_S3="true"
-    # Pipeline S3 Credential Option to configure 
     # true/false flag to configure and deploy with Cognito
     export USE_COGNITO="true"
     # Load Balancer Scheme
