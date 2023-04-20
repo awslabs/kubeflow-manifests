@@ -32,15 +32,20 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
 2. Deploy Kubeflow.
+
+    1. Export your pipeline-s3-credential-option
+    ```bash 
+    export PIPELINE_S3_CREDENTIAL_OPTION=<IRSA/STATIC>
+    ```
+
     1. Install Kubeflow using the following command:
-    <!-- If using old credentials method then CREDENTIALS_OPTION=static -->
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3 CREDENTIALS_OPTION=irsa
+make deploy-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 CREDENTIALS_OPTION=irsa
+make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
 {{< /tabpane >}}
 
@@ -61,9 +66,9 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 C
 1. Delete the kubeflow deployment:
  
     {{< tabpane persistLang=false >}}
-    {{< tab header="Kustomize" lang="toml" >}}make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3
+    {{< tab header="Kustomize" lang="toml" >}}make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
     {{< /tab >}}
-    {{< tab header="Helm" lang="yaml" >}}make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3
+    {{< tab header="Helm" lang="yaml" >}}make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
     {{< /tab >}}
     {{< /tabpane >}}
 

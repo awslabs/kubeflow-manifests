@@ -48,23 +48,19 @@ pwd
             export TF_VAR_create_subdomain="false"
             ```
 
-<!-- This only applies to old Credential Method which is still allowed in 1.7 but deprecated after. 
+1. As of Kubeflow 1.7, there are two options for users to connect with S3 as backend. 
 
-1. Create an IAM user to use with the Minio Client
+   1.  [RECCOMENDED] IRSA which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+   For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
 
-    [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively. -->
+   2. Create an IAM user to use with the Minio Client
+
+      [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `TF_VAR_minio_aws_access_key_id` and `TF_VAR_minio_aws_secret_access_key` respectively.
+
 
 1. Define the following environment variables:
-    <!-- These need to be part of the below export list if using old Credential Method which is still allowed in 1.7 but deprecated after. 
-    # AWS access key id of the static credentials used to authenticate the Minio Client
-    export TF_VAR_minio_aws_access_key_id=
-    # AWS secret access key of the static credentials used to authenticate the Minio Client
-    export TF_VAR_minio_aws_secret_access_key=
-    THIS BELOW FIELD IS NEW to allow for old credential method
-    # true/false flag to configure to use static credentials
-    export USE_STATIC="true"
-    -->
-    ```sh
+
+    ```bash
     # Region to create the cluster in
     export CLUSTER_REGION=
     # Name of the cluster to create
@@ -79,15 +75,30 @@ pwd
     export USE_RDS="true"
     # true/false flag to configure and deploy with S3
     export USE_S3="true"
+    # Pipeline S3 Credential Option to configure 
     # true/false flag to configure and deploy with Cognito
     export USE_COGNITO="true"
     # Load Balancer Scheme
     export LOAD_BALANCER_SCHEME=internet-facing
     ```
-
     > NOTE: Configure Load Balancer Scheme (e.g. `internet-facing` or `internal`). Default is set to `internet-facing`. Use `internal` as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See [Load balancer scheme](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme) in the AWS documentation
 
-    <!-- Will have to save the new USE_STATIC="${USE_STATIC}" below  export if they are using the old credentials method which was mentioned above. -->
+1. Export your desired PIPELINE_S3_CREDENTIAL_OPTION specific values
+{{< tabpane persistLang=false >}}
+{{< tab header="IRSA" lang="toml" >}}
+# Pipeline S3 Credential Option to configure 
+export PIPELINE_S3_CREDENTIAL_OPTION="irsa"
+{{< /tab >}}
+{{< tab header="IAM User" lang="toml" >}}
+# Pipeline S3 Credential Option to configure 
+export PIPELINE_S3_CREDENTIAL_OPTION="static"
+# AWS access key id of the static credentials used to authenticate the Minio Client
+export TF_VAR_minio_aws_access_key_id=
+# AWS secret access key of the static credentials used to authenticate the Minio Client
+export TF_VAR_minio_aws_secret_access_key=
+{{< /tab >}}
+   {{< /tabpane >}}
+
 
 1. Save the variables to a `.tfvars` file:
     ```sh
@@ -100,6 +111,7 @@ pwd
     cognito_user_pool_name="${USER_POOL_NAME}"
     use_rds="${USE_RDS}"
     use_s3="${USE_S3}"
+    pipeline_s3_credential_option="${PIPELINE_S3_CREDENTIAL_OPTION}"
     use_cognito="${USE_COGNITO}"
     load_balancer_scheme="${LOAD_BALANCER_SCHEME}"
 
