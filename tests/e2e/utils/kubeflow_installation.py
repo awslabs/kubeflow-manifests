@@ -215,7 +215,7 @@ def install_certmanager():
 
 
 def install_alb_controller(cluster_name):
-    exec_shell(f"helm repo add eks https://aws.github.io/eks-charts".split())
+    exec_shell(f"helm repo add eks https://aws.github.io/eks-charts")
 
     exec_shell(f"helm repo update")
 
