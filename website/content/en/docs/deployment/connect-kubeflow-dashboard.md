@@ -5,7 +5,7 @@ weight = 70
 +++
 
 ## Port-forward (Manifest deployment)
-
+> Note: Make sure you are in the repository root directory. 
 ### Option 1: Amazon EC2 
 
 Run the following command on your EC2 instance: 
@@ -40,7 +40,7 @@ make port-forward
 Then, open the AWS Cloud9 browser and go to [http://localhost:8080/](http://localhost:8080/).
 
 ## Port-forward (Terraform deployment)
-
+> Note: Make sure you are in the repository root directory. 
 1. Update the `kubeconfig`:
     ```sh
     $(terraform output -raw configure_kubectl)
