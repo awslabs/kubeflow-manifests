@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/connect-kubeflow-dashboard\/",
-      "wordCount" : "294",
+      "wordCount" : "342",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-21T13:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-21T15:19:46-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Connect to your Kubeflow Dashboard">
 <meta itemprop="description" content="Start experimenting and running your end-to-end ML workflows with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-04-21T13:45:09-07:00" />
-<meta itemprop="wordCount" content="294">
+<meta itemprop="dateModified" content="2023-04-21T15:19:46-07:00" />
+<meta itemprop="wordCount" content="342">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Connect to your Kubeflow Dashboard"/>
 <meta name="twitter:description" content="Start experimenting and running your end-to-end ML workflows with Kubeflow on AWS"/>
@@ -492,6 +492,9 @@
 		
 	</header>    
 	<h2 id="port-forward-manifest-deployment">Port-forward (Manifest deployment)</h2>
+<blockquote>
+<p>Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output <code>&lt;path/to/kubeflow-manifests&gt;</code> directory.</p>
+</blockquote>
 <h3 id="option-1-amazon-ec2">Option 1: Amazon EC2</h3>
 <p>Run the following command on your EC2 instance:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">make port-forward
@@ -507,6 +510,9 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">make port-forward
 </span></span></code></pre></div><p>Then, open the AWS Cloud9 browser and go to <a href="http://localhost:8080/">http://localhost:8080/</a>.</p>
 <h2 id="port-forward-terraform-deployment">Port-forward (Terraform deployment)</h2>
+<blockquote>
+<p>Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output <code>&lt;path/to/kubeflow-manifests&gt;</code> directory.</p>
+</blockquote>
 <ol>
 <li>
 <p>Update the <code>kubeconfig</code>:</p>
@@ -550,7 +556,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/655d4102cb9f59455a976367b4cc513187ae7bcc">KFP IRSA docs (#680) (655d410)</a>
+  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/541ff9cbfb50e415a452f43a482c51d5e031a2e5">Doc Note for Port-forward running directory (#699) (541ff9c)</a>
 </div>
 
 </div>

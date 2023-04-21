@@ -299,6 +299,9 @@ Instead, by using a remote backend, such as AWS S3, state is consolidated in one
         
         
         &lt;h2 id=&#34;port-forward-manifest-deployment&#34;&gt;Port-forward (Manifest deployment)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt; directory.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;option-1-amazon-ec2&#34;&gt;Option 1: Amazon EC2&lt;/h3&gt;
 &lt;p&gt;Run the following command on your EC2 instance:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
@@ -314,6 +317,9 @@ Instead, by using a remote backend, such as AWS S3, state is consolidated in one
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, open the AWS Cloud9 browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;port-forward-terraform-deployment&#34;&gt;Port-forward (Terraform deployment)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt; directory.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Update the &lt;code&gt;kubeconfig&lt;/code&gt;:&lt;/p&gt;
