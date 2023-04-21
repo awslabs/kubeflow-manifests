@@ -6,8 +6,10 @@ spec:
   owner:
     kind: User
     name: user@example.com
+  {{- if .Values.awsIamForServiceAccount.awsIamRole }}
   plugins:
   - kind: AwsIamForServiceAccount
     spec:
       awsIamRole: '{{ .Values.awsIamForServiceAccount.awsIamRole }}'
       annotateOnly: true
+  {{- end }}
