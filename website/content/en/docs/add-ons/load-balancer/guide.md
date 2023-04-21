@@ -39,7 +39,14 @@ This guide assumes that you have:
 
 ## Create Load Balancer
 
-If you prefer to create a load balancer using automated scripts and are not using Terraform, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
+
+#### Setup for Kustomize deployments
+
+If you prefer to create a load balancer using automated scripts, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
+
+#### Setup for Terraform deployments
+
+Follow the manual steps below. 
 
 ### Create domain and certificates
 
@@ -92,7 +99,7 @@ If you choose DNS validation for the validation of the certificates, you will be
 
 Set up resources required for the Load Balancer controller:
 
-#### 1. Verify Subnet configuration
+#### 1. Verify subnet configurations
 
 1. Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the **Prerequisites** section in the [Application load balancing on Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html) guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
     - Check if the following tags exist on the subnets:
@@ -113,12 +120,10 @@ Set up resources required for the Load Balancer controller:
 > Important: Terraform deployent users should skip this step.
 
 1. The Load balancer controller uses [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
-    > Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then skip this step.
     ```bash
     eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
     ```
 1. Create an IAM role with [the necessary permissions](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json) for the Load Balancer controller to use via a service account to access AWS services.
-    > Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then skip this step.
     ```bash
     export LBC_POLICY_NAME=alb_ingress_controller_${CLUSTER_REGION}_${CLUSTER_NAME}
     export LBC_POLICY_ARN=$(aws iam create-policy --policy-name $LBC_POLICY_NAME --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query 'Policy.Arn')
