@@ -24,6 +24,7 @@ from e2e.utils.utils import (
     WaitForCircuitBreakerError,
     write_env_to_yaml,
     rand_name,
+    exec_shell,
 )
 
 from e2e.utils.aws.iam import IAMPolicy
@@ -43,7 +44,7 @@ def main():
     ec2_client = get_ec2_client(CLUSTER_REGION)
     setup_rds(rds_client, secrets_manager_client, eks_client, ec2_client)
     setup_cluster_secrets()
-    setup_kubeflow_pipeline()
+    setup_kubeflow_pipeline(oidc_role_arn)
     print_banner("RDS S3 Setup Complete")
     script_metadata = [
         f"bucket_name={S3_BUCKET_NAME}",
@@ -559,7 +560,7 @@ def install_secrets_store_csi_driver():
 
 
 # TO DO: decouple kustomize params.env and helm values.yaml write up in future
-def setup_kubeflow_pipeline():
+def setup_kubeflow_pipeline(oidc_role_arn):
     print("Setting up Kubeflow Pipeline...")
     print("Retrieving DB instance info...")
     db_instance_info = get_db_instance_info()
@@ -648,6 +649,37 @@ def setup_kubeflow_pipeline():
     pipeline_s3_secret_provider_class_file = (
         "../../awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml"
     )
+    if PIPELINE_S3_CREDENTIAL_OPTION == "irsa":
+        BACKEND_ROLE_ARN = oidc_role_arn[0]
+        PROFILE_ROLE_ARN = oidc_role_arn[1]
+        # kustomize
+        CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
+        USER_NAMESPACE_PATH = (
+            "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
+        )
+        exec_shell(
+            f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{BACKEND_ROLE_ARN}"\' '
+            + f"-i {CHART_EXPORT_PATH}"
+        )
+        exec_shell(
+            f'yq e \'.spec.plugins[0].spec."awsIamRole"="{PROFILE_ROLE_ARN}"\' '
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
+
+        # Helm
+        USER_NAMESPACE_PATH = "../../charts/common/user-namespace/values.yaml"
+        exec_shell(
+            f"yq e '.s3.roleArn=\"{BACKEND_ROLE_ARN}\"' "
+            + f"-i {pipeline_rds_s3_values_file}"
+        )
+        exec_shell(
+            f"yq e '.s3.roleArn=\"{BACKEND_ROLE_ARN}\"' "
+            + f"-i {pipeline_s3_only_values_file}"
+        )
+        exec_shell(
+            f"yq e '.awsIamForServiceAccount.awsIamRole=\"{PROFILE_ROLE_ARN}\"' "
+            + f"-i {USER_NAMESPACE_PATH}"
+        )
 
     s3_params = {
         "bucketName": S3_BUCKET_NAME,

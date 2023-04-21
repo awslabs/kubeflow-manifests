@@ -9,4 +9,5 @@ spec:
   plugins:
     - kind: AwsIamForServiceAccount
       spec:
-        awsIamRole: '{{ .Values.irsa.roleArn }}'
+        awsIamRole: '{{ .Values.awsIamForServiceAccount.awsIamRole }}'
+        annotateOnly: true

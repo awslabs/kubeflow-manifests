@@ -6,10 +6,9 @@ data:
     {
         s3: {
             bucket: {{ .Values.s3.bucketName }},
-            keyPrefix: artifacts,
             endpoint: {{ .Values.s3.minioServiceHost }},
             insecure: false,
-            keyFormat: "artifacts/{{`{{workflow.name}}`}}/{{`{{workflow.creationTimestamp.Y}}`}}/{{`{{workflow.creationTimestamp.m}}`}}/{{`{{workflow.creationTimestamp.d}}`}}/{{`{{pod.name}}`}}"
+            keyFormat: "artifacts/{{`{{workflow.name}}`}}/{{`{{workflow.creationTimestamp.Y}}`}}/{{`{{workflow.creationTimestamp.m}}`}}/{{`{{workflow.creationTimestamp.d}}`}}/{{`{{pod.name}}`}}"，
             accessKeySecret: {
                 name: mlpipeline-minio-artifact,
                 key: accesskey

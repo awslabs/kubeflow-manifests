@@ -315,7 +315,7 @@ module "filter_kfp_set_values" {
     "s3.minioServiceRegion" = coalesce(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb"            = var.mlmdb_name,
     "s3.minioServiceHost"   = var.minio_service_host,
-    "irsa.roleArn"          = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
+    "s3.roleArn"          = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
   }
 }
 
@@ -464,7 +464,7 @@ module "kubeflow_aws_telemetry" {
 module "filter_kubeflow_user_namespace_set_values" {
   source = "../../../../iaac/terraform/utils/set-values-filter"
   set_values = {
-    "irsa.roleArn" = try(data.aws_iam_role.user_namespace_irsa_iam_role[0].arn, null)
+    "awsIamForServiceAccount.awsIamRole" = try(data.aws_iam_role.user_namespace_irsa_iam_role[0].arn, null)
   }
 }
 
