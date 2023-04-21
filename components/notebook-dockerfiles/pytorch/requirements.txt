@@ -1,15 +1,15 @@
 # These packages are installed for both python2 and python3
 
 # Jupyter related packages
-jupyter-console==6.4.4
-jupyterlab==3.4.4
-jupyterlab-git==0.38.0
-notebook==6.4.12
-ipykernel==6.15.1
+jupyter-console==6.6.3
+jupyterlab==3.6.3
+jupyterlab-git==0.41.0
+notebook==6.5.4
+ipykernel==6.22.0
 
 # Extensions for jupyter notebook
-widgetsnbextension==3.6.1
-ipywidgets==7.7.1
+widgetsnbextension==4.0.7
+ipywidgets==8.0.6
 
 # Kubeflow Related Packages
 kfp==1.8.20
