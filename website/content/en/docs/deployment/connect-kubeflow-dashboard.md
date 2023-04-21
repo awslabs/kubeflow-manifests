@@ -5,6 +5,7 @@ weight = 70
 +++
 
 ## Port-forward (Manifest deployment)
+> Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output `<path/to/kubeflow-manifests>` directory.
 
 ### Option 1: Amazon EC2 
 
@@ -40,7 +41,7 @@ make port-forward
 Then, open the AWS Cloud9 browser and go to [http://localhost:8080/](http://localhost:8080/).
 
 ## Port-forward (Terraform deployment)
-
+> Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output `<path/to/kubeflow-manifests>` directory.
 1. Update the `kubeconfig`:
     ```sh
     $(terraform output -raw configure_kubectl)
