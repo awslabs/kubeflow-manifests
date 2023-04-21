@@ -36,6 +36,9 @@ export CLAIM_NAME=<fsx-claim>
 ```
 
 ## 2.0 Setup FSx for Lustre
+
+> Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_fsx_csi_driver = false` then skip this section.
+
 You can either use Automated or Manual setup. We currently only support **Static provisioning** for FSx.  
 
 ### 2.1 [Option 1] Automated setup

@@ -37,6 +37,8 @@ export CLAIM_NAME=<efs-claim>
 
 ## 2.0 Set up EFS
 
+> Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_efs_csi_driver = false` then skip this section.
+
 You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between **static and dynamic provisioning**, so pick whichever suits you. On the other hand, for the automated script we currently only support **dynamic provisioning**. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
 ### 2.1 [Option 1] Automated setup

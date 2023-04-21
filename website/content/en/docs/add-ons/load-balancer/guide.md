@@ -37,7 +37,7 @@ This guide assumes that you have:
 
 ## Create Load Balancer
 
-If you prefer to create a load balancer using automated scripts, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
+If you prefer to create a load balancer using automated scripts and are not using Terraform, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
 
 ### Create domain and certificates
 
@@ -104,10 +104,12 @@ Set up resources required for the Load Balancer controller:
         - `kubernetes.io/role/internal-elb`. Add this tag only to private subnets.
         - `kubernetes.io/role/elb`. Add this tag only to public subnets.
 1. The Load balancer controller uses [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
+    > Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then skip this step.
     ```bash
     eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
     ```
 1. Create an IAM role with [the necessary permissions](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json) for the Load Balancer controller to use via a service account to access AWS services.
+    > Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then skip this step.
     ```bash
     export LBC_POLICY_NAME=alb_ingress_controller_${CLUSTER_REGION}_${CLUSTER_NAME}
     export LBC_POLICY_ARN=$(aws iam create-policy --policy-name $LBC_POLICY_NAME --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query 'Policy.Arn')
@@ -139,6 +141,8 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
 3. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
 
 ### Automated script
+
+> Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then do not follow the instructions in this section. Instead follow the manual steps above.
 
 1. Install dependencies for the script
     ```bash
@@ -197,6 +201,7 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
 > Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/)
 
 ## Clean up
+> Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_load_balancer_controller = false` then do not follow the instructions in this section.
 
 To delete the resources created in this guide, run the following commands from the root of your repository:
 > Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/load_balancer/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the [previous section](#automated-script).
