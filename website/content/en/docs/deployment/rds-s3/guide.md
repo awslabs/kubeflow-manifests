@@ -61,6 +61,26 @@ export REPO_ROOT=$(pwd)
 
 There are two ways to create RDS and S3 resources before you deploy the Kubeflow manifests. Either use the [automated setup](#21-option-1-automated-setup) Python script that is mentioned in the following step, or follow the [manual setup instructions](#22-option-2-manual-setup).
 
+As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:
+  >  Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.
+   -  Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+   For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
+
+   - Option 2 - IAM User(Deprecated):
+      [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `minio_aws_access_key_id` and `minio_aws_secret_access_key` respectively.
+
+1. Export your desired PIPELINE_S3_CREDENTIAL_OPTION:
+   {{< tabpane >}}
+   {{< tab header="IRSA" lang="toml" >}}
+export PIPELINE_S3_CREDENTIAL_OPTION=irsa
+{{< /tab >}}
+   {{< tab header="IAM User" lang="toml" >}}
+export PIPELINE_S3_CREDENTIAL_OPTION=static
+{{< /tab >}}
+   {{< /tabpane >}}
+
+> Note: Automated Setup is only supported for RDS AND S3 Deployments, for RDS/S3 only use the manual steps.
+
 ### 2.1 **Option 1: Automated Setup**
 
 This setup performs all the manual steps in an automated fashion.  
@@ -73,15 +93,6 @@ The script takes care of creating the S3 bucket, setting up IRSA to access to S3
    ```bash
    cd tests/e2e
    ```
-
-1. As of Kubeflow 1.7, there are two options for users to connect with S3 as backend. 
-
-   1.  [RECOMMENDED] IRSA which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
-   For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
-
-   2. Create an IAM user to use with the Minio Client
-
-      [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `minio_aws_access_key_id` and `minio_aws_secret_access_key` respectively.
 
 1. Export values for `CLUSTER_REGION`, `CLUSTER_NAME`, `S3_BUCKET`.
    ```bash
@@ -148,18 +159,7 @@ Follow this step if you prefer to manually set up each component.
     - `RDS database endpoint URL`
     - `RDS database port`
 
-
-
-3. As of Kubeflow 1.7, there are two options for users to connect with S3 as backend. 
-
-   1.  [RECOMMENDED] IRSA which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
-   For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
-
-   2. Create an IAM user to use with the Minio Client
-
-      [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `minio_aws_access_key_id` and `minio_aws_secret_access_key` respectively.
-
-### 2.3 Manual RDS Setup
+### 2.2.1 RDS Setup
 
 1. Export values:
    ```bash
@@ -188,30 +188,40 @@ yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rd
             {{< /tab >}}
             {{< /tabpane >}} 
 
-### 2.4 Manual S3 Setup
+### 2.2.2 S3 Setup
+
+As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:
+  >  Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.
+   -  Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+   For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
+
+   - Option 2 - IAM User(Deprecated):
+      [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi) with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as `minio_aws_access_key_id` and `minio_aws_secret_access_key` respectively.
+
    1. Export values:
       ```bash
-      export S3_SECRET="<your s3 secret name>"
       export S3_BUCKET="<your s3 bucket name>"
       export MINIO_SERVICE_HOST=s3.amazonaws.com
       ```
 
-   1. [IRSA ONLY] IRSA Roles
+   ### 2.2.2.1 [IRSA] IRSA Roles
 
-      1. Associate an OpenID Connect (OIDC) provider with your IAM role to authenticate your cluster with the IAM service.
+1. Create and Configure IRSA Roles:
 
+      1. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one: 
          ```bash
          eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} \
          --region ${CLUSTER_REGION} --approve
          ```  
-      2. Get the following OIDC information for future reference:
+
+      2. Get the identity issuer URL by running the following commands:
          ```bash
          export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
          export OIDC_PROVIDER_URL=$(aws eks describe-cluster --name $CLUSTER_NAME --region $CLUSTER_REGION \
          --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
          ```
 
-      3. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Role. For simplicity, we will restrict access to the specified S3_BUCKET as an example.
+      3. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.
          ```bash
          printf '{
          "Version": "2012-10-17",
@@ -252,9 +262,9 @@ yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rd
          }
          EOF
          
-         export OIDC_BACKEND_ROLE_NAME=kf-pipeline-backend-role-$CLUSTER_NAME
-         export BACKEND_ROLE_ARN=$(aws --region $CLUSTER_REGION iam get-role --role-name $OIDC_BACKEND_ROLE_NAME --output text --query 'Role.Arn')
-         aws --region $CLUSTER_REGION iam create-role --role-name $OIDC_BACKEND_ROLE_NAME --assume-role-policy-document file://backend-trust.json
+         export PIPELINE_BACKEND_ROLE_NAME=kf-pipeline-backend-role-$CLUSTER_NAME
+         aws --region $CLUSTER_REGION iam create-role --role-name $PIPELINE_BACKEND_ROLE_NAME --assume-role-policy-document file://backend-trust.json
+         export BACKEND_ROLE_ARN=$(aws --region $CLUSTER_REGION iam get-role --role-name $PIPELINE_BACKEND_ROLE_NAME --output text --query 'Role.Arn')
          ```
       5. Create Profile Role
          ```bash
@@ -280,15 +290,15 @@ yq e '.rds.secretName = env(RDS_SECRET)' -i charts/common/aws-secrets-manager/rd
          EOF
 
          export OIDC_PROFILE_ROLE_NAME=kf-pipeline-profile-role-$CLUSTER_NAME
-         export PROFILE_ROLE_ARN=$(aws --region $CLUSTER_REGION iam get-role --role-name $OIDC_PROFILE_ROLE_NAME --output text --query 'Role.Arn')
          aws --region $CLUSTER_REGION iam create-role --role-name $OIDC_PROFILE_ROLE_NAME --assume-role-policy-document file://profile-trust.json
+         export PROFILE_ROLE_ARN=$(aws --region $CLUSTER_REGION iam get-role --role-name $OIDC_PROFILE_ROLE_NAME --output text --query 'Role.Arn')
          ```
       6. Attach S3 Policy to Roles
          ```bash
-         aws --region $CLUSTER_REGION iam put-role-policy --role-name $OIDC_BACKEND_ROLE_NAME --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
+         aws --region $CLUSTER_REGION iam put-role-policy --role-name $PIPELINE_BACKEND_ROLE_NAME --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
          aws --region $CLUSTER_REGION iam put-role-policy --role-name $OIDC_PROFILE_ROLE_NAME --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
          ```
-      7. Update the KFP role configurations.
+      7. Configure the manifests with role ARNs.
          - Select the package manager of your choice.
             {{< tabpane persistLang=false >}}
             {{< tab header="Kustomize" lang="toml" >}}
@@ -302,14 +312,20 @@ yq e '.awsIamForServiceAccount.awsIamRole = env(PROFILE_ROLE_ARN)' -i charts/com
 {{< /tab >}}
             {{< /tabpane >}}
 
-   1. [IAM User ONLY] S3 Secrets 
-         1. [S3] Create the S3 Secret and configure the Secret provider:
-      1. Configure a Secret (e.g. `s3-secret`) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
+### 2.2.2.2 [IAM User] S3 Secrets 
+1. Create and configure S3 Secrets:
+      1. Export values:
+         ```bash
+         export S3_SECRET="<your s3 secret name>"
+         export MINIO_AWS_ACCESS_KEY_ID="<your s3 user access key>"
+         export MINIO_AWS_SECRET_ACCESS_KEY="<your s3 user secret  key>"
+         ```
+      2. Configure a Secret (e.g. `s3-secret`) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
          - For more details about configuring or finding your AWS credentials, see [AWS security credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
          - ```bash
            aws secretsmanager create-secret --name $S3_SECRET --secret-string '{"accesskey":"'$MINIO_AWS_ACCESS_KEY_ID'","secretkey":"'$MINIO_AWS_SECRET_ACCESS_KEY'"}' --region $CLUSTER_REGION
            ```
-      1. Rename the `parameters.objects.objectName` field in [the S3 Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the Secret. 
+      3. Rename the `parameters.objects.objectName` field in [the S3 Secret provider configuration](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml) to the name of the Secret. 
          - Select the package manager of your choice.
             {{< tabpane persistLang=false >}}
             {{< tab header="Kustomize" lang="toml" >}}
@@ -321,7 +337,7 @@ yq e '.s3.secretName = env(S3_SECRET)' -i charts/common/aws-secrets-manager/rds-
             {{< /tab >}}
             {{< /tabpane >}}
 
-### Manually Install CSI Driver and update KFP configurations
+### Install CSI Driver and update KFP configurations
 4. Install AWS Secrets & Configuration Provider with Kubernetes Secrets Store CSI driver
 
    1. Run the following commands to enable OIDC and create an `iamserviceaccount` with permissions to retrieve the Secrets created with AWS Secrets Manager.
@@ -543,10 +559,10 @@ Run the following command to uninstall your Kubeflow deployment:
 
 {{< tabpane persistLang=false >}}
 {{< tab header="Kustomize" lang="toml" >}}
-make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=irsa
+make delete-kubeflow INSTALLATION_OPTION=kustomize DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
 {{< tab header="Helm" lang="yaml" >}}
-make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=irsa
+make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
 {{< /tabpane >}}
 

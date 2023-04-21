@@ -15,10 +15,10 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 3. Create an EKS cluster
 4. Create an S3 Bucket
 5. Create an RDS Instance
-<!-- For old credentials method should still read for RDS and S3 -->
-6. Configure AWS Secrets for RDS
-7. Install AWS Secrets and Kubernetes Secrets Store CSI driver
-8. Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines
+6. Configure AWS Secrets or IAM Role for S3
+7. Configure AWS Secrets for RDS
+8. Install AWS Secrets and Kubernetes Secrets Store CSI driver
+9. Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines
 
 ## Configure Custom Domain and Cognito
 
