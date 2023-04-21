@@ -6,6 +6,8 @@ weight = 20
 
 This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.  
 
+> Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.
+
 ## 1.0 Prerequisites
 For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the [deployment options]({{< ref "/docs/deployment" >}}) and [general prerequisites]({{< ref "/docs/deployment/vanilla/guide.md" >}}) for more information.
 
@@ -37,11 +39,18 @@ export CLAIM_NAME=<fsx-claim>
 
 ## 2.0 Setup FSx for Lustre
 
-> Important: If you have deployed Kubeflow using any of the Terraform deployment options and have not set `enable_aws_fsx_csi_driver = false` then skip this section.
+#### Setup for Kustomize deployments
 
 You can either use Automated or Manual setup. We currently only support **Static provisioning** for FSx.  
 
+#### Setup for Terraform deployments
+
+Follow the Manual setup. We currently only support **Static provisioning** for FSx.  
+
 ### 2.1 [Option 1] Automated setup
+
+> Important: Terraform deployment users should not follow these Automated setup instructions and should follow the [Manual setup instructions](#22-option-2-manual-setup).
+
 The script automates all the manual resource creation steps but is currently only available for **Static Provisioning** option.  
 It performs the required cluster configuration, creates an FSx file system and it also takes care of creating a storage class for static provisioning. Once done, move to section 3.0. 
 1. Run the following commands from the `tests/e2e` directory:
@@ -77,7 +86,11 @@ The script applies some default values for the file system name, performance mod
 ### 2.2 [Option 2] Manual setup
 If you prefer to manually setup each component then you can follow this manual guide.  
 
-#### 1. Install the FSx CSI Driver
+#### 1. Driver install and IAM configuration
+
+> Important: Terraform deployent users should skip this step.
+
+##### 1. Install the FSx CSI Driver
 We recommend installing the FSx CSI Driver v0.9.0 directly from the [the aws-fsx-csi-driver GitHub repository](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows:
 
 ```bash
@@ -92,7 +105,7 @@ NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 fsx.csi.aws.com   false            false            Persistent   14s
 ```
 
-#### 2. Create the IAM Policy for the CSI Driver
+##### 2. Create the IAM Policy for the CSI Driver
 The CSI driver's service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account `fsx-csi-controller-sa` with an IAM Role which has the required permissions.
 
 1. Create the policy using the json file provided as follows:
@@ -120,12 +133,12 @@ eksctl create iamserviceaccount \
 kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
 ```
 
-#### 3. Create an instance of the FSx Filesystem
+#### 2. Create an instance of the FSx Filesystem
 Please refer to the official [AWS FSx CSI documentation](https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html) for detailed instructions on creating an FSx filesystem. 
 
 Note: For this guide, we assume that you are creating your FSx Filesystem in the same VPC as your EKS Cluster. 
 
-#### 4. Static provisioning
+#### 3. Static provisioning
 [Using this sample from official Kubeflow Docs](https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre) 
 
 1. Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that `file_system_id` is set. 
