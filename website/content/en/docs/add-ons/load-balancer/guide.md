@@ -40,7 +40,7 @@ This guide assumes that you have:
 ## Create Load Balancer
 
 
-#### Setup for Kustomize deployments
+#### Setup for Manifest deployments
 
 If you prefer to create a load balancer using automated scripts, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
 
@@ -95,11 +95,11 @@ If you choose DNS validation for the validation of the certificates, you will be
     ```bash
     printf 'certArn='$certArn'' > awsconfigs/common/istio-ingress/overlays/https/params.env
     ```
-### Configure Load Balancer controller
+### Configure and Install Load Balancer Controller
+
+> Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set `enable_aws_load_balancer_controller = false`.
 
 Set up resources required for the Load Balancer controller:
-
-#### 1. Verify subnet configurations
 
 1. Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the **Prerequisites** section in the [Application load balancing on Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html) guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
     - Check if the following tags exist on the subnets:
@@ -115,10 +115,6 @@ Set up resources required for the Load Balancer controller:
         - `kubernetes.io/role/internal-elb`. Add this tag only to private subnets.
         - `kubernetes.io/role/elb`. Add this tag only to public subnets.
 
-#### 2. Configure IAM
-
-> Important: Terraform deployent users should skip this step.
-
 1. The Load balancer controller uses [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
     ```bash
     eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
@@ -130,17 +126,22 @@ Set up resources required for the Load Balancer controller:
     eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn ${LBC_POLICY_ARN} --override-existing-serviceaccounts --approve
     ```
 
-#### 3. Configure the Load Balancer Controller
-
 1. Configure the parameters for [load balancer controller](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name.
     ```bash
     printf 'clusterName='$CLUSTER_NAME'' > awsconfigs/common/aws-alb-ingress-controller/base/params.env
     ```
 
-### Build Manifests and deploy components
-Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml) file.
+1. Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml) file.
+    ```bash
+    while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+    ```
+
+### Create Ingress
+
+Create an ingress that will use the certifcate you specified in `certArn`.
+
 ```bash
-while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+kustomize build awsconfigs/common/istio-ingress/overlays/https | kubectl apply -f -
 ```
 
 ### Update the domain with ALB address

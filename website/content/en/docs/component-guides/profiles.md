@@ -47,7 +47,7 @@ You can find documentation about the `AwsIamForServiceAccount` plugin for specif
 
 After installing Kubeflow on AWS with one of the available [deployment options]({{< ref "/docs/deployment" >}}), you can configure Kubeflow Profiles with the following steps:
 
-### 1. Environment Variables
+### 1. Setup
 
 1. Define the following environment variables:
 
@@ -59,7 +59,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export PROFILE_CONTROLLER_POLICY_NAME=<the name of the profile controller policy to be created>
    ```
 
-### 2. Configure the IAM Profile controller
+### 2. Configure the Profile Controller
 
 > Important: Terraform deployent users should skip this step.
 

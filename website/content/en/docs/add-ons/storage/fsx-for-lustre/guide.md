@@ -39,7 +39,7 @@ export CLAIM_NAME=<fsx-claim>
 
 ## 2.0 Setup FSx for Lustre
 
-#### Setup for Kustomize deployments
+#### Setup for Manifest deployments
 
 You can either use Automated or Manual setup. We currently only support **Static provisioning** for FSx.  
 
@@ -88,7 +88,7 @@ If you prefer to manually setup each component then you can follow this manual g
 
 #### 1. Driver install and IAM configuration
 
-> Important: Terraform deployent users should skip this step.
+> Important: Skip this step if you are using a Terraform deployment since EFS CSI driver is installed by default unless you set `enable_aws_fsx_csi_driver = false`.
 
 ##### 1. Install the FSx CSI Driver
 We recommend installing the FSx CSI Driver v0.9.0 directly from the [the aws-fsx-csi-driver GitHub repository](https://github.com/kubernetes-sigs/aws-fsx-csi-driver) as follows:

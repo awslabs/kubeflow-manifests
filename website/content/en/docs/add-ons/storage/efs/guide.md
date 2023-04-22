@@ -39,7 +39,7 @@ export CLAIM_NAME=<efs-claim>
 
 ## 2.0 Set up EFS
 
-#### Setup for Kustomize deployments
+#### Setup for Manifest deployments
 
 You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between **static and dynamic provisioning**, so pick whichever suits you. On the other hand, for the automated script we currently only support **dynamic provisioning**. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
@@ -93,9 +93,9 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 
 #### 1. Driver install and IAM configuration
 
-> Important: Terraform deployent users should skip this step.
+> Important: Skip this step if you are using a Terraform deployment since EFS CSI driver is installed by default unless you set `enable_aws_efs_csi_driver = false`.
 
-##### 1. Install the EFS CSI driver
+##### 1.1 Install the EFS CSI driver
 We recommend installing the EFS CSI Driver v1.5.4 directly from the [the aws-efs-csi-driver github repo](https://github.com/kubernetes-sigs/aws-efs-csi-driver) as follows:
 
 ```bash
@@ -110,7 +110,7 @@ NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 efs.csi.aws.com   false            false            Persistent   5d17h
 ```
 
-##### 2. Create the IAM Policy for the CSI driver
+##### 1.2. Create the IAM Policy for the CSI driver
 The CSI driver's service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account `efs-csi-controller-sa` with an IAM Role which has the required permissions.
 
 1. Download the IAM policy document from GitHub as follows.
