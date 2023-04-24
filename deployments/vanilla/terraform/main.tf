@@ -17,10 +17,8 @@ locals {
   azs      = slice(local.available_azs, 0, local.az_count)
 
   tags = {
-    Blueprint       = local.cluster_name
-    GithubRepo      = "github.com/awslabs/kubeflow-manifests"
     Platform        = "kubeflow-on-aws"
-    KubeflowVersion = "1.6"
+    KubeflowVersion = "1.7"
   }
 
   kf_helm_repo_path = var.kf_helm_repo_path
@@ -140,17 +138,17 @@ module "eks_blueprints_kubernetes_addons" {
 
   aws_efs_csi_driver_helm_config = {
     namespace = "kube-system"
-    version = "2.4.1"
+    version   = "2.4.1"
   }
 
-  enable_aws_efs_csi_driver           = true
+  enable_aws_efs_csi_driver = true
 
   aws_fsx_csi_driver_helm_config = {
     namespace = "kube-system"
-    version = "1.5.1"
+    version   = "1.5.1"
   }
 
-  enable_aws_fsx_csi_driver           = true
+  enable_aws_fsx_csi_driver = true
 
   enable_nvidia_device_plugin = local.using_gpu
 
@@ -180,6 +178,8 @@ module "kubeflow_components" {
   notebook_enable_culling        = var.notebook_enable_culling
   notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
+
+  tags = local.tags
 }
 
 #---------------------------------------------------------------

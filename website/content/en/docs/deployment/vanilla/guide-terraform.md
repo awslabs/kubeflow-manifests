@@ -57,6 +57,9 @@ pwd
 ### (Optional) Configure Culling for Notebooks
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
+### (Recommended) Configure AWS S3 to backup Terraform state
+Optionally enable AWS S3 as a Terraform backend by following the instructions [here]({{< ref "/docs/deployment/terraform-s3-backend.md#" >}}).
+
 ### All Configurations
 
 A full list of inputs for the terraform stack can be found [here](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/terraform/variables.tf).

@@ -40,7 +40,7 @@ From this point onwards, we will be creating/updating the DNS records **in the s
 
     ![cognito-email-required](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-email-required.png)
 
-1. On the Policies page, select `Only allow administrators to create users` under `Do you want to allow users to sign themselves up?` and save changes. This step is optional but is recommended to have strict control over the users.
+1. On the Configure sign-up experience page, unselect `Enable self-registration` under `Self-service sign-up?` and save changes. This step is optional but is recommended to have strict control over the users.
 
 1. Click on `Create pool` to create the user pool.
 
@@ -48,7 +48,7 @@ From this point onwards, we will be creating/updating the DNS records **in the s
 
     ![cognito-app-client-id](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-id.png)
 
-1. In the `App client settings`, select `Authorization code grant` flow under OAuth-2.0 and check `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. 
+1. In the `App client edit the Hosted UI`, select `Authorization code grant` flow under OAuth-2.0 and check `email`, `openid`, `aws.cognito.signin.user.admin` and `profile` scopes. 
 Check also `Enabled Identity Providers`. 
 
     * Substitute `example.com` in this URL - `https://kubeflow.platform.example.com/oauth2/idpresponse` with your domain and use it as the Callback URL(s).
@@ -56,6 +56,8 @@ Check also `Enabled Identity Providers`.
     * Substitute `example.com` in this URL - `https://kubeflow.platform.example.com` with your domain and use it as the Sign out URL(s).
 
         ![cognito-app-client-settings](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings.png)
+
+        ![cognito-app-client-settings](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-app-client-settings-oidc.png)
 
 1. Add a custom domain to the user pool. In order to add a custom domain to your user pool, you need to specify a domain name, and provide a certificate managed with AWS Certificate Manager (ACM).
 

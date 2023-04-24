@@ -3,9 +3,9 @@ artifactRepository:
 {
     s3: {
         bucket: $(kfp-artifact-bucket-name),
-        keyPrefix: artifacts,
         endpoint: $(kfp-artifact-storage-endpoint),
         insecure: false,
+        keyFormat: "artifacts/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}"，
         accessKeySecret: {
             name: mlpipeline-minio-artifact,
             key: accesskey
@@ -15,6 +15,7 @@ artifactRepository:
             key: secretkey
         }
     },
-    archiveLogs: true
+    archiveLogs: true,
+    containerRuntimeExecutor: emissary
 }
 }

@@ -1,2 +1,2 @@
-irsa:
-  roleArn:
+awsIamForServiceAccount:
+  awsIamRole:

@@ -7,6 +7,7 @@ from e2e.utils.utils import (
     get_rds_client,
     get_s3_client,
     get_secrets_manager_client,
+    get_iam_client,
     load_yaml_file,
     kubectl_delete,
 )
@@ -20,6 +21,8 @@ def main():
     delete_s3_bucket(metadata, secrets_manager_client, region)
     delete_rds(metadata, secrets_manager_client, region)
     uninstall_secrets_manager(region, cluster_name)
+    if "backEndRoleArn" in metadata["S3"]:
+        delete_pipeline_iam_role(metadata, region)
 
 
 def delete_s3_bucket(metadata, secrets_manager_client, region):
@@ -128,6 +131,24 @@ def uninstall_secrets_manager(region, cluster_name):
     )
     print("IAM service account kubeflow-secrets-manager-sa successfully deleted")
 
+
+def delete_pipeline_iam_role(metadata, region):
+    iam_client = get_iam_client(region=region)
+    pipeline_roles = []
+    pipeline_roles.append(metadata["S3"]["backEndRoleArn"].split("/")[1])
+    pipeline_roles.append(metadata["S3"]["profileRoleArn"].split("/")[1])
+    policy_arn = metadata["S3"]["policyArn"]
+    for role_name in pipeline_roles:
+        try:
+            iam_client.detach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+        except:
+            raise ("Failed to detach role policy, it may not exist anymore.")
+
+        iam_client.delete_role(RoleName=role_name)
+        print(f"Deleted IAM Role : {role_name}")
+
+    iam_client.delete_policy(PolicyArn=policy_arn)
+    print(f"Deleted IAM Policy : {policy_arn}")
 
 if __name__ == "__main__":
     main()

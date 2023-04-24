@@ -36,6 +36,11 @@ spec:
             configMapKeyRef:
               key: minioServiceRegion
               name: pipeline-install-config
+        - name: MINIO_SERVICE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: minioServiceHost
+              name: pipeline-install-config
         - name: KFP_VERSION
           valueFrom:
             configMapKeyRef:

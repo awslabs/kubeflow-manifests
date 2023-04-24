@@ -70,3 +70,9 @@ variable "notebook_idleness_check_period" {
   type        = string
   default     = 5
 }
+
+variable "tags" {
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+  type        = map(string)
+  default     = {}
+}

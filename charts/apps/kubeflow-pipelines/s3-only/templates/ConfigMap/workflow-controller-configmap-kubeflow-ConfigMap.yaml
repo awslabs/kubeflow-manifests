@@ -10,8 +10,10 @@ data:
             endpoint: {{ .Values.s3.minioServiceHost }},
             insecure: false,
             useSDKCreds: true,
+            keyFormat: "artifacts/{{`{{workflow.name}}`}}/{{`{{workflow.creationTimestamp.Y}}`}}/{{`{{workflow.creationTimestamp.m}}`}}/{{`{{workflow.creationTimestamp.d}}`}}/{{`{{pod.name}}`}}"
         },
-        archiveLogs: true
+        archiveLogs: true,
+        containerRuntimeExecutor: emissary
     }
     }
 kind: ConfigMap

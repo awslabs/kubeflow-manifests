@@ -76,7 +76,9 @@ def ebs_addon(metadata, region, request, account_id, cluster):
         )
         ebs_csi_driver["role_name"] = ebs_csi_role_name
         ebs_csi_driver["service_account_name"] = "ebs-csi-controller-sa"
-        create_addon("aws-ebs-csi-driver", cluster, account_id, ebs_csi_role_name, region)
+        create_addon(
+            "aws-ebs-csi-driver", cluster, account_id, ebs_csi_role_name, region
+        )
         ebs_csi_driver["addon_name"] = "aws-ebs-csi-driver"
         ebs_csi_driver["addon_account"] = account_id
 
@@ -101,7 +103,7 @@ def installation(
     ebs_addon,
     installation_path,
     installation_option,
-    credentials_option,
+    pipeline_s3_credential_option,
     request,
 ):
     """
@@ -115,10 +117,17 @@ def installation(
     """
 
     def on_create():
-        install_kubeflow(installation_option, deployment_option, cluster, credentials_option)
+        install_kubeflow(
+            installation_option,
+            deployment_option,
+            cluster,
+            pipeline_s3_credential_option,
+        )
 
     def on_delete():
-        uninstall_kubeflow(installation_option, deployment_option, credentials_option)
+        uninstall_kubeflow(
+            installation_option, deployment_option, pipeline_s3_credential_option
+        )
 
     configure_resource_fixture(
         metadata, request, installation_path, "installation_path", on_create, on_delete

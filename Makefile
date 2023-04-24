@@ -9,7 +9,7 @@ install-awscli:
 	aws --version
 
 install-eksctl:
-	$(eval EKSCTL_VERSION:=v0.111.0)
+	$(eval EKSCTL_VERSION:=v0.137.0)
 	curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/$(EKSCTL_VERSION)/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
 	sudo mv /tmp/eksctl /usr/local/bin
 	eksctl version
@@ -37,8 +37,7 @@ install-yq:
 	yq --version
 
 install-jq:
-	$(eval JQ_VERSION:=1.5+dfsg-2)
-	sudo apt-get install jq=$(JQ_VERSION) -y
+	sudo apt-get install jq -y
 
 install-terraform:
 	$(eval TERRAFORM_VERSION:=1.2.7)
@@ -70,7 +69,7 @@ verify-cluster-variables:
 create-eks-cluster: verify-cluster-variables
 	eksctl create cluster \
 	--name $(CLUSTER_NAME) \
-	--version 1.24 \
+	--version 1.25 \
 	--region $(CLUSTER_REGION) \
 	--nodegroup-name linux-nodes \
 	--node-type m5.xlarge \
@@ -93,29 +92,16 @@ bootstrap-ack: verify-cluster-variables connect-to-eks-cluster
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/setup_sm_controller_req.py
 
-bootstrap-pipelines: verify-cluster-variables connect-to-eks-cluster
-	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
-	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/setup_pipelines_irsa.py
-
 cleanup-ack-req: verify-cluster-variables
 	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/ack_sm_controller_bootstrap/config.yaml
 	cd tests/e2e && PYTHONPATH=.. python3.8 utils/ack_sm_controller_bootstrap/cleanup_sm_controller_req.py
 
-cleanup-pipelines-req: verify-cluster-variables
-	yq e '.cluster.name=env(CLUSTER_NAME)' -i tests/e2e/utils/pipelines/config.yaml
-	yq e '.cluster.region=env(CLUSTER_REGION)' -i tests/e2e/utils/pipelines/config.yaml
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/pipelines/cleanup_pipelines_irsa.py
-
 deploy-kubeflow: bootstrap-ack
 	$(eval DEPLOYMENT_OPTION:=vanilla)
 	$(eval INSTALLATION_OPTION:=kustomize)
-	$(eval CREDENTIALS_OPTION:=irsa)
-	if [ "$(CREDENTIALS_OPTION)" = "irsa" ]; then \
-		make bootstrap-pipelines; \
-	fi
-	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --credentials_option $(CREDENTIALS_OPTION) --cluster_name $(CLUSTER_NAME)
+	$(eval PIPELINE_S3_CREDENTIAL_OPTION:=irsa)
+	cd tests/e2e && PYTHONPATH=.. python3.8 utils/kubeflow_installation.py --deployment_option $(DEPLOYMENT_OPTION) --installation_option $(INSTALLATION_OPTION) --pipeline_s3_credential_option $(PIPELINE_S3_CREDENTIAL_OPTION) --cluster_name $(CLUSTER_NAME)
 
 delete-kubeflow:
 	$(eval DEPLOYMENT_OPTION:=vanilla)

@@ -20,10 +20,13 @@ resource "aws_security_group" "public_access" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  tags = var.tags
 }
 
 resource "aws_db_subnet_group" "rds_db_subnet_group" {
   subnet_ids = var.subnet_ids
+  tags       = var.tags
 }
 
 resource "random_uuid" "db_snapshot_suffix" {
@@ -55,11 +58,13 @@ resource "aws_db_instance" "kubeflow_db" {
   max_allocated_storage     = var.max_allocated_storage
   publicly_accessible       = var.publicly_accessible
   final_snapshot_identifier = "snp-${random_uuid.db_snapshot_suffix.result}"
+  tags                      = var.tags
 }
 
 resource "aws_secretsmanager_secret" "rds_secret" {
   name_prefix             = "rds-secret-"
   recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                    = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "rds_secret_version" {

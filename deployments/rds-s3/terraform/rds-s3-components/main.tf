@@ -13,19 +13,22 @@ locals {
   secrets_manager_chart_s3     = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/s3-only"
   secrets_manager_chart_rds_s3 = "${var.kf_helm_repo_path}/charts/common/aws-secrets-manager/rds-s3"
 
+  use_static = "static" == var.pipeline_s3_credential_option
+  use_irsa   = "irsa" == var.pipeline_s3_credential_option
+
   kfp_chart_map = {
     (local.kfp_chart_vanilla)           = !var.use_rds && !var.use_s3,
     (local.kfp_chart_rds_only)          = var.use_rds && !var.use_s3,
-    (local.kfp_chart_s3_only)           = !var.use_rds && var.use_s3 && !var.use_static,
-    (local.kfp_chart_rds_and_s3)        = var.use_rds && var.use_s3 && !var.use_static,
-    (local.kfp_chart_s3_only_static)    = !var.use_rds && var.use_s3 && var.use_static,
-    (local.kfp_chart_rds_and_s3_static) = var.use_rds && var.use_s3 && var.use_static
+    (local.kfp_chart_s3_only)           = !var.use_rds && var.use_s3 && local.use_irsa,
+    (local.kfp_chart_rds_and_s3)        = var.use_rds && var.use_s3 && local.use_irsa,
+    (local.kfp_chart_s3_only_static)    = !var.use_rds && var.use_s3 && local.use_static,
+    (local.kfp_chart_rds_and_s3_static) = var.use_rds && var.use_s3 && local.use_static
   }
 
   secrets_manager_chart_map = {
-    (local.secrets_manager_chart_rds)    = var.use_rds && var.use_s3 && !var.use_static,
-    (local.secrets_manager_chart_s3)     = !var.use_rds && var.use_s3 && var.use_static,
-    (local.secrets_manager_chart_rds_s3) = var.use_rds && var.use_s3 && var.use_static
+    (local.secrets_manager_chart_rds)    = var.use_rds && var.use_s3 && local.use_irsa,
+    (local.secrets_manager_chart_s3)     = !var.use_rds && var.use_s3 && local.use_static,
+    (local.secrets_manager_chart_rds_s3) = var.use_rds && var.use_s3 && local.use_static
   }
 
   katib_chart                      = var.use_rds ? local.katib_chart_rds : local.katib_chart_vanilla
@@ -46,19 +49,19 @@ resource "kubernetes_namespace" "kubeflow" {
 }
 
 data "aws_iam_role" "pipeline_irsa_iam_role" {
-  count      = var.use_static ? 0 : 1
+  count      = local.use_static ? 0 : 1
   name       = try(module.kubeflow_pipeline_irsa[0].irsa_iam_role_name, null)
   depends_on = [module.kubeflow_pipeline_irsa]
 }
 
 data "aws_iam_role" "user_namespace_irsa_iam_role" {
-  count      = var.use_static ? 0 : 1
+  count      = local.use_static ? 0 : 1
   name       = try(module.user_namespace_irsa[0].irsa_iam_role_name, null)
   depends_on = [module.user_namespace_irsa]
 }
 
 module "kubeflow_secrets_manager_irsa" {
-  count                             = var.use_static || var.use_rds ? 1 : 0
+  count                             = local.use_static || var.use_rds ? 1 : 0
   source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = kubernetes_namespace.kubeflow.metadata[0].name
   create_kubernetes_namespace       = false
@@ -73,7 +76,7 @@ module "kubeflow_secrets_manager_irsa" {
 }
 
 module "kubeflow_pipeline_irsa" {
-  count                             = var.use_static ? 0 : 1
+  count                             = local.use_static ? 0 : 1
   source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = kubernetes_namespace.kubeflow.metadata[0].name
   create_kubernetes_namespace       = false
@@ -88,7 +91,7 @@ module "kubeflow_pipeline_irsa" {
 }
 
 module "user_namespace_irsa" {
-  count                             = var.use_static ? 0 : 1
+  count                             = local.use_static ? 0 : 1
   source                            = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/irsa?ref=v4.28.0"
   kubernetes_namespace              = "kubeflow-user-example-com"
   create_kubernetes_namespace       = false
@@ -127,6 +130,7 @@ module "rds" {
   publicly_accessible            = var.publicly_accessible
   multi_az                       = var.multi_az
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "s3" {
@@ -136,6 +140,7 @@ module "s3" {
   minio_aws_access_key_id        = var.minio_aws_access_key_id
   minio_aws_secret_access_key    = var.minio_aws_secret_access_key
   secret_recovery_window_in_days = var.secret_recovery_window_in_days
+  tags                           = var.tags
 }
 
 module "filter_secrets_manager_set_values" {
@@ -147,7 +152,7 @@ module "filter_secrets_manager_set_values" {
 }
 
 module "secrets_manager" {
-  count  = var.use_rds || (var.use_s3 && var.use_static) ? 1 : 0
+  count  = var.use_rds || (var.use_s3 && local.use_static) ? 1 : 0
   source = "../../../../iaac/terraform/common/aws-secrets-manager"
   helm_config = {
     chart = local.secrets_manager_chart
@@ -248,7 +253,7 @@ module "filter_kfp_set_values" {
     "s3.minioServiceRegion" = coalesce(var.minio_service_region, var.addon_context.aws_region_name)
     "rds.mlmdDb"            = var.mlmdb_name,
     "s3.minioServiceHost"   = var.minio_service_host
-    "irsa.roleArn"          = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
+    "s3.roleArn"          = try(data.aws_iam_role.pipeline_irsa_iam_role[0].arn, null)
   }
 }
 
@@ -397,7 +402,7 @@ module "kubeflow_aws_telemetry" {
 module "filter_kubeflow_user_namespace_set_values" {
   source = "../../../../iaac/terraform/utils/set-values-filter"
   set_values = {
-    "irsa.roleArn" = try(data.aws_iam_role.user_namespace_irsa_iam_role[0].arn, null)
+    "awsIamForServiceAccount.awsIamRole" = try(data.aws_iam_role.user_namespace_irsa_iam_role[0].arn, null)
   }
 }
 
