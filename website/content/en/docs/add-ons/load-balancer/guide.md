@@ -95,7 +95,7 @@ If you choose DNS validation for the validation of the certificates, you will be
     ```bash
     printf 'certArn='$certArn'' > awsconfigs/common/istio-ingress/overlays/https/params.env
     ```
-### Configure and Install Load Balancer Controller
+### Configure Load Balancer Controller
 
 > Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set `enable_aws_load_balancer_controller = false`.
 
@@ -131,10 +131,17 @@ Set up resources required for the Load Balancer controller:
     printf 'clusterName='$CLUSTER_NAME'' > awsconfigs/common/aws-alb-ingress-controller/base/params.env
     ```
 
-1. Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml) file.
-    ```bash
-    while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
-    ```
+### Install Load Balancer Controller
+
+> Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set `enable_aws_load_balancer_controller = false`.
+
+Run the following command to build and install the Load Balancer controller [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/kustomization.yaml) file.
+
+```bash
+kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
+kubectl wait --for condition=established crd/ingressclassparams.elbv2.k8s.aws
+kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
+```
 
 ### Create Ingress
 

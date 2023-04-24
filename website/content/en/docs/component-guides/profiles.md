@@ -47,7 +47,7 @@ You can find documentation about the `AwsIamForServiceAccount` plugin for specif
 
 After installing Kubeflow on AWS with one of the available [deployment options]({{< ref "/docs/deployment" >}}), you can configure Kubeflow Profiles with the following steps:
 
-### 1. Setup
+### 1. Setup Environment Variables
 
 1. Define the following environment variables:
 
