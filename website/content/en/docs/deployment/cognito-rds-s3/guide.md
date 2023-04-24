@@ -32,14 +32,14 @@ Refer to the [general prerequisites guide]({{< ref "/docs/deployment/prerequisit
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
 ### Multi-User Profiles
-If you are using IRSA and are in a multi-user environment any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/component-guides/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
+If you are using IRSA and are in a multi-user environment any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/deployment/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
 
 
 2. Deploy Kubeflow.
 
     1. Export your pipeline-s3-credential-option
     ```bash 
-    export PIPELINE_S3_CREDENTIAL_OPTION=<IRSA/STATIC>
+    export PIPELINE_S3_CREDENTIAL_OPTION=<irsa/static>
     ```
 
     1. Install Kubeflow using the following command:

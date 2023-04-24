@@ -1,26 +1,13 @@
 +++
 title = "Pipeline Profiles"
-description = "Use AWS IAM for Kubeflow Profiles"
-weight = 40
+description = "Use AWS IAM roles for service accounts with Kubeflow Profiles"
+weight = 70
 +++
 
-## Kubeflow Profiles
+### Pipeline S3 Credential Option IRSA (IAM roles for service accounts)
+When using IRSA (IAM roles for service accounts) as your pipeline S3 credential option any additional profiles created as part of a multi-user deployment besides the preconfigured `kubeflow-user-example-com` will need to be configured with IRSA to access S3. As part of multi-user-isolation, every Pipeline run in Kubeflow Pipelines is ran in an individuals profile user-namespace. A `default-editor` service account exists in every Profile's namespace that is used to run Pipelines as-well as connect to S3. This `default-editor` SA needs to be annotated with an IAM role with sufficient permissions to access your S3 Bucket to run your Pipelines. In the below steps we will be configuring an IAM role with restricted access to a specific S3 Bucket, we recommend following the principle of least privileges. 
 
-A [Kubeflow Profile](https://github.com/kubeflow/kubeflow/tree/master/components/profile-controller#kubeflow-profile) is a unique configuration for a user that determines their access privileges and is defined by the Administrator. Kubeflow uses Profiles to control all policies, roles, and bindings involved, and to guarantee consistency. Resources belonging to a Profile are contained within a Profile namespace.
-
-## Profile plugins
-
-Use `Profile Plugins` to interface with the Identity and Access Management (IAM) services that manage permissions for external resources outside of Kubernetes.
-
-The `AwsIamForServiceAccount` plugin allows the use of [AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) access control for Profile users in order to grant or limit access to AWS resources and services.
-
-### IAM roles for service accounts
-
-In order for the Profile controller to get the necessary permissions, the Profile controller pod must be recognized as an entity that can interface with AWS IAM. This is done by using [IAM roles for service accounts (IRSA)](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/).
-
-IRSA allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
-
-For more information, see [Amazon EKS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+>Note: If you choose to run your pipeline with a service account other than the default which is `default-editor`, you must make sure to annotate that service account with an IAM role with sufficient S3 permissions.
 
 ### Admin considerations
 
@@ -41,45 +28,20 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export CLUSTER_REGION=<your region>
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
    export PROFILE_NAME=<the name of the profile to be created>
-   export PROFILE_CONTROLLER_POLICY_NAME=<the name of the profile controller policy to be created>
    ```
-
-2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
-
-   ```bash
-   aws iam create-policy \
-   --region $CLUSTER_REGION \
-   --policy-name ${PROFILE_CONTROLLER_POLICY_NAME} \
-   --policy-document file://awsconfigs/infra_configs/iam_profile_controller_policy.json
-   ```
-
-   As a principle of least privilege, we recommend scoping the resources in the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) to the specific policy arns of the policies created in step 6.
-
 3. Associate IAM OIDC with your cluster.
 
    ```bash
    aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
 
    eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
-   ```
 
-4. Create an IRSA for the Profile controller using the policy.
-
-   ```bash
-   eksctl create iamserviceaccount \
-   --cluster=$CLUSTER_NAME \
-   --name="profiles-controller-service-account" \
-   --namespace=kubeflow \
-   --attach-policy-arn="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/${PROFILE_CONTROLLER_POLICY_NAME}" \
-   --region=$CLUSTER_REGION \
-   --override-existing-serviceaccounts \
-   --approve
+   export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
    ```
 
 5. Create an IAM trust policy to authorize federated requests from the OIDC provider.
 
    ```bash
-   export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
 
    cat <<EOF > trust.json
    {
@@ -137,6 +99,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
 
 9. Create a Profile using the `PROFILE_NAME`.
 
+>Note: annotateOnly has been set to true. This means that the Profile Controller will not mutate your IAM Role and Policy.
    ```bash
    cat <<EOF > profile_iam.yaml
    apiVersion: kubeflow.org/v1
@@ -151,6 +114,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
      - kind: AwsIamForServiceAccount
        spec:
          awsIamRole: $(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query 'Role.Arn')
+         annotateOnly: true
    EOF
 
    kubectl apply -f profile_iam.yaml

@@ -99,7 +99,7 @@ export TF_VAR_minio_aws_secret_access_key=
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide.
 
 ### Multi-User Profiles
-If you are using IRSA and are in a multi-user environment any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/component-guides/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
+If you are using IRSA and are in a multi-user environment any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/deployment/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
 
 ### (Recommended) Configure AWS S3 to backup Terraform state
 Optionally enable AWS S3 as a Terraform backend by following the instructions [here]({{< ref "/docs/deployment/terraform-s3-backend.md#" >}}).
