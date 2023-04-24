@@ -37,11 +37,10 @@ install-yq:
 	yq --version
 
 install-jq:
-	$(eval JQ_VERSION:=1.5+dfsg-2)
-	sudo apt-get install jq=$(JQ_VERSION) -y
+	sudo apt-get install jq -y
 
 install-terraform:
-	$(eval TERRAFORM_VERSION:=1.2.7)
+	$(eval TERRAFORM_VERSION:=1.4.5)
 	curl "https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_linux_amd64.zip" -o "terraform.zip"
 	unzip -o -q terraform.zip
 	sudo install -o root -g root -m 0755 terraform /usr/local/bin/terraform

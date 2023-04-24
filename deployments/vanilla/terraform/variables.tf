@@ -2,6 +2,11 @@
 variable "cluster_name" {
   description = "Name of cluster"
   type        = string
+
+  validation {
+    condition     = length(var.cluster_name) > 0 && length(var.cluster_name) <= 19
+    error_message = "The cluster name must be between [1, 19] characters"
+  }
 }
 
 variable "cluster_region" {
