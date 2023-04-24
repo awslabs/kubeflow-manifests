@@ -25,6 +25,9 @@
         &lt;p&gt;This tutorial shows how to expose Kubeflow over a load balancer on AWS.&lt;/p&gt;
 &lt;h2 id=&#34;before-you-begin&#34;&gt;Before you begin&lt;/h2&gt;
 &lt;p&gt;Follow this guide only if you are &lt;strong&gt;not&lt;/strong&gt; using &lt;code&gt;Cognito&lt;/code&gt; as the authentication provider in your deployment. Cognito-integrated deployment is configured with the AWS Load Balancer controller by default to create an ingress-managed Application Load Balancer and exposes Kubeflow via a hosted domain.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
 &lt;p&gt;Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the &lt;a href=&#34;https://kubernetes-sigs.github.io/aws-load-balancer-controller/&#34;&gt;AWS Load Balancer (ALB) controller&lt;/a&gt;, which satisfies the Kubernetes &lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/ingress/&#34;&gt;Ingress resource&lt;/a&gt; to create an &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html&#34;&gt;Application Load Balancer&lt;/a&gt; (ALB). When you create a Kubernetes &lt;code&gt;Ingress&lt;/code&gt;, an ALB is provisioned that load balances application traffic.&lt;/p&gt;
 &lt;p&gt;In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies&#34;&gt;Secure Cookies&lt;/a&gt;, so accessing Kubeflow with HTTP over a non-localhost domain does not work.&lt;/p&gt;
@@ -49,7 +52,10 @@
 &lt;li&gt;Verify that the current directory is the root of the repository by running the &lt;code&gt;pwd&lt;/code&gt; command. The output should be &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;create-load-balancer&#34;&gt;Create Load Balancer&lt;/h2&gt;
+&lt;h4 id=&#34;setup-for-manifest-deployments&#34;&gt;Setup for Manifest deployments&lt;/h4&gt;
 &lt;p&gt;If you prefer to create a load balancer using automated scripts, you &lt;strong&gt;only&lt;/strong&gt; need to follow the steps in the &lt;a href=&#34;#automated-script&#34;&gt;automated script section&lt;/a&gt;. You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.&lt;/p&gt;
+&lt;h4 id=&#34;setup-for-terraform-deployments&#34;&gt;Setup for Terraform deployments&lt;/h4&gt;
+&lt;p&gt;Follow the manual steps below.&lt;/p&gt;
 &lt;h3 id=&#34;create-domain-and-certificates&#34;&gt;Create domain and certificates&lt;/h3&gt;
 &lt;p&gt;You need a registered domain and TLS certificate to use HTTPS with Load Balancer. Since your top level domain (e.g. &lt;code&gt;example.com&lt;/code&gt;) can be registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM, and Application Load Balancer, you will create a separate &lt;a href=&#34;https://en.wikipedia.org/wiki/Subdomain&#34;&gt;sudomain&lt;/a&gt; (e.g. &lt;code&gt;platform.example.com&lt;/code&gt;) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain (&lt;code&gt;*.example.com&lt;/code&gt;) and subdomain (&lt;code&gt;*.platform.example.com&lt;/code&gt;) in the region where your platform will run (your EKS cluster region).&lt;/p&gt;
 &lt;h4 id=&#34;create-a-subdomain&#34;&gt;Create a subdomain&lt;/h4&gt;
@@ -99,10 +105,14 @@
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;certArn=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$certArn&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/istio-ingress/overlays/https/params.env
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id=&#34;configure-load-balancer-controller&#34;&gt;Configure Load Balancer controller&lt;/h3&gt;
+&lt;h3 id=&#34;configure-load-balancer-controller&#34;&gt;Configure Load Balancer Controller&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set &lt;code&gt;enable_aws_load_balancer_controller = false&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;Set up resources required for the Load Balancer controller:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the &lt;strong&gt;Prerequisites&lt;/strong&gt; section in the &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html&#34;&gt;Application load balancing on Amazon EKS&lt;/a&gt; guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
+&lt;li&gt;
+&lt;p&gt;Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the &lt;strong&gt;Prerequisites&lt;/strong&gt; section in the &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html&#34;&gt;Application load balancing on Amazon EKS&lt;/a&gt; guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Check if the following tags exist on the subnets:
 &lt;ul&gt;
@@ -120,21 +130,32 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;The Load balancer controller uses &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html&#34;&gt;IAM roles for service accounts&lt;/a&gt;(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
+&lt;li&gt;
+&lt;p&gt;The Load balancer controller uses &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html&#34;&gt;IAM roles for service accounts&lt;/a&gt;(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl utils associate-iam-oidc-provider --cluster &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --approve
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;Create an IAM role with &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json&#34;&gt;the necessary permissions&lt;/a&gt; for the Load Balancer controller to use via a service account to access AWS services.
+&lt;li&gt;
+&lt;p&gt;Create an IAM role with &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json&#34;&gt;the necessary permissions&lt;/a&gt; for the Load Balancer controller to use via a service account to access AWS services.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;LBC_POLICY_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;alb_ingress_controller_&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;_&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;LBC_POLICY_ARN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws iam create-policy --policy-name &lt;span class=&#34;nv&#34;&gt;$LBC_POLICY_NAME&lt;/span&gt; --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query &lt;span class=&#34;s1&#34;&gt;&amp;#39;Policy.Arn&amp;#39;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --attach-policy-arn &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;LBC_POLICY_ARN&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --override-existing-serviceaccounts --approve
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env&#34;&gt;load balancer controller&lt;/a&gt; with the cluster name.
+&lt;li&gt;
+&lt;p&gt;Configure the parameters for &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env&#34;&gt;load balancer controller&lt;/a&gt; with the cluster name.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;clusterName=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/common/aws-alb-ingress-controller/base/params.env
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id=&#34;build-manifests-and-deploy-components&#34;&gt;Build Manifests and deploy components&lt;/h3&gt;
-&lt;p&gt;Run the following command to build and install the components specified in the Load Balancer &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml&#34;&gt;kustomize&lt;/a&gt; file.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; ! kustomize build deployments/add-ons/load-balancer &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Retrying to apply resources&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; sleep 30&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;h3 id=&#34;install-load-balancer-controller&#34;&gt;Install Load Balancer Controller&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set &lt;code&gt;enable_aws_load_balancer_controller = false&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Run the following command to build and install the Load Balancer controller &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/kustomization.yaml&#34;&gt;kustomize&lt;/a&gt; file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build awsconfigs/common/aws-alb-ingress-controller/base &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl &lt;span class=&#34;nb&#34;&gt;wait&lt;/span&gt; --for &lt;span class=&#34;nv&#34;&gt;condition&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;established crd/ingressclassparams.elbv2.k8s.aws
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build awsconfigs/common/aws-alb-ingress-controller/base &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;create-ingress&#34;&gt;Create Ingress&lt;/h3&gt;
+&lt;p&gt;Create an ingress that will use the certifcate you specified in &lt;code&gt;certArn&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kustomize build awsconfigs/common/istio-ingress/overlays/https &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; kubectl apply -f -
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;update-the-domain-with-alb-address&#34;&gt;Update the domain with ALB address&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;Check if ALB is provisioned. This may take a few minutes.
@@ -152,6 +173,9 @@
 &lt;li&gt;The central dashboard should now be available at &lt;code&gt;https://kubeflow.platform.example.com&lt;/code&gt;. Open a browser and navigate to this URL.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;automated-script&#34;&gt;Automated script&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Terraform deployment users should not follow these Automated setup instructions and should follow the &lt;a href=&#34;#create-load-balancer&#34;&gt;Manual setup instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;ol&gt;
 &lt;li&gt;Install dependencies for the script
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; tests/e2e
@@ -214,6 +238,9 @@
 &lt;p&gt;Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the &lt;a href=&#34;https://toolbox.googleapps.com/apps/dig/#CNAME/&#34;&gt;Google Admin Toolbox&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;clean-up&#34;&gt;Clean up&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Terraform deployment users should not follow these clean up steps and should manually delete resources created while following the &lt;a href=&#34;#create-load-balancer&#34;&gt;Manual setup instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;To delete the resources created in this guide, run the following commands from the root of your repository:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: Make sure that you have the configuration file created by the script in &lt;code&gt;tests/e2e/utils/load_balancer/config.yaml&lt;/code&gt;. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the &lt;a href=&#34;#automated-script&#34;&gt;previous section&lt;/a&gt;.&lt;/p&gt;
@@ -235,6 +262,9 @@
         
         
         &lt;p&gt;This guide describes how to use Amazon EFS as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
 &lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
@@ -262,8 +292,14 @@
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;efs-claim&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-set-up-efs&#34;&gt;2.0 Set up EFS&lt;/h2&gt;
+&lt;h4 id=&#34;setup-for-manifest-deployments&#34;&gt;Setup for Manifest deployments&lt;/h4&gt;
 &lt;p&gt;You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between &lt;strong&gt;static and dynamic provisioning&lt;/strong&gt;, so pick whichever suits you. On the other hand, for the automated script we currently only support &lt;strong&gt;dynamic provisioning&lt;/strong&gt;. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide.&lt;/p&gt;
+&lt;h4 id=&#34;setup-for-terraform-deployments&#34;&gt;Setup for Terraform deployments&lt;/h4&gt;
+&lt;p&gt;Follow the Manual setup to set up the resources required. As part of the Manual setup, you get another choice between &lt;strong&gt;static and dynamic provisioning&lt;/strong&gt;, so pick whichever suits you.&lt;/p&gt;
 &lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 [Option 1] Automated setup&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Terraform deployment users should not follow these Automated setup instructions and should follow the &lt;a href=&#34;#22-option-2-manual-setup&#34;&gt;Manual setup instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;The script automates all the manual resource creation steps but is currently only available for &lt;strong&gt;Dynamic Provisioning&lt;/strong&gt; option.&lt;br&gt;
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0.&lt;/p&gt;
 &lt;ol&gt;
@@ -296,7 +332,11 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 [Option 2] Manual setup&lt;/h3&gt;
 &lt;p&gt;If you prefer to manually setup each component then you can follow this manual guide.  As mentioned, it you have two options between &lt;strong&gt;Static and Dynamic provisioing&lt;/strong&gt; later in step 4 of this section.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_ACCOUNT_ID&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws sts get-caller-identity --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;Account&amp;#34;&lt;/span&gt; --output text&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;1-install-the-efs-csi-driver&#34;&gt;1. Install the EFS CSI driver&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;1-driver-install-and-iam-configuration&#34;&gt;1. Driver install and IAM configuration&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Skip this step if you are using a Terraform deployment since EFS CSI driver is installed by default unless you set &lt;code&gt;enable_aws_efs_csi_driver = false&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h5 id=&#34;11-install-the-efs-csi-driver&#34;&gt;1.1 Install the EFS CSI driver&lt;/h5&gt;
 &lt;p&gt;We recommend installing the EFS CSI Driver v1.5.4 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-efs-csi-driver&#34;&gt;the aws-efs-csi-driver github repo&lt;/a&gt; as follows:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v1.5.4&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can confirm that EFS CSI Driver was installed into the default kube-system namespace for you. You can check using the following command:&lt;/p&gt;
@@ -304,7 +344,7 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;efs.csi.aws.com   &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            Persistent   5d17h
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-create-the-iam-policy-for-the-csi-driver&#34;&gt;2. Create the IAM Policy for the CSI driver&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;12-create-the-iam-policy-for-the-csi-driver&#34;&gt;1.2. Create the IAM Policy for the CSI driver&lt;/h5&gt;
 &lt;p&gt;The CSI driver&amp;rsquo;s service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; with an IAM Role which has the required permissions.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Download the IAM policy document from GitHub as follows.&lt;/li&gt;
@@ -331,14 +371,14 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;li&gt;You can verify by describing the specified service account to check if it has been correctly annotated:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe -n kube-system serviceaccount efs-csi-controller-sa
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-manually-create-an-instance-of-the-efs-filesystem&#34;&gt;3. Manually create an instance of the EFS filesystem&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-manually-create-an-instance-of-the-efs-filesystem&#34;&gt;2. Manually create an instance of the EFS filesystem&lt;/h4&gt;
 &lt;p&gt;Please refer to the official &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html#efs-create-filesystem&#34;&gt;AWS EFS CSI Document&lt;/a&gt; for detailed instructions on creating an EFS filesystem.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: For this guide, we assume that you are creating your EFS Filesystem in the same VPC as your EKS Cluster.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h4 id=&#34;choose-between-dynamic-and-static-provisioning&#34;&gt;Choose between dynamic and static provisioning&lt;/h4&gt;
 &lt;p&gt;In the following section, you have to choose between setting up &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/&#34;&gt;dynamic provisioning&lt;/a&gt; or setting up static provisioning.&lt;/p&gt;
-&lt;h4 id=&#34;4-option-1-dynamic-provisioning&#34;&gt;4. [Option 1] Dynamic provisioning&lt;/h4&gt;
+&lt;h4 id=&#34;3-option-1-dynamic-provisioning&#34;&gt;3. [Option 1] Dynamic provisioning&lt;/h4&gt;
 &lt;ol&gt;
 &lt;li&gt;Use the &lt;code&gt;$file_system_id&lt;/code&gt; you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the &lt;code&gt;dynamic-provisioning/sc.yaml&lt;/code&gt; file by chaning &lt;code&gt;&amp;lt;YOUR_FILE_SYSTEM_ID&amp;gt;&lt;/code&gt; with your &lt;code&gt;fs-xxxxxx&lt;/code&gt; file system id. You can also change it using the following command :&lt;/li&gt;
 &lt;/ol&gt;
@@ -359,7 +399,7 @@ The PVC needs to be in the namespace you will be accessing it from. Replace the 
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -f &lt;span class=&#34;nv&#34;&gt;$GITHUB_STORAGE_DIR&lt;/span&gt;/efs/dynamic-provisioning/pvc.yaml
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note : The &lt;code&gt;StorageClass&lt;/code&gt; is a cluster scoped resource which means we only need to do this step once per cluster.&lt;/p&gt;
-&lt;h4 id=&#34;4-option-2-static-provisioning&#34;&gt;4. [Option 2] Static Provisioning&lt;/h4&gt;
+&lt;h4 id=&#34;3-option-2-static-provisioning&#34;&gt;3. [Option 2] Static Provisioning&lt;/h4&gt;
 &lt;p&gt;Using &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/multiple_pods&#34;&gt;this sample&lt;/a&gt;, we provided the required spec files in the sample subdirectory. However, you can create the PVC another way.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Use the &lt;code&gt;$file_system_id&lt;/code&gt; you recorded in section 3 above or use the AWS Console to get the filesystem id of the EFS file system you want to use. Now edit the last line of the static-provisioning/pv.yaml file to specify the &lt;code&gt;volumeHandle&lt;/code&gt; field to point to your EFS filesystem. Replace &lt;code&gt;$file_system_id&lt;/code&gt; if it is not already set.&lt;/li&gt;
@@ -498,6 +538,9 @@ b. Delete the &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; service account and
         
         
         &lt;p&gt;This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&#34;10-prerequisites&#34;&gt;1.0 Prerequisites&lt;/h2&gt;
 &lt;p&gt;For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/&#34;&gt;deployment options&lt;/a&gt; and &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/vanilla/guide/&#34;&gt;general prerequisites&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;ol&gt;
@@ -525,8 +568,14 @@ b. Delete the &lt;code&gt;efs-csi-controller-sa&lt;/code&gt; service account and
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;fsx-claim&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-setup-fsx-for-lustre&#34;&gt;2.0 Setup FSx for Lustre&lt;/h2&gt;
+&lt;h4 id=&#34;setup-for-manifest-deployments&#34;&gt;Setup for Manifest deployments&lt;/h4&gt;
 &lt;p&gt;You can either use Automated or Manual setup. We currently only support &lt;strong&gt;Static provisioning&lt;/strong&gt; for FSx.&lt;/p&gt;
+&lt;h4 id=&#34;setup-for-terraform-deployments&#34;&gt;Setup for Terraform deployments&lt;/h4&gt;
+&lt;p&gt;Follow the Manual setup. We currently only support &lt;strong&gt;Static provisioning&lt;/strong&gt; for FSx.&lt;/p&gt;
 &lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 [Option 1] Automated setup&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Terraform deployment users should not follow these Automated setup instructions and should follow the &lt;a href=&#34;#22-option-2-manual-setup&#34;&gt;Manual setup instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;The script automates all the manual resource creation steps but is currently only available for &lt;strong&gt;Static Provisioning&lt;/strong&gt; option.&lt;br&gt;
 It performs the required cluster configuration, creates an FSx file system and it also takes care of creating a storage class for static provisioning. Once done, move to section 3.0.&lt;/p&gt;
 &lt;ol&gt;
@@ -556,7 +605,11 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;p&gt;The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing &lt;code&gt;python utils/auto-fsx-setup.py --help&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;22-option-2-manual-setup&#34;&gt;2.2 [Option 2] Manual setup&lt;/h3&gt;
 &lt;p&gt;If you prefer to manually setup each component then you can follow this manual guide.&lt;/p&gt;
-&lt;h4 id=&#34;1-install-the-fsx-csi-driver&#34;&gt;1. Install the FSx CSI Driver&lt;/h4&gt;
+&lt;h4 id=&#34;1-driver-install-and-iam-configuration&#34;&gt;1. Driver install and IAM configuration&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Skip this step if you are using a Terraform deployment since EFS CSI driver is installed by default unless you set &lt;code&gt;enable_aws_fsx_csi_driver = false&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h5 id=&#34;1-install-the-fsx-csi-driver&#34;&gt;1. Install the FSx CSI Driver&lt;/h5&gt;
 &lt;p&gt;We recommend installing the FSx CSI Driver v0.9.0 directly from the &lt;a href=&#34;https://github.com/kubernetes-sigs/aws-fsx-csi-driver&#34;&gt;the aws-fsx-csi-driver GitHub repository&lt;/a&gt; as follows:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl apply -k &lt;span class=&#34;s2&#34;&gt;&amp;#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.9.0&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can confirm that FSx CSI Driver was installed using the following command:&lt;/p&gt;
@@ -564,7 +617,7 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;fsx.csi.aws.com   &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;            Persistent   14s
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-create-the-iam-policy-for-the-csi-driver&#34;&gt;2. Create the IAM Policy for the CSI Driver&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;2-create-the-iam-policy-for-the-csi-driver&#34;&gt;2. Create the IAM Policy for the CSI Driver&lt;/h5&gt;
 &lt;p&gt;The CSI driver&amp;rsquo;s service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account &lt;code&gt;fsx-csi-controller-sa&lt;/code&gt; with an IAM Role which has the required permissions.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create the policy using the json file provided as follows:&lt;/li&gt;
@@ -587,10 +640,10 @@ It performs the required cluster configuration, creates an FSx file system and i
 &lt;li&gt;You can verify by describing the specified service account to check if it has been correctly annotated:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;3-create-an-instance-of-the-fsx-filesystem&#34;&gt;3. Create an instance of the FSx Filesystem&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;2-create-an-instance-of-the-fsx-filesystem&#34;&gt;2. Create an instance of the FSx Filesystem&lt;/h4&gt;
 &lt;p&gt;Please refer to the official &lt;a href=&#34;https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html&#34;&gt;AWS FSx CSI documentation&lt;/a&gt; for detailed instructions on creating an FSx filesystem.&lt;/p&gt;
 &lt;p&gt;Note: For this guide, we assume that you are creating your FSx Filesystem in the same VPC as your EKS Cluster.&lt;/p&gt;
-&lt;h4 id=&#34;4-static-provisioning&#34;&gt;4. Static provisioning&lt;/h4&gt;
+&lt;h4 id=&#34;3-static-provisioning&#34;&gt;3. Static provisioning&lt;/h4&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre&#34;&gt;Using this sample from official Kubeflow Docs&lt;/a&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that &lt;code&gt;file_system_id&lt;/code&gt; is set.&lt;/li&gt;

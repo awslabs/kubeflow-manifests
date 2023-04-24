@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/add-ons\/storage\/fsx-for-lustre\/guide\/",
-      "wordCount" : "2080",
+      "wordCount" : "2167",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/storage/fsx-for-lustre/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-21T15:19:46-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-24T10:08:23-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="FSx for Lustre">
 <meta itemprop="description" content="Use Amazon FSx as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-04-21T15:19:46-07:00" />
-<meta itemprop="wordCount" content="2080">
+<meta itemprop="dateModified" content="2023-04-24T10:08:23-07:00" />
+<meta itemprop="wordCount" content="2167">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="FSx for Lustre"/>
 <meta name="twitter:description" content="Use Amazon FSx as persistent storage with Kubeflow on AWS"/>
@@ -420,6 +420,7 @@
     <li><a href="#10-prerequisites">1.0 Prerequisites</a></li>
     <li><a href="#20-setup-fsx-for-lustre">2.0 Setup FSx for Lustre</a>
       <ul>
+        <li></li>
         <li><a href="#21-option-1-automated-setup">2.1 [Option 1] Automated setup</a></li>
         <li><a href="#22-option-2-manual-setup">2.2 [Option 2] Manual setup</a></li>
         <li><a href="#23-check-your-setup">2.3 Check your setup</a></li>
@@ -509,6 +510,9 @@
 		
 	</header>    
 	<p>This guide describes how to use Amazon FSx as Persistent storage on top of an existing Kubeflow deployment.</p>
+<blockquote>
+<p>Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.</p>
+</blockquote>
 <h2 id="10-prerequisites">1.0 Prerequisites</h2>
 <p>For this guide, we assume that you already have an EKS Cluster with Kubeflow installed. The FSx CSI Driver can be installed and configured as a separate resource on top of an existing Kubeflow deployment. See the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/">deployment options</a> and <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/vanilla/guide/">general prerequisites</a> for more information.</p>
 <ol>
@@ -536,8 +540,14 @@
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLAIM_NAME</span><span class="o">=</span>&lt;fsx-claim&gt;
 </span></span></code></pre></div><h2 id="20-setup-fsx-for-lustre">2.0 Setup FSx for Lustre</h2>
+<h4 id="setup-for-manifest-deployments">Setup for Manifest deployments</h4>
 <p>You can either use Automated or Manual setup. We currently only support <strong>Static provisioning</strong> for FSx.</p>
+<h4 id="setup-for-terraform-deployments">Setup for Terraform deployments</h4>
+<p>Follow the Manual setup. We currently only support <strong>Static provisioning</strong> for FSx.</p>
 <h3 id="21-option-1-automated-setup">2.1 [Option 1] Automated setup</h3>
+<blockquote>
+<p>Important: Terraform deployment users should not follow these Automated setup instructions and should follow the <a href="#22-option-2-manual-setup">Manual setup instructions</a>.</p>
+</blockquote>
 <p>The script automates all the manual resource creation steps but is currently only available for <strong>Static Provisioning</strong> option.<br>
 It performs the required cluster configuration, creates an FSx file system and it also takes care of creating a storage class for static provisioning. Once done, move to section 3.0.</p>
 <ol>
@@ -567,7 +577,11 @@ It performs the required cluster configuration, creates an FSx file system and i
 <p>The script applies some default values for the file system name, performance mode etc. If you know what you are doing, you can see which options are customizable by executing <code>python utils/auto-fsx-setup.py --help</code>.</p>
 <h3 id="22-option-2-manual-setup">2.2 [Option 2] Manual setup</h3>
 <p>If you prefer to manually setup each component then you can follow this manual guide.</p>
-<h4 id="1-install-the-fsx-csi-driver">1. Install the FSx CSI Driver</h4>
+<h4 id="1-driver-install-and-iam-configuration">1. Driver install and IAM configuration</h4>
+<blockquote>
+<p>Important: Skip this step if you are using a Terraform deployment since EFS CSI driver is installed by default unless you set <code>enable_aws_fsx_csi_driver = false</code>.</p>
+</blockquote>
+<h5 id="1-install-the-fsx-csi-driver">1. Install the FSx CSI Driver</h5>
 <p>We recommend installing the FSx CSI Driver v0.9.0 directly from the <a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">the aws-fsx-csi-driver GitHub repository</a> as follows:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -k <span class="s2">&#34;github.com/kubernetes-sigs/aws-fsx-csi-driver/deploy/kubernetes/overlays/stable/?ref=tags/v0.9.0&#34;</span>
 </span></span></code></pre></div><p>You can confirm that FSx CSI Driver was installed using the following command:</p>
@@ -575,7 +589,7 @@ It performs the required cluster configuration, creates an FSx file system and i
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">NAME              ATTACHREQUIRED   PODINFOONMOUNT   MODES        AGE
 </span></span><span class="line"><span class="cl">fsx.csi.aws.com   <span class="nb">false</span>            <span class="nb">false</span>            Persistent   14s
-</span></span></code></pre></div><h4 id="2-create-the-iam-policy-for-the-csi-driver">2. Create the IAM Policy for the CSI Driver</h4>
+</span></span></code></pre></div><h5 id="2-create-the-iam-policy-for-the-csi-driver">2. Create the IAM Policy for the CSI Driver</h5>
 <p>The CSI driver&rsquo;s service account (created during installation) requires IAM permission to make calls to AWS APIs on your behalf. Here, we will be annotating the Service Account <code>fsx-csi-controller-sa</code> with an IAM Role which has the required permissions.</p>
 <ol>
 <li>Create the policy using the json file provided as follows:</li>
@@ -598,10 +612,10 @@ It performs the required cluster configuration, creates an FSx file system and i
 <li>You can verify by describing the specified service account to check if it has been correctly annotated:</li>
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl describe -n kube-system serviceaccount fsx-csi-controller-sa
-</span></span></code></pre></div><h4 id="3-create-an-instance-of-the-fsx-filesystem">3. Create an instance of the FSx Filesystem</h4>
+</span></span></code></pre></div><h4 id="2-create-an-instance-of-the-fsx-filesystem">2. Create an instance of the FSx Filesystem</h4>
 <p>Please refer to the official <a href="https://docs.aws.amazon.com/fsx/latest/LustreGuide/getting-started-step1.html">AWS FSx CSI documentation</a> for detailed instructions on creating an FSx filesystem.</p>
 <p>Note: For this guide, we assume that you are creating your FSx Filesystem in the same VPC as your EKS Cluster.</p>
-<h4 id="4-static-provisioning">4. Static provisioning</h4>
+<h4 id="3-static-provisioning">3. Static provisioning</h4>
 <p><a href="https://www.kubeflow.org/docs/distributions/aws/customizing-aws/storage/#amazon-fsx-for-lustre">Using this sample from official Kubeflow Docs</a></p>
 <ol>
 <li>Use the AWS Console to get the filesystem id of the FSx volume you want to use. You could also use the following command to list all the volumes available in your region. Either way, make sure that <code>file_system_id</code> is set.</li>
@@ -719,7 +733,7 @@ Source: <a href="https://www.tensorflow.org/tutorials/load_data/images">https://
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/541ff9cbfb50e415a452f43a482c51d5e031a2e5">Doc Note for Port-forward running directory (#699) (541ff9c)</a>
+  Last modified April 24, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/bba1bc916a17eb79c0f6fd13cf46dd13f150f627">Minor validation and docs update (#695) (bba1bc9)</a>
 </div>
 
 </div>

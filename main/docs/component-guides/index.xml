@@ -598,7 +598,11 @@ public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-cpu-py310-
 &lt;p&gt;Integration with the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin is actively being worked on for all components with &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration&#34;&gt;Profile-level support&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;You can find documentation about the &lt;code&gt;AwsIamForServiceAccount&lt;/code&gt; plugin for specific components in the individual &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/&#34;&gt;component guides&lt;/a&gt;. Read on for general configuration instructions.&lt;/p&gt;
 &lt;h2 id=&#34;configuration-steps&#34;&gt;Configuration steps&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;After installing Kubeflow on AWS with one of the available &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/&#34;&gt;deployment options&lt;/a&gt;, you can configure Kubeflow Profiles with the following steps:&lt;/p&gt;
+&lt;h3 id=&#34;1-setup-environment-variables&#34;&gt;1. Setup Environment Variables&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Define the following environment variables:&lt;/p&gt;
@@ -608,6 +612,12 @@ public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-cpu-py310-
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PROFILE_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;the name of the profile to be created&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PROFILE_CONTROLLER_POLICY_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;the name of the profile controller policy to be created&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;2-configure-the-profile-controller&#34;&gt;2. Configure the Profile Controller&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Terraform deployent users should skip this step.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Create an IAM policy using the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json&#34;&gt;IAM Profile controller policy&lt;/a&gt; file.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws iam create-policy &lt;span class=&#34;se&#34;&gt;\
@@ -633,6 +643,9 @@ public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-pytorch:2.0.0-cpu-py310-
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--override-existing-serviceaccounts &lt;span class=&#34;se&#34;&gt;\
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--approve
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;3-create-a-profile&#34;&gt;3. Create a Profile&lt;/h3&gt;
+&lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Create an IAM trust policy to authorize federated requests from the OIDC provider.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;OIDC_URL&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;aws eks describe-cluster --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --name &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt;  --query &lt;span class=&#34;s2&#34;&gt;&amp;#34;cluster.identity.oidc.issuer&amp;#34;&lt;/span&gt; --output text &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; cut -c9-&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;

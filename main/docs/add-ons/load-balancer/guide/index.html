@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/add-ons\/load-balancer\/guide\/",
-      "wordCount" : "1653",
+      "wordCount" : "1799",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/load-balancer/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-21T15:19:46-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-24T10:08:23-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Load Balancer">
 <meta itemprop="description" content="Expose Kubeflow over Load Balancer on AWS">
-<meta itemprop="dateModified" content="2023-04-21T15:19:46-07:00" />
-<meta itemprop="wordCount" content="1653">
+<meta itemprop="dateModified" content="2023-04-24T10:08:23-07:00" />
+<meta itemprop="wordCount" content="1799">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Load Balancer"/>
 <meta name="twitter:description" content="Expose Kubeflow over Load Balancer on AWS"/>
@@ -422,10 +422,12 @@
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#create-load-balancer">Create Load Balancer</a>
       <ul>
+        <li></li>
         <li><a href="#create-domain-and-certificates">Create domain and certificates</a></li>
         <li><a href="#configure-ingress">Configure Ingress</a></li>
-        <li><a href="#configure-load-balancer-controller">Configure Load Balancer controller</a></li>
-        <li><a href="#build-manifests-and-deploy-components">Build Manifests and deploy components</a></li>
+        <li><a href="#configure-load-balancer-controller">Configure Load Balancer Controller</a></li>
+        <li><a href="#install-load-balancer-controller">Install Load Balancer Controller</a></li>
+        <li><a href="#create-ingress">Create Ingress</a></li>
         <li><a href="#update-the-domain-with-alb-address">Update the domain with ALB address</a></li>
         <li><a href="#automated-script">Automated script</a></li>
       </ul>
@@ -496,6 +498,9 @@
 	<p>This tutorial shows how to expose Kubeflow over a load balancer on AWS.</p>
 <h2 id="before-you-begin">Before you begin</h2>
 <p>Follow this guide only if you are <strong>not</strong> using <code>Cognito</code> as the authentication provider in your deployment. Cognito-integrated deployment is configured with the AWS Load Balancer controller by default to create an ingress-managed Application Load Balancer and exposes Kubeflow via a hosted domain.</p>
+<blockquote>
+<p>Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.</p>
+</blockquote>
 <h2 id="background">Background</h2>
 <p>Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/">AWS Load Balancer (ALB) controller</a>, which satisfies the Kubernetes <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress resource</a> to create an <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">Application Load Balancer</a> (ALB). When you create a Kubernetes <code>Ingress</code>, an ALB is provisioned that load balances application traffic.</p>
 <p>In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies">Secure Cookies</a>, so accessing Kubeflow with HTTP over a non-localhost domain does not work.</p>
@@ -520,7 +525,10 @@
 <li>Verify that the current directory is the root of the repository by running the <code>pwd</code> command. The output should be <code>&lt;path/to/kubeflow-manifests&gt;</code>.</li>
 </ul>
 <h2 id="create-load-balancer">Create Load Balancer</h2>
+<h4 id="setup-for-manifest-deployments">Setup for Manifest deployments</h4>
 <p>If you prefer to create a load balancer using automated scripts, you <strong>only</strong> need to follow the steps in the <a href="#automated-script">automated script section</a>. You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.</p>
+<h4 id="setup-for-terraform-deployments">Setup for Terraform deployments</h4>
+<p>Follow the manual steps below.</p>
 <h3 id="create-domain-and-certificates">Create domain and certificates</h3>
 <p>You need a registered domain and TLS certificate to use HTTPS with Load Balancer. Since your top level domain (e.g. <code>example.com</code>) can be registered at any service provider, for uniformity and taking advantage of the integration provided between Route53, ACM, and Application Load Balancer, you will create a separate <a href="https://en.wikipedia.org/wiki/Subdomain">sudomain</a> (e.g. <code>platform.example.com</code>) to host Kubeflow and a corresponding hosted zone in Route53 to route traffic for this subdomain. To get TLS support, you will need certificates for both the root domain (<code>*.example.com</code>) and subdomain (<code>*.platform.example.com</code>) in the region where your platform will run (your EKS cluster region).</p>
 <h4 id="create-a-subdomain">Create a subdomain</h4>
@@ -570,10 +578,14 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;certArn=&#39;</span><span class="nv">$certArn</span><span class="s1">&#39;&#39;</span> &gt; awsconfigs/common/istio-ingress/overlays/https/params.env
 </span></span></code></pre></div></li>
 </ol>
-<h3 id="configure-load-balancer-controller">Configure Load Balancer controller</h3>
+<h3 id="configure-load-balancer-controller">Configure Load Balancer Controller</h3>
+<blockquote>
+<p>Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set <code>enable_aws_load_balancer_controller = false</code>.</p>
+</blockquote>
 <p>Set up resources required for the Load Balancer controller:</p>
 <ol>
-<li>Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the <strong>Prerequisites</strong> section in the <a href="https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html">Application load balancing on Amazon EKS</a> guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.
+<li>
+<p>Make sure that all the subnets (public and private) corresponding to the EKS cluster are tagged according to the <strong>Prerequisites</strong> section in the <a href="https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html">Application load balancing on Amazon EKS</a> guide. Ignore the requirement to have an existing ALB provisioned on the cluster. We will deploy Load Balancer controller version 1.1.5 later on.</p>
 <ul>
 <li>Check if the following tags exist on the subnets:
 <ul>
@@ -591,21 +603,32 @@
 </li>
 </ul>
 </li>
-<li>The Load balancer controller uses <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM roles for service accounts</a>(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
+<li>
+<p>The Load balancer controller uses <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM roles for service accounts</a>(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --cluster <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> --region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> --approve
 </span></span></code></pre></div></li>
-<li>Create an IAM role with <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json">the necessary permissions</a> for the Load Balancer controller to use via a service account to access AWS services.
+<li>
+<p>Create an IAM role with <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_alb_ingress_policy.json">the necessary permissions</a> for the Load Balancer controller to use via a service account to access AWS services.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LBC_POLICY_NAME</span><span class="o">=</span>alb_ingress_controller_<span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span>_<span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LBC_POLICY_ARN</span><span class="o">=</span><span class="k">$(</span>aws iam create-policy --policy-name <span class="nv">$LBC_POLICY_NAME</span> --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query <span class="s1">&#39;Policy.Arn&#39;</span><span class="k">)</span>
 </span></span><span class="line"><span class="cl">eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> --region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> --attach-policy-arn <span class="si">${</span><span class="nv">LBC_POLICY_ARN</span><span class="si">}</span> --override-existing-serviceaccounts --approve
 </span></span></code></pre></div></li>
-<li>Configure the parameters for <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env">load balancer controller</a> with the cluster name.
+<li>
+<p>Configure the parameters for <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env">load balancer controller</a> with the cluster name.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;clusterName=&#39;</span><span class="nv">$CLUSTER_NAME</span><span class="s1">&#39;&#39;</span> &gt; awsconfigs/common/aws-alb-ingress-controller/base/params.env
 </span></span></code></pre></div></li>
 </ol>
-<h3 id="build-manifests-and-deploy-components">Build Manifests and deploy components</h3>
-<p>Run the following command to build and install the components specified in the Load Balancer <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml">kustomize</a> file.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">while</span> ! kustomize build deployments/add-ons/load-balancer <span class="p">|</span> kubectl apply -f -<span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="s2">&#34;Retrying to apply resources&#34;</span><span class="p">;</span> sleep 30<span class="p">;</span> <span class="k">done</span>
+<h3 id="install-load-balancer-controller">Install Load Balancer Controller</h3>
+<blockquote>
+<p>Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set <code>enable_aws_load_balancer_controller = false</code>.</p>
+</blockquote>
+<p>Run the following command to build and install the Load Balancer controller <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/kustomization.yaml">kustomize</a> file.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-alb-ingress-controller/base <span class="p">|</span> kubectl apply -f -
+</span></span><span class="line"><span class="cl">kubectl <span class="nb">wait</span> --for <span class="nv">condition</span><span class="o">=</span>established crd/ingressclassparams.elbv2.k8s.aws
+</span></span><span class="line"><span class="cl">kustomize build awsconfigs/common/aws-alb-ingress-controller/base <span class="p">|</span> kubectl apply -f -
+</span></span></code></pre></div><h3 id="create-ingress">Create Ingress</h3>
+<p>Create an ingress that will use the certifcate you specified in <code>certArn</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kustomize build awsconfigs/common/istio-ingress/overlays/https <span class="p">|</span> kubectl apply -f -
 </span></span></code></pre></div><h3 id="update-the-domain-with-alb-address">Update the domain with ALB address</h3>
 <ol>
 <li>Check if ALB is provisioned. This may take a few minutes.
@@ -623,6 +646,9 @@
 <li>The central dashboard should now be available at <code>https://kubeflow.platform.example.com</code>. Open a browser and navigate to this URL.</li>
 </ol>
 <h3 id="automated-script">Automated script</h3>
+<blockquote>
+<p>Important: Terraform deployment users should not follow these Automated setup instructions and should follow the <a href="#create-load-balancer">Manual setup instructions</a>.</p>
+</blockquote>
 <ol>
 <li>Install dependencies for the script
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
@@ -685,6 +711,9 @@
 <p>Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the <a href="https://toolbox.googleapps.com/apps/dig/#CNAME/">Google Admin Toolbox</a></p>
 </blockquote>
 <h2 id="clean-up">Clean up</h2>
+<blockquote>
+<p>Important: Terraform deployment users should not follow these clean up steps and should manually delete resources created while following the <a href="#create-load-balancer">Manual setup instructions</a>.</p>
+</blockquote>
 <p>To delete the resources created in this guide, run the following commands from the root of your repository:</p>
 <blockquote>
 <p>Note: Make sure that you have the configuration file created by the script in <code>tests/e2e/utils/load_balancer/config.yaml</code>. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the <a href="#automated-script">previous section</a>.</p>
@@ -696,7 +725,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/541ff9cbfb50e415a452f43a482c51d5e031a2e5">Doc Note for Port-forward running directory (#699) (541ff9c)</a>
+  Last modified April 24, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/bba1bc916a17eb79c0f6fd13cf46dd13f150f627">Minor validation and docs update (#695) (bba1bc9)</a>
 </div>
 
 </div>
