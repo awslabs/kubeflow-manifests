@@ -26,6 +26,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    ```bash
    export CLUSTER_NAME=<your cluster name>
    export CLUSTER_REGION=<your region>
+   export S3_BUCKET=<your s3 bucket>
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
    export PROFILE_NAME=<the name of the profile to be created>
    ```
