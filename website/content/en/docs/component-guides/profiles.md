@@ -43,7 +43,11 @@ You can find documentation about the `AwsIamForServiceAccount` plugin for specif
 
 ## Configuration steps
 
+> Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.
+
 After installing Kubeflow on AWS with one of the available [deployment options]({{< ref "/docs/deployment" >}}), you can configure Kubeflow Profiles with the following steps:
+
+### 1. Setup Environment Variables
 
 1. Define the following environment variables:
 
@@ -55,7 +59,11 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export PROFILE_CONTROLLER_POLICY_NAME=<the name of the profile controller policy to be created>
    ```
 
-2. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
+### 2. Configure the Profile Controller
+
+> Important: Terraform deployent users should skip this step.
+
+1. Create an IAM policy using the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) file.
 
    ```bash
    aws iam create-policy \
@@ -66,7 +74,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
 
    As a principle of least privilege, we recommend scoping the resources in the [IAM Profile controller policy](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json) to the specific policy arns of the policies created in step 6.
 
-3. Associate IAM OIDC with your cluster.
+2. Associate IAM OIDC with your cluster.
 
    ```bash
    aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
@@ -74,7 +82,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $CLUSTER_REGION --approve
    ```
 
-4. Create an IRSA for the Profile controller using the policy.
+3. Create an IRSA for the Profile controller using the policy.
 
    ```bash
    eksctl create iamserviceaccount \
@@ -87,7 +95,9 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    --approve
    ```
 
-5. Create an IAM trust policy to authorize federated requests from the OIDC provider.
+### 3. Create a Profile
+
+1. Create an IAM trust policy to authorize federated requests from the OIDC provider.
 
    ```bash
    export OIDC_URL=$(aws eks describe-cluster --region $CLUSTER_REGION --name $CLUSTER_NAME  --query "cluster.identity.oidc.issuer" --output text | cut -c9-)
@@ -113,9 +123,9 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    EOF
    ```
 
-6. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
+2. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) to scope the permissions for the Profile. For simplicity, we will use the `arn:aws:iam::aws:policy/AmazonS3FullAccess` policy as an example.
 
-7. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
+3. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
 
    ```bash
    aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
@@ -123,7 +133,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    aws iam attach-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
    ```
 
-8. Create a user in your configured auth provider (e.g. Cognito or Dex) or use an existing user.
+4. Create a user in your configured auth provider (e.g. Cognito or Dex) or use an existing user.
 
    Export the user as an environment variable. For simplicity, we will use the `user@example.com` user that is created by default by most of our provided deployment options.
 
@@ -131,7 +141,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    export PROFILE_USER="user@example.com"
    ```
 
-9. Create a Profile using the `PROFILE_NAME`.
+5. Create a Profile using the `PROFILE_NAME`.
 
    ```bash
    cat <<EOF > profile_iam.yaml
