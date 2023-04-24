@@ -403,6 +403,8 @@ yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipe
 ### (Optional) Configure Culling for Notebooks
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide. 
 
+### Multi-User Profiles
+If you are using IRSA and are in a multi-user environment any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/component-guides/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
 
 ## 3.0 Build Manifests and install Kubeflow
 
