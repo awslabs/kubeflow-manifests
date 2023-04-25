@@ -94,30 +94,30 @@
         
         
         &lt;h2 id=&#34;compatibility&#34;&gt;Compatibility&lt;/h2&gt;
-&lt;p&gt;Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.6.&lt;/p&gt;
+&lt;p&gt;Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.7.&lt;/p&gt;
 &lt;div class=&#34;table-responsive&#34;&gt;
   &lt;table class=&#34;table table-bordered&#34;&gt;
     &lt;thead class=&#34;thead-light&#34;&gt;
       &lt;tr&gt;
         &lt;th&gt;EKS Versions&lt;/th&gt;
-        &lt;th&gt;Kubeflow v1.6&lt;/th&gt;
+        &lt;th&gt;Kubeflow v1.7&lt;/th&gt;
       &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody&gt;
     &lt;tr&gt;
+        &lt;td&gt;1.25&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;1.24&lt;/td&gt;
+        &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
         &lt;td&gt;1.23&lt;/td&gt;
         &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
         &lt;td&gt;1.22&lt;/td&gt;
-        &lt;td&gt;&lt;b&gt;Compatible&lt;/b&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-        &lt;td&gt;1.21&lt;/td&gt;
-        &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-        &lt;td&gt;1.20&lt;/td&gt;
         &lt;td&gt;&lt;b&gt;Incompatible&lt;/b&gt;&lt;/td&gt;
       &lt;/tr&gt;
     &lt;/tbody&gt;
@@ -141,6 +141,17 @@
         
         
         &lt;p&gt;We highly recommend that you follow AWS security best practices while provisioning any AWS resources.&lt;/p&gt;
+&lt;h2 id=&#34;default-security-configuration&#34;&gt;Default security configuration&lt;/h2&gt;
+&lt;h3 id=&#34;amazon-simple-storage-service-s3&#34;&gt;Amazon Simple Storage Service (S3)&lt;/h3&gt;
+&lt;h4 id=&#34;block-public-access&#34;&gt;Block public access&lt;/h4&gt;
+&lt;p&gt;The Amazon S3 bucket created for Kubeflow artifacts has a default &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html&#34;&gt;&amp;ldquo;block public access&amp;rdquo; configuration&lt;/a&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;encryption&#34;&gt;Encryption&lt;/h4&gt;
+&lt;p&gt;When you use Amazon S3 for kubeflow artifact storage, Kubeflow on AWS configures the Amazon S3 bucket to use &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html&#34;&gt;server-side encryption with Amazon S3-managed encryption keys&lt;/a&gt; (SSE-S3). If you prefer to use &lt;a href=&#34;https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html&#34;&gt;server-side encryption with AWS Key Management Service&lt;/a&gt; (SSE-KMS), you can modify these files to specify an AWS KMS key.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/iaac/terraform/aws-infra/s3/main.tf&#34;&gt;main.tf&lt;/a&gt; for Terraform deployments&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/rds-s3/auto-rds-s3-setup.py&#34;&gt;auto-rds-s3-setup.py&lt;/a&gt; for manifest deployments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both SSE-S3 and SSE-KMS provide encryption of objects in the Amazon S3 bucket. You may prefer SSE-KMS if you want to separate the management of encryption keys (via AWS KMS) from management of the Amazon S3 bucket. That separation may provide a stronger security posture. In order to access and use an object in an Amazon S3 bucket, a user needs permission to read the object in the Amazon S3 bucket as well as permission to use the AWS KMS encryption key.&lt;/p&gt;
 &lt;h2 id=&#34;security-resources&#34;&gt;Security resources&lt;/h2&gt;
 &lt;p&gt;Refer to the following documents for more information:&lt;/p&gt;
 &lt;ul&gt;

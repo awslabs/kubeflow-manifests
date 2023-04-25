@@ -235,6 +235,8 @@
 &lt;/ol&gt;
 &lt;h3 id=&#34;optional-configure-culling-for-notebooks&#34;&gt;(Optional) Configure Culling for Notebooks&lt;/h3&gt;
 &lt;p&gt;Enable culling for notebooks by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/configure-notebook-culling/&#34;&gt;instructions&lt;/a&gt; in configure culling for notebooks guide.&lt;/p&gt;
+&lt;h3 id=&#34;recommended-configure-aws-s3-to-backup-terraform-state&#34;&gt;(Recommended) Configure AWS S3 to backup Terraform state&lt;/h3&gt;
+&lt;p&gt;Optionally enable AWS S3 as a Terraform backend by following the instructions &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/terraform-s3-backend/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;all-configurations&#34;&gt;All Configurations&lt;/h3&gt;
 &lt;p&gt;A full list of inputs for the terraform stack can be found &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/vanilla/terraform/variables.tf&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;preview&#34;&gt;Preview&lt;/h3&gt;

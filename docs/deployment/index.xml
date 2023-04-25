@@ -47,9 +47,9 @@
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Launch Ubuntu 18.04 cloud9 instance 
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;clone-repository&#34;&gt;Clone repository&lt;/h2&gt;
 &lt;p&gt;Clone the &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests&#34;&gt;&lt;code&gt;awslabs/kubeflow-manifests&lt;/code&gt;&lt;/a&gt; and the &lt;a href=&#34;https://github.com/kubeflow/manifests&#34;&gt;&lt;code&gt;kubeflow/manifests&lt;/code&gt;&lt;/a&gt; repositories and check out the release branches of your choosing.&lt;/p&gt;
-&lt;p&gt;Substitute the value for &lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt;(e.g. v1.6.1) and &lt;code&gt;AWS_RELEASE_VERSION&lt;/code&gt;(e.g. v1.6.1-aws-b1.0.2) with the tag or branch you want to use below. Read more about &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/releases/&#34;&gt;releases and versioning&lt;/a&gt; if you are unsure about what these values should be.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.6.1
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.6.1-aws-b1.0.2
+&lt;p&gt;Substitute the value for &lt;code&gt;KUBEFLOW_RELEASE_VERSION&lt;/code&gt;(e.g. v1.7.0) and &lt;code&gt;AWS_RELEASE_VERSION&lt;/code&gt;(e.g. v1.7.0-aws-b1.0.0) with the tag or branch you want to use below. Read more about &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/about/releases/&#34;&gt;releases and versioning&lt;/a&gt; if you are unsure about what these values should be.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.7.0
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;v1.7.0-aws-b1.0.0
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone https://github.com/awslabs/kubeflow-manifests.git &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; kubeflow-manifests
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git checkout &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;AWS_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone --branch &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;KUBEFLOW_RELEASE_VERSION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; https://github.com/kubeflow/manifests.git upstream
@@ -66,12 +66,7 @@
 &lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/tasks/tools&#34;&gt;kubectl&lt;/a&gt; - A command line tool for working with Kubernetes clusters.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://mikefarah.gitbook.io/yq&#34;&gt;yq&lt;/a&gt; - A command line tool for YAML processing. (For Linux environments, use the &lt;a href=&#34;https://github.com/mikefarah/yq/#install&#34;&gt;wget plain binary installation&lt;/a&gt;)&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://stedolan.github.io/jq/download/&#34;&gt;jq&lt;/a&gt; - A command line tool for processing JSON.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0&#34;&gt;kustomize version 3.2.0&lt;/a&gt; - A command line tool to customize Kubernetes objects through a kustomization file.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see &lt;a href=&#34;https://github.com/kubernetes-sigs/kustomize/issues/3794&#34;&gt;kubernetes-sigs/kustomize#3794&lt;/a&gt; and &lt;a href=&#34;https://github.com/kubeflow/manifests/issues/1797&#34;&gt;kubeflow/manifests#1797&lt;/a&gt;. We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.1&#34;&gt;kustomize version 5.0.1&lt;/a&gt; - A command line tool to customize Kubernetes objects through a kustomization file.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.python.org/downloads/&#34;&gt;python 3.8+&lt;/a&gt; - A programming language used for automated installation scripts.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://pip.pypa.io/en/stable/installation/&#34;&gt;pip&lt;/a&gt; - A package installer for python.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://learn.hashicorp.com/tutorials/terraform/install-cli&#34;&gt;terraform&lt;/a&gt; - An infrastructure as code tool that lets you develop cloud and on-prem resources.&lt;/li&gt;
@@ -86,10 +81,10 @@ You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it
 &lt;p&gt;Warning &lt;a href=&#34;https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html&#34;&gt;Cloud9&lt;/a&gt; users: When configuring your IAM credentials on Cloud9, we recommend using a &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles&#34;&gt;profile&lt;/a&gt;. Click &lt;code&gt;Cancel&lt;/code&gt; when a pop up &amp;ldquo;Could not update credentials&amp;rdquo; opens, then choose &lt;code&gt;Permanently disable&lt;/code&gt; for the &amp;ldquo;Unable to update credentials&amp;rdquo; pop up.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aws configure --profile&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;AWS Access Key ID &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;enter access key id&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;AWS Secret Access Key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;enter secret access key&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Default region name &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: &amp;lt;AWS region&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Default output format &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;None&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: json
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS Access Key ID [None]: &amp;lt;enter access key id&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS Secret Access Key [None]: &amp;lt;enter secret access key&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Default region name [None]: &amp;lt;AWS region&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Default output format [None]: json&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Set the AWS_PROFILE variable with the profile above&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;AWS_PROFILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;kubeflow
@@ -126,7 +121,7 @@ You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run the following command to create an EKS cluster:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;eksctl create cluster &lt;span class=&#34;se&#34;&gt;\
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--name &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--version 1.22 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--version 1.25 &lt;span class=&#34;se&#34;&gt;\
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--nodegroup-name linux-nodes &lt;span class=&#34;se&#34;&gt;\
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;--node-type m5.xlarge &lt;span class=&#34;se&#34;&gt;\
@@ -197,6 +192,104 @@ You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it
     </item>
     
     <item>
+      <title>Docs: Configure AWS S3 as a backend for storing Terraform State</title>
+      <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/terraform-s3-backend/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awslabs.github.io/kubeflow-manifests/docs/deployment/terraform-s3-backend/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;local-vs-remote-state&#34;&gt;Local vs. Remote state&lt;/h2&gt;
+&lt;p&gt;While Terraform manages the state of resources it has created through a &lt;code&gt;terraform.tfstate&lt;/code&gt; file, by default this file only exists locally.
+This means that you will need to manually copy over the original &lt;code&gt;terraform.tfstate&lt;/code&gt; file when managing previously created resources on a different host. Without having a local copy of the &lt;code&gt;terraform.tfstate&lt;/code&gt; file, Terraform will attempt to recreate all the existing resource since it does not know their current state.&lt;/p&gt;
+&lt;p&gt;Having multiple copies of the same &lt;code&gt;terraform.tfstate&lt;/code&gt; can become difficult to manage and keep in sync between different hosts and users.
+Instead, by using a remote backend, such as AWS S3, state is consolidated in one shared remote location and can be re-used between multiple hosts. Additionally, the state will not be lost if the local &lt;code&gt;terraform.tfstate&lt;/code&gt; file was accidentally deleted.&lt;/p&gt;
+&lt;p&gt;For additional details on using AWS S3 as a Terraform backend, refer to the following Terraform &lt;a href=&#34;https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Required Terraform variables will still need to be provided as input when deploying even if a remote state file is being used.&lt;/p&gt;
+&lt;p&gt;For example, a cluster name will still need to be provided through the TF_VAR_cluster_name or &lt;code&gt;.tfvar&lt;/code&gt; file before deploying.&lt;/p&gt;
+&lt;p&gt;Make sure you provide your .tfvars file in the deployment folder and export all the TF_VAR variables when making changes to an existing deployment.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;permissions&#34;&gt;Permissions&lt;/h2&gt;
+&lt;p&gt;The permissions required by the Terraform user to use AWS S3 as a Terraform backend can be found &lt;a href=&#34;https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3-bucket-permissions&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;creating-an-initial-backup-of-terraform-state&#34;&gt;Creating an initial backup of Terraform state&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Decide on a name and region for the bucket to create, as well as a path in the bucket for where to store the &lt;code&gt;tfstate&lt;/code&gt; file.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Define the following environment variables:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_BUCKET_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PATH_TO_BACKUP&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;BUCKET_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create the S3 bucket:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$BUCKET_REGION&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;us-east-1&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    aws s3api create-bucket --bucket &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;S3_BUCKET_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;BUCKET_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    aws s3api create-bucket --bucket &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;S3_BUCKET_NAME&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; --region &lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;BUCKET_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;    --create-bucket-configuration &lt;span class=&#34;nv&#34;&gt;LocationConstraint&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;BUCKET_REGION&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to the respective Terraform deployment folder. For example, if Vanilla kubeflow is being deployed:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; deployments/vanilla/terraform
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create the following file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; backend.tf
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;terraform {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    backend &amp;#34;s3&amp;#34; {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        bucket = &amp;#34;${S3_BUCKET_NAME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        key    = &amp;#34;${PATH_TO_BACKUP}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        region = &amp;#34;${BUCKET_REGION}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;re-using-a-terraform-state-backup&#34;&gt;Re-using a Terraform state backup&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Find the name and region for the created bucket, as well as the path in the bucket for where the &lt;code&gt;tfstate&lt;/code&gt; file is stored.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Define the following environment variables:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;S3_BUCKET_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PATH_TO_BACKUP&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;BUCKET_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to the respective Terraform deployment folder. For example, if Vanilla kubeflow is being deployed:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; deployments/vanilla/terraform
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create the following file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; backend.tf
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;terraform {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    backend &amp;#34;s3&amp;#34; {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        bucket = &amp;#34;${S3_BUCKET_NAME}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        key    = &amp;#34;${PATH_TO_BACKUP}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;        region = &amp;#34;${BUCKET_REGION}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you were following a Terraform deployment guide, resume following the guide to deploy Terraform using the above configuration. Otherwise, follow the respective Terraform deployment guide for your deployment type to apply the above configuration and deploy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Connect to your Kubeflow Dashboard</title>
       <link>https://awslabs.github.io/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -206,6 +299,9 @@ You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it
         
         
         &lt;h2 id=&#34;port-forward-manifest-deployment&#34;&gt;Port-forward (Manifest deployment)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt; directory.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;option-1-amazon-ec2&#34;&gt;Option 1: Amazon EC2&lt;/h3&gt;
 &lt;p&gt;Run the following command on your EC2 instance:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
@@ -221,6 +317,9 @@ You might want to grant &lt;code&gt;Administrative Privileges&lt;/code&gt; as it
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make port-forward
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, open the AWS Cloud9 browser and go to &lt;a href=&#34;http://localhost:8080/&#34;&gt;http://localhost:8080/&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;port-forward-terraform-deployment&#34;&gt;Port-forward (Terraform deployment)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: Make sure you are in the the root of the repository before running the following commands. Running pwd command should output &lt;code&gt;&amp;lt;path/to/kubeflow-manifests&amp;gt;&lt;/code&gt; directory.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Update the &lt;code&gt;kubeconfig&lt;/code&gt;:&lt;/p&gt;
@@ -342,9 +441,9 @@ Select the package manager of your choice.&lt;/p&gt;
 
 &lt;div class=&#34;tab-content&#34; id=&#34;tabs-0-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
         id=&#34;tabs-0-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-0-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;enableCulling=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$ENABLE_CULLING&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;cullIdleTime=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CULL_IDLE_TIMEOUT&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;idlenessCheckPeriod=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$IDLENESS_CHECK_PERIOD&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;ENABLE_CULLING=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$ENABLE_CULLING&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;CULL_IDLE_TIME=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CULL_IDLE_TIMEOUT&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;IDLENESS_CHECK_PERIOD=&amp;#39;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$IDLENESS_CHECK_PERIOD&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&lt;/span&gt; &amp;gt; awsconfigs/apps/notebook-controller/params.env
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&#34;tab-pane fade&#34;

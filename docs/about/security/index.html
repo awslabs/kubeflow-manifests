@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/about\/security\/",
-      "wordCount" : "84",
+      "wordCount" : "252",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/about/security/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T16:20:11-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2022-12-20T17:44:14-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Security">
 <meta itemprop="description" content="Follow AWS security best practices when using Kubeflow on AWS">
-<meta itemprop="dateModified" content="2022-06-27T16:20:11-07:00" />
-<meta itemprop="wordCount" content="84">
+<meta itemprop="dateModified" content="2022-12-20T17:44:14-07:00" />
+<meta itemprop="wordCount" content="252">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Security"/>
 <meta name="twitter:description" content="Follow AWS security best practices when using Kubeflow on AWS"/>
@@ -130,6 +130,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -277,6 +279,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -322,6 +328,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -401,6 +411,17 @@
             
 
 
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#default-security-configuration">Default security configuration</a>
+      <ul>
+        <li><a href="#amazon-simple-storage-service-s3">Amazon Simple Storage Service (S3)</a></li>
+      </ul>
+    </li>
+    <li><a href="#security-resources">Security resources</a></li>
+  </ul>
+</nav></div>
+
 
 
             
@@ -461,6 +482,17 @@
 		
 	</header>    
 	<p>We highly recommend that you follow AWS security best practices while provisioning any AWS resources.</p>
+<h2 id="default-security-configuration">Default security configuration</h2>
+<h3 id="amazon-simple-storage-service-s3">Amazon Simple Storage Service (S3)</h3>
+<h4 id="block-public-access">Block public access</h4>
+<p>The Amazon S3 bucket created for Kubeflow artifacts has a default <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html">&ldquo;block public access&rdquo; configuration</a>.</p>
+<h4 id="encryption">Encryption</h4>
+<p>When you use Amazon S3 for kubeflow artifact storage, Kubeflow on AWS configures the Amazon S3 bucket to use <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html">server-side encryption with Amazon S3-managed encryption keys</a> (SSE-S3). If you prefer to use <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html">server-side encryption with AWS Key Management Service</a> (SSE-KMS), you can modify these files to specify an AWS KMS key.</p>
+<ul>
+<li><a href="https://github.com/awslabs/kubeflow-manifests/blob/main/iaac/terraform/aws-infra/s3/main.tf">main.tf</a> for Terraform deployments</li>
+<li><a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/utils/rds-s3/auto-rds-s3-setup.py">auto-rds-s3-setup.py</a> for manifest deployments</li>
+</ul>
+<p>Both SSE-S3 and SSE-KMS provide encryption of objects in the Amazon S3 bucket. You may prefer SSE-KMS if you want to separate the management of encryption keys (via AWS KMS) from management of the Amazon S3 bucket. That separation may provide a stronger security posture. In order to access and use an object in an Amazon S3 bucket, a user needs permission to read the object in the Amazon S3 bucket as well as permission to use the AWS KMS encryption key.</p>
 <h2 id="security-resources">Security resources</h2>
 <p>Refer to the following documents for more information:</p>
 <ul>
@@ -477,7 +509,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/07fac2a1edb4df75930fb9e4527afb93401b6c58">Quick Website fixes (#280) (07fac2a1)</a>
+  Last modified December 20, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/100eda733684e33fd5f781957fef14e9c35eb6b5">Task/s3nopublic (#518) (100eda73)</a>
 </div>
 
 </div>
@@ -557,7 +589,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

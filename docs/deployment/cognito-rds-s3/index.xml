@@ -34,7 +34,8 @@
 &lt;li&gt;Create an EKS cluster&lt;/li&gt;
 &lt;li&gt;Create an S3 Bucket&lt;/li&gt;
 &lt;li&gt;Create an RDS Instance&lt;/li&gt;
-&lt;li&gt;Configure AWS Secrets for RDS and S3&lt;/li&gt;
+&lt;li&gt;Configure AWS Secrets or IAM Role for S3&lt;/li&gt;
+&lt;li&gt;Configure AWS Secrets for RDS&lt;/li&gt;
 &lt;li&gt;Install AWS Secrets and Kubernetes Secrets Store CSI driver&lt;/li&gt;
 &lt;li&gt;Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines&lt;/li&gt;
 &lt;/ol&gt;
@@ -55,7 +56,14 @@
 &lt;li&gt;
 &lt;p&gt;Deploy Kubeflow.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Install Kubeflow using the following command:
+&lt;li&gt;Export your pipeline-s3-credential-option&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;IRSA/STATIC&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Install Kubeflow using the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
 
 
 
@@ -107,14 +115,13 @@
 
 
 &lt;div class=&#34;tab-content&#34; id=&#34;tabs-4-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
-        id=&#34;tabs-4-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deploy-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cognito-rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+        id=&#34;tabs-4-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;deploy-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cognito-rds-s3&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&#34;tab-pane fade&#34;
-        id=&#34;tabs-4-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+        id=&#34;tabs-4-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-4-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   
 &lt;/div&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
+
+&lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Follow the rest of the Cognito guide from &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/manifest/guide/#50-update-the-domain-with-the-alb-address&#34;&gt;section 5.0 (Updating the domain with ALB address)&lt;/a&gt; in order to:&lt;/p&gt;
 &lt;ol&gt;
@@ -187,10 +194,10 @@
 
 
 &lt;div class=&#34;tab-content&#34; id=&#34;tabs-6-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
-        id=&#34;tabs-6-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;delete-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cognito-rds-s3&lt;/span&gt;
+        id=&#34;tabs-6-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;delete-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;cognito-rds-s3&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&#34;tab-pane fade&#34;
-        id=&#34;tabs-6-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+        id=&#34;tabs-6-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   
 &lt;/div&gt;
@@ -300,19 +307,11 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Create an IAM user to use with the Minio Client&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi&#34;&gt;Create an IAM user&lt;/a&gt; with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as &lt;code&gt;TF_VAR_minio_aws_access_key_id&lt;/code&gt; and &lt;code&gt;TF_VAR_minio_aws_secret_access_key&lt;/code&gt; respectively.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
 &lt;p&gt;Define the following environment variables:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Region to create the cluster in&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Region to create the cluster in&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_REGION&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the cluster to create&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLUSTER_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS access key id of the static credentials used to authenticate the Minio Client&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_minio_aws_access_key_id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# AWS secret access key of the static credentials used to authenticate the Minio Client&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;TF_VAR_minio_aws_secret_access_key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of an existing Route53 root domain (e.g. example.com)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;ROOT_DOMAIN&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Name of the subdomain to create (e.g. platform.example.com)&lt;/span&gt;
@@ -331,6 +330,88 @@
 &lt;p&gt;NOTE: Configure Load Balancer Scheme (e.g. &lt;code&gt;internet-facing&lt;/code&gt; or &lt;code&gt;internal&lt;/code&gt;). Default is set to &lt;code&gt;internet-facing&lt;/code&gt;. Use &lt;code&gt;internal&lt;/code&gt; as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See &lt;a href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme&#34;&gt;Load balancer scheme&lt;/a&gt; in the AWS documentation&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+For more information, see &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html&#34;&gt;Amazon EKS IAM roles for service accounts&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Option 2 - IAM User (Deprecated):
+&lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi&#34;&gt;Create an IAM user&lt;/a&gt; with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as &lt;code&gt;minio_aws_access_key_id&lt;/code&gt; and &lt;code&gt;minio_aws_secret_access_key&lt;/code&gt; respectively.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Export your desired PIPELINE_S3_CREDENTIAL_OPTION specific values
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   &lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-6&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-IRSA&#34;
+        id=&#34;tabs-6-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-6-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;IRSA&amp;#34;);&#34;
+        aria-controls=&#34;tabs-6-0&#34; aria-selected=&#34;true&#34;&gt;
+        IRSA
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-IAM-User&#34;
+        id=&#34;tabs-6-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-6-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;IAM-User&amp;#34;);&#34;
+        aria-controls=&#34;tabs-6-1&#34; aria-selected=&#34;false&#34;&gt;
+        IAM User
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-6-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-6-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# Pipeline S3 Credential Option to configure &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;irsa&amp;#34;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-6-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-6-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# Pipeline S3 Credential Option to configure &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;static&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# AWS access key id of the static credentials used to authenticate the Minio Client&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;TF_VAR_minio_aws_access_key_id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# AWS secret access key of the static credentials used to authenticate the Minio Client&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;TF_VAR_minio_aws_secret_access_key&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Save the variables to a &lt;code&gt;.tfvars&lt;/code&gt; file:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; sample.auto.tfvars
@@ -342,6 +423,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;cognito_user_pool_name=&amp;#34;${USER_POOL_NAME}&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;use_rds=&amp;#34;${USE_RDS}&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;use_s3=&amp;#34;${USE_S3}&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;pipeline_s3_credential_option=&amp;#34;${PIPELINE_S3_CREDENTIAL_OPTION}&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;use_cognito=&amp;#34;${USE_COGNITO}&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;load_balancer_scheme=&amp;#34;${LOAD_BALANCER_SCHEME}&amp;#34;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;
@@ -354,6 +436,8 @@
 &lt;/ol&gt;
 &lt;h3 id=&#34;optional-configure-culling-for-notebooks&#34;&gt;(Optional) Configure Culling for Notebooks&lt;/h3&gt;
 &lt;p&gt;Enable culling for notebooks by following the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/configure-notebook-culling/&#34;&gt;instructions&lt;/a&gt; in configure culling for notebooks guide.&lt;/p&gt;
+&lt;h3 id=&#34;recommended-configure-aws-s3-to-backup-terraform-state&#34;&gt;(Recommended) Configure AWS S3 to backup Terraform state&lt;/h3&gt;
+&lt;p&gt;Optionally enable AWS S3 as a Terraform backend by following the instructions &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/terraform-s3-backend/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;view-all-configurations&#34;&gt;View all Configurations&lt;/h3&gt;
 &lt;p&gt;View &lt;a href=&#34;https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf&#34;&gt;all possible configuration options of the terraform stack&lt;/a&gt; in the &lt;code&gt;variables.tf&lt;/code&gt; file.&lt;/p&gt;
 &lt;h3 id=&#34;preview&#34;&gt;Preview&lt;/h3&gt;

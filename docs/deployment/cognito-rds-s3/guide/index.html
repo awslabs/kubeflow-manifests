@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito-rds-s3\/guide\/",
-      "wordCount" : "396",
+      "wordCount" : "411",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-21T13:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
-<meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
-<meta itemprop="wordCount" content="396">
+<meta itemprop="dateModified" content="2023-04-21T13:45:09-07:00" />
+<meta itemprop="wordCount" content="411">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -493,7 +503,8 @@
 <li>Create an EKS cluster</li>
 <li>Create an S3 Bucket</li>
 <li>Create an RDS Instance</li>
-<li>Configure AWS Secrets for RDS and S3</li>
+<li>Configure AWS Secrets or IAM Role for S3</li>
+<li>Configure AWS Secrets for RDS</li>
 <li>Install AWS Secrets and Kubernetes Secrets Store CSI driver</li>
 <li>Configure an RDS endpoint and an S3 bucket name for Kubeflow Pipelines</li>
 </ol>
@@ -514,7 +525,14 @@
 <li>
 <p>Deploy Kubeflow.</p>
 <ol>
-<li>Install Kubeflow using the following command:
+<li>Export your pipeline-s3-credential-option</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="o">=</span>&lt;IRSA/STATIC&gt;
+</span></span></code></pre></div><ol>
+<li>Install Kubeflow using the following command:</li>
+</ol>
+</li>
+</ol>
 
 
 
@@ -566,14 +584,13 @@
 
 
 <div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
-        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span></span></span></code></pre></div></div>
+        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3</span></span></span></code></pre></div></div>
+        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
-</li>
-</ol>
-</li>
+
+<ol>
 <li>
 <p>Follow the rest of the Cognito guide from <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito/manifest/guide/#50-update-the-domain-with-the-alb-address">section 5.0 (Updating the domain with ALB address)</a> in order to:</p>
 <ol>
@@ -646,10 +663,10 @@
 
 
 <div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
-        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span>
+        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span>
 </span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3</span><span class="w">
+        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span></span></span></code></pre></div></div>
   
 </div>
@@ -706,7 +723,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cc5098c9e6adbb6740cd50ee4cd5ad285ceb10c3">Cherry-pick Kserve with IRSA and Notebook culling Doc (#512) (cc5098c9)</a>
+  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/655d4102cb9f59455a976367b4cc513187ae7bcc">KFP IRSA docs (#680) (655d4102)</a>
 </div>
 
 </div>
@@ -789,7 +806,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

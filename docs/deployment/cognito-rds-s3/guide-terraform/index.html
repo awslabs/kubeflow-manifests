@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/cognito-rds-s3\/guide-terraform\/",
-      "wordCount" : "635",
+      "wordCount" : "843",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/cognito-rds-s3/guide-terraform/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-11-24T13:09:28-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-21T13:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Terraform Deployment Guide">
 <meta itemprop="description" content="Deploy Kubeflow with Cognito, RDS, and S3 using Terraform">
-<meta itemprop="dateModified" content="2022-11-24T13:09:28-08:00" />
-<meta itemprop="wordCount" content="635">
+<meta itemprop="dateModified" content="2023-04-21T13:45:09-07:00" />
+<meta itemprop="wordCount" content="843">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Terraform Deployment Guide"/>
 <meta name="twitter:description" content="Deploy Kubeflow with Cognito, RDS, and S3 using Terraform"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -415,6 +425,7 @@
       <ul>
         <li><a href="#configure">Configure</a></li>
         <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
+        <li><a href="#recommended-configure-aws-s3-to-backup-terraform-state">(Recommended) Configure AWS S3 to backup Terraform state</a></li>
         <li><a href="#view-all-configurations">View all Configurations</a></li>
         <li><a href="#preview">Preview</a></li>
         <li><a href="#apply">Apply</a></li>
@@ -531,19 +542,11 @@
 </ul>
 </li>
 <li>
-<p>Create an IAM user to use with the Minio Client</p>
-<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>TF_VAR_minio_aws_access_key_id</code> and <code>TF_VAR_minio_aws_secret_access_key</code> respectively.</p>
-</li>
-<li>
 <p>Define the following environment variables:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># Region to create the cluster in</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Region to create the cluster in</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># Name of the cluster to create</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># AWS access key id of the static credentials used to authenticate the Minio Client</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">TF_VAR_minio_aws_access_key_id</span><span class="o">=</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># AWS secret access key of the static credentials used to authenticate the Minio Client</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">TF_VAR_minio_aws_secret_access_key</span><span class="o">=</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># Name of an existing Route53 root domain (e.g. example.com)</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ROOT_DOMAIN</span><span class="o">=</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># Name of the subdomain to create (e.g. platform.example.com)</span>
@@ -562,6 +565,88 @@
 <p>NOTE: Configure Load Balancer Scheme (e.g. <code>internet-facing</code> or <code>internal</code>). Default is set to <code>internet-facing</code>. Use <code>internal</code> as the load balancer scheme if you want the load balancer to be accessible only within your VPC. See <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html#load-balancer-scheme">Load balancer scheme</a> in the AWS documentation</p>
 </blockquote>
 </li>
+</ol>
+<p>As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:</p>
+<blockquote>
+<p>Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.</p>
+</blockquote>
+<ul>
+<li>
+<p>Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+For more information, see <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Amazon EKS IAM roles for service accounts</a>.</p>
+</li>
+<li>
+<p>Option 2 - IAM User (Deprecated):
+<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>minio_aws_access_key_id</code> and <code>minio_aws_secret_access_key</code> respectively.</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>Export your desired PIPELINE_S3_CREDENTIAL_OPTION specific values
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-6" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-6-0-tab" data-toggle="tab" href="#tabs-6-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-6-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-6-1-tab" data-toggle="tab" href="#tabs-6-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-6-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
+        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="c"># Pipeline S3 Credential Option to configure </span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="s2">&#34;irsa&#34;</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="c"># Pipeline S3 Credential Option to configure </span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="s2">&#34;static&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c"># AWS access key id of the static credentials used to authenticate the Minio Client</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">TF_VAR_minio_aws_access_key_id</span><span class="p">=</span>
+</span></span><span class="line"><span class="cl"><span class="c"># AWS secret access key of the static credentials used to authenticate the Minio Client</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">TF_VAR_minio_aws_secret_access_key</span><span class="p">=</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
 <li>
 <p>Save the variables to a <code>.tfvars</code> file:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; sample.auto.tfvars
@@ -573,6 +658,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="s">cognito_user_pool_name=&#34;${USER_POOL_NAME}&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">use_rds=&#34;${USE_RDS}&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">use_s3=&#34;${USE_S3}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">pipeline_s3_credential_option=&#34;${PIPELINE_S3_CREDENTIAL_OPTION}&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">use_cognito=&#34;${USE_COGNITO}&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">load_balancer_scheme=&#34;${LOAD_BALANCER_SCHEME}&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">
@@ -585,6 +671,8 @@
 </ol>
 <h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
 <p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
+<h3 id="recommended-configure-aws-s3-to-backup-terraform-state">(Recommended) Configure AWS S3 to backup Terraform state</h3>
+<p>Optionally enable AWS S3 as a Terraform backend by following the instructions <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/terraform-s3-backend/">here</a>.</p>
 <h3 id="view-all-configurations">View all Configurations</h3>
 <p>View <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/cognito-rds-s3/terraform/variables.tf">all possible configuration options of the terraform stack</a> in the <code>variables.tf</code> file.</p>
 <h3 id="preview">Preview</h3>
@@ -608,7 +696,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified November 24, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cc5098c9e6adbb6740cd50ee4cd5ad285ceb10c3">Cherry-pick Kserve with IRSA and Notebook culling Doc (#512) (cc5098c9)</a>
+  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/655d4102cb9f59455a976367b4cc513187ae7bcc">KFP IRSA docs (#680) (655d4102)</a>
 </div>
 
 </div>
@@ -691,7 +779,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

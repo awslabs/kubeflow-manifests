@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/prerequisites\/",
-      "wordCount" : "709",
+      "wordCount" : "652",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-07T13:02:05-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-03-31T09:46:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Prerequisites">
 <meta itemprop="description" content="Set up your environment for deploying Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-04-07T13:02:05-07:00" />
-<meta itemprop="wordCount" content="709">
+<meta itemprop="dateModified" content="2023-03-31T09:46:54-07:00" />
+<meta itemprop="wordCount" content="652">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Prerequisites"/>
 <meta name="twitter:description" content="Set up your environment for deploying Kubeflow on AWS"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -507,9 +517,9 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">Launch Ubuntu 18.04 cloud9 instance 
 </span></span></code></pre></div><h2 id="clone-repository">Clone repository</h2>
 <p>Clone the <a href="https://github.com/awslabs/kubeflow-manifests"><code>awslabs/kubeflow-manifests</code></a> and the <a href="https://github.com/kubeflow/manifests"><code>kubeflow/manifests</code></a> repositories and check out the release branches of your choosing.</p>
-<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.6.1) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.6.1-aws-b1.0.2) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.6.1
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.6.1-aws-b1.0.2
+<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.7.0) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.7.0-aws-b1.0.0) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.7.0
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.7.0-aws-b1.0.0
 </span></span><span class="line"><span class="cl">git clone https://github.com/awslabs/kubeflow-manifests.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kubeflow-manifests
 </span></span><span class="line"><span class="cl">git checkout <span class="si">${</span><span class="nv">AWS_RELEASE_VERSION</span><span class="si">}</span>
 </span></span><span class="line"><span class="cl">git clone --branch <span class="si">${</span><span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="si">}</span> https://github.com/kubeflow/manifests.git upstream
@@ -526,12 +536,7 @@
 <li><a href="https://kubernetes.io/docs/tasks/tools">kubectl</a> - A command line tool for working with Kubernetes clusters.</li>
 <li><a href="https://mikefarah.gitbook.io/yq">yq</a> - A command line tool for YAML processing. (For Linux environments, use the <a href="https://github.com/mikefarah/yq/#install">wget plain binary installation</a>)</li>
 <li><a href="https://stedolan.github.io/jq/download/">jq</a> - A command line tool for processing JSON.</li>
-<li><a href="https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0">kustomize version 3.2.0</a> - A command line tool to customize Kubernetes objects through a kustomization file.</li>
-</ul>
-<blockquote>
-<p>Warning: Kubeflow is not compatible with the latest versions of of kustomize 4.x. This is due to changes in the order that resources are sorted and printed. Please see <a href="https://github.com/kubernetes-sigs/kustomize/issues/3794">kubernetes-sigs/kustomize#3794</a> and <a href="https://github.com/kubeflow/manifests/issues/1797">kubeflow/manifests#1797</a>. We know that this is not ideal and are working with the upstream kustomize team to add support for the latest versions of kustomize as soon as we can.</p>
-</blockquote>
-<ul>
+<li><a href="https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.1">kustomize version 5.0.1</a> - A command line tool to customize Kubernetes objects through a kustomization file.</li>
 <li><a href="https://www.python.org/downloads/">python 3.8+</a> - A programming language used for automated installation scripts.</li>
 <li><a href="https://pip.pypa.io/en/stable/installation/">pip</a> - A package installer for python.</li>
 <li><a href="https://learn.hashicorp.com/tutorials/terraform/install-cli">terraform</a> - An infrastructure as code tool that lets you develop cloud and on-prem resources.</li>
@@ -546,10 +551,10 @@ You might want to grant <code>Administrative Privileges</code> as it will requir
 <p>Warning <a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/security-iam.html">Cloud9</a> users: When configuring your IAM credentials on Cloud9, we recommend using a <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-profiles">profile</a>. Click <code>Cancel</code> when a pop up &ldquo;Could not update credentials&rdquo; opens, then choose <code>Permanently disable</code> for the &ldquo;Unable to update credentials&rdquo; pop up.</p>
 </blockquote>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws configure --profile<span class="o">=</span>kubeflow
-</span></span><span class="line"><span class="cl">AWS Access Key ID <span class="o">[</span>None<span class="o">]</span>: &lt;enter access key id&gt;
-</span></span><span class="line"><span class="cl">AWS Secret Access Key <span class="o">[</span>None<span class="o">]</span>: &lt;enter secret access key&gt;
-</span></span><span class="line"><span class="cl">Default region name <span class="o">[</span>None<span class="o">]</span>: &lt;AWS region&gt;
-</span></span><span class="line"><span class="cl">Default output format <span class="o">[</span>None<span class="o">]</span>: json
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Access Key ID [None]: &lt;enter access key id&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># AWS Secret Access Key [None]: &lt;enter secret access key&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Default region name [None]: &lt;AWS region&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Default output format [None]: json</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># Set the AWS_PROFILE variable with the profile above</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_PROFILE</span><span class="o">=</span>kubeflow
@@ -560,7 +565,7 @@ You might want to grant <code>Administrative Privileges</code> as it will requir
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/2e5a851766c0f640128fc5e039a4a80559665c44">update website to release-v1.6.1-aws-b1.0.2 (#667) (2e5a8517)</a>
+  Last modified March 31, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/97f7c9d99d871998b6a419bacecd057f5f0f86ab">kustomize and website changes for v1.7.0 (#646) (97f7c9d9)</a>
 </div>
 
 </div>
@@ -643,7 +648,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

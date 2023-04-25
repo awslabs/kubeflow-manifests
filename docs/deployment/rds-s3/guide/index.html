@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/deployment\/rds-s3\/guide\/",
-      "wordCount" : "2206",
+      "wordCount" : "3041",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-07T11:04:20-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-21T13:45:09-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-04-07T11:04:20-07:00" />
-<meta itemprop="wordCount" content="2206">
+<meta itemprop="dateModified" content="2023-04-21T13:45:09-07:00" />
+<meta itemprop="wordCount" content="3041">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -426,6 +436,11 @@
         <li><a href="#21-option-1-automated-setup">2.1 <strong>Option 1: Automated Setup</strong></a></li>
         <li><a href="#advanced-customization">Advanced customization</a></li>
         <li><a href="#22-option-2-manual-setup">2.2 <strong>Option 2: Manual Setup</strong></a></li>
+        <li><a href="#221-rds-setup">2.2.1 RDS Setup</a></li>
+        <li><a href="#222-s3-setup">2.2.2 S3 Setup</a></li>
+        <li><a href="#2221-configure-using-irsa">2.2.2.1 Configure using IRSA</a></li>
+        <li><a href="#2222-configure-using-iam-user">2.2.2.2 Configure using IAM User</a></li>
+        <li><a href="#install-csi-driver-and-update-kfp-configurations">Install CSI Driver and update KFP configurations</a></li>
         <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
       </ul>
     </li>
@@ -545,31 +560,226 @@ Export the below variable:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">REPO_ROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
 </span></span></code></pre></div><h2 id="20-set-up-rds-s3-and-configure-secrets">2.0 Set up RDS, S3, and configure Secrets</h2>
 <p>There are two ways to create RDS and S3 resources before you deploy the Kubeflow manifests. Either use the <a href="#21-option-1-automated-setup">automated setup</a> Python script that is mentioned in the following step, or follow the <a href="#22-option-2-manual-setup">manual setup instructions</a>.</p>
+<p>As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:</p>
+<blockquote>
+<p>Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.</p>
+</blockquote>
+<ul>
+<li>
+<p>Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+For more information, see <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Amazon EKS IAM roles for service accounts</a>.</p>
+</li>
+<li>
+<p>Option 2 - IAM User (Deprecated):
+<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>minio_aws_access_key_id</code> and <code>minio_aws_secret_access_key</code> respectively.</p>
+</li>
+</ul>
+<ol>
+<li>Export your desired PIPELINE_S3_CREDENTIAL_OPTION:
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-3" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-3-0-tab" data-toggle="tab" href="#tabs-3-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-3-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-3-1-tab" data-toggle="tab" href="#tabs-3-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-3-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-3-content"><div class="tab-pane fade show active"
+        id="tabs-3-0" role="tabpanel" aria-labelled-by="tabs-3-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">irsa</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-3-1" role="tabpanel" aria-labelled-by="tabs-3-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">static</span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ol>
 <h3 id="21-option-1-automated-setup">2.1 <strong>Option 1: Automated Setup</strong></h3>
+<blockquote>
+<p>Note: Automated Setup is only supported for RDS AND S3 Deployments, for RDS/S3 only use the manual steps.</p>
+</blockquote>
 <p>This setup performs all the manual steps in an automated fashion.</p>
-<p>The script takes care of creating the S3 bucket, creating the S3 Secrets using the Secrets manager, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.</p>
+<p>The script takes care of creating the S3 bucket, setting up IRSA to access to S3 or creating the S3 Secrets if using static credentials, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.</p>
 <blockquote>
 <p>Note: The script will <strong>not</strong> delete any resource. Therefore, if a resource already exists (eg: Secret, database with the same name, or S3 bucket), <strong>it will skip the creation of those resources and use the existing resources instead</strong>. This is by design in order to prevent unwanted results, such as accidental deletion. For example, if a database with the same name already exists, the script will skip the database creation setup. If you forgot to change the database name used for creation, then this gives you the chance to retry the script with the proper value. See <code>python auto-rds-s3-setup.py --help</code> for the list of parameters, as well as their default values.</p>
 </blockquote>
 <ol>
-<li>Navigate to the <code>tests/e2e</code> directory.
+<li>
+<p>Navigate to the <code>tests/e2e</code> directory.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
 </span></span></code></pre></div></li>
-<li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> of the IAM user that you created to use in the following step, which will be referenced as <code>MINIO_AWS_ACCESS_KEY_ID</code> and <code>MINIO_AWS_SECRET_ACCESS_KEY</code> respectively.</li>
-<li>Export values for <code>CLUSTER_REGION</code>, <code>CLUSTER_NAME</code>, <code>S3_BUCKET</code>, <code>MINIO_AWS_ACCESS_KEY_ID</code>, and <code>MINIO_AWS_SECRET_ACCESS_KEY</code>.
+<li>
+<p>Export values for <code>CLUSTER_REGION</code>, <code>CLUSTER_NAME</code>, <code>S3_BUCKET</code>.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_INSTANCE_NAME</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_SUBNET_GROUP_NAME</span><span class="o">=</span>&lt;&gt;
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;&gt;
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RDS_SECRET_NAME</span><span class="o">=</span>&lt;&gt;
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_SECRET_NAME</span><span class="o">=</span>&lt;&gt;
 </span></span></code></pre></div></li>
-<li>Run the <code>auto-rds-s3-setup.py</code> script
-<pre tabindex="0"><code>PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME
-</code></pre></li>
+<li>
+<p>Export your desired PIPELINE_S3_CREDENTIAL_OPTION specific values
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-4" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-4-0-tab" data-toggle="tab" href="#tabs-4-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-4-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-4-1-tab" data-toggle="tab" href="#tabs-4-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-4-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
+        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">irsa</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">S3_SECRET_NAME</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">MINIO_AWS_ACCESS_KEY_ID</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">static</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
+<li>
+<p>Run the <code>auto-rds-s3-setup.py</code> script
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-5" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-5-0-tab" data-toggle="tab" href="#tabs-5-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-5-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-5-1-tab" data-toggle="tab" href="#tabs-5-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-5-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-5-content"><div class="tab-pane fade show active"
+        id="tabs-5-0" role="tabpanel" aria-labelled-by="tabs-5-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">-s3_aws_access_key_id</span> <span class="err">$</span><span class="nx">MINIO_AWS_ACCESS_KEY_ID</span> <span class="nx">--s3_aws_secret_access_key</span> <span class="err">$</span><span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span> <span class="nx">--s3_secret_name</span> <span class="err">$</span><span class="nx">S3_SECRET_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
 </ol>
 <h3 id="advanced-customization">Advanced customization</h3>
 <p>The <code>auto-rds-s3-setup.py</code> script applies default values for the user password, max storage, storage type, instance type, and more. You can customize those preferences by specifying different values.</p>
@@ -601,20 +811,19 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 <li><code>RDS database port</code></li>
 </ul>
 </li>
+</ol>
+<h3 id="221-rds-setup">2.2.1 RDS Setup</h3>
+<ol>
 <li>
 <p>Export values:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RDS_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your rds secret name&gt;&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 secret name&gt;&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_HOST</span><span class="o">=</span><span class="s2">&#34;&lt;your rds db host&gt;&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MLMD_DB</span><span class="o">=</span>metadata_db
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 bucket name&gt;&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_SERVICE_HOST</span><span class="o">=</span>s3.amazonaws.com
 </span></span></code></pre></div></li>
 <li>
 <p>Create Secrets in AWS Secrets Manager</p>
 <ol>
-<li>
-<p>[RDS] Create the RDS Secret and configure the Secret provider:</p>
+<li>[RDS] Create the RDS Secret and configure the Secret provider:
 <ol>
 <li>Configure a Secret (e.g <code>rds-secret</code>), with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when creating your RDS instance.
 <ul>
@@ -628,248 +837,6 @@ Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
 <ul>
 <li>Rename the field with the following command:
 Select the package manager of your choice.
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <ul class="nav nav-tabs" id="tabs-3" role="tablist"><li class="nav-item">
-      <a class="nav-link active tab-Kustomize"
-        id="tabs-3-0-tab" data-toggle="tab" href="#tabs-3-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-3-0" aria-selected="true">
-        Kustomize
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link tab-Helm"
-        id="tabs-3-1-tab" data-toggle="tab" href="#tabs-3-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-3-1" aria-selected="false">
-        Helm
-      </a>
-    </li></ul>
-
-
-<div class="tab-content" id="tabs-3-content"><div class="tab-pane fade show active"
-        id="tabs-3-0" role="tabpanel" aria-labelled-by="tabs-3-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;rds-secret&#34;,env(RDS_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
-</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
-  <div class="tab-pane fade"
-        id="tabs-3-1" role="tabpanel" aria-labelled-by="tabs-3-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-only/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
-  
-</div>
-</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>
-<p>[S3] Create the S3 Secret and configure the Secret provider:</p>
-<ol>
-<li>Configure a Secret (e.g. <code>s3-secret</code>) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
-<ul>
-<li>For more details about configuring or finding your AWS credentials, see <a href="https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html">AWS security credentials</a></li>
-<li>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$S3_SECRET</span> --secret-string <span class="s1">&#39;{&#34;accesskey&#34;:&#34;AXXXXXXXXXXXXXXXXXX6&#34;,&#34;secretkey&#34;:&#34;eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>Rename the <code>parameters.objects.objectName</code> field in <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml">the S3 Secret provider configuration</a> to the name of the Secret.
-<ul>
-<li>Rename the field with the following command:
-Select the package manager of your choice.
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <ul class="nav nav-tabs" id="tabs-4" role="tablist"><li class="nav-item">
-      <a class="nav-link active tab-Kustomize"
-        id="tabs-4-0-tab" data-toggle="tab" href="#tabs-4-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-4-0" aria-selected="true">
-        Kustomize
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link tab-Helm"
-        id="tabs-4-1-tab" data-toggle="tab" href="#tabs-4-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-4-1" aria-selected="false">
-        Helm
-      </a>
-    </li></ul>
-
-
-<div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
-        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;s3-secret&#34;,env(S3_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
-</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
-  <div class="tab-pane fade"
-        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/s3-only/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
-  
-</div>
-</li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>
-<p>Install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver</p>
-<ol>
-<li>Run the following commands to enable OIDC and create an <code>iamserviceaccount</code> with permissions to retrieve the Secrets created with AWS Secrets Manager.</li>
-</ol>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --region<span class="o">=</span><span class="nv">$CLUSTER_REGION</span> --cluster<span class="o">=</span><span class="nv">$CLUSTER_NAME</span> --approve
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster <span class="nv">$CLUSTER_NAME</span> --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region <span class="nv">$CLUSTER_REGION</span>
-</span></span></code></pre></div><ol start="2">
-<li>Run the following commands to install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver:</li>
-</ol>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretproviderclass.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/csidriver.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store-csi-driver.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretprovidersyncing.yaml
-</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
-</span></span></code></pre></div></li>
-<li>
-<p>Update the KFP configurations.</p>
-<ol>
-<li>
-<p>[RDS] Configure the <em>RDS endpoint URL</em> and <em>the metadata DB name</em>:</p>
-<ul>
-<li>Rename the field with the following command
-Select the package manager of your choice.
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <ul class="nav nav-tabs" id="tabs-5" role="tablist"><li class="nav-item">
-      <a class="nav-link active tab-Kustomize"
-        id="tabs-5-0-tab" data-toggle="tab" href="#tabs-5-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-5-0" aria-selected="true">
-        Kustomize
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link tab-Helm"
-        id="tabs-5-1-tab" data-toggle="tab" href="#tabs-5-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-5-1" aria-selected="false">
-        Helm
-      </a>
-    </li></ul>
-
-
-<div class="tab-content" id="tabs-5-content"><div class="tab-pane fade show active"
-        id="tabs-5-0" role="tabpanel" aria-labelled-by="tabs-5-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">dbHost=&#39;</span><span class="err">$</span><span class="nx">DB_HOST</span><span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">mlmdDb=&#39;</span><span class="err">$</span><span class="nx">MLMD_DB</span><span class="s1">&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="err">&gt;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span>
-</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
-  <div class="tab-pane fade"
-        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
-  
-</div>
-</li>
-</ul>
-</li>
-<li>
-<p>[S3] Configure the <em>S3 bucket name</em> and <em>S3 bucket region</em>:</p>
-<p>Select the package manager of your choice.
 
             
 
@@ -921,14 +888,446 @@ Select the package manager of your choice.
 
 
 <div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
-        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
+        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;rds-secret&#34;,env(RDS_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="222-s3-setup">2.2.2 S3 Setup</h3>
+<ol>
+<li>Export values:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 bucket name&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_SERVICE_HOST</span><span class="o">=</span>s3.amazonaws.com
+</span></span></code></pre></div></li>
+</ol>
+<p>As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:</p>
+<blockquote>
+<p>Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.</p>
+</blockquote>
+<ul>
+<li>Option 1 - IRSA (Recommended): Follow <a href="#2221-configure-using-irsa">Configure using IRSA</a></li>
+<li>Option 2 - IAM User (Deprecated): Follow <a href="#2222-configure-using-iam-user">Configure using IAM User</a></li>
+</ul>
+<h3 id="2221-configure-using-irsa">2.2.2.1 Configure using IRSA</h3>
+<p>IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA. For more information, see <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Amazon EKS IAM roles for service accounts</a>.</p>
+<ol>
+<li>
+<p>Create and Configure IAM Roles:</p>
+<ol>
+<li>
+<p>An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --cluster <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> --approve
+</span></span></code></pre></div></li>
+<li>
+<p>Get the identity issuer URL by running the following commands:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --query <span class="s2">&#34;Account&#34;</span> --output text<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OIDC_PROVIDER_URL</span><span class="o">=</span><span class="k">$(</span>aws eks describe-cluster --name <span class="nv">$CLUSTER_NAME</span> --region <span class="nv">$CLUSTER_REGION</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--query <span class="s2">&#34;cluster.identity.oidc.issuer&#34;</span> --output text <span class="p">|</span> cut -c9-<span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html">Create an IAM policy</a> with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s1">      {
+</span></span></span><span class="line"><span class="cl"><span class="s1">         &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">         &#34;Action&#34;: &#34;s3:*&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">         &#34;Resource&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &#34;arn:aws:s3:::${S3_BUCKET}&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &#34;arn:aws:s3::::${S3_BUCKET}/*&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">         ]
+</span></span></span><span class="line"><span class="cl"><span class="s1">      }
+</span></span></span><span class="line"><span class="cl"><span class="s1">   ]
+</span></span></span><span class="line"><span class="cl"><span class="s1">}
+</span></span></span><span class="line"><span class="cl"><span class="s1"> &#39;</span> &gt; ./s3_policy.json
+</span></span></code></pre></div></li>
+<li>
+<p>Create Pipeline Backend Role</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; backend-trust.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">   {
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Principal&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;Federated&#34;: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER_URL}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">   },
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Action&#34;: &#34;sts:AssumeRoleWithWebIdentity&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Condition&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;StringEquals&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:sub&#34;: &#34;system:serviceaccount:kubeflow:ml-pipeline&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PIPELINE_BACKEND_ROLE_NAME</span><span class="o">=</span>kf-pipeline-backend-role-<span class="nv">$CLUSTER_NAME</span>
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam create-role --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --assume-role-policy-document file://backend-trust.json
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">BACKEND_ROLE_ARN</span><span class="o">=</span><span class="k">$(</span>aws --region <span class="nv">$CLUSTER_REGION</span> iam get-role --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --output text --query <span class="s1">&#39;Role.Arn&#39;</span><span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Create Profile Role</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; profile-trust.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">   {
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Principal&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;Federated&#34;: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER_URL}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">   },
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Action&#34;: &#34;sts:AssumeRoleWithWebIdentity&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Condition&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;StringEquals&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:sub&#34;: &#34;system:serviceaccount:kubeflow-user-example-com:default-editor&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_ROLE_NAME</span><span class="o">=</span>kf-pipeline-profile-role-<span class="nv">$CLUSTER_NAME</span>
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam create-role --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --assume-role-policy-document file://profile-trust.json
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_ROLE_ARN</span><span class="o">=</span><span class="k">$(</span>aws --region <span class="nv">$CLUSTER_REGION</span> iam get-role --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --output text --query <span class="s1">&#39;Role.Arn&#39;</span><span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Attach S3 Policy to Roles</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
+</span></span></code></pre></div></li>
+<li>
+<p>Configure the manifests with role ARNs.</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-7" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-7-0-tab" data-toggle="tab" href="#tabs-7-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-7-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-7-1-tab" data-toggle="tab" href="#tabs-7-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-7-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-7-content"><div class="tab-pane fade show active"
+        id="tabs-7-0" role="tabpanel" aria-labelled-by="tabs-7-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="s1">&#39;.metadata.annotations.&#34;eks.amazonaws.com/role-arn&#34;=env(BACKEND_ROLE_ARN)&#39;</span> <span class="nx">-i</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">service-account</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="s1">&#39;.spec.plugins[0].spec.&#34;awsIamRole&#34;=env(PROFILE_ROLE_ARN)&#39;</span> <span class="nx">-i</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">user-namespace</span><span class="err">/</span><span class="nx">overlay</span><span class="err">/</span><span class="nx">profile</span><span class="p">.</span><span class="nx">yaml</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-7-1" role="tabpanel" aria-labelled-by="tabs-7-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.roleArn = env(BACKEND_ROLE_ARN)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.roleArn = env(BACKEND_ROLE_ARN)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.awsIamForServiceAccount.awsIamRole = env(PROFILE_ROLE_ARN)&#39; -i charts/common/user-namespace/values.yaml</span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="2222-configure-using-iam-user">2.2.2.2 Configure using IAM User</h3>
+<ol>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>minio_aws_access_key_id</code> and <code>minio_aws_secret_access_key</code> respectively.</p>
+</li>
+<li>
+<p>Create and configure S3 Secrets:</p>
+<ol>
+<li>Export values:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 secret name&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user access key&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user secret  key&gt;&#34;</span>
+</span></span></code></pre></div></li>
+<li>Configure a Secret (e.g. <code>s3-secret</code>) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
+<ul>
+<li>For more details about configuring or finding your AWS credentials, see <a href="https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html">AWS security credentials</a></li>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$S3_SECRET</span> --secret-string <span class="s1">&#39;{&#34;accesskey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_ACCESS_KEY_ID</span><span class="s1">&#39;&#34;,&#34;secretkey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_SECRET_ACCESS_KEY</span><span class="s1">&#39;&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>Rename the <code>parameters.objects.objectName</code> field in <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml">the S3 Secret provider configuration</a> to the name of the Secret.
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-8" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-8-0-tab" data-toggle="tab" href="#tabs-8-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-8-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-8-1-tab" data-toggle="tab" href="#tabs-8-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-8-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-8-content"><div class="tab-pane fade show active"
+        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;s3-secret&#34;,env(S3_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="install-csi-driver-and-update-kfp-configurations">Install CSI Driver and update KFP configurations</h3>
+<ol start="4">
+<li>
+<p>Install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver</p>
+<ol>
+<li>Run the following commands to enable OIDC and create an <code>iamserviceaccount</code> with permissions to retrieve the Secrets created with AWS Secrets Manager.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --region<span class="o">=</span><span class="nv">$CLUSTER_REGION</span> --cluster<span class="o">=</span><span class="nv">$CLUSTER_NAME</span> --approve
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster <span class="nv">$CLUSTER_NAME</span> --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region <span class="nv">$CLUSTER_REGION</span>
+</span></span></code></pre></div><ol start="2">
+<li>Run the following commands to install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretproviderclass.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/csidriver.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store-csi-driver.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretprovidersyncing.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
+</span></span></code></pre></div></li>
+<li>
+<p>Update the KFP configurations.</p>
+<ol>
+<li>
+<p>[RDS] Configure the <em>RDS endpoint URL</em> and <em>the metadata DB name</em>:</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-9" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-9-0-tab" data-toggle="tab" href="#tabs-9-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-9-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-9-1-tab" data-toggle="tab" href="#tabs-9-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-9-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-9-content"><div class="tab-pane fade show active"
+        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">dbHost=&#39;</span><span class="err">$</span><span class="nx">DB_HOST</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">mlmdDb=&#39;</span><span class="err">$</span><span class="nx">MLMD_DB</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="err">&gt;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+<li>
+<p>[S3] Configure the <em>S3 bucket name</em> and <em>S3 bucket region</em>:</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-10-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-10-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
+        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s1">bucketName=&#39;</span><span class="err">$</span><span class="nx">S3_BUCKET</span><span class="s1">&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s1">minioServiceHost=&#39;</span><span class="err">$</span><span class="nx">MINIO_SERVICE_HOST</span><span class="s1">&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s1">minioServiceRegion=&#39;</span><span class="err">$</span><span class="nx">CLUSTER_REGION</span><span class="s1">&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="err">&gt;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span>
 </span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
@@ -937,7 +1336,8 @@ Select the package manager of your choice.
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
   
 </div>
-</p>
+</li>
+</ul>
 </li>
 </ol>
 </li>
@@ -990,25 +1390,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-8" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-12" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-8-0-tab" data-toggle="tab" href="#tabs-8-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-8-0" aria-selected="true">
+        id="tabs-12-0-tab" data-toggle="tab" href="#tabs-12-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-12-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-8-1-tab" data-toggle="tab" href="#tabs-8-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-8-1" aria-selected="false">
+        id="tabs-12-1-tab" data-toggle="tab" href="#tabs-12-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-12-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-8-content"><div class="tab-pane fade show active"
-        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-12-content"><div class="tab-pane fade show active"
+        id="tabs-12-0" role="tabpanel" aria-labelled-by="tabs-12-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
+        id="tabs-12-1" role="tabpanel" aria-labelled-by="tabs-12-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -1049,25 +1449,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-9" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-13" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-9-0-tab" data-toggle="tab" href="#tabs-9-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-9-0" aria-selected="true">
+        id="tabs-13-0-tab" data-toggle="tab" href="#tabs-13-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-13-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-9-1-tab" data-toggle="tab" href="#tabs-9-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-9-1" aria-selected="false">
+        id="tabs-13-1-tab" data-toggle="tab" href="#tabs-13-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-13-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-9-content"><div class="tab-pane fade show active"
-        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-only</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-13-content"><div class="tab-pane fade show active"
+        id="tabs-13-0" role="tabpanel" aria-labelled-by="tabs-13-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-only</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only</span></span></span></code></pre></div></div>
+        id="tabs-13-1" role="tabpanel" aria-labelled-by="tabs-13-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -1108,25 +1508,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-14" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-10-0" aria-selected="true">
+        id="tabs-14-0-tab" data-toggle="tab" href="#tabs-14-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-14-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-10-1" aria-selected="false">
+        id="tabs-14-1-tab" data-toggle="tab" href="#tabs-14-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-14-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
-        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">s3-only</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-14-content"><div class="tab-pane fade show active"
+        id="tabs-14-0" role="tabpanel" aria-labelled-by="tabs-14-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">s3-only</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only</span></span></span></code></pre></div></div>
+        id="tabs-14-1" role="tabpanel" aria-labelled-by="tabs-14-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -1221,7 +1621,7 @@ Select the package manager of your choice.
 <h2 id="50-uninstall-kubeflow">5.0 Uninstall Kubeflow</h2>
 <p>Run the following command to uninstall your Kubeflow deployment:</p>
 <blockquote>
-<p>Note: Make sure you have the correct INSTALLATION_OPTION and DEPLOYMENT_OPTION environment variables set for your chosen installation</p>
+<p>Note: Make sure you have the correct INSTALLATION_OPTION, DEPLOYMENT_OPTION and PIPELINE_S3_CREDENTIAL_OPTION environment variables set for your chosen installation</p>
 </blockquote>
 
 
@@ -1258,25 +1658,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-14" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-18" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-14-0-tab" data-toggle="tab" href="#tabs-14-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-14-0" aria-selected="true">
+        id="tabs-18-0-tab" data-toggle="tab" href="#tabs-18-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-18-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-14-1-tab" data-toggle="tab" href="#tabs-14-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-14-1" aria-selected="false">
+        id="tabs-18-1-tab" data-toggle="tab" href="#tabs-18-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-18-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-14-content"><div class="tab-pane fade show active"
-        id="tabs-14-0" role="tabpanel" aria-labelled-by="tabs-14-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-18-content"><div class="tab-pane fade show active"
+        id="tabs-18-0" role="tabpanel" aria-labelled-by="tabs-18-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-14-1" role="tabpanel" aria-labelled-by="tabs-14-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3</span></span></span></code></pre></div></div>
+        id="tabs-18-1" role="tabpanel" aria-labelled-by="tabs-18-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 
@@ -1297,7 +1697,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 7, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/38edf2becf9cfac3ed5c82d8401a9ad90a9bd9b7">Release v1.6.1 aws b1.0.2 (#666) (38edf2be)</a>
+  Last modified April 21, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/655d4102cb9f59455a976367b4cc513187ae7bcc">KFP IRSA docs (#680) (655d4102)</a>
 </div>
 
 </div>
@@ -1380,7 +1780,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

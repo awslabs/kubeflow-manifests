@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/about/eks-compatibility/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-09-20T14:46:23-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-03-02T10:32:04-08:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Amazon EKS and Kubeflow Compatibility">
 <meta itemprop="description" content="Check compatibility between Amazon EKS and Kubeflow versions">
-<meta itemprop="dateModified" content="2022-09-20T14:46:23-07:00" />
+<meta itemprop="dateModified" content="2023-03-02T10:32:04-08:00" />
 <meta itemprop="wordCount" content="62">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Amazon EKS and Kubeflow Compatibility"/>
@@ -130,6 +130,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -277,6 +279,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -322,6 +328,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -461,30 +471,30 @@
 		
 	</header>    
 	<h2 id="compatibility">Compatibility</h2>
-<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.6.</p>
+<p>Amazon EKS maintains end-to-end testing between EKS Kubernetes versions and Kubeflow versions. The following table relates compatibility between Kubernetes versions on Amazon EKS and Kubeflow v1.7.</p>
 <div class="table-responsive">
   <table class="table table-bordered">
     <thead class="thead-light">
       <tr>
         <th>EKS Versions</th>
-        <th>Kubeflow v1.6</th>
+        <th>Kubeflow v1.7</th>
       </tr>
     </thead>
     <tbody>
     <tr>
+        <td>1.25</td>
+        <td><b>Compatible</b></td>
+      </tr>
+      <tr>
+        <td>1.24</td>
+        <td><b>Compatible</b></td>
+      </tr>
+      <tr>
         <td>1.23</td>
         <td><b>Compatible</b></td>
       </tr>
       <tr>
         <td>1.22</td>
-        <td><b>Compatible</b></td>
-      </tr>
-      <tr>
-        <td>1.21</td>
-        <td><b>Incompatible</b></td>
-      </tr>
-      <tr>
-        <td>1.20</td>
         <td><b>Incompatible</b></td>
       </tr>
     </tbody>
@@ -498,7 +508,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified September 20, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/0677cab9518acb36996757724171fd4dbffe8e87">Update make commands for website docs (#386) (0677cab9)</a>
+  Last modified March 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/970528e5e992a15a9caacaf343d1694a942246c6">Added EBS-driver fixture in integration test for k8s 1.23&#43; (#597) (970528e5)</a>
 </div>
 
 </div>
@@ -578,7 +588,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

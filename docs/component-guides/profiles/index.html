@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/docs\/component-guides\/profiles\/",
-      "wordCount" : "793",
+      "wordCount" : "832",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/profiles/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-06-27T12:25:42-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-24T10:08:23-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Profiles">
 <meta itemprop="description" content="Use AWS IAM for Kubeflow Profiles">
-<meta itemprop="dateModified" content="2022-06-27T12:25:42-07:00" />
-<meta itemprop="wordCount" content="793">
+<meta itemprop="dateModified" content="2023-04-24T10:08:23-07:00" />
+<meta itemprop="wordCount" content="832">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Profiles"/>
 <meta name="twitter:description" content="Use AWS IAM for Kubeflow Profiles"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -417,7 +427,13 @@
         <li><a href="#component-level-implementations">Component-level implementations</a></li>
       </ul>
     </li>
-    <li><a href="#configuration-steps">Configuration steps</a></li>
+    <li><a href="#configuration-steps">Configuration steps</a>
+      <ul>
+        <li><a href="#1-setup-environment-variables">1. Setup Environment Variables</a></li>
+        <li><a href="#2-configure-the-profile-controller">2. Configure the Profile Controller</a></li>
+        <li><a href="#3-create-a-profile">3. Create a Profile</a></li>
+      </ul>
+    </li>
     <li><a href="#use-kubeflow-profiles-with-notebooks">Use Kubeflow Profiles with Notebooks</a></li>
   </ul>
 </nav></div>
@@ -507,7 +523,11 @@
 <p>Integration with the <code>AwsIamForServiceAccount</code> plugin is actively being worked on for all components with <a href="https://www.kubeflow.org/docs/components/multi-tenancy/overview/#current-integration">Profile-level support</a>.</p>
 <p>You can find documentation about the <code>AwsIamForServiceAccount</code> plugin for specific components in the individual <a href="https://awslabs.github.io/kubeflow-manifests/docs/component-guides/">component guides</a>. Read on for general configuration instructions.</p>
 <h2 id="configuration-steps">Configuration steps</h2>
+<blockquote>
+<p>Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.</p>
+</blockquote>
 <p>After installing Kubeflow on AWS with one of the available <a href="https://awslabs.github.io/kubeflow-manifests/docs/deployment/">deployment options</a>, you can configure Kubeflow Profiles with the following steps:</p>
+<h3 id="1-setup-environment-variables">1. Setup Environment Variables</h3>
 <ol>
 <li>
 <p>Define the following environment variables:</p>
@@ -517,6 +537,12 @@
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAME</span><span class="o">=</span>&lt;the name of the profile to be created&gt;
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_CONTROLLER_POLICY_NAME</span><span class="o">=</span>&lt;the name of the profile controller policy to be created&gt;
 </span></span></code></pre></div></li>
+</ol>
+<h3 id="2-configure-the-profile-controller">2. Configure the Profile Controller</h3>
+<blockquote>
+<p>Important: Terraform deployent users should skip this step.</p>
+</blockquote>
+<ol>
 <li>
 <p>Create an IAM policy using the <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/infra_configs/iam_profile_controller_policy.json">IAM Profile controller policy</a> file.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam create-policy <span class="se">\
@@ -542,6 +568,9 @@
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--override-existing-serviceaccounts <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--approve
 </span></span></code></pre></div></li>
+</ol>
+<h3 id="3-create-a-profile">3. Create a Profile</h3>
+<ol>
 <li>
 <p>Create an IAM trust policy to authorize federated requests from the OIDC provider.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OIDC_URL</span><span class="o">=</span><span class="k">$(</span>aws eks describe-cluster --region <span class="nv">$CLUSTER_REGION</span> --name <span class="nv">$CLUSTER_NAME</span>  --query <span class="s2">&#34;cluster.identity.oidc.issuer&#34;</span> --output text <span class="p">|</span> cut -c9-<span class="k">)</span>
@@ -606,7 +635,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified June 27, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/4fb88f32e28bfce2e8395b2097f6360034e69a3d">Webside doc fixes (#275) (4fb88f32)</a>
+  Last modified April 24, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/bba1bc916a17eb79c0f6fd13cf46dd13f150f627">Minor validation and docs update (#695) (bba1bc91)</a>
 </div>
 
 </div>
@@ -689,7 +718,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 

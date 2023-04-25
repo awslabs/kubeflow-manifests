@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-eks-cluster/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-09-21T22:47:31-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-04-17T16:42:54-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Create an EKS Cluster">
 <meta itemprop="description" content="Create an EKS cluster before you deploy Kubeflow on AWS using Kustomize or Helm">
-<meta itemprop="dateModified" content="2022-09-21T22:47:31-07:00" />
+<meta itemprop="dateModified" content="2023-04-17T16:42:54-07:00" />
 <meta itemprop="wordCount" content="196">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Create an EKS Cluster"/>
@@ -136,6 +136,8 @@
 <div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -283,6 +285,10 @@
   
 </li>
   </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
@@ -328,6 +334,10 @@
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"/>
   <label for="m-kubeflow-manifestsdocscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsdocscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsdocscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsdocscomponent-guideskatib-li">
   <input type="checkbox" id="m-kubeflow-manifestsdocscomponent-guideskatib-check"/>
@@ -483,7 +493,7 @@
 </span></span></code></pre></div><p>Run the following command to create an EKS cluster:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl create cluster <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--name <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.22 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--version 1.25 <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--nodegroup-name linux-nodes <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>--node-type m5.xlarge <span class="se">\
@@ -501,7 +511,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified September 21, 2022: <a href="https://github.com/awslabs/kubeflow-manifests//commit/0048c0222c865690fe2fae58e855289226d60031">Minor doc changes (#428) (0048c022)</a>
+  Last modified April 17, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/34a28de480b724de882b194de1a6e58bf6103dde"> update to latest eksctl version and update eks to 1.25 (#682) (34a28de4)</a>
 </div>
 
 </div>
@@ -584,7 +594,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 
