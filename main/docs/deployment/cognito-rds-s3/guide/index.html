@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/cognito-rds-s3\/guide\/",
-      "wordCount" : "411",
+      "wordCount" : "503",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/cognito-rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T12:05:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-02T16:43:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3">
-<meta itemprop="dateModified" content="2023-05-02T12:05:29-07:00" />
-<meta itemprop="wordCount" content="411">
+<meta itemprop="dateModified" content="2023-05-02T16:43:53-07:00" />
+<meta itemprop="wordCount" content="503">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with Amazon Cognito, RDS and S3"/>
@@ -293,6 +293,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-check"/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/main/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
@@ -425,6 +429,7 @@
         <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
       </ul>
     </li>
+    <li><a href="#creating-profiles">Creating Profiles</a></li>
     <li><a href="#uninstall-kubeflow">Uninstall Kubeflow</a></li>
   </ul>
 </nav></div>
@@ -525,11 +530,71 @@
 <li>
 <p>Deploy Kubeflow.</p>
 <ol>
-<li>Export your pipeline-s3-credential-option</li>
-</ol>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="o">=</span>&lt;IRSA/STATIC&gt;
-</span></span></code></pre></div><ol>
-<li>Install Kubeflow using the following command:</li>
+<li>
+<p>Export your pipeline-s3-credential-option
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-4" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-4-0-tab" data-toggle="tab" href="#tabs-4-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-4-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-4-1-tab" data-toggle="tab" href="#tabs-4-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-4-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
+        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="c"># Pipeline S3 Credential Option to configure </span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="s2">&#34;irsa&#34;</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="c"># Pipeline S3 Credential Option to configure </span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="s2">&#34;static&#34;</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
+<li>
+<p>Install Kubeflow using the following command:</p>
+</li>
 </ol>
 </li>
 </ol>
@@ -568,25 +633,25 @@
 
 
 
-<ul class="nav nav-tabs" id="tabs-4" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-5" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-4-0-tab" data-toggle="tab" href="#tabs-4-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-4-0" aria-selected="true">
+        id="tabs-5-0-tab" data-toggle="tab" href="#tabs-5-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-5-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-4-1-tab" data-toggle="tab" href="#tabs-4-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-4-1" aria-selected="false">
+        id="tabs-5-1-tab" data-toggle="tab" href="#tabs-5-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-5-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
-        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-5-content"><div class="tab-pane fade show active"
+        id="tabs-5-0" role="tabpanel" aria-labelled-by="tabs-5-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 
@@ -601,6 +666,9 @@
 </ol>
 </li>
 </ol>
+<h2 id="creating-profiles">Creating Profiles</h2>
+<p>A default profile named <code>kubeflow-user-example-com</code> for email <code>user@example.com</code> has been configured with this deployment. If you are using IRSA as <code>PIPELINE_S3_CREDENTIAL_OPTION</code>, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/create-profiles-with-iam-role/">pipeline profiles</a> for instructions on how to create additional profiles.</p>
+<p>If you are not using this feature, you can create a profile by just specifying email address of the user.</p>
 <h2 id="uninstall-kubeflow">Uninstall Kubeflow</h2>
 <blockquote>
 <p>Note: Delete all the resources you might have created in your profile namespaces before running these steps.</p>
@@ -647,26 +715,26 @@
 
 
 
-    <ul class="nav nav-tabs" id="tabs-6" role="tablist"><li class="nav-item">
+    <ul class="nav nav-tabs" id="tabs-8" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-6-0-tab" data-toggle="tab" href="#tabs-6-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-6-0" aria-selected="true">
+        id="tabs-8-0-tab" data-toggle="tab" href="#tabs-8-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-8-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-6-1-tab" data-toggle="tab" href="#tabs-6-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-6-1" aria-selected="false">
+        id="tabs-8-1-tab" data-toggle="tab" href="#tabs-8-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-8-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
-        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span>
+<div class="tab-content" id="tabs-8-content"><div class="tab-pane fade show active"
+        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">cognito-rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span>
 </span></span><span class="line"><span class="cl">    </span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span><span class="w">
+        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span></span></span></code></pre></div></div>
   
 </div>
@@ -723,7 +791,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/e93d1dd3cf1aaafab1b42f1c3b4c92c83cb97251">[Doc] Kserve secret yaml file indentation fix (#719) (e93d1dd)</a>
+  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/d245504d2dfe5c0cff4c8470297a64317b4a925d">Add documentation about creating Pipeline Profiles (#700) (d245504)</a>
 </div>
 
 </div>

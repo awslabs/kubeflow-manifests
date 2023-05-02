@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/rds-s3\/guide\/",
-      "wordCount" : "3041",
+      "wordCount" : "3115",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T12:05:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-02T16:43:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-05-02T12:05:29-07:00" />
-<meta itemprop="wordCount" content="3041">
+<meta itemprop="dateModified" content="2023-05-02T16:43:53-07:00" />
+<meta itemprop="wordCount" content="3115">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
@@ -293,6 +293,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/main/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-check"/>
+  <label for="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/main/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"/>
   <label for="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/main/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsmaindocsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
@@ -449,13 +453,14 @@
         <li></li>
       </ul>
     </li>
-    <li><a href="#40-verify-the-installation">4.0 Verify the installation</a>
+    <li><a href="#40-creating-profiles">4.0 Creating Profiles</a></li>
+    <li><a href="#50-verify-the-installation">5.0 Verify the installation</a>
       <ul>
-        <li><a href="#41-verify-rds">4.1 Verify RDS</a></li>
-        <li><a href="#42-verify-s3">4.2 Verify S3</a></li>
+        <li><a href="#51-verify-rds">5.1 Verify RDS</a></li>
+        <li><a href="#52-verify-s3">5.2 Verify S3</a></li>
       </ul>
     </li>
-    <li><a href="#50-uninstall-kubeflow">5.0 Uninstall Kubeflow</a></li>
+    <li><a href="#60-uninstall-kubeflow">6.0 Uninstall Kubeflow</a></li>
   </ul>
 </nav></div>
 
@@ -1532,8 +1537,11 @@ Select the package manager of your choice.
 </p>
 <p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a>.</p>
 <p>You can now start experimenting and running your end-to-end ML workflows with Kubeflow!</p>
-<h2 id="40-verify-the-installation">4.0 Verify the installation</h2>
-<h3 id="41-verify-rds">4.1 Verify RDS</h3>
+<h2 id="40-creating-profiles">4.0 Creating Profiles</h2>
+<p>A default profile named <code>kubeflow-user-example-com</code> for email <code>user@example.com</code> has been configured with this deployment. If you are using IRSA as <code>PIPELINE_S3_CREDENTIAL_OPTION</code>, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/create-profiles-with-iam-role/">pipeline profiles</a> for instructions on how to create additional profiles.</p>
+<p>If you are not using this feature, you can create a profile by just specifying email address of the user.</p>
+<h2 id="50-verify-the-installation">5.0 Verify the installation</h2>
+<h3 id="51-verify-rds">5.1 Verify RDS</h3>
 <ol>
 <li>Connect to your RDS instance from a pod within the cluster with the following command:</li>
 </ol>
@@ -1603,7 +1611,7 @@ Select the package manager of your choice.
 <li>Describe the <code>observation_logs</code> to verify that they are being populated.</li>
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql&gt; <span class="k">select</span> * from observation_logs<span class="p">;</span>
-</span></span></code></pre></div><h3 id="42-verify-s3">4.2 Verify S3</h3>
+</span></span></code></pre></div><h3 id="52-verify-s3">5.2 Verify S3</h3>
 <ol>
 <li>
 <p>Access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Kubeflow Pipelines (under Pipelines).</p>
@@ -1618,7 +1626,7 @@ Select the package manager of your choice.
 <p>Verify that the bucket is not empty and was populated by the outputs of the experiment.</p>
 </li>
 </ol>
-<h2 id="50-uninstall-kubeflow">5.0 Uninstall Kubeflow</h2>
+<h2 id="60-uninstall-kubeflow">6.0 Uninstall Kubeflow</h2>
 <p>Run the following command to uninstall your Kubeflow deployment:</p>
 <blockquote>
 <p>Note: Make sure you have the correct INSTALLATION_OPTION, DEPLOYMENT_OPTION and PIPELINE_S3_CREDENTIAL_OPTION environment variables set for your chosen installation</p>
@@ -1658,25 +1666,25 @@ Select the package manager of your choice.
 
 
 
-<ul class="nav nav-tabs" id="tabs-18" role="tablist"><li class="nav-item">
+<ul class="nav nav-tabs" id="tabs-19" role="tablist"><li class="nav-item">
       <a class="nav-link active tab-Kustomize"
-        id="tabs-18-0-tab" data-toggle="tab" href="#tabs-18-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
-        aria-controls="tabs-18-0" aria-selected="true">
+        id="tabs-19-0-tab" data-toggle="tab" href="#tabs-19-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-19-0" aria-selected="true">
         Kustomize
       </a>
     </li><li class="nav-item">
       <a class="nav-link tab-Helm"
-        id="tabs-18-1-tab" data-toggle="tab" href="#tabs-18-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
-        aria-controls="tabs-18-1" aria-selected="false">
+        id="tabs-19-1-tab" data-toggle="tab" href="#tabs-19-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-19-1" aria-selected="false">
         Helm
       </a>
     </li></ul>
 
 
-<div class="tab-content" id="tabs-18-content"><div class="tab-pane fade show active"
-        id="tabs-18-0" role="tabpanel" aria-labelled-by="tabs-18-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+<div class="tab-content" id="tabs-19-content"><div class="tab-pane fade show active"
+        id="tabs-19-0" role="tabpanel" aria-labelled-by="tabs-19-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-18-1" role="tabpanel" aria-labelled-by="tabs-18-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+        id="tabs-19-1" role="tabpanel" aria-labelled-by="tabs-19-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 
@@ -1697,7 +1705,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/e93d1dd3cf1aaafab1b42f1c3b4c92c83cb97251">[Doc] Kserve secret yaml file indentation fix (#719) (e93d1dd)</a>
+  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/d245504d2dfe5c0cff4c8470297a64317b4a925d">Add documentation about creating Pipeline Profiles (#700) (d245504)</a>
 </div>
 
 </div>
