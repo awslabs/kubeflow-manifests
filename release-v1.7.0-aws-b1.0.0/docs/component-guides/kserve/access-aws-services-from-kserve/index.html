@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/component-guides/kserve/access-aws-services-from-kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-24T18:14:02-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-02T16:51:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Configure inferenceService to Access AWS Services from KServe">
 <meta itemprop="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
-<meta itemprop="dateModified" content="2023-04-24T18:14:02-07:00" />
+<meta itemprop="dateModified" content="2023-05-02T16:51:53-07:00" />
 <meta itemprop="wordCount" content="242">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configure inferenceService to Access AWS Services from KServe"/>
@@ -517,15 +517,15 @@
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; secret.yaml
 </span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: v1
-</span></span></span><span class="line"><span class="cl"><span class="s">    kind: Secret
-</span></span></span><span class="line"><span class="cl"><span class="s">    metadata:
-</span></span></span><span class="line"><span class="cl"><span class="s">      name: aws-secret
-</span></span></span><span class="line"><span class="cl"><span class="s">      namespace: ${PROFILE_NAMESPACE}
-</span></span></span><span class="line"><span class="cl"><span class="s">      annotations:
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-endpoint: s3.amazonaws.com
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-usehttps: &#34;1&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-region: ${CLUSTER_REGION}
-</span></span></span><span class="line"><span class="cl"><span class="s">    type: Opaque
+</span></span></span><span class="line"><span class="cl"><span class="s">kind: Secret
+</span></span></span><span class="line"><span class="cl"><span class="s">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: aws-secret
+</span></span></span><span class="line"><span class="cl"><span class="s">  namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">  annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-endpoint: s3.amazonaws.com
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-usehttps: &#34;1&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-region: ${CLUSTER_REGION}
+</span></span></span><span class="line"><span class="cl"><span class="s">type: Opaque
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">kubectl apply -f secret.yaml
@@ -570,7 +570,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 24, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/bec7a054a2a697b740cf3f3ecd48322889217a3c">Update Website Config.toml Search Component version for the latest v1.7.0 release branch (#708) (bec7a05)</a>
+  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cbc9105e531c05d22a53516204f844f02936d072">[Cherry pick] Kserve Indentation doc fix v1.7.0 (#720) (cbc9105)</a>
 </div>
 
 </div>
