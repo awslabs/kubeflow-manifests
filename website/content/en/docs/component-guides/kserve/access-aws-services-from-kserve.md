@@ -29,15 +29,15 @@ weight = 10
   ```sh
   cat <<EOF > secret.yaml
   apiVersion: v1
-      kind: Secret
-      metadata:
-        name: aws-secret
-        namespace: ${PROFILE_NAMESPACE}
-        annotations:
-          serving.kserve.io/s3-endpoint: s3.amazonaws.com
-          serving.kserve.io/s3-usehttps: "1"
-          serving.kserve.io/s3-region: ${CLUSTER_REGION}
-      type: Opaque
+  kind: Secret
+  metadata:
+    name: aws-secret
+    namespace: ${PROFILE_NAMESPACE}
+    annotations:
+      serving.kserve.io/s3-endpoint: s3.amazonaws.com
+      serving.kserve.io/s3-usehttps: "1"
+      serving.kserve.io/s3-region: ${CLUSTER_REGION}
+  type: Opaque
   EOF
 
   kubectl apply -f secret.yaml
