@@ -4,32 +4,32 @@ description = "Use AWS IAM roles for service accounts with Kubeflow Profiles"
 weight = 70
 +++
 
-In a multi tenant Kubeflow installation, the pods created by pipelines workflow and the pipelines frontend services run in an user profile namespace. The service account (`default-editor`) used for these pods needs permissions for the S3 bucket used by pipelines to read and write artifacts from S3. When using IRSA (IAM roles for service accounts) as your pipeline S3 credential option, any additional profiles created as part of a multi-user deployment besides the preconfigured `kubeflow-user-example-com` will need to be configured with permissions to S3 bucket using IRSA.
+In a multi tenant Kubeflow installation, the pods created by pipelines workflow and the pipelines frontend services run in an user profile namespace. The service account (`default-editor`) used for these pods needs permissions for the S3 bucket used by pipelines to read and write artifacts from S3. When using IRSA (IAM roles for service accounts) as your `PIPELINE_S3_CREDENTIAL_OPTION`, any additional profiles created as part of a multi-user deployment besides the preconfigured `kubeflow-user-example-com` will need to be configured with permissions to S3 bucket using IRSA.
 
-The `default-editor` SA needs to be annotated with an IAM role with sufficient permissions to access your S3 Bucket to run your pipelines. In the below steps we will be configuring a profile an IAM role with restricted access to a specific S3 Bucket using the `AwsIamForServiceAccount` plugin for Profiles. To learn more about Profiles read the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md" >}}).
+The `default-editor` SA needs to be annotated with an IAM role with sufficient permissions to access your S3 Bucket to run your pipelines. In the below steps we will be configuring a profile an IAM role with restricted access to a specific S3 Bucket using the `AwsIamForServiceAccount` plugin for Profiles. To learn more about the `AwsIamForServiceAccount` plugin for Profiles read the [Profiles component guide]({{< ref "/docs/component-guides/profiles.md" >}}).
 
->Note: If you choose to run your pipeline with a service account other than the default which is `default-editor`, you must make sure to annotate that service account with an IAM role with sufficient S3 permissions.
-
-#### Admin considerations
-
-- Kubeflow admins will need to create an IAM role for each Profile with the desired scoped permissions.
-- A `default-editor` SA exists in every Profile's namespace and will be annotated with the role ARN created for the profile. Pods annotated with the SA name will be granted the Profile role permissions.
-- The `default-editor` SA is used by various services in Kubeflow to launch resources in Profile namespaces. However, not all services do this by default.
+> Note: If you choose to run your pipeline with a service account other than the default which is `default-editor`, you must make sure to annotate that service account with an IAM role with sufficient S3 permissions.
 
 ## Create a Profile
 
 After installing Kubeflow on AWS with one of the available [deployment options]({{< ref "/docs/deployment" >}}), you can configure Kubeflow Profiles with the following steps:
 
 1. Define the following environment variables:
-
+   
+   The `S3_BUCKET` that is exported should be the same bucket that is used by Kubeflow Pipelines.
    ```bash
-   export CLUSTER_NAME=<your cluster name>
-   export CLUSTER_REGION=<your region>
-   export S3_BUCKET=<your s3 bucket>
+   # Your cluster name
+   export CLUSTER_NAME=
+   # Your cluster region
+   export CLUSTER_REGION=
+   # The S3 Bucket that is used by Kubeflow Pipelines
+   export S3_BUCKET=
+   # Your AWS Acconut ID
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-   export PROFILE_NAME=<the name of the profile to be created>
+   # Name of the profile to create
+   export PROFILE_NAME=
    ```
-2. Retrieve IAM OIDC associated with your cluster.
+2. Retrieve OIDC Provider URL
 
    ```bash
    aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
@@ -53,7 +53,8 @@ After installing Kubeflow on AWS with one of the available [deployment options](
        "Action": "sts:AssumeRoleWithWebIdentity",
        "Condition": {
            "StringEquals": {
-           "${OIDC_URL}:aud": "sts.amazonaws.com"
+           "${OIDC_URL}:aud": "sts.amazonaws.com",
+           "${OIDC_URL}:sub": "system:serviceaccount:kubeflow-user-example-com:default-editor"
            }
        }
        }
@@ -84,20 +85,20 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    ```bash
     aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
 
-    aws --region $CLUSTER_REGION iam put-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json  
+    aws --region $CLUSTER_REGION iam put-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-name kf-$PROFILE_NAME-pipeline-s3 --policy-document file://s3_policy.json  
     ```
 
-6. Create a user in your configured auth provider (e.g. Cognito or Dex) or use an existing user.
+6. Create a user in your configured auth provider (e.g. Cognito or Dex).
 
-   Export the user as an environment variable. For simplicity, we will use the `user@example.com` user that is created by default by most of our provided deployment options.
+   Export the user as an environment variable. 
 
    ```bash
-   export PROFILE_USER="user@example.com"
+   export PROFILE_USER=""
    ```
 
 7. Create a Profile using the `PROFILE_NAME`.
 
->Note: annotateOnly has been set to true. This means that the Profile Controller will not mutate your IAM Role and Policy.
+> Note: annotateOnly has been set to true. This means that the Profile Controller will not mutate your IAM Role and Policy.
    ```bash
    cat <<EOF > profile_iam.yaml
    apiVersion: kubeflow.org/v1

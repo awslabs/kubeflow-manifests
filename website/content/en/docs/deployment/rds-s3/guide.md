@@ -403,10 +403,6 @@ yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipe
 ### (Optional) Configure Culling for Notebooks
 Enable culling for notebooks by following the [instructions]({{< ref "/docs/deployment/configure-notebook-culling.md#" >}}) in configure culling for notebooks guide. 
 
-### Creating Profiles
-A default profile named `kubeflow-user-example-com` for email `user@example.com` has been configured with this deployment. If you are using IRSA as `PIPELINE_S3_CREDENTIAL_OPTION`, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/deployment/pipeline-profiles.md" >}}) for instructions on how to create additional profiles.
-
-If you are not using this feature, you can create a profile by just specifying email address of the user.
 ## 3.0 Build Manifests and install Kubeflow
 
 Once you have the resources ready, you can deploy the Kubeflow manifests for one of the following deployment options:
@@ -461,9 +457,14 @@ Once everything is installed successfully, you can access the Kubeflow Central D
 
 You can now start experimenting and running your end-to-end ML workflows with Kubeflow!
 
-## 4.0 Verify the installation
+## 4.0 Creating Profiles
+A default profile named `kubeflow-user-example-com` for email `user@example.com` has been configured with this deployment. If you are using IRSA as `PIPELINE_S3_CREDENTIAL_OPTION`, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/deployment/create-profiles-with-iam-role.md" >}}) for instructions on how to create additional profiles.
 
-### 4.1 Verify RDS
+If you are not using this feature, you can create a profile by just specifying email address of the user.
+
+## 5.0 Verify the installation
+
+### 5.1 Verify RDS
 
 1. Connect to your RDS instance from a pod within the cluster with the following command:
 ```bash
@@ -539,7 +540,7 @@ mysql> use kubeflow; show tables;
 mysql> select * from observation_logs;
 ```
 
-### 4.2 Verify S3
+### 5.2 Verify S3
 
 1. Access the Kubeflow Central Dashboard [by logging in to your cluster]({{< ref "/docs/deployment/vanilla/guide.md#connect-to-your-kubeflow-cluster" >}}) and navigate to Kubeflow Pipelines (under Pipelines).
 
@@ -549,7 +550,7 @@ mysql> select * from observation_logs;
 
 4. Verify that the bucket is not empty and was populated by the outputs of the experiment.
 
-## 5.0 Uninstall Kubeflow
+## 6.0 Uninstall Kubeflow
 
 Run the following command to uninstall your Kubeflow deployment:
 
