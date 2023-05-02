@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/component-guides/kserve/access-aws-services-from-kserve/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T15:04:31-04:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-02T12:05:29-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Configure inferenceService to Access AWS Services from KServe">
 <meta itemprop="description" content="Configuration for accessing AWS services for inference services such as pulling images from private ECR and downloading models from S3 bucket.">
-<meta itemprop="dateModified" content="2023-05-02T15:04:31-04:00" />
+<meta itemprop="dateModified" content="2023-05-02T12:05:29-07:00" />
 <meta itemprop="wordCount" content="242">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configure inferenceService to Access AWS Services from KServe"/>
@@ -517,15 +517,15 @@
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; secret.yaml
 </span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: v1
-</span></span></span><span class="line"><span class="cl"><span class="s">    kind: Secret
-</span></span></span><span class="line"><span class="cl"><span class="s">    metadata:
-</span></span></span><span class="line"><span class="cl"><span class="s">      name: aws-secret
-</span></span></span><span class="line"><span class="cl"><span class="s">      namespace: ${PROFILE_NAMESPACE}
-</span></span></span><span class="line"><span class="cl"><span class="s">      annotations:
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-endpoint: s3.amazonaws.com
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-usehttps: &#34;1&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s">        serving.kserve.io/s3-region: ${CLUSTER_REGION}
-</span></span></span><span class="line"><span class="cl"><span class="s">    type: Opaque
+</span></span></span><span class="line"><span class="cl"><span class="s">kind: Secret
+</span></span></span><span class="line"><span class="cl"><span class="s">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: aws-secret
+</span></span></span><span class="line"><span class="cl"><span class="s">  namespace: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">  annotations:
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-endpoint: s3.amazonaws.com
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-usehttps: &#34;1&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    serving.kserve.io/s3-region: ${CLUSTER_REGION}
+</span></span></span><span class="line"><span class="cl"><span class="s">type: Opaque
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">kubectl apply -f secret.yaml
@@ -570,7 +570,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8e654ba064971716dbfaceeb7f8d52705120841c">Fixed small typo in Load Balancer guide (#712) (8e654ba)</a>
+  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/e93d1dd3cf1aaafab1b42f1c3b4c92c83cb97251">[Doc] Kserve secret yaml file indentation fix (#719) (e93d1dd)</a>
 </div>
 
 </div>
