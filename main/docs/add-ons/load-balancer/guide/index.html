@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/load-balancer/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-04-24T13:04:46-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-02T15:04:31-04:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Load Balancer">
 <meta itemprop="description" content="Expose Kubeflow over Load Balancer on AWS">
-<meta itemprop="dateModified" content="2023-04-24T13:04:46-07:00" />
+<meta itemprop="dateModified" content="2023-05-02T15:04:31-04:00" />
 <meta itemprop="wordCount" content="1799">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Load Balancer"/>
@@ -506,7 +506,7 @@
 <h2 id="background">Background</h2>
 <p>Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/">AWS Load Balancer (ALB) controller</a>, which satisfies the Kubernetes <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress resource</a> to create an <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">Application Load Balancer</a> (ALB). When you create a Kubernetes <code>Ingress</code>, an ALB is provisioned that load balances application traffic.</p>
 <p>In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies">Secure Cookies</a>, so accessing Kubeflow with HTTP over a non-localhost domain does not work.</p>
-<p>To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager</a> is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates">you must specify a domain name</a> (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as <a href="https://aws.amazon.com/route53/">Route53</a>, or GoDoddy.</p>
+<p>To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager</a> is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates">you must specify a domain name</a> (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as <a href="https://aws.amazon.com/route53/">Route53</a>, or GoDaddy.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p>This guide assumes that you have:</p>
 <ul>
@@ -727,7 +727,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified April 24, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/1ce49e2e8c28d45c4bd7c961cc81648abd55c08e">Update Config.toml For 1.7.0 release (#701) (1ce49e2)</a>
+  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/8e654ba064971716dbfaceeb7f8d52705120841c">Fixed small typo in Load Balancer guide (#712) (8e654ba)</a>
 </div>
 
 </div>
