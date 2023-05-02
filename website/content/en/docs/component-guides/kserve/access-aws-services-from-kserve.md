@@ -38,6 +38,9 @@ weight = 10
       serving.kserve.io/s3-usehttps: "1"
       serving.kserve.io/s3-region: ${CLUSTER_REGION}
   type: Opaque
+  data:
+    AWS_ACCESS_KEY_ID: ""
+    AWS_SECRET_ACCESS_KEY: ""
   EOF
 
   kubectl apply -f secret.yaml
