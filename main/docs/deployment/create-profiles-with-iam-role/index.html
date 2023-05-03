@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/create-profiles-with-iam-role\/",
-      "wordCount" : "527",
+      "wordCount" : "530",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/create-profiles-with-iam-role/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T16:43:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-03T12:18:57-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Create Profiles with IAM role">
 <meta itemprop="description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles">
-<meta itemprop="dateModified" content="2023-05-02T16:43:53-07:00" />
-<meta itemprop="wordCount" content="527">
+<meta itemprop="dateModified" content="2023-05-03T12:18:57-07:00" />
+<meta itemprop="wordCount" content="530">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Create Profiles with IAM role"/>
 <meta name="twitter:description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles"/>
@@ -500,7 +500,7 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># Your AWS Acconut ID</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --query <span class="s2">&#34;Account&#34;</span> --output text<span class="k">)</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># Name of the profile to create</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAME</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span>
 </span></span></code></pre></div></li>
 <li>
 <p>Retrieve OIDC Provider URL</p>
@@ -524,7 +524,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Condition&#34;: {
 </span></span></span><span class="line"><span class="cl"><span class="s">        &#34;StringEquals&#34;: {
 </span></span></span><span class="line"><span class="cl"><span class="s">        &#34;${OIDC_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;${OIDC_URL}:sub&#34;: &#34;system:serviceaccount:kubeflow-user-example-com:default-editor&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;${OIDC_URL}:sub&#34;: &#34;system:serviceaccount:${PROFILE_NAMESPACE}:default-editor&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">        }
 </span></span></span><span class="line"><span class="cl"><span class="s">    }
 </span></span></span><span class="line"><span class="cl"><span class="s">    }
@@ -534,34 +534,35 @@
 </span></span></code></pre></div></li>
 <li>
 <p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html">Create an IAM policy</a> with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">printf</span> <span class="s1">&#39;{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    &#34;Version&#34;: &#34;2012-10-17&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s1">    &#34;Statement&#34;: [
-</span></span></span><span class="line"><span class="cl"><span class="s1">    {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;Effect&#34;: &#34;Allow&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;Action&#34;: &#34;s3:*&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;Resource&#34;: [
-</span></span></span><span class="line"><span class="cl"><span class="s1">            &#34;arn:aws:s3:::${S3_BUCKET}&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s1">            &#34;arn:aws:s3::::${S3_BUCKET}/*&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">              ]
-</span></span></span><span class="line"><span class="cl"><span class="s1">           }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        ]
-</span></span></span><span class="line"><span class="cl"><span class="s1">     }
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#39;</span> &gt; ./s3_policy.json
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; s3_policy.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">           {
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Action&#34;: &#34;s3:*&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Resource&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}/*&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">              ]
+</span></span></span><span class="line"><span class="cl"><span class="s">           }
+</span></span></span><span class="line"><span class="cl"><span class="s">     ]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></div></li>
 <li>
 <p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html">Create an IAM role</a> for the Profile using the scoped policy from the previous step.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> aws iam create-role --role-name <span class="nv">$PROFILE_NAME</span>-<span class="nv">$CLUSTER_NAME</span>-role --assume-role-policy-document file://trust.json
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> aws iam create-role --role-name <span class="nv">$PROFILE_NAMESPACE</span>-<span class="nv">$CLUSTER_NAME</span>-role --assume-role-policy-document file://trust.json
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"> aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PROFILE_NAME</span>-<span class="nv">$CLUSTER_NAME</span>-role --policy-name kf-<span class="nv">$PROFILE_NAME</span>-pipeline-s3 --policy-document file://s3_policy.json  
+</span></span><span class="line"><span class="cl"> aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PROFILE_NAMESPACE</span>-<span class="nv">$CLUSTER_NAME</span>-role --policy-name kf-<span class="nv">$PROFILE_NAMESPACE</span>-pipeline-s3 --policy-document file://s3_policy.json  
 </span></span></code></pre></div></li>
 <li>
 <p>Create a user in your configured auth provider (e.g. Cognito or Dex).</p>
-<p>Export the user as an environment variable.</p>
+<p>Export the user email as env variable, e.g. <code>user@example.com</code></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_USER</span><span class="o">=</span><span class="s2">&#34;&#34;</span>
 </span></span></code></pre></div></li>
 <li>
-<p>Create a Profile using the <code>PROFILE_NAME</code>.</p>
+<p>Create a Profile using the <code>PROFILE_NAMESPACE</code>.</p>
 </li>
 </ol>
 <blockquote>
@@ -571,7 +572,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: kubeflow.org/v1
 </span></span></span><span class="line"><span class="cl"><span class="s">kind: Profile
 </span></span></span><span class="line"><span class="cl"><span class="s">metadata:
-</span></span></span><span class="line"><span class="cl"><span class="s">  name: ${PROFILE_NAME}
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: ${PROFILE_NAMESPACE}
 </span></span></span><span class="line"><span class="cl"><span class="s">spec:
 </span></span></span><span class="line"><span class="cl"><span class="s">  owner:
 </span></span></span><span class="line"><span class="cl"><span class="s">    kind: User
@@ -579,7 +580,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="s">  plugins:
 </span></span></span><span class="line"><span class="cl"><span class="s">  - kind: AwsIamForServiceAccount
 </span></span></span><span class="line"><span class="cl"><span class="s">    spec:
-</span></span></span><span class="line"><span class="cl"><span class="s">      awsIamRole: $(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query &#39;Role.Arn&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="s">      awsIamRole: $(aws iam get-role --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --output text --query &#39;Role.Arn&#39;)
 </span></span></span><span class="line"><span class="cl"><span class="s">      annotateOnly: true
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span><span class="line"><span class="cl">
@@ -588,7 +589,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/d245504d2dfe5c0cff4c8470297a64317b4a925d">Add documentation about creating Pipeline Profiles (#700) (d245504)</a>
+  Last modified May 3, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/fb5d82f6f3835728cf7d01369b6098a7b9492836">Fix profiles with iam docs  (#722) (fb5d82f)</a>
 </div>
 
 </div>
