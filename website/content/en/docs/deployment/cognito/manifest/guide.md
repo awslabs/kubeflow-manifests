@@ -204,8 +204,8 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito
     Before connecting to the dashboard:
 
     * Go to the Cognito console and create some users in `Users and groups`. These are the users who will log in to the central dashboard.
-        ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
-
+        - Create a user with email address `user@example.com`. This user and email address come preconfigured and have a Profile created by default.
+    ![cognito-user-pool-created](https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png)
     * Create a Profile for a user by following the steps in the [Manual Profile Creation](https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation). 
     The following is a Profile example for reference:
          ```bash
