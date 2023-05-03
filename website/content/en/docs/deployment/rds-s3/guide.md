@@ -221,21 +221,22 @@ IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission b
 
       3. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.
          ```bash
-         printf '{
-         "Version": "2012-10-17",
-         "Statement": [
-               {
+         cat <<EOF > s3_policy.json
+         {
+            "Version": "2012-10-17",
+            "Statement": [
+                     {
                   "Effect": "Allow",
                   "Action": "s3:*",
                   "Resource": [
                      "arn:aws:s3:::${S3_BUCKET}",
-                     "arn:aws:s3::::${S3_BUCKET}/*"
-                  ]
-               }
-            ]
+                     "arn:aws:s3:::${S3_BUCKET}/*"
+                        ]
+                     }
+               ]
          }
-          ' > ./s3_policy.json
-          ```
+         EOF
+         ```
 
       4. Create Pipeline Backend Role
          ```bash

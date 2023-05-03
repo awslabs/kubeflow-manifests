@@ -27,7 +27,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    # Your AWS Acconut ID
    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
    # Name of the profile to create
-   export PROFILE_NAME=
+   export PROFILE_NAMESPACE=
    ```
 2. Retrieve OIDC Provider URL
 
@@ -54,7 +54,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
        "Condition": {
            "StringEquals": {
            "${OIDC_URL}:aud": "sts.amazonaws.com",
-           "${OIDC_URL}:sub": "system:serviceaccount:kubeflow-user-example-com:default-editor"
+           "${OIDC_URL}:sub": "system:serviceaccount:${PROFILE_NAMESPACE}:default-editor"
            }
        }
        }
@@ -65,38 +65,39 @@ After installing Kubeflow on AWS with one of the available [deployment options](
 
 4. [Create an IAM policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.
     ```bash
-    printf '{
+    cat <<EOF > s3_policy.json
+    {
         "Version": "2012-10-17",
         "Statement": [
-        {
+               {
             "Effect": "Allow",
             "Action": "s3:*",
             "Resource": [
                 "arn:aws:s3:::${S3_BUCKET}",
-                "arn:aws:s3::::${S3_BUCKET}/*"
+                "arn:aws:s3:::${S3_BUCKET}/*"
                   ]
                }
-            ]
-         }
-          ' > ./s3_policy.json
+         ]
+    }
+    EOF
     ```
 5. [Create an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html) for the Profile using the scoped policy from the previous step.
 
    ```bash
-    aws iam create-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
+    aws iam create-role --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --assume-role-policy-document file://trust.json
 
-    aws --region $CLUSTER_REGION iam put-role-policy --role-name $PROFILE_NAME-$CLUSTER_NAME-role --policy-name kf-$PROFILE_NAME-pipeline-s3 --policy-document file://s3_policy.json  
+    aws --region $CLUSTER_REGION iam put-role-policy --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --policy-name kf-$PROFILE_NAMESPACE-pipeline-s3 --policy-document file://s3_policy.json  
     ```
 
 6. Create a user in your configured auth provider (e.g. Cognito or Dex).
 
-   Export the user as an environment variable. 
+   Export the user email as env variable, e.g. `user@example.com`
 
    ```bash
    export PROFILE_USER=""
    ```
 
-7. Create a Profile using the `PROFILE_NAME`.
+7. Create a Profile using the `PROFILE_NAMESPACE`.
 
 > Note: annotateOnly has been set to true. This means that the Profile Controller will not mutate your IAM Role and Policy.
    ```bash
@@ -104,7 +105,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
    apiVersion: kubeflow.org/v1
    kind: Profile
    metadata:
-     name: ${PROFILE_NAME}
+     name: ${PROFILE_NAMESPACE}
    spec:
      owner:
        kind: User
@@ -112,7 +113,7 @@ After installing Kubeflow on AWS with one of the available [deployment options](
      plugins:
      - kind: AwsIamForServiceAccount
        spec:
-         awsIamRole: $(aws iam get-role --role-name $PROFILE_NAME-$CLUSTER_NAME-role --output text --query 'Role.Arn')
+         awsIamRole: $(aws iam get-role --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --output text --query 'Role.Arn')
          annotateOnly: true
    EOF
 
