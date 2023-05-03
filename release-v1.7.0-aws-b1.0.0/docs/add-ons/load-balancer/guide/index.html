@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/add-ons/load-balancer/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T16:51:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-03T13:30:44-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Load Balancer">
 <meta itemprop="description" content="Expose Kubeflow over Load Balancer on AWS">
-<meta itemprop="dateModified" content="2023-05-02T16:51:53-07:00" />
+<meta itemprop="dateModified" content="2023-05-03T13:30:44-07:00" />
 <meta itemprop="wordCount" content="1799">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Load Balancer"/>
@@ -293,6 +293,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-check"/>
   <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
@@ -506,7 +510,7 @@
 <h2 id="background">Background</h2>
 <p>Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/">AWS Load Balancer (ALB) controller</a>, which satisfies the Kubernetes <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress resource</a> to create an <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">Application Load Balancer</a> (ALB). When you create a Kubernetes <code>Ingress</code>, an ALB is provisioned that load balances application traffic.</p>
 <p>In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies">Secure Cookies</a>, so accessing Kubeflow with HTTP over a non-localhost domain does not work.</p>
-<p>To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager</a> is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates">you must specify a domain name</a> (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as <a href="https://aws.amazon.com/route53/">Route53</a>, or GoDoddy.</p>
+<p>To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager</a> is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates">you must specify a domain name</a> (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as <a href="https://aws.amazon.com/route53/">Route53</a>, or GoDaddy.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p>This guide assumes that you have:</p>
 <ul>
@@ -727,7 +731,7 @@
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cbc9105e531c05d22a53516204f844f02936d072">[Cherry pick] Kserve Indentation doc fix v1.7.0 (#720) (cbc9105)</a>
+  Last modified May 3, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/d2d3fa90e3fd072cc9620b3e31d2a69ba2779e0d">Cherry pick docs into 1.7  (#723) (d2d3fa9)</a>
 </div>
 
 </div>

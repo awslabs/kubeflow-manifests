@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.0\/docs\/deployment\/rds-s3\/guide-terraform\/",
-      "wordCount" : "596",
+      "wordCount" : "669",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/rds-s3/guide-terraform/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-02T16:51:53-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-03T13:30:44-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Terraform Deployment Guide">
 <meta itemprop="description" content="Deploy Kubeflow with RDS and S3 using Terraform">
-<meta itemprop="dateModified" content="2023-05-02T16:51:53-07:00" />
-<meta itemprop="wordCount" content="596">
+<meta itemprop="dateModified" content="2023-05-03T13:30:44-07:00" />
+<meta itemprop="wordCount" content="669">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Terraform Deployment Guide"/>
 <meta name="twitter:description" content="Deploy Kubeflow with RDS and S3 using Terraform"/>
@@ -293,6 +293,10 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+  
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-check"/>
   <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
@@ -431,6 +435,7 @@
         <li><a href="#apply">Apply</a></li>
       </ul>
     </li>
+    <li><a href="#creating-profiles">Creating Profiles</a></li>
     <li><a href="#connect-to-your-kubeflow-dashboard">Connect to your Kubeflow dashboard</a></li>
     <li><a href="#cleanup">Cleanup</a></li>
   </ul>
@@ -649,7 +654,10 @@ For more information, see <a href="https://docs.aws.amazon.com/eks/latest/usergu
 </span></span></code></pre></div><h3 id="apply">Apply</h3>
 <p>Run the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">make deploy
-</span></span></code></pre></div><h2 id="connect-to-your-kubeflow-dashboard">Connect to your Kubeflow dashboard</h2>
+</span></span></code></pre></div><h2 id="creating-profiles">Creating Profiles</h2>
+<p>A default profile named <code>kubeflow-user-example-com</code> for email <code>user@example.com</code> has been configured with this deployment. If you are using IRSA as <code>PIPELINE_S3_CREDENTIAL_OPTION</code>, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/">pipeline profiles</a> for instructions on how to create additional profiles.</p>
+<p>If you are not using this feature, you can create a profile by just specifying email address of the user.</p>
+<h2 id="connect-to-your-kubeflow-dashboard">Connect to your Kubeflow dashboard</h2>
 <p>For information on connecting to your Kubeflow dashboard depending on your deployment environment, see <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/#port-forward-terraform-deployment">Port-forward (Terraform deployment)</a>. Then, <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/#log-into-the-kubeflow-ui">log into the Kubeflow UI</a>.</p>
 <h2 id="cleanup">Cleanup</h2>
 <p>Uninstall Kubeflow on AWS with a single command.</p>
@@ -658,7 +666,7 @@ For more information, see <a href="https://docs.aws.amazon.com/eks/latest/usergu
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 2, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/cbc9105e531c05d22a53516204f844f02936d072">[Cherry pick] Kserve Indentation doc fix v1.7.0 (#720) (cbc9105)</a>
+  Last modified May 3, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/d2d3fa90e3fd072cc9620b3e31d2a69ba2779e0d">Cherry pick docs into 1.7  (#723) (d2d3fa9)</a>
 </div>
 
 </div>

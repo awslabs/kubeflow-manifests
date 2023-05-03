@@ -4,7 +4,6 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="generator" content="Hugo 0.93.0" />
-<link rel="alternate" type="application/rss&#43;xml" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/index.xml">
 <meta name="robots" content="index, follow">
 
 <script type="application/ld+json">
@@ -16,9 +15,9 @@
            "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.0"
       },
       "articleSection" : "docs",
-      "name" : "Cognito",
-      "headline" : "Cognito",
-      "description" : "Deploying Kubeflow with AWS Cognito as identity provider",
+      "name" : "Create Profiles with IAM role",
+      "headline" : "Create Profiles with IAM role",
+      "description" : "Use AWS IAM roles for service accounts with Kubeflow Profiles",
       "inLanguage" : "en-US",
       "author" : "",
       "creator" : "",
@@ -28,8 +27,8 @@
       "copyrightYear" : "0001",
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
-      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.0\/docs\/deployment\/cognito\/",
-      "wordCount" : "0",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.0\/docs\/deployment\/create-profiles-with-iam-role\/",
+      "wordCount" : "530",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -43,17 +42,22 @@
 <meta name="msapplication-TileColor" content="#4279f4">
 <meta name="theme-color" content="#4279f4">
 
-<title>Cognito | Kubeflow on AWS</title>
-<meta name="description" content="Deploying Kubeflow with AWS Cognito as identity provider">
-<meta property="og:title" content="Cognito" />
-<meta property="og:description" content="Deploying Kubeflow with AWS Cognito as identity provider" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<title>Create Profiles with IAM role | Kubeflow on AWS</title>
+<meta name="description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles">
+<meta property="og:title" content="Create Profiles with IAM role" />
+<meta property="og:description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/" /><meta property="article:section" content="docs" />
 
-<meta itemprop="name" content="Cognito">
-<meta itemprop="description" content="Deploying Kubeflow with AWS Cognito as identity provider"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cognito"/>
-<meta name="twitter:description" content="Deploying Kubeflow with AWS Cognito as identity provider"/>
+<meta property="article:modified_time" content="2023-05-03T13:30:44-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="Create Profiles with IAM role">
+<meta itemprop="description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles">
+<meta itemprop="dateModified" content="2023-05-03T13:30:44-07:00" />
+<meta itemprop="wordCount" content="530">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Create Profiles with IAM role"/>
+<meta name="twitter:description" content="Use AWS IAM roles for service accounts with Kubeflow Profiles"/>
 
 
 
@@ -66,11 +70,17 @@
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
 
+    
+    <link href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/css/syntax.min.css" rel="stylesheet">
+
+    
+    <link href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/css/copy-code-button.min.css" rel="stylesheet">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
@@ -234,9 +244,9 @@
   
 </li>
   </ul>
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-check" checked/>
-  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito"><span class="td-sidebar-nav-active-item">Cognito</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognito"><span class="">Cognito</span></a></label>
   
   <ul class="ul-3 foldable">
     <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcognitomanifest-li">
@@ -283,9 +293,9 @@
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"/>
   <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
   
-</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-li">
-  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"/>
-  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentcreate-profiles-with-iam-role"><span class="td-sidebar-nav-active-item">Create Profiles with IAM role</span></a></label>
   
 </li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-li">
   <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b100docsdeploymentconfigure-notebook-culling-check"/>
@@ -400,10 +410,10 @@
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
             
 <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
-<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/cognito/_index.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/cognito/_index.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/cognito/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
-  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Cognito" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/create-profiles-with-iam-role.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/create-profiles-with-iam-role.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/create-profiles-with-iam-role.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Create%20Profiles%20with%20IAM%20role" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
   <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
   
 </div>
@@ -447,14 +457,14 @@
     <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/">Deployment Options</a>
   </li>
   <li class="breadcrumb-item active" aria-current="page">
-    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/">Cognito</a>
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/create-profiles-with-iam-role/">Create Profiles with IAM role</a>
   </li>
   </ol>
 </nav>
             
 <div class="td-content">
-	<h1>Cognito</h1>
-  <div class="lead">Deploying Kubeflow with AWS Cognito as identity provider</div>
+	<h1>Create Profiles with IAM role</h1>
+	<div class="lead">Use AWS IAM roles for service accounts with Kubeflow Profiles</div>
 	<header class="article-meta">
 		
 
@@ -469,38 +479,113 @@
   
 
 		
-	</header>
-	
-        <div class="section-index">
-    
-    
-    
-    
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-            <div class="entry">
-                <h5>
-                    <a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/manifest/">Manifest Deployment Guides</a>
-                </h5>
-                <p>Deploying Kubeflow with AWS Cognito as identity provider using Kustomize or Helm</p>
-            </div>
-        
-            
-            <div class="entry">
-                <h5>
-                    <a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/cognito/guide-terraform/">Terraform Deployment Guide</a>
-                </h5>
-                <p>Deploy Kubeflow with AWS Cognito as an identity provider using Terraform</p>
-            </div>
-        
-    
-</div>
-
+	</header>    
+	<p>In a multi tenant Kubeflow installation, the pods created by pipelines workflow and the pipelines frontend services run in an user profile namespace. The service account (<code>default-editor</code>) used for these pods needs permissions for the S3 bucket used by pipelines to read and write artifacts from S3. When using IRSA (IAM roles for service accounts) as your <code>PIPELINE_S3_CREDENTIAL_OPTION</code>, any additional profiles created as part of a multi-user deployment besides the preconfigured <code>kubeflow-user-example-com</code> will need to be configured with permissions to S3 bucket using IRSA.</p>
+<p>The <code>default-editor</code> SA needs to be annotated with an IAM role with sufficient permissions to access your S3 Bucket to run your pipelines. In the below steps we will be configuring a profile an IAM role with restricted access to a specific S3 Bucket using the <code>AwsIamForServiceAccount</code> plugin for Profiles. To learn more about the <code>AwsIamForServiceAccount</code> plugin for Profiles read the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/component-guides/profiles/">Profiles component guide</a>.</p>
+<blockquote>
+<p>Note: If you choose to run your pipeline with a service account other than the default which is <code>default-editor</code>, you must make sure to annotate that service account with an IAM role with sufficient S3 permissions.</p>
+</blockquote>
+<h2 id="create-a-profile">Create a Profile</h2>
+<p>After installing Kubeflow on AWS with one of the available <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/docs/deployment/">deployment options</a>, you can configure Kubeflow Profiles with the following steps:</p>
+<ol>
+<li>
+<p>Define the following environment variables:</p>
+<p>The <code>S3_BUCKET</code> that is exported should be the same bucket that is used by Kubeflow Pipelines.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Your cluster name</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Your cluster region</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The S3 Bucket that is used by Kubeflow Pipelines</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Your AWS Acconut ID</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --query <span class="s2">&#34;Account&#34;</span> --output text<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Name of the profile to create</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_NAMESPACE</span><span class="o">=</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Retrieve OIDC Provider URL</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> eks update-kubeconfig --name <span class="nv">$CLUSTER_NAME</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OIDC_URL</span><span class="o">=</span><span class="k">$(</span>aws eks describe-cluster --region <span class="nv">$CLUSTER_REGION</span> --name <span class="nv">$CLUSTER_NAME</span>  --query <span class="s2">&#34;cluster.identity.oidc.issuer&#34;</span> --output text <span class="p">|</span> cut -c9-<span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Create an IAM trust policy to authorize federated requests from the OIDC provider.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; trust.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">    {
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Principal&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Federated&#34;: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_URL}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    },
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Action&#34;: &#34;sts:AssumeRoleWithWebIdentity&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Condition&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;StringEquals&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;${OIDC_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;${OIDC_URL}:sub&#34;: &#34;system:serviceaccount:${PROFILE_NAMESPACE}:default-editor&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        }
+</span></span></span><span class="line"><span class="cl"><span class="s">    }
+</span></span></span><span class="line"><span class="cl"><span class="s">    }
+</span></span></span><span class="line"><span class="cl"><span class="s">]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></div></li>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html">Create an IAM policy</a> with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; s3_policy.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">           {
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Action&#34;: &#34;s3:*&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;Resource&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}/*&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">              ]
+</span></span></span><span class="line"><span class="cl"><span class="s">           }
+</span></span></span><span class="line"><span class="cl"><span class="s">     ]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></div></li>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create.html">Create an IAM role</a> for the Profile using the scoped policy from the previous step.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> aws iam create-role --role-name <span class="nv">$PROFILE_NAMESPACE</span>-<span class="nv">$CLUSTER_NAME</span>-role --assume-role-policy-document file://trust.json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PROFILE_NAMESPACE</span>-<span class="nv">$CLUSTER_NAME</span>-role --policy-name kf-<span class="nv">$PROFILE_NAMESPACE</span>-pipeline-s3 --policy-document file://s3_policy.json  
+</span></span></code></pre></div></li>
+<li>
+<p>Create a user in your configured auth provider (e.g. Cognito or Dex).</p>
+<p>Export the user email as env variable, e.g. <code>user@example.com</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_USER</span><span class="o">=</span><span class="s2">&#34;&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Create a Profile using the <code>PROFILE_NAMESPACE</code>.</p>
+</li>
+</ol>
+<blockquote>
+<p>Note: annotateOnly has been set to true. This means that the Profile Controller will not mutate your IAM Role and Policy.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; profile_iam.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">apiVersion: kubeflow.org/v1
+</span></span></span><span class="line"><span class="cl"><span class="s">kind: Profile
+</span></span></span><span class="line"><span class="cl"><span class="s">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s">  name: ${PROFILE_NAMESPACE}
+</span></span></span><span class="line"><span class="cl"><span class="s">spec:
+</span></span></span><span class="line"><span class="cl"><span class="s">  owner:
+</span></span></span><span class="line"><span class="cl"><span class="s">    kind: User
+</span></span></span><span class="line"><span class="cl"><span class="s">    name: ${PROFILE_USER}
+</span></span></span><span class="line"><span class="cl"><span class="s">  plugins:
+</span></span></span><span class="line"><span class="cl"><span class="s">  - kind: AwsIamForServiceAccount
+</span></span></span><span class="line"><span class="cl"><span class="s">    spec:
+</span></span></span><span class="line"><span class="cl"><span class="s">      awsIamRole: $(aws iam get-role --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --output text --query &#39;Role.Arn&#39;)
+</span></span></span><span class="line"><span class="cl"><span class="s">      annotateOnly: true
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl apply -f profile_iam.yaml
+</span></span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
@@ -508,6 +593,7 @@
 </div>
 
 </div>
+
 
           </main>
         </div>
@@ -566,6 +652,9 @@
 <script src="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/js/main.min.ee50a81e040816d9cf064259781efbe0a327b9a06ee1d360f4e18123c849cbdd.js" integrity="sha256-7lCoHgQIFtnPBkJZeB774KMnuaBu4dNg9OGBI8hJy90=" crossorigin="anonymous"></script>
 
 
+
+
+<script src="/kubeflow-manifests/release-v1.7.0-aws-b1.0.0/js/copy-code-button.min.js"></script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
