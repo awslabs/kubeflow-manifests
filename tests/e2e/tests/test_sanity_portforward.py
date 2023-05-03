@@ -12,7 +12,7 @@ import time
 import pytest
 import boto3
 
-from e2e.utils.utils import get_s3_client
+from e2e.utils.utils import get_s3_client, kubectl_wait_pods
 
 from e2e.utils.constants import DEFAULT_USER_NAMESPACE
 from e2e.utils.utils import load_yaml_file, wait_for, rand_name, write_yaml_file, WaitForCircuitBreakerError
@@ -214,6 +214,9 @@ class TestSanity:
         sub_cmd = f"jupyter nbconvert --to notebook --execute ../uploaded/{ipynb_notebook_file} --stdout"
         cmd = f"kubectl -n kubeflow-user-example-com exec -it {notebook_name}-0 -- /bin/bash -c".split()
         cmd.append(sub_cmd)
+
+        # kubectl wait --for=condition=ready pod -l 'app in ({notebook_name})' --timeout=240s -n {DEFAULT_USER_NAMESPACE}
+        kubectl_wait_pods(notebook_name, DEFAULT_USER_NAMESPACE)
 
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
         print(output)
