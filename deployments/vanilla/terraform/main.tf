@@ -118,6 +118,12 @@ module "eks_blueprints" {
   tags                = local.tags
 }
 
+module "pre_configuration" {
+  source = "../../../iaac/terraform/utils/pre-configuration"
+
+  cluster_name  = local.cluster_name
+}
+
 module "eks_blueprints_kubernetes_addons" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.28.0"
 
@@ -140,6 +146,8 @@ module "eks_blueprints_kubernetes_addons" {
     namespace = "kube-system"
     version   = "2.4.1"
   }
+
+  aws_efs_csi_driver_irsa_policies = [module.pre_configuration.aws_efs_csi_driver_policy_arn]
 
   enable_aws_efs_csi_driver = true
 
