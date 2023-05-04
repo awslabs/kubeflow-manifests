@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-03T12:18:57-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-04T11:17:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-05-03T12:18:57-07:00" />
+<meta itemprop="dateModified" content="2023-05-04T11:17:59-07:00" />
 <meta itemprop="wordCount" content="3116">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
@@ -780,7 +780,7 @@ For more information, see <a href="https://docs.aws.amazon.com/eks/latest/usergu
 <div class="tab-content" id="tabs-5-content"><div class="tab-pane fade show active"
         id="tabs-5-0" role="tabpanel" aria-labelled-by="tabs-5-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   <div class="tab-pane fade"
-        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">-s3_aws_access_key_id</span> <span class="err">$</span><span class="nx">MINIO_AWS_ACCESS_KEY_ID</span> <span class="nx">--s3_aws_secret_access_key</span> <span class="err">$</span><span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span> <span class="nx">--s3_secret_name</span> <span class="err">$</span><span class="nx">S3_SECRET_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">--s3_aws_access_key_id</span> <span class="err">$</span><span class="nx">MINIO_AWS_ACCESS_KEY_ID</span> <span class="nx">--s3_aws_secret_access_key</span> <span class="err">$</span><span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span> <span class="nx">--s3_secret_name</span> <span class="err">$</span><span class="nx">S3_SECRET_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
   
 </div>
 </p>
@@ -1706,7 +1706,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 3, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/fb5d82f6f3835728cf7d01369b6098a7b9492836">Fix profiles with iam docs  (#722) (fb5d82f)</a>
+  Last modified May 4, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/7b8ac17e25d4eb633ebb5bab6a0f8818df175d01">Fixing rds-s3 guide (#727) (7b8ac17)</a>
 </div>
 
 </div>
