@@ -123,7 +123,7 @@ export PIPELINE_S3_CREDENTIAL_OPTION=static
 PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --db_instance_name $DB_INSTANCE_NAME  --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME --pipeline_s3_credential_option $PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
    {{< tab header="IAM User" lang="toml" >}}
-PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET -s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME  --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME --pipeline_s3_credential_option $PIPELINE_S3_CREDENTIAL_OPTION
+PYTHONPATH=.. python utils/rds-s3/auto-rds-s3-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --bucket $S3_BUCKET --s3_aws_access_key_id $MINIO_AWS_ACCESS_KEY_ID --s3_aws_secret_access_key $MINIO_AWS_SECRET_ACCESS_KEY --db_instance_name $DB_INSTANCE_NAME --s3_secret_name $S3_SECRET_NAME  --rds_secret_name $RDS_SECRET_NAME --db_subnet_group_name $DB_SUBNET_GROUP_NAME --pipeline_s3_credential_option $PIPELINE_S3_CREDENTIAL_OPTION
 {{< /tab >}}
    {{< /tabpane >}}
 
