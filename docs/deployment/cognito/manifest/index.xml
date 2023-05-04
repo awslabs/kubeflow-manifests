@@ -712,13 +712,14 @@ Check also &lt;code&gt;Enabled Identity Providers&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The central dashboard should now be available at &lt;code&gt;https://kubeflow.platform.example.com&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Before connecting to the dashboard:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Go to the Cognito console and create some users in &lt;code&gt;Users and groups&lt;/code&gt;. These are the users who will log in to the central dashboard.
-&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png&#34; alt=&#34;cognito-user-pool-created&#34;&gt;&lt;/p&gt;
+&lt;li&gt;Go to the Cognito console and create some users in &lt;code&gt;Users and groups&lt;/code&gt;. These are the users who will log in to the central dashboard.
+&lt;ul&gt;
+&lt;li&gt;Create a user with email address &lt;code&gt;user@example.com&lt;/code&gt;. This user and email address come preconfigured and have a Profile created by default.
+&lt;img src=&#34;https://raw.githubusercontent.com/awslabs/kubeflow-manifests/main/website/content/en/docs/images/cognito/cognito-user-pool-created.png&#34; alt=&#34;cognito-user-pool-created&#34;&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Create a Profile for a user by following the steps in the &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation&#34;&gt;Manual Profile Creation&lt;/a&gt;.
-The following is a Profile example for reference:&lt;/p&gt;
+&lt;li&gt;Create a Profile for a user by following the steps in the &lt;a href=&#34;https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/#manual-profile-creation&#34;&gt;Manual Profile Creation&lt;/a&gt;.
+The following is a Profile example for reference:
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;apiVersion: kubeflow.org/v1beta1
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kind: Profile
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;metadata:

@@ -276,7 +276,7 @@ For more information, see &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest
 &lt;div class=&#34;tab-content&#34; id=&#34;tabs-5-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
         id=&#34;tabs-5-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-5-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=..&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;python&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;auto-rds-s3-setup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;py&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--region&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--cluster&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--bucket&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_BUCKET&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_instance_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_INSTANCE_NAME&lt;/span&gt;  &lt;span class=&#34;nx&#34;&gt;--rds_secret_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;RDS_SECRET_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_subnet_group_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_SUBNET_GROUP_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--pipeline_s3_credential_option&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&#34;tab-pane fade&#34;
-        id=&#34;tabs-5-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-5-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=..&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;python&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;auto-rds-s3-setup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;py&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--region&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--cluster&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--bucket&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_BUCKET&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;-s3_aws_access_key_id&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MINIO_AWS_ACCESS_KEY_ID&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--s3_aws_secret_access_key&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MINIO_AWS_SECRET_ACCESS_KEY&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_instance_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_INSTANCE_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--s3_secret_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_SECRET_NAME&lt;/span&gt;  &lt;span class=&#34;nx&#34;&gt;--rds_secret_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;RDS_SECRET_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_subnet_group_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_SUBNET_GROUP_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--pipeline_s3_credential_option&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+        id=&#34;tabs-5-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-5-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;PYTHONPATH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=..&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;python&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;auto-rds-s3-setup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;py&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--region&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--cluster&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--bucket&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_BUCKET&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--s3_aws_access_key_id&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MINIO_AWS_ACCESS_KEY_ID&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--s3_aws_secret_access_key&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;MINIO_AWS_SECRET_ACCESS_KEY&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_instance_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_INSTANCE_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--s3_secret_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;S3_SECRET_NAME&lt;/span&gt;  &lt;span class=&#34;nx&#34;&gt;--rds_secret_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;RDS_SECRET_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--db_subnet_group_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DB_SUBNET_GROUP_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--pipeline_s3_credential_option&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   
 &lt;/div&gt;
 &lt;/p&gt;
@@ -439,20 +439,21 @@ Select the package manager of your choice.
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html&#34;&gt;Create an IAM policy&lt;/a&gt; with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;printf&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;{
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#34;Statement&amp;#34;: [
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;      {
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         &amp;#34;Action&amp;#34;: &amp;#34;s3:*&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         &amp;#34;Resource&amp;#34;: [
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;            &amp;#34;arn:aws:s3:::${S3_BUCKET}&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;            &amp;#34;arn:aws:s3::::${S3_BUCKET}/*&amp;#34;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         ]
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;      }
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;   ]
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;}
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt; &amp;#39;&lt;/span&gt; &amp;gt; ./s3_policy.json
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;cat &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; s3_policy.json
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;{
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;   &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;   &amp;#34;Statement&amp;#34;: [
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;            {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;         &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;         &amp;#34;Action&amp;#34;: &amp;#34;s3:*&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;         &amp;#34;Resource&amp;#34;: [
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;            &amp;#34;arn:aws:s3:::${S3_BUCKET}&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;            &amp;#34;arn:aws:s3:::${S3_BUCKET}/*&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;               ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;            }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;      ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s&#34;&gt;EOF&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Create Pipeline Backend Role&lt;/p&gt;
@@ -1033,8 +1034,11 @@ Select the package manager of your choice.
 &lt;/p&gt;
 &lt;p&gt;Once everything is installed successfully, you can access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;You can now start experimenting and running your end-to-end ML workflows with Kubeflow!&lt;/p&gt;
-&lt;h2 id=&#34;40-verify-the-installation&#34;&gt;4.0 Verify the installation&lt;/h2&gt;
-&lt;h3 id=&#34;41-verify-rds&#34;&gt;4.1 Verify RDS&lt;/h3&gt;
+&lt;h2 id=&#34;40-creating-profiles&#34;&gt;4.0 Creating Profiles&lt;/h2&gt;
+&lt;p&gt;A default profile named &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; for email &lt;code&gt;user@example.com&lt;/code&gt; has been configured with this deployment. If you are using IRSA as &lt;code&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/code&gt;, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-profiles-with-iam-role/&#34;&gt;pipeline profiles&lt;/a&gt; for instructions on how to create additional profiles.&lt;/p&gt;
+&lt;p&gt;If you are not using this feature, you can create a profile by just specifying email address of the user.&lt;/p&gt;
+&lt;h2 id=&#34;50-verify-the-installation&#34;&gt;5.0 Verify the installation&lt;/h2&gt;
+&lt;h3 id=&#34;51-verify-rds&#34;&gt;5.1 Verify RDS&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;Connect to your RDS instance from a pod within the cluster with the following command:&lt;/li&gt;
 &lt;/ol&gt;
@@ -1104,7 +1108,7 @@ Select the package manager of your choice.
 &lt;li&gt;Describe the &lt;code&gt;observation_logs&lt;/code&gt; to verify that they are being populated.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql&amp;gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; * from observation_logs&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;42-verify-s3&#34;&gt;4.2 Verify S3&lt;/h3&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;52-verify-s3&#34;&gt;5.2 Verify S3&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Access the Kubeflow Central Dashboard &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster&#34;&gt;by logging in to your cluster&lt;/a&gt; and navigate to Kubeflow Pipelines (under Pipelines).&lt;/p&gt;
@@ -1119,7 +1123,7 @@ Select the package manager of your choice.
 &lt;p&gt;Verify that the bucket is not empty and was populated by the outputs of the experiment.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;50-uninstall-kubeflow&#34;&gt;5.0 Uninstall Kubeflow&lt;/h2&gt;
+&lt;h2 id=&#34;60-uninstall-kubeflow&#34;&gt;6.0 Uninstall Kubeflow&lt;/h2&gt;
 &lt;p&gt;Run the following command to uninstall your Kubeflow deployment:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: Make sure you have the correct INSTALLATION_OPTION, DEPLOYMENT_OPTION and PIPELINE_S3_CREDENTIAL_OPTION environment variables set for your chosen installation&lt;/p&gt;
@@ -1159,25 +1163,25 @@ Select the package manager of your choice.
 
 
 
-&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-18&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-19&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
       &lt;a class=&#34;nav-link active tab-Kustomize&#34;
-        id=&#34;tabs-18-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-18-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
-        aria-controls=&#34;tabs-18-0&#34; aria-selected=&#34;true&#34;&gt;
+        id=&#34;tabs-19-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-19-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Kustomize&amp;#34;);&#34;
+        aria-controls=&#34;tabs-19-0&#34; aria-selected=&#34;true&#34;&gt;
         Kustomize
       &lt;/a&gt;
     &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
       &lt;a class=&#34;nav-link tab-Helm&#34;
-        id=&#34;tabs-18-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-18-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
-        aria-controls=&#34;tabs-18-1&#34; aria-selected=&#34;false&#34;&gt;
+        id=&#34;tabs-19-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-19-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Helm&amp;#34;);&#34;
+        aria-controls=&#34;tabs-19-1&#34; aria-selected=&#34;false&#34;&gt;
         Helm
       &lt;/a&gt;
     &lt;/li&gt;&lt;/ul&gt;
 
 
-&lt;div class=&#34;tab-content&#34; id=&#34;tabs-18-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
-        id=&#34;tabs-18-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-18-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;delete-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-19-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-19-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-19-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;make&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;delete-kubeflow&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;INSTALLATION_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;kustomize&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DEPLOYMENT_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;rds-s3&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&#34;tab-pane fade&#34;
-        id=&#34;tabs-18-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-18-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+        id=&#34;tabs-19-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-19-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
   
 &lt;/div&gt;
 
@@ -1358,7 +1362,10 @@ For more information, see &lt;a href=&#34;https://docs.aws.amazon.com/eks/latest
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;apply&#34;&gt;Apply&lt;/h3&gt;
 &lt;p&gt;Run the following command:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;make deploy
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;connect-to-your-kubeflow-dashboard&#34;&gt;Connect to your Kubeflow dashboard&lt;/h2&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;creating-profiles&#34;&gt;Creating Profiles&lt;/h2&gt;
+&lt;p&gt;A default profile named &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; for email &lt;code&gt;user@example.com&lt;/code&gt; has been configured with this deployment. If you are using IRSA as &lt;code&gt;PIPELINE_S3_CREDENTIAL_OPTION&lt;/code&gt;, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/create-profiles-with-iam-role/&#34;&gt;pipeline profiles&lt;/a&gt; for instructions on how to create additional profiles.&lt;/p&gt;
+&lt;p&gt;If you are not using this feature, you can create a profile by just specifying email address of the user.&lt;/p&gt;
+&lt;h2 id=&#34;connect-to-your-kubeflow-dashboard&#34;&gt;Connect to your Kubeflow dashboard&lt;/h2&gt;
 &lt;p&gt;For information on connecting to your Kubeflow dashboard depending on your deployment environment, see &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/#port-forward-terraform-deployment&#34;&gt;Port-forward (Terraform deployment)&lt;/a&gt;. Then, &lt;a href=&#34;https://awslabs.github.io/kubeflow-manifests/docs/deployment/connect-kubeflow-dashboard/#log-into-the-kubeflow-ui&#34;&gt;log into the Kubeflow UI&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;cleanup&#34;&gt;Cleanup&lt;/h2&gt;
 &lt;p&gt;Uninstall Kubeflow on AWS with a single command.&lt;/p&gt;
