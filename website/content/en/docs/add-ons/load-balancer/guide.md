@@ -10,13 +10,15 @@ This tutorial shows how to expose Kubeflow over a load balancer on AWS.
 
 Follow this guide only if you are **not** using `Cognito` as the authentication provider in your deployment. Cognito-integrated deployment is configured with the AWS Load Balancer controller by default to create an ingress-managed Application Load Balancer and exposes Kubeflow via a hosted domain.
 
+> Note: For Terraform deployment users, some steps that should be skipped will have a note indicating such below.
+
 ## Background
 
 Kubeflow does not offer a generic solution for connecting to Kubeflow over a Load Balancer because this process is highly dependent on your environment and cloud provider. On AWS, we use the [AWS Load Balancer (ALB) controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/), which satisfies the Kubernetes [Ingress resource](https://kubernetes.io/docs/concepts/services-networking/ingress/) to create an [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) (ALB). When you create a Kubernetes `Ingress`, an ALB is provisioned that load balances application traffic.
 
 In order to connect to Kubeflow using a Load Balancer, we need to setup HTTPS. Many of the Kubeflow web apps (e.g. Tensorboard Web App, Jupyter Web App, Katib UI) use [Secure Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies), so accessing Kubeflow with HTTP over a non-localhost domain does not work.
 
-To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, [you must specify a domain name](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates) (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as [Route53](https://aws.amazon.com/route53/), or GoDoddy.
+To secure the traffic and use HTTPS, we must associate a Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificate with the Load Balancer. [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) is a service that lets you easily provision, manage, and deploy public and private SSL/TLS certificates for use with AWS services and your internal connected resources. To create a certificate for use with the Load Balancer, [you must specify a domain name](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates) (i.e. certificates cannot be created for ALB DNS). You can register your domain using any domain service provider such as [Route53](https://aws.amazon.com/route53/), or GoDaddy.
 
 ## Prerequisites
 This guide assumes that you have: 
@@ -37,7 +39,14 @@ This guide assumes that you have:
 
 ## Create Load Balancer
 
+
+#### Setup for Manifest deployments
+
 If you prefer to create a load balancer using automated scripts, you **only** need to follow the steps in the [automated script section](#automated-script). You can read the following sections in this guide to understand what happens when you run the automated script or to walk through all of the steps manually.
+
+#### Setup for Terraform deployments
+
+Follow the manual steps below. 
 
 ### Create domain and certificates
 
@@ -86,7 +95,9 @@ If you choose DNS validation for the validation of the certificates, you will be
     ```bash
     printf 'certArn='$certArn'' > awsconfigs/common/istio-ingress/overlays/https/params.env
     ```
-### Configure Load Balancer controller
+### Configure Load Balancer Controller
+
+> Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set `enable_aws_load_balancer_controller = false`.
 
 Set up resources required for the Load Balancer controller:
 
@@ -103,6 +114,7 @@ Set up resources required for the Load Balancer controller:
             ```
         - `kubernetes.io/role/internal-elb`. Add this tag only to private subnets.
         - `kubernetes.io/role/elb`. Add this tag only to public subnets.
+
 1. The Load balancer controller uses [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)(IRSA) to access AWS services. An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:
     ```bash
     eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --approve
@@ -113,15 +125,30 @@ Set up resources required for the Load Balancer controller:
     export LBC_POLICY_ARN=$(aws iam create-policy --policy-name $LBC_POLICY_NAME --policy-document file://awsconfigs/infra_configs/iam_alb_ingress_policy.json --output text --query 'Policy.Arn')
     eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster ${CLUSTER_NAME} --region ${CLUSTER_REGION} --attach-policy-arn ${LBC_POLICY_ARN} --override-existing-serviceaccounts --approve
     ```
+
 1. Configure the parameters for [load balancer controller](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/params.env) with the cluster name.
     ```bash
     printf 'clusterName='$CLUSTER_NAME'' > awsconfigs/common/aws-alb-ingress-controller/base/params.env
     ```
 
-### Build Manifests and deploy components
-Run the following command to build and install the components specified in the Load Balancer [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/deployments/add-ons/load-balancer/kustomization.yaml) file.
+### Install Load Balancer Controller
+
+> Important: Skip this step if you are using a Terraform deployment since the AWS Load Balancer Controller is installed by default unless you set `enable_aws_load_balancer_controller = false`.
+
+Run the following command to build and install the Load Balancer controller [kustomize](https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-alb-ingress-controller/base/kustomization.yaml) file.
+
 ```bash
-while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 30; done
+kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
+kubectl wait --for condition=established crd/ingressclassparams.elbv2.k8s.aws
+kustomize build awsconfigs/common/aws-alb-ingress-controller/base | kubectl apply -f -
+```
+
+### Create Ingress
+
+Create an ingress that will use the certifcate you specified in `certArn`.
+
+```bash
+kustomize build awsconfigs/common/istio-ingress/overlays/https | kubectl apply -f -
 ```
 
 ### Update the domain with ALB address
@@ -139,6 +166,8 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
 3. The central dashboard should now be available at `https://kubeflow.platform.example.com`. Open a browser and navigate to this URL.
 
 ### Automated script
+
+> Important: Terraform deployment users should not follow these Automated setup instructions and should follow the [Manual setup instructions](#create-load-balancer).
 
 1. Install dependencies for the script
     ```bash
@@ -197,6 +226,8 @@ while ! kustomize build deployments/add-ons/load-balancer | kubectl apply -f -; 
 > Note: It might a few minutes for DNS changes to propagate and for your URL to work. Check if the DNS entry propogated with the [Google Admin Toolbox](https://toolbox.googleapps.com/apps/dig/#CNAME/)
 
 ## Clean up
+
+> Important: Terraform deployment users should not follow these clean up steps and should manually delete resources created while following the [Manual setup instructions](#create-load-balancer).
 
 To delete the resources created in this guide, run the following commands from the root of your repository:
 > Note: Make sure that you have the configuration file created by the script in `tests/e2e/utils/load_balancer/config.yaml`. If you did not use the script, plug in the name, ARN, or ID of the resources that you created in the configuration file by referring to the sample in Step 4 of the [previous section](#automated-script).

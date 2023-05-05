@@ -34,9 +34,16 @@ Enable culling for notebooks by following the [instructions]({{< ref "/docs/depl
 2. Deploy Kubeflow.
 
     1. Export your pipeline-s3-credential-option
-    ```bash 
-    export PIPELINE_S3_CREDENTIAL_OPTION=<IRSA/STATIC>
-    ```
+    {{< tabpane persistLang=false >}}
+{{< tab header="IRSA" lang="toml" >}}
+# Pipeline S3 Credential Option to configure 
+export PIPELINE_S3_CREDENTIAL_OPTION="irsa"
+{{< /tab >}}
+{{< tab header="IAM User" lang="toml" >}}
+# Pipeline S3 Credential Option to configure 
+export PIPELINE_S3_CREDENTIAL_OPTION="static"
+{{< /tab >}}
+   {{< /tabpane >}}
 
     1. Install Kubeflow using the following command:
 
@@ -55,6 +62,11 @@ make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=cognito-rds-s3 P
     1. Create a user in a Cognito user pool
     1. Create a profile for the user from the user pool
     1. Connect to the central dashboard
+
+## Creating Profiles
+A default profile named `kubeflow-user-example-com` for email `user@example.com` has been configured with this deployment. If you are using IRSA as `PIPELINE_S3_CREDENTIAL_OPTION`, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the [pipeline profiles]({{< ref "/docs/deployment/create-profiles-with-iam-role.md" >}}) for instructions on how to create additional profiles.
+
+If you are not using this feature, you can create a profile by just specifying email address of the user.
 
 ## Uninstall Kubeflow
 > Note: Delete all the resources you might have created in your profile namespaces before running these steps.
