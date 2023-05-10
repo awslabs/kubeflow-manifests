@@ -12,10 +12,11 @@ from time import sleep
 def main():
     header()
 
-    verify_prerequisites()
+    if not SKIP_DRIVER_INSTALLATION:
+        verify_prerequisites()
+        setup_iam_authorization()
+        setup_efs_driver()
 
-    setup_iam_authorization()
-    setup_efs_driver()
     setup_efs_file_system()
     setup_efs_provisioning()
 
@@ -51,9 +52,15 @@ def verify_oidc_provider_prerequisite():
 def is_oidc_provider_present() -> bool:
     eks_client = get_eks_client()
     try:
-        https_oidc_provider = eks_client.describe_cluster(
-            name=CLUSTER_NAME,
-        ).get('cluster').get('identity').get('oidc').get('issuer')
+        https_oidc_provider = (
+            eks_client.describe_cluster(
+                name=CLUSTER_NAME,
+            )
+            .get("cluster")
+            .get("identity")
+            .get("oidc")
+            .get("issuer")
+        )
         return True if "oidc" in https_oidc_provider else False
     except:
         return False
@@ -340,7 +347,6 @@ def wait_for_efs_file_system_to_become_available(efs_file_system_creation_token)
     print("Waiting for EFS file system to become available...")
 
     while status != "available":
-
         status = efs_client.describe_file_systems(
             CreationToken=efs_file_system_creation_token
         )["FileSystems"][0]["LifeCycleState"]
@@ -422,7 +428,6 @@ def create_mount_targets(efs_client, efs_security_group_id, file_system_id, subn
 
 def wait_for_mount_target_to_become_available(efs_client, mount_target_ids):
     for mount_target_id in mount_target_ids:
-
         status = None
 
         print(f"Waiting for EFS mount target {mount_target_id} to become available...")
@@ -586,6 +591,14 @@ parser.add_argument(
     help=f"Specify the path to the source files if different. Default is set to empty.",
     required=False,
 )
+SKIP_DRIVER_INSTALLATION_DEFAULT = False
+parser.add_argument(
+    "--skip-driver-installation",
+    default=SKIP_DRIVER_INSTALLATION_DEFAULT,
+    action="store_true",
+    help=f"Skips the creation of the service account for the EFS controller and skips installing the EFS CSI driver since the default Terraform installation performs these steps by default.",
+    required=False,
+)
 
 args, _ = parser.parse_known_args()
 
@@ -599,6 +612,7 @@ if __name__ == "__main__":
     EFS_GID = args.efs_gid
     EFS_UID = args.efs_uid
     DIRECTORY_PATH = args.directory
+    SKIP_DRIVER_INSTALLATION = args.skip_driver_installation
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
     EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy" + EFS_FILE_SYSTEM_NAME
