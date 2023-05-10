@@ -12,9 +12,8 @@ from time import sleep
 def main():
     header()
 
-    verify_prerequisites()
-
-    if not SETUP_FOR_TERRAFORM:
+    if not SKIP_DRIVER_INSTALLATION:
+        verify_prerequisites()
         setup_iam_authorization()
         setup_efs_driver()
 
@@ -592,10 +591,10 @@ parser.add_argument(
     help=f"Specify the path to the source files if different. Default is set to empty.",
     required=False,
 )
-SETUP_FOR_TERRAFORM_DEFAULT = False
+SKIP_DRIVER_INSTALLATION_DEFAULT = False
 parser.add_argument(
-    "--setup-for-terraform",
-    default=SETUP_FOR_TERRAFORM_DEFAULT,
+    "--skip-driver-installation",
+    default=SKIP_DRIVER_INSTALLATION_DEFAULT,
     action="store_true",
     help=f"Skips the creation of the service account for the EFS controller and skips installing the EFS CSI driver since the default Terraform installation performs these steps by default.",
     required=False,
@@ -613,7 +612,7 @@ if __name__ == "__main__":
     EFS_GID = args.efs_gid
     EFS_UID = args.efs_uid
     DIRECTORY_PATH = args.directory
-    SETUP_FOR_TERRAFORM = args.setup_for_terraform
+    SKIP_DRIVER_INSTALLATION = args.skip_driver_installation
 
     AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
     EFS_IAM_POLICY_NAME = "AmazonEKS_EFS_CSI_Driver_Policy" + EFS_FILE_SYSTEM_NAME
