@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/add-ons\/storage\/efs\/guide\/",
-      "wordCount" : "2795",
+      "wordCount" : "2760",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/add-ons/storage/efs/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-04T11:17:59-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-05-10T14:10:13-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="EFS">
 <meta itemprop="description" content="Use Amazon EFS as persistent storage with Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-05-04T11:17:59-07:00" />
-<meta itemprop="wordCount" content="2795">
+<meta itemprop="dateModified" content="2023-05-10T14:10:13-07:00" />
+<meta itemprop="wordCount" content="2760">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="EFS"/>
 <meta name="twitter:description" content="Use Amazon EFS as persistent storage with Kubeflow on AWS"/>
@@ -426,7 +426,6 @@
     <li><a href="#10-prerequisites">1.0 Prerequisites</a></li>
     <li><a href="#20-set-up-efs">2.0 Set up EFS</a>
       <ul>
-        <li></li>
         <li><a href="#21-option-1-automated-setup">2.1 [Option 1] Automated setup</a></li>
         <li><a href="#22-option-2-manual-setup">2.2 [Option 2] Manual setup</a></li>
         <li><a href="#23-check-your-setup">2.3 Check your setup</a></li>
@@ -543,14 +542,8 @@
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLAIM_NAME</span><span class="o">=</span>&lt;efs-claim&gt;
 </span></span></code></pre></div><h2 id="20-set-up-efs">2.0 Set up EFS</h2>
-<h4 id="setup-for-manifest-deployments">Setup for Manifest deployments</h4>
 <p>You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between <strong>static and dynamic provisioning</strong>, so pick whichever suits you. On the other hand, for the automated script we currently only support <strong>dynamic provisioning</strong>. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide.</p>
-<h4 id="setup-for-terraform-deployments">Setup for Terraform deployments</h4>
-<p>Follow the Manual setup to set up the resources required. As part of the Manual setup, you get another choice between <strong>static and dynamic provisioning</strong>, so pick whichever suits you.</p>
 <h3 id="21-option-1-automated-setup">2.1 [Option 1] Automated setup</h3>
-<blockquote>
-<p>Important: Terraform deployment users should not follow these Automated setup instructions and should follow the <a href="#22-option-2-manual-setup">Manual setup instructions</a>.</p>
-</blockquote>
 <p>The script automates all the manual resource creation steps but is currently only available for <strong>Dynamic Provisioning</strong> option.<br>
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0.</p>
 <ol>
@@ -562,15 +555,73 @@ It performs the required cluster configuration, creates an EFS file system and i
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip install -r requirements.txt
 </span></span></code></pre></div><ol start="3">
-<li>Run the automated script.</li>
+<li>Run the appropriate automated script command for your deployment type.</li>
 </ol>
 <blockquote>
 <p>Note: If you want the script to create a new security group for EFS, specify a name here. On the other hand, if you want to use an existing Security group, you can specify that name too. We have used the same name as the claim we are going to create.</p>
 </blockquote>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SECURITY_GROUP_TO_CREATE</span><span class="o">=</span><span class="nv">$CLAIM_NAME</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-3" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Manifest"
+        id="tabs-3-0-tab" data-toggle="tab" href="#tabs-3-0" role="tab" onclick="handleClick(&#34;Manifest&#34;);"
+        aria-controls="tabs-3-0" aria-selected="true">
+        Manifest
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Terraform"
+        id="tabs-3-1-tab" data-toggle="tab" href="#tabs-3-1" role="tab" onclick="handleClick(&#34;Terraform&#34;);"
+        aria-controls="tabs-3-1" aria-selected="false">
+        Terraform
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-3-content"><div class="tab-pane fade show active"
+        id="tabs-3-0" role="tabpanel" aria-labelled-by="tabs-3-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">SECURITY_GROUP_TO_CREATE</span><span class="p">=</span><span class="err">$</span><span class="nx">CLAIM_NAME</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">python utils/auto-efs-setup.py --region <span class="nv">$CLUSTER_REGION</span> --cluster <span class="nv">$CLUSTER_NAME</span> --efs_file_system_name <span class="nv">$CLAIM_NAME</span> --efs_security_group_name <span class="nv">$SECURITY_GROUP_TO_CREATE</span>
-</span></span></code></pre></div><ol start="4">
+</span></span><span class="line"><span class="cl"><span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">auto-efs-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--efs_file_system_name</span> <span class="err">$</span><span class="nx">CLAIM_NAME</span> <span class="nx">--efs_security_group_name</span> <span class="err">$</span><span class="nx">SECURITY_GROUP_TO_CREATE</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-3-1" role="tabpanel" aria-labelled-by="tabs-3-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">SECURITY_GROUP_TO_CREATE</span><span class="p">=</span><span class="err">$</span><span class="nx">CLAIM_NAME</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">auto-efs-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--efs_file_system_name</span> <span class="err">$</span><span class="nx">CLAIM_NAME</span> <span class="nx">--efs_security_group_name</span> <span class="err">$</span><span class="nx">SECURITY_GROUP_TO_CREATE</span> <span class="nx">--skip-driver-installation</span></span></span></code></pre></div></div>
+  
+</div>
+
+<ol start="4">
 <li>The script above takes care of creating the <code>StorageClass (SC)</code> which is a cluster scoped resource. In order to create the <code>PersistentVolumeClaim (PVC)</code> you can either use the yaml file provided in this directory or use the Kubeflow UI directly.
 The PVC needs to be in the namespace you will be accessing it from. Replace the <code>kubeflow-user-example-com</code> namespace specified the below with the namespace for your kubeflow user and edit the <code>efs/dynamic-provisioning/pvc.yaml</code> file accordingly.</li>
 </ol>
@@ -779,7 +830,7 @@ b. Delete the <code>efs-csi-controller-sa</code> service account and then re-run
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 4, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/7b8ac17e25d4eb633ebb5bab6a0f8818df175d01">Fixing rds-s3 guide (#727) (7b8ac17)</a>
+  Last modified May 10, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/88862c022af9fde6f0823f5654b230caae0a81bb">Update the EKS blueprints module version in use to release v4.31 (#731) (88862c0)</a>
 </div>
 
 </div>

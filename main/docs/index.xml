@@ -751,14 +751,8 @@ Skip this step if your domain is managed by other domain provider.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;CLAIM_NAME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&amp;lt;efs-claim&amp;gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;20-set-up-efs&#34;&gt;2.0 Set up EFS&lt;/h2&gt;
-&lt;h4 id=&#34;setup-for-manifest-deployments&#34;&gt;Setup for Manifest deployments&lt;/h4&gt;
 &lt;p&gt;You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between &lt;strong&gt;static and dynamic provisioning&lt;/strong&gt;, so pick whichever suits you. On the other hand, for the automated script we currently only support &lt;strong&gt;dynamic provisioning&lt;/strong&gt;. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide.&lt;/p&gt;
-&lt;h4 id=&#34;setup-for-terraform-deployments&#34;&gt;Setup for Terraform deployments&lt;/h4&gt;
-&lt;p&gt;Follow the Manual setup to set up the resources required. As part of the Manual setup, you get another choice between &lt;strong&gt;static and dynamic provisioning&lt;/strong&gt;, so pick whichever suits you.&lt;/p&gt;
 &lt;h3 id=&#34;21-option-1-automated-setup&#34;&gt;2.1 [Option 1] Automated setup&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Important: Terraform deployment users should not follow these Automated setup instructions and should follow the &lt;a href=&#34;#22-option-2-manual-setup&#34;&gt;Manual setup instructions&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;p&gt;The script automates all the manual resource creation steps but is currently only available for &lt;strong&gt;Dynamic Provisioning&lt;/strong&gt; option.&lt;br&gt;
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0.&lt;/p&gt;
 &lt;ol&gt;
@@ -770,15 +764,73 @@ It performs the required cluster configuration, creates an EFS file system and i
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pip install -r requirements.txt
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;Run the automated script.&lt;/li&gt;
+&lt;li&gt;Run the appropriate automated script command for your deployment type.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Note: If you want the script to create a new security group for EFS, specify a name here. On the other hand, if you want to use an existing Security group, you can specify that name too. We have used the same name as the claim we are going to create.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs-3&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link active tab-Manifest&#34;
+        id=&#34;tabs-3-0-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-3-0&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Manifest&amp;#34;);&#34;
+        aria-controls=&#34;tabs-3-0&#34; aria-selected=&#34;true&#34;&gt;
+        Manifest
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;li class=&#34;nav-item&#34;&gt;
+      &lt;a class=&#34;nav-link tab-Terraform&#34;
+        id=&#34;tabs-3-1-tab&#34; data-toggle=&#34;tab&#34; href=&#34;#tabs-3-1&#34; role=&#34;tab&#34; onclick=&#34;handleClick(&amp;#34;Terraform&amp;#34;);&#34;
+        aria-controls=&#34;tabs-3-1&#34; aria-selected=&#34;false&#34;&gt;
+        Terraform
+      &lt;/a&gt;
+    &lt;/li&gt;&lt;/ul&gt;
+
+
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs-3-content&#34;&gt;&lt;div class=&#34;tab-pane fade show active&#34;
+        id=&#34;tabs-3-0&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-3-0-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLAIM_NAME&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python utils/auto-efs-setup.py --region &lt;span class=&#34;nv&#34;&gt;$CLUSTER_REGION&lt;/span&gt; --cluster &lt;span class=&#34;nv&#34;&gt;$CLUSTER_NAME&lt;/span&gt; --efs_file_system_name &lt;span class=&#34;nv&#34;&gt;$CLAIM_NAME&lt;/span&gt; --efs_security_group_name &lt;span class=&#34;nv&#34;&gt;$SECURITY_GROUP_TO_CREATE&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;python&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;auto-efs-setup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;py&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--region&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--cluster&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--efs_file_system_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLAIM_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--efs_security_group_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&#34;tab-pane fade&#34;
+        id=&#34;tabs-3-1&#34; role=&#34;tabpanel&#34; aria-labelled-by=&#34;tabs-3-1-tab&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLAIM_NAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;python&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;utils&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;auto-efs-setup&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;py&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--region&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_REGION&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--cluster&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLUSTER_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--efs_file_system_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;CLAIM_NAME&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--efs_security_group_name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;$&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;SECURITY_GROUP_TO_CREATE&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;--skip-driver-installation&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  
+&lt;/div&gt;
+
+&lt;ol start=&#34;4&#34;&gt;
 &lt;li&gt;The script above takes care of creating the &lt;code&gt;StorageClass (SC)&lt;/code&gt; which is a cluster scoped resource. In order to create the &lt;code&gt;PersistentVolumeClaim (PVC)&lt;/code&gt; you can either use the yaml file provided in this directory or use the Kubeflow UI directly.
 The PVC needs to be in the namespace you will be accessing it from. Replace the &lt;code&gt;kubeflow-user-example-com&lt;/code&gt; namespace specified the below with the namespace for your kubeflow user and edit the &lt;code&gt;efs/dynamic-provisioning/pvc.yaml&lt;/code&gt; file accordingly.&lt;/li&gt;
 &lt;/ol&gt;
