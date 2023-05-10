@@ -46,7 +46,7 @@ class ElasticLoadBalancingV2:
         # 'internal-' is not a valid prefix according to ALB validation so we strip it here
         dns_stripped = dns.lstrip("internal-")
 
-        dns_prefix = dns_stripped.lstrip("internal-").split(".")[0]
+        dns_prefix = dns_stripped.split(".")[0]
         last_hypen_index = dns_prefix.rfind("-")
         if last_hypen_index != -1:
             return dns_stripped[:last_hypen_index]
