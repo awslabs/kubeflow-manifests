@@ -39,12 +39,16 @@ class ElasticLoadBalancingV2:
         """
         Workaround to extract load balancer name from dns.
 
-        If ALB DNS is 72d70454-istiosystem-istio-2ab2-xxxxxxxxxx.us-east-1.elb.amazonaws.com
+        If ALB DNS is internal-72d70454-istiosystem-istio-2ab2-xxxxxxxxxx.us-east-1.elb.amazonaws.com
         ALB name is 72d70454-istiosystem-istio-2ab2
         """
-        dns_prefix = dns.split(".")[0]
+
+        # 'internal-' is not a valid prefix according to ALB validation so we strip it here
+        dns_stripped = dns.lstrip("internal-")
+
+        dns_prefix = dns_stripped.split(".")[0]
         last_hypen_index = dns_prefix.rfind("-")
         if last_hypen_index != -1:
-            return dns[:last_hypen_index]
+            return dns_stripped[:last_hypen_index]
         else:
             return dns_prefix
