@@ -39,17 +39,9 @@ export CLAIM_NAME=<efs-claim>
 
 ## 2.0 Set up EFS
 
-#### Setup for Manifest deployments
-
 You can either use Automated or Manual setup to set up the resources required. If you choose the manual route, you get another choice between **static and dynamic provisioning**, so pick whichever suits you. On the other hand, for the automated script we currently only support **dynamic provisioning**. Whichever combination you pick, be sure to continue picking the appropriate sections through the rest of this guide. 
 
-#### Setup for Terraform deployments
-
-Follow the Manual setup to set up the resources required. As part of the Manual setup, you get another choice between **static and dynamic provisioning**, so pick whichever suits you.
-
 ### 2.1 [Option 1] Automated setup
-
-> Important: Terraform deployment users should not follow these Automated setup instructions and should follow the [Manual setup instructions](#22-option-2-manual-setup).
 
 The script automates all the manual resource creation steps but is currently only available for **Dynamic Provisioning** option.  
 It performs the required cluster configuration, creates an EFS file system and it also takes care of creating a storage class for dynamic provisioning. Once done, move to section 3.0. 
@@ -62,15 +54,22 @@ cd $GITHUB_ROOT/tests/e2e
 pip install -r requirements.txt
 ```
 
-3. Run the automated script.
+3. Run the appropriate automated script command for your deployment type.
 
 > Note: If you want the script to create a new security group for EFS, specify a name here. On the other hand, if you want to use an existing Security group, you can specify that name too. We have used the same name as the claim we are going to create. 
 
-```bash
+{{< tabpane persistLang=false >}}
+{{< tab header="Manifest" lang="toml" >}}
 export SECURITY_GROUP_TO_CREATE=$CLAIM_NAME
 
 python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $CLAIM_NAME --efs_security_group_name $SECURITY_GROUP_TO_CREATE
-```
+{{< /tab >}}
+{{< tab header="Terraform" lang="toml" >}}
+export SECURITY_GROUP_TO_CREATE=$CLAIM_NAME
+
+python utils/auto-efs-setup.py --region $CLUSTER_REGION --cluster $CLUSTER_NAME --efs_file_system_name $CLAIM_NAME --efs_security_group_name $SECURITY_GROUP_TO_CREATE --skip-driver-installation
+{{< /tab >}}
+{{< /tabpane >}}
 
 4. The script above takes care of creating the `StorageClass (SC)` which is a cluster scoped resource. In order to create the `PersistentVolumeClaim (PVC)` you can either use the yaml file provided in this directory or use the Kubeflow UI directly. 
 The PVC needs to be in the namespace you will be accessing it from. Replace the `kubeflow-user-example-com` namespace specified the below with the namespace for your kubeflow user and edit the `efs/dynamic-provisioning/pvc.yaml` file accordingly. 
