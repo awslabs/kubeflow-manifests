@@ -57,8 +57,8 @@ from e2e.utils.custom_resources import (
 from kfp_server_api.exceptions import ApiException as KFPApiException
 from kubernetes.client.exceptions import ApiException as K8sApiException
 
-INSTALLATION_PATH_FILE = "./resources/installation_config/rds-s3-static.yaml"
-RDS_S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/rds-s3.yaml"
+INSTALLATION_PATH_FILE = "./resources/installation_config/s3-only-static.yaml"
+S3_CLOUDFORMATION_TEMPLATE_PATH = "./resources/cloudformation-templates/s3-only.yaml"
 CUSTOM_RESOURCE_TEMPLATES_FOLDER = "./resources/custom-resource-templates"
 DISABLE_PIPELINE_CACHING_PATCH_FILE = (
     "./resources/custom-resource-templates/patch-disable-pipeline-caching.yaml"
@@ -74,7 +74,7 @@ def installation_path():
 def cfn_stack(metadata, cluster, region, request):
     cfn_client = get_cfn_client(region)
     ec2_client = get_ec2_client(region)
-    stack_name = rand_name("test-e2e-rds-s3-stack-")
+    stack_name = rand_name("test-e2e-s3-only-stack-")
 
     resp = ec2_client.describe_vpcs(
         Filters=[
@@ -120,42 +120,38 @@ def cfn_stack(metadata, cluster, region, request):
         metadata=metadata,
         request=request,
         cfn_client=cfn_client,
-        template_path=RDS_S3_CLOUDFORMATION_TEMPLATE_PATH,
+        template_path=S3_CLOUDFORMATION_TEMPLATE_PATH,
         stack_name=stack_name,
-        metadata_key="test_rds_s3_cfn_stack",
+        metadata_key="test_s3_cfn_stack",
         create_timeout=10 * 60,
         delete_timeout=10 * 60,
         params={
             "VpcId": vpc_id,
             "Subnets": ",".join(public_subnets),
             "SecurityGroupId": security_groups[0],
-            "DBUsername": rand_name("admin"),
-            "DBPassword": rand_name("Kubefl0w"),
             "S3SecretString": create_secret_string(s3_secret),
         },
     )
 
 
 KFP_MANIFEST_FOLDER = "../../awsconfigs/apps/pipeline"
-KFP_RDS_PARAMS_ENV_FILE = f"{KFP_MANIFEST_FOLDER}/rds/params.env"
 KFP_S3_PARAMS_ENV_FILE = f"{KFP_MANIFEST_FOLDER}/s3/params.env"
 
 AWS_SECRETS_MANAGER_MANIFEST_FOLDER = "../../awsconfigs/common/aws-secrets-manager"
-RDS_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/rds/secret-provider.yaml"
 S3_SECRET_PROVIDER_CLASS_FILE = f"{AWS_SECRETS_MANAGER_MANIFEST_FOLDER}/s3/secret-provider.yaml"
 
-path_dic_rds_s3 = load_yaml_file(INSTALLATION_PATH_FILE)
+path_dic_s3_only = load_yaml_file(INSTALLATION_PATH_FILE)
 #pipelines helm path
-pipeline_rds_s3_helm_path = path_dic_rds_s3["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
+pipeline_s3_only_helm_path = path_dic_s3_only["kubeflow-pipelines"]["installation_options"]["helm"]["paths"]
 
 #secrets-manager helm path
-secrets_manager_rds_s3_helm_path = path_dic_rds_s3["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
+secrets_manager_s3_only_helm_path = path_dic_s3_only["aws-secrets-manager"]["installation_options"]["helm"]["paths"]
 
 #pipelines values file
-pipeline_rds_s3_values_file = f"{pipeline_rds_s3_helm_path}/values.yaml" 
+pipeline_s3_only_values_file = f"{pipeline_s3_only_helm_path}/values.yaml" 
 
 #secrets-manager values file
-secrets_manager_rds_s3_values_file = f"{secrets_manager_rds_s3_helm_path}/values.yaml" 
+secrets_manager_s3_only_values_file = f"{secrets_manager_s3_only_helm_path}/values.yaml" 
 
 
 METADB_NAME = "metadata_db"
@@ -164,17 +160,6 @@ METADB_NAME = "metadata_db"
 def configure_manifests(cfn_stack, aws_secrets_driver, region):
     cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
-
-    rds_secret_provider = unmarshal_yaml(RDS_SECRET_PROVIDER_CLASS_FILE)
-    rds_secret_provider_objects = yaml.safe_load(
-        rds_secret_provider["spec"]["parameters"]["objects"]
-    )
-    rds_secret_provider_objects[0]["objectName"] = "-".join(
-        stack_outputs["RDSSecretName"].split(":")[-1].split("-")[:-1]
-    )
-    rds_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
-        rds_secret_provider_objects
-    )
 
     s3_secret_provider = unmarshal_yaml(S3_SECRET_PROVIDER_CLASS_FILE)
     s3_secret_provider_objects = yaml.safe_load(
@@ -186,16 +171,9 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
     s3_secret_provider["spec"]["parameters"]["objects"] = yaml.dump(
         s3_secret_provider_objects
     )
-    with open(RDS_SECRET_PROVIDER_CLASS_FILE, "w") as file:
-        yaml.dump(rds_secret_provider, file)
 
     with open(S3_SECRET_PROVIDER_CLASS_FILE, "w") as file:
         yaml.dump(s3_secret_provider, file)
-
-    rds_params = {
-        "dbHost": stack_outputs["RDSEndpoint"],
-        "mlmdDb": METADB_NAME,
-    }
 
     s3_params = {
         "bucketName": stack_outputs["S3BucketName"],
@@ -203,20 +181,13 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
         "minioServiceRegion": region,
     }
 
-
-    configure_env_file(
-        env_file_path=KFP_RDS_PARAMS_ENV_FILE,
-        env_dict=rds_params
-    )
-
     configure_env_file(
         env_file_path=KFP_S3_PARAMS_ENV_FILE,
         env_dict=s3_params
         
     )
 
-    write_env_to_yaml(rds_params, pipeline_rds_s3_values_file, module="rds")
-    write_env_to_yaml(s3_params, pipeline_rds_s3_values_file, module="s3")
+    write_env_to_yaml(s3_params, pipeline_s3_only_values_file, module="s3")
     
     s3_secret_params = {
         "secretName": "-".join(
@@ -224,14 +195,7 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region):
     )
     }
 
-    rds_secret_params = {
-        "secretName": "-".join(
-        stack_outputs["RDSSecretName"].split(":")[-1].split("-")[:-1]
-        )
-    }
-
-    write_env_to_yaml(rds_secret_params, secrets_manager_rds_s3_values_file, module="rds")
-    write_env_to_yaml(s3_secret_params, secrets_manager_rds_s3_values_file, module="s3")
+    write_env_to_yaml(s3_secret_params, secrets_manager_s3_only_values_file, module="s3")
 
 @pytest.fixture(scope="class")
 def delete_s3_bucket_contents(cfn_stack, request, region):
@@ -297,7 +261,7 @@ def wait_for_katib_experiment_succeeded(cluster, region, namespace, name):
     wait_for(callback)
 
 
-class TestRDSS3:
+class TestS3:
     @pytest.fixture(scope="class")
     def setup(self, metadata, port_forward, cluster, region, delete_s3_bucket_contents):
 
@@ -314,13 +278,10 @@ class TestRDSS3:
 
         metadata_file = metadata.to_file()
         print(metadata.params)  # These needed to be logged
-        print("Created metadata file for TestRDSS3", metadata_file)
+        print("Created metadata file for TestS3", metadata_file)
 
     # todo: make test method reusable
-    def test_kfp_experiment(self, setup, kfp_client, cfn_stack, region):
-        cfn_client = get_cfn_client(region)
-        stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
-
+    def test_kfp_experiment(self, kfp_client):
         name = rand_name("experiment-")
         description = rand_name("description-")
         experiment = kfp_client.create_experiment(
@@ -330,21 +291,6 @@ class TestRDSS3:
         assert name == experiment.name
         assert description == experiment.description
         assert DEFAULT_USER_NAMESPACE == experiment.resource_references[0].key.id
-
-        mysql_client = get_mysql_client(
-            user=cfn_stack["params"]["DBUsername"],
-            password=cfn_stack["params"]["DBPassword"],
-            host=stack_outputs["RDSEndpoint"],
-            database="mlpipeline",
-        )
-
-        resp = mysql_utils.query(
-            mysql_client, f"select * from experiments where Name='{name}'"
-        )
-        assert len(resp) == 1
-        assert resp[0]["Name"] == experiment.name
-        assert resp[0]["Description"] == experiment.description
-        assert resp[0]["Namespace"] == experiment.resource_references[0].key.id
 
         resp = kfp_client.get_experiment(
             experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
@@ -356,11 +302,6 @@ class TestRDSS3:
 
         kfp_client.delete_experiment(experiment.id)
 
-        resp = mysql_utils.query(
-            mysql_client, f"select * from experiments where Name='{name}'"
-        )
-        assert len(resp) == 0
-
         try:
             kfp_client.get_experiment(
                 experiment_id=experiment.id, namespace=DEFAULT_USER_NAMESPACE
@@ -368,8 +309,6 @@ class TestRDSS3:
             raise AssertionError("Expected KFPApiException Not Found")
         except KFPApiException as e:
             assert "Not Found" == e.reason
-
-        mysql_client.close()
 
     # todo: make test method reusable
     def test_run_pipeline(self, setup, kfp_client, cfn_stack, region):
@@ -419,43 +358,10 @@ class TestRDSS3:
         for key in s3_artifact_keys:
             assert key in content_keys
 
-        mysql_client = get_mysql_client(
-            user=cfn_stack["params"]["DBUsername"],
-            password=cfn_stack["params"]["DBPassword"],
-            host=stack_outputs["RDSEndpoint"],
-            database="mlpipeline",
-        )
-
-        resp = mysql_utils.query(
-            mysql_client, f"select * from run_details where UUID='{run.id}'"
-        )
-
-        assert len(resp) == 1
-        assert resp[0]["DisplayName"] == job_name
-        assert resp[0]["PipelineId"] == pipeline_id
-        assert resp[0]["Conditions"] == "Succeeded"
-
-        mysql_client = get_mysql_client(
-            user=cfn_stack["params"]["DBUsername"],
-            password=cfn_stack["params"]["DBPassword"],
-            host=stack_outputs["RDSEndpoint"],
-            database=METADB_NAME,
-        )
-
-        resp = mysql_utils.query(
-            mysql_client, f"show tables"
-        )
-        tables_in_mldb = {t['Tables_in_metadata_db'] for t in resp}
-        expected_tables_in_mldb = {'ContextProperty', 'Execution', 'ParentType', 'Type', 'ParentContext', 'ArtifactProperty', 'Event', 'ExecutionProperty', 'Context', 'EventPath', 'Artifact', 'MLMDEnv', 'Association', 'TypeProperty', 'Attribution'}
-        assert expected_tables_in_mldb == tables_in_mldb
-
         kfp_client.delete_experiment(experiment.id)
 
     # todo: make test method reusable
-    def test_katib_experiment(self, setup, cluster, region, cfn_stack):
-        cfn_client = get_cfn_client(region)
-        stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
-
+    def test_katib_experiment(self, cluster, region):
         filepath = os.path.abspath(
             os.path.join(CUSTOM_RESOURCE_TEMPLATES_FOLDER, KATIB_EXPERIMENT_FILE)
         )
@@ -472,21 +378,11 @@ class TestRDSS3:
         assert resp["metadata"]["name"] == name
         assert resp["metadata"]["namespace"] == namespace
 
-        wait_for_katib_experiment_succeeded(cluster, region, namespace, name)
+        resp = get_katib_experiment(cluster, region, namespace, name)
 
-        mysql_client = get_mysql_client(
-            user=cfn_stack["params"]["DBUsername"],
-            password=cfn_stack["params"]["DBPassword"],
-            host=stack_outputs["RDSEndpoint"],
-            database="kubeflow",
-        )
-
-        resp = mysql_utils.query(
-            mysql_client,
-            f"select count(*) as count from observation_logs where trial_name like '{name}%'",
-        )
-
-        assert resp[0]["count"] > 0
+        assert resp["kind"] == "Experiment"
+        assert resp["metadata"]["name"] == name
+        assert resp["metadata"]["namespace"] == namespace
 
         resp = delete_katib_experiment(cluster, region, namespace, name)
 
