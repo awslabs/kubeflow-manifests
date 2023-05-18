@@ -55,7 +55,7 @@ def installation_path():
     return INSTALLATION_PATH_FILE
 
 NOTEBOOK_IMAGES = [
-    "public.ecr.aws/c9e4w0g3/notebook-servers/jupyter-tensorflow:2.6.3-cpu-py38-ubuntu20.04-v1.8",
+    "public.ecr.aws/kubeflow-on-aws/notebook-servers/jupyter-tensorflow:2.12.0-cpu-py310-ubuntu20.04-ec2-v1.0",
 ]
 
 testdata = [
@@ -215,8 +215,10 @@ class TestSanity:
         cmd = f"kubectl -n kubeflow-user-example-com exec -it {notebook_name}-0 -- /bin/bash -c".split()
         cmd.append(sub_cmd)
 
-        # kubectl wait --for=condition=ready pod -l 'app in ({notebook_name})' --timeout=240s -n {DEFAULT_USER_NAMESPACE}
-        kubectl_wait_pods(notebook_name, DEFAULT_USER_NAMESPACE)
+        # kubectl wait --for=condition=ready pod -l 'app in ({notebook_name})' --timeout=360s -n {DEFAULT_USER_NAMESPACE}
+        kubectl_wait_pods(
+            pods=notebook_name, namespace=DEFAULT_USER_NAMESPACE, timeout=360
+        )
 
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
         print(output)
