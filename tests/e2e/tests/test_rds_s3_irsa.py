@@ -20,6 +20,7 @@ from e2e.utils.utils import (
     get_mysql_client,
     load_json_file,
     load_yaml_file,
+    exec_shell,
     write_env_to_yaml,
 )
 from e2e.utils.config import metadata, configure_env_file, configure_resource_fixture
@@ -86,9 +87,15 @@ DISABLE_PIPELINE_CACHING_PATCH_FILE = (
 
 DEFAULT_USER_NAMESPACE = "kubeflow-user-example-com"
 
+
 @pytest.fixture(scope="class")
 def installation_path():
     return INSTALLATION_PATH_FILE
+
+
+@pytest.fixture(scope="class")
+def associate_oidc(cluster, region):
+    associate_iam_oidc_provider(cluster_name=cluster, region=region)
 
 
 @pytest.fixture(scope="class")
@@ -185,19 +192,14 @@ METADB_NAME = "metadata_db"
 def installation_path():
     return INSTALLATION_PATH_FILE
 
+
 @pytest.fixture(scope="class")
 def associate_oidc(cluster, region):
     associate_iam_oidc_provider(cluster_name=cluster, region=region)
 
-@pytest.fixture(scope="class")
-def login():
-    return "user@example.com"
-
 
 @pytest.fixture(scope="class")
-def configure_manifests(cfn_stack, aws_secrets_driver, region, cluster):
-    iam_client = get_iam_client(region=region)
-
+def configure_manifests(cfn_stack, aws_secrets_driver, profile_role, region, cluster):
     cfn_client = get_cfn_client(region)
     stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
@@ -243,10 +245,35 @@ def configure_manifests(cfn_stack, aws_secrets_driver, region, cluster):
         rds_secret_params, secrets_manager_rds_s3_values_file, module="rds"
     )
 
+    iam_client = get_iam_client(region=region)
+    resp = iam_client.get_role(RoleName=profile_role)
+    oidc_role_arn = resp["Role"]["Arn"]
+
+    # kustomize
+    CHART_EXPORT_PATH = "../../awsconfigs/apps/pipeline/s3/service-account.yaml"
+    USER_NAMESPACE_PATH = "../../awsconfigs/common/user-namespace/overlay/profile.yaml"
+    exec_shell(
+        f'yq e \'.metadata.annotations."eks.amazonaws.com/role-arn"="{oidc_role_arn}"\' '
+        + f"-i {CHART_EXPORT_PATH}"
+    )
+    exec_shell(
+        f'yq e \'.spec.plugins[0].spec."awsIamRole"="{oidc_role_arn}"\' '
+        + f"-i {USER_NAMESPACE_PATH}"
+    )
+
+    # Helm
+    USER_NAMESPACE_PATH = "../../charts/common/user-namespace/values.yaml"
+    exec_shell(
+        f"yq e '.s3.roleArn=\"{oidc_role_arn}\"' " + f"-i {pipeline_rds_s3_values_file}"
+    )
+    exec_shell(
+        f"yq e '.awsIamForServiceAccount.awsIamRole=\"{oidc_role_arn}\"' "
+        + f"-i {USER_NAMESPACE_PATH}"
+    )
+
     os.environ["CLUSTER_REGION"] = region
     os.environ["CLUSTER_NAME"] = cluster
-    apply_retcode = subprocess.call(f"make bootstrap-pipelines".split(), cwd="../..")
-    assert apply_retcode == 0
+
 
 @pytest.fixture(scope="class")
 def delete_s3_bucket_contents(cfn_stack, request, region):
@@ -271,9 +298,82 @@ def delete_s3_bucket_contents(cfn_stack, request, region):
 PIPELINE_NAME = "[Demo] XGBoost - Iterative model training"
 KATIB_EXPERIMENT_FILE = "katib-experiment-random.yaml"
 
+
+@pytest.fixture(scope="class")
+def profile_trust_policy(cluster, region, account_id, associate_oidc):
+    eks_client = get_eks_client(region=region)
+
+    resp = eks_client.describe_cluster(name=cluster)
+    oidc_url = resp["cluster"]["identity"]["oidc"]["issuer"].split("https://")[1]
+
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Federated": f"arn:aws:iam::{account_id}:oidc-provider/{oidc_url}"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                    "StringEquals": {
+                        f"{oidc_url}:aud": "sts.amazonaws.com",
+                        f"{oidc_url}:sub": [
+                            f"system:serviceaccount:kubeflow-user-example-com:default-editor",
+                            "system:serviceaccount:kubeflow:ml-pipeline",
+                        ],
+                    }
+                },
+            }
+        ],
+    }
+
+    return json.dumps(trust_policy)
+
+
+@pytest.fixture(scope="class")
+def profile_role(region, metadata, request, profile_trust_policy):
+    role_name = rand_name("profile-role-")
+    metadata_key = "profile_role_name"
+
+    def on_create():
+        iam_client = get_iam_client(region=region)
+        iam_client.create_role(
+            RoleName=role_name, AssumeRolePolicyDocument=profile_trust_policy
+        )
+
+        iam_client.attach_role_policy(
+            RoleName=role_name, PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        )
+
+    def on_delete():
+        name = metadata.get(metadata_key) or role_name
+        iam_client = get_iam_client(region=region)
+        iam_client.detach_role_policy(
+            RoleName=name, PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        )
+        iam_client.delete_role(RoleName=name)
+
+    return configure_resource_fixture(
+        metadata=metadata,
+        request=request,
+        resource_details=role_name,
+        metadata_key=metadata_key,
+        on_create=on_create,
+        on_delete=on_delete,
+    )
+
+
 class TestRDSS3:
     @pytest.fixture(scope="class")
-    def setup(self, metadata, port_forward, cluster, region, delete_s3_bucket_contents):
+    def setup(
+        self,
+        metadata,
+        port_forward,
+        cluster,
+        region,
+        delete_s3_bucket_contents,
+    ):
 
         # Disable caching in KFP
         # By default KFP will cache previous pipeline runs and subsequent runs will skip cached steps
@@ -295,22 +395,21 @@ class TestRDSS3:
         cfn_client = get_cfn_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-        db_username=cfn_stack["params"]["DBUsername"]
-        db_password=cfn_stack["params"]["DBPassword"]
-        rds_endpoint=stack_outputs["RDSEndpoint"]
+        db_username = cfn_stack["params"]["DBUsername"]
+        db_password = cfn_stack["params"]["DBPassword"]
+        rds_endpoint = stack_outputs["RDSEndpoint"]
 
         rds_s3.test_kfp_experiment(kfp_client, db_username, db_password, rds_endpoint)
-
 
     # todo: make test method reusable
     def test_run_pipeline(self, setup, kfp_client, cfn_stack, region):
         cfn_client = get_cfn_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-        db_username=cfn_stack["params"]["DBUsername"]
-        db_password=cfn_stack["params"]["DBPassword"]
-        rds_endpoint=stack_outputs["RDSEndpoint"]
-        s3_bucket_name=stack_outputs["S3BucketName"]
+        db_username = cfn_stack["params"]["DBUsername"]
+        db_password = cfn_stack["params"]["DBPassword"]
+        rds_endpoint = stack_outputs["RDSEndpoint"]
+        s3_bucket_name = stack_outputs["S3BucketName"]
 
         rds_s3.test_run_pipeline(
             kfp_client, s3_bucket_name, db_username, db_password, rds_endpoint, region
@@ -321,10 +420,10 @@ class TestRDSS3:
         cfn_client = get_cfn_client(region)
         stack_outputs = get_stack_outputs(cfn_client, cfn_stack["stack_name"])
 
-        db_username=cfn_stack["params"]["DBUsername"]
-        db_password=cfn_stack["params"]["DBPassword"]
-        rds_endpoint=stack_outputs["RDSEndpoint"]
-        
+        db_username = cfn_stack["params"]["DBUsername"]
+        db_password = cfn_stack["params"]["DBPassword"]
+        rds_endpoint = stack_outputs["RDSEndpoint"]
+
         rds_s3.test_katib_experiment(
             cluster, region, db_username, db_password, rds_endpoint
         )
