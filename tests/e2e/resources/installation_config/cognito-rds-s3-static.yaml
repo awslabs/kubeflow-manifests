@@ -377,9 +377,9 @@ aws-secrets-manager:
   installation_options:
     kustomize: 
       paths:
-        - ../../awsconfigs/common/aws-secrets-manager/rds
+        - ../../awsconfigs/common/aws-secrets-manager
     helm:
-      paths: ../../charts/common/aws-secrets-manager/rds-only
+      paths: ../../charts/common/aws-secrets-manager/rds-s3
   validations:
     pods:
       namespace: kubeflow
