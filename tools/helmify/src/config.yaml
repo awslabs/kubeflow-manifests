@@ -140,6 +140,18 @@ central-dashboard:
   output_helm_chart_path: charts/apps/central-dashboard
   version: 0.2.0
   app_version: v1.7.0
+  params:
+    template_paths:
+      - tools/helmify/template/central-dashboard/params.env
+      - tools/helmify/template/central-dashboard/centraldashboard-config.yaml
+    target_paths:
+      - awsconfigs/apps/centraldashboard/params.env
+      - awsconfigs/apps/centraldashboard/patches/configmap.yaml
+  values:
+    template_paths:
+      - tools/helmify/template/central-dashboard/values.yaml
+    target_paths:
+      - charts/apps/central-dashboard/values.yaml
 
 
 aws-secrets-manager:

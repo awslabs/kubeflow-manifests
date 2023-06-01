@@ -12,3 +12,9 @@ commonLabels:
 
 patchesStrategicMerge:
 - patches/configmap.yaml
+
+configMapGenerator:
+  - name: centraldashboard-parameters
+    behavior: merge
+    envs:
+    - params.env
