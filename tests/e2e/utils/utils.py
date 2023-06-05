@@ -317,6 +317,17 @@ def load_multiple_yaml_files(file_path: str):
     return yaml.safe_load_all(content)
 
 
+def str_presenter(dumper, data):
+    # check for multiline string
+    if len(data.splitlines()) > 1:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+
+yaml.add_representer(str, str_presenter)
+yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
+
+
 def write_yaml_file(yaml_content, file_path: str):
     with open(file_path, "w") as file:
         file.write(yaml.dump(yaml_content))
