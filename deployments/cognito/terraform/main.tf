@@ -208,7 +208,7 @@ module "kubeflow_components" {
 #---------------------------------------------------------------
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.4"
+  version = "5.0.0"
 
   name = local.cluster_name
   cidr = local.vpc_cidr
