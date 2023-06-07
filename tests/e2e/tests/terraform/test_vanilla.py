@@ -27,7 +27,7 @@ TF_FOLDER = TO_ROOT + "deployments/vanilla/terraform/"
 
 @pytest.fixture(scope="class")
 def installation(region, metadata, request):
-    cluster_name = rand_name(TEST_SUITE_NAME + "-")
+    cluster_name = rand_name(TEST_SUITE_NAME + "-")[:18]
 
     input_variables = {
         "cluster_name": cluster_name,

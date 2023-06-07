@@ -20,7 +20,7 @@ TF_FOLDER = TO_ROOT + "deployments/cognito-rds-s3/terraform/"
 
 @pytest.fixture(scope="class")
 def installation(region, metadata, request):
-    cluster_name = rand_name(TEST_SUITE_NAME + "-")
+    cluster_name = rand_name(TEST_SUITE_NAME + "-")[:18]
     db_username = rand_name("user")
     db_password = rand_name("pw")
     subdomain_name = rand_name("sub") + "." + get_root_domain_name(request)

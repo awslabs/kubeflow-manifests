@@ -29,7 +29,7 @@ TF_FOLDER = TO_ROOT + "deployments/rds-s3/terraform/"
 
 @pytest.fixture(scope="class")
 def installation(region, metadata, request):
-    cluster_name = rand_name(TEST_SUITE_NAME + "-")
+    cluster_name = rand_name(TEST_SUITE_NAME + "-")[:18]
     db_username = rand_name("user")
     db_password = rand_name("pw")
     pipeline_s3_credential_option = get_pipeline_s3_credential_option(request)
