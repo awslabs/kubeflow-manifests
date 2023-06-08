@@ -28,7 +28,7 @@
       "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
       "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
       "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/main\/docs\/deployment\/rds-s3\/guide\/",
-      "wordCount" : "3116",
+      "wordCount" : "3146",
       "keywords" : [ "Kubeflow" ]
   }
   </script>
@@ -49,12 +49,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/main/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-11T13:00:50-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-06-08T03:12:54+03:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Manifest Deployment Guide">
 <meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
-<meta itemprop="dateModified" content="2023-05-11T13:00:50-07:00" />
-<meta itemprop="wordCount" content="3116">
+<meta itemprop="dateModified" content="2023-06-08T03:12:54+03:00" />
+<meta itemprop="wordCount" content="3146">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Manifest Deployment Guide"/>
 <meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
@@ -1262,8 +1262,10 @@ Select the package manager of your choice.
 </span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
   <div class="tab-pane fade"
         id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
   
@@ -1336,6 +1338,9 @@ Select the package manager of your choice.
         id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
@@ -1706,7 +1711,7 @@ Select the package manager of your choice.
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 11, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/f7a915b88f2e72dfca0dd19af2e49f1b677b9169">update website for 1.7 patch release 1 (#735) (f7a915b)</a>
+  Last modified June 8, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/4e247e3722150163f99528880be46a30cf38bdbe">Fix helm deployment for rds-s3-static (#749) (4e247e3)</a>
 </div>
 
 </div>
