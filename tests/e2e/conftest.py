@@ -109,6 +109,14 @@ def get_root_domain_name(request):
     return request.config.getoption("--root-domain-name")
 
 
+def get_pipeline_s3_credential_option(request):
+    pipeline_s3_credential_option = request.config.getoption(
+        "--pipeline_s3_credential_option"
+    )
+    if not pipeline_s3_credential_option:
+        pipeline_s3_credential_option = "static"
+    return pipeline_s3_credential_option
+
 @pytest.fixture(scope="class")
 def region(metadata, request):
     """
