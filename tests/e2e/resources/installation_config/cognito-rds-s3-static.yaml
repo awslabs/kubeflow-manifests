@@ -379,7 +379,7 @@ aws-secrets-manager:
       paths:
         - ../../awsconfigs/common/aws-secrets-manager
     helm:
-      paths: ../../charts/common/aws-secrets-manager/
+      paths: ../../charts/common/aws-secrets-manager/rds-s3
   validations:
     pods:
       namespace: kubeflow
