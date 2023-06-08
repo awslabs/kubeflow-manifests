@@ -14,7 +14,7 @@ TF_FOLDER = TO_ROOT + "deployments/cognito/terraform/"
 
 @pytest.fixture(scope="class")
 def installation(region, metadata, request):
-    cluster_name = rand_name(TEST_SUITE_NAME + "-")
+    cluster_name = rand_name(TEST_SUITE_NAME + "-")[:18]
     subdomain_name = rand_name("sub") + "." + get_root_domain_name(request)
     cognito_user_pool_name = rand_name("up-")
 
