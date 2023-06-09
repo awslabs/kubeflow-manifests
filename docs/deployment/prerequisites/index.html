@@ -49,11 +49,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/docs/deployment/prerequisites/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-11T13:00:32-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+<meta property="article:modified_time" content="2023-06-09T10:12:14-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
 
 <meta itemprop="name" content="Prerequisites">
 <meta itemprop="description" content="Set up your environment for deploying Kubeflow on AWS">
-<meta itemprop="dateModified" content="2023-05-11T13:00:32-07:00" />
+<meta itemprop="dateModified" content="2023-06-09T10:12:14-07:00" />
 <meta itemprop="wordCount" content="652">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Prerequisites"/>
@@ -137,7 +137,7 @@
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
 	
-	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.1/docs">v1.7</a>
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.2/docs">v1.7</a>
 	
 	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
 	
@@ -521,9 +521,9 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">Launch Ubuntu 18.04 cloud9 instance 
 </span></span></code></pre></div><h2 id="clone-repository">Clone repository</h2>
 <p>Clone the <a href="https://github.com/awslabs/kubeflow-manifests"><code>awslabs/kubeflow-manifests</code></a> and the <a href="https://github.com/kubeflow/manifests"><code>kubeflow/manifests</code></a> repositories and check out the release branches of your choosing.</p>
-<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.7.0) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.7.0-aws-b1.0.1) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
+<p>Substitute the value for <code>KUBEFLOW_RELEASE_VERSION</code>(e.g. v1.7.0) and <code>AWS_RELEASE_VERSION</code>(e.g. v1.7.0-aws-b1.0.2) with the tag or branch you want to use below. Read more about <a href="https://awslabs.github.io/kubeflow-manifests/docs/about/releases/">releases and versioning</a> if you are unsure about what these values should be.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="o">=</span>v1.7.0
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.7.0-aws-b1.0.1
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_RELEASE_VERSION</span><span class="o">=</span>v1.7.0-aws-b1.0.2
 </span></span><span class="line"><span class="cl">git clone https://github.com/awslabs/kubeflow-manifests.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kubeflow-manifests
 </span></span><span class="line"><span class="cl">git checkout <span class="si">${</span><span class="nv">AWS_RELEASE_VERSION</span><span class="si">}</span>
 </span></span><span class="line"><span class="cl">git clone --branch <span class="si">${</span><span class="nv">KUBEFLOW_RELEASE_VERSION</span><span class="si">}</span> https://github.com/kubeflow/manifests.git upstream
@@ -569,7 +569,7 @@ You might want to grant <code>Administrative Privileges</code> as it will requir
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">
-  Last modified May 11, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/71af1d005f0341fd894695a1154ab83260c46a53">Release changes for v1.7.0 aws b1.0.1 (#736) (71af1d00)</a>
+  Last modified June 9, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/f3f4125a1264e92d870e3b87933df406c598fbf4">Website changes for release branch (#758) (f3f4125a)</a>
 </div>
 
 </div>
@@ -652,7 +652,7 @@ indexName: 'kubeflow-manifests',
 container: '#docsearch',
 
 searchParameters: {
-    facetFilters: ["version: latest "],
+    facetFilters: ["version: main "],
   },
 debug: true 
 
