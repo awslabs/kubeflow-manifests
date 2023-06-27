@@ -374,8 +374,10 @@ mlmdDb='$MLMD_DB'
             {{< /tab >}}
             {{< tab header="Helm" lang="yaml" >}}
 yq e '.rds.dbHost = env(DB_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.rds.dbHost = env(DB_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml
 yq e '.rds.dbHost = env(DB_HOST)' -i charts/apps/kubeflow-pipelines/rds-only/values.yaml
 yq e '.rds.mlmdDb = env(MLMD_DB)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.rds.mlmdDb = env(MLMD_DB)' -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml
 yq e '.rds.mlmdDb = env(MLMD_DB)' -i charts/apps/kubeflow-pipelines/rds-only/values.yaml
             {{< /tab >}}
             {{< /tabpane >}}
@@ -395,6 +397,9 @@ minioServiceRegion='$CLUSTER_REGION'
 yq e '.s3.bucketName = env(S3_BUCKET)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
 yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
 yq e '.s3.minioServiceHost = env(MINIO_SERVICE_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml
+yq e '.s3.bucketName = env(S3_BUCKET)' -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml
+yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml
+yq e '.s3.minioServiceHost = env(MINIO_SERVICE_HOST)' -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml
 yq e '.s3.bucketName = env(S3_BUCKET)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
 yq e '.s3.minioServiceHost = env(MINIO_SERVICE_HOST)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml
 yq e '.s3.minioServiceRegion = env(CLUSTER_REGION)' -i charts/apps/kubeflow-pipelines/s3-only/values.yaml

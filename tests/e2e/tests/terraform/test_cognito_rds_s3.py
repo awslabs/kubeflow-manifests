@@ -3,30 +3,35 @@ import pytest
 from e2e.utils.constants import TO_ROOT, ALTERNATE_MLMDB_NAME
 from e2e.utils.config import metadata
 from e2e.utils.utils import rand_name
-from e2e.conftest import region, get_accesskey, get_secretkey, get_root_domain_name
+from e2e.conftest import (
+    region,
+    get_accesskey,
+    get_secretkey,
+    get_root_domain_name,
+    get_pipeline_s3_credential_option,
+)
 
 from e2e.utils.terraform_utils import terraform_installation, get_stack_output
 from e2e.test_methods import cognito, rds_s3
 
-TEST_SUITE_NAME = "tf-cgo-rds-s3"
+TEST_SUITE_NAME = "cog-rds-s3"
 TF_FOLDER = TO_ROOT + "deployments/cognito-rds-s3/terraform/"
 
 
 @pytest.fixture(scope="class")
 def installation(region, metadata, request):
-    cluster_name = rand_name(TEST_SUITE_NAME + "-")
+    cluster_name = rand_name(TEST_SUITE_NAME + "-")[:18]
     db_username = rand_name("user")
     db_password = rand_name("pw")
     subdomain_name = rand_name("sub") + "." + get_root_domain_name(request)
     cognito_user_pool_name = rand_name("up-")
+    pipeline_s3_credential_option = get_pipeline_s3_credential_option(request)
 
     input_variables = {
         "cluster_name": cluster_name,
         "cluster_region": region,
         "db_username": db_username,
         "db_password": db_password,
-        "minio_aws_access_key_id": get_accesskey(request),
-        "minio_aws_secret_access_key": get_secretkey(request),
         "mlmdb_name": ALTERNATE_MLMDB_NAME,
         "publicly_accessible": "true",
         "deletion_protection": "false",
@@ -35,7 +40,12 @@ def installation(region, metadata, request):
         "aws_route53_root_zone_name": get_root_domain_name(request),
         "aws_route53_subdomain_zone_name": subdomain_name,
         "cognito_user_pool_name": cognito_user_pool_name,
+        "pipeline_s3_credential_option": pipeline_s3_credential_option,
     }
+
+    if pipeline_s3_credential_option == "static":
+        input_variables["minio_aws_access_key_id"] = get_accesskey(request)
+        input_variables["minio_aws_secret_access_key"] = get_secretkey(request)
 
     return terraform_installation(
         input_variables, TF_FOLDER, TEST_SUITE_NAME, metadata, request
