@@ -50,9 +50,6 @@ def notebook_server(
         "NAMESPACE": DEFAULT_USER_NAMESPACE,
         "IMAGE": image_name,
     }
-    notebook_pvc = unmarshal_yaml(
-        yaml_file=notebook_server_pvc_spec_file, replacements=replacements
-    )
     notebook_server = unmarshal_yaml(
         yaml_file=notebook_server_spec_file, replacements=replacements
     )
@@ -64,10 +61,6 @@ def notebook_server(
             file_path=notebook_file_path,
         )
 
-        with tempfile.NamedTemporaryFile() as tmp:
-            tmp.write(str.encode(str(yaml.dump(notebook_pvc))))
-            tmp.flush()
-            subprocess.call(f"kubectl apply -f {tmp.name}".split())
 
         with tempfile.NamedTemporaryFile() as tmp:
             tmp.write(str.encode(str(yaml.dump(notebook_server))))
@@ -83,10 +76,6 @@ def notebook_server(
             tmp.flush()
             subprocess.call(f"kubectl delete -f {tmp.name}".split())
 
-        with tempfile.NamedTemporaryFile() as tmp:
-            tmp.write(str.encode(str(yaml.dump(notebook_pvc))))
-            tmp.flush()
-            subprocess.call(f"kubectl delete -f {tmp.name}".split())
 
         delete_configmap(
             namespace=DEFAULT_USER_NAMESPACE, configmap_name=config_map_name
