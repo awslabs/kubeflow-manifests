@@ -29,6 +29,8 @@ spec:
           name: dshm
       serviceAccountName: default-editor
       volumes:
+      - name: ${NOTEBOOK_NAME}
+        emptyDir: {}
       - configMap:
           name: ${NOTEBOOK_NAME}-config-map
         name: ${NOTEBOOK_NAME}-config-map
