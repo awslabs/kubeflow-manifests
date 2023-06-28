@@ -220,7 +220,7 @@ class TestSanity:
             pods=notebook_name, namespace=DEFAULT_USER_NAMESPACE, timeout=360
         )
 
-        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=120).decode()
         print(output)
         # The second condition is now required in case the kfp test runs before this one.
         assert expected_output in output or "training-job-" in output
