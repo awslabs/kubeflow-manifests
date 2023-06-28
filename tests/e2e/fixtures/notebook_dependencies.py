@@ -38,9 +38,6 @@ def notebook_server(
         TO_ROOT_PATH + "tests/e2e/resources/notebooks/" + ipynb_notebook_file
     )
 
-    notebook_server_pvc_spec_file = (
-        TO_ROOT_PATH + "tests/e2e/resources/custom-resource-templates/notebook-pvc.yaml"
-    )
     notebook_server_spec_file = (
         TO_ROOT_PATH + "tests/e2e/resources/custom-resource-templates/notebook-crd.yaml"
     )
