@@ -266,7 +266,13 @@ def kubectl_wait_pods(
     else:
         cmd = f"kubectl wait --for=condition={condition} pod -l '{identifier} in ({pods})' --timeout={timeout}s"
     print(f"running command: {cmd}")
-    assert os.system(cmd) == 0
+    retcode = os.system(cmd)
+
+    if retcode is not 0:
+        ns = f"-n {namespace}" if namespace else ""
+        debug_cmd = f"kubectl describe pod -l '{identifier} in ({pods})' --timeout={timeout}s {ns}"
+        os.system(debug_cmd)
+        raise Exception("Timeout/error waiting for pod condition")
 
 
 def kubectl_wait_crd(crd, timeout=60, condition="established"):
