@@ -142,7 +142,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # EKS Blueprints Add-ons
   enable_cert_manager                 = true
-  enable_aws_load_balancer_controller = true
+  enable_aws_load_balancer_controller = false
 
   aws_efs_csi_driver_helm_config = {
     namespace = "kube-system"
@@ -186,6 +186,15 @@ module "eks_blueprints_kubernetes_addons" {
 
   tags = local.tags
 
+}
+
+module "aws_load_balancer_controller" {
+  source = "../../../iaac/terraform/common/aws-load-balancer-controller"
+
+  cluster_name      = local.cluster_name
+  oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
+
+  tags = local.tags
 }
 
 # todo: update the blueprints repo code to export the desired values as outputs
@@ -248,6 +257,8 @@ module "kubeflow_components" {
   load_balancer_scheme            = var.load_balancer_scheme
 
   tags = local.tags
+
+  depends_on = [module.aws_load_balancer_controller]
 
   providers = {
     aws          = aws
