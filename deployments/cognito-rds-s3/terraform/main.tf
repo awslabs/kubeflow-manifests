@@ -40,6 +40,7 @@ locals {
     desired_size    = 3
     max_size        = 5
     ami_type        = "AL2_x86_64_GPU"
+    disk_size       = 75
     subnet_ids      = module.vpc.private_subnets
   } : null
 
