@@ -130,6 +130,7 @@ module "rds" {
   db_password                    = coalesce(var.db_password, try(random_password.db_password[0].result, null))
   db_class                       = var.db_class
   db_allocated_storage           = var.db_allocated_storage
+  mysql_engine_version           = var.mysql_engine_version
   backup_retention_period        = var.backup_retention_period
   storage_type                   = var.storage_type
   deletion_protection            = var.deletion_protection
