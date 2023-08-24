@@ -120,21 +120,11 @@ module "eks_blueprints" {
 }
 
 module "ebs_csi_driver_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.20"
-
-  role_name_prefix = "${local.cluster_name}-ebs-csi-driver-"
-
-  attach_ebs_csi_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks_blueprints.eks_oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
-
-  tags = local.tags
+  source                = "../../../iaac/terraform/aws-infra/ebs-csi-driver-irsa"
+  cluster_name          = local.cluster_name
+  cluster_region        = local.region
+  tags                  = local.tags
+  eks_oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
 }
 
 module "eks_blueprints_kubernetes_addons" {
