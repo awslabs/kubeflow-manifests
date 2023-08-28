@@ -2,7 +2,7 @@ module "ebs_csi_driver_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.20"
 
-  role_name_prefix = "${var.cluster_name}-${var.cluster_region}-ebs-csi-driver-"
+  role_name_prefix = substr("${var.cluster_name}-${var.cluster_region}-ebs-csi-driver-", 0, 38) # Can only be 38 characters long
 
   attach_ebs_csi_policy = true
 
