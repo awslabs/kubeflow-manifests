@@ -166,9 +166,6 @@ module "eks_blueprints_kubernetes_addons" {
   enable_aws_load_balancer_controller = true
   enable_cert_manager                 = true
 
-  cert_manager = {
-    chart_version = "v1.10.0"
-  }
 
   enable_aws_efs_csi_driver = true
   enable_aws_fsx_csi_driver = true
