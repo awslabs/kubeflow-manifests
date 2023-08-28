@@ -135,7 +135,7 @@ module "ebs_csi_driver_irsa" {
 }
 
 module "eks_blueprints_kubernetes_addons" {
-  source = "aws-ia/eks-blueprints-addons/aws"
+  source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0" #ensure to update this to the latest/desired version
 
   cluster_name      = local.cluster_name
@@ -143,11 +143,11 @@ module "eks_blueprints_kubernetes_addons" {
   cluster_version   = module.eks_blueprints.eks_cluster_version
   oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
 
-depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
+  depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
 
   eks_addons = {
     aws-ebs-csi-driver = {
-      most_recent = true
+      most_recent              = true
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
     }
     coredns = {
@@ -161,8 +161,8 @@ depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
     }
   }
 
-  enable_aws_load_balancer_controller    = true
-  enable_cert_manager                    = true
+  enable_aws_load_balancer_controller = true
+  enable_cert_manager                 = true
 
   cert_manager = {
     chart_version = "v1.10.0"
@@ -173,26 +173,26 @@ depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
 
 
   aws_efs_csi_driver = {
-    namespace = "kube-system"
+    namespace     = "kube-system"
     chart_version = "2.4.1"
   }
 
   aws_fsx_csi_driver = {
-    namespace = "kube-system"
+    namespace     = "kube-system"
     chart_version = "1.5.1"
   }
 
   secrets_store_csi_driver = {
-    namespace = "kube-system"
-    chart_version   = "1.3.2"
+    namespace     = "kube-system"
+    chart_version = "1.3.2"
     set = [
       {
         name  = "syncSecret.enabled",
         value = "true"
       }
-    ] 
+    ]
   }
-  
+
   enable_secrets_store_csi_driver = true
 
   secrets_store_csi_driver_provider_aws = {
@@ -204,14 +204,14 @@ depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
       }
     ]
   }
-  
+
   enable_secrets_store_csi_driver_provider_aws = true
 
   tags = local.tags
 }
 
 module "eks_data_addons" {
-  source = "aws-ia/eks-data-addons/aws"
+  source  = "aws-ia/eks-data-addons/aws"
   version = "~> 1.0" # ensure to update this to the latest/desired version
 
   oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
