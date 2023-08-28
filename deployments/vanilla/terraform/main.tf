@@ -120,44 +120,73 @@ module "eks_blueprints" {
   tags                = local.tags
 }
 
+module "ebs_csi_driver_irsa" {
+  source                = "../../../iaac/terraform/aws-infra/ebs-csi-driver-irsa"
+  cluster_name          = local.cluster_name
+  cluster_region        = local.region
+  tags                  = local.tags
+  eks_oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
+}
+
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0" #ensure to update this to the latest/desired version
 
-  eks_cluster_id       = module.eks_blueprints.eks_cluster_id
-  eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
-  eks_oidc_provider    = module.eks_blueprints.oidc_provider
-  eks_cluster_version  = module.eks_blueprints.eks_cluster_version
+  cluster_name      = local.cluster_name
+  cluster_endpoint  = module.eks_blueprints.eks_cluster_endpoint
+  cluster_version   = module.eks_blueprints.eks_cluster_version
+  oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
 
-  # EKS Managed Add-ons
-  enable_amazon_eks_vpc_cni            = true
-  enable_amazon_eks_coredns            = true
-  enable_amazon_eks_kube_proxy         = true
-  enable_amazon_eks_aws_ebs_csi_driver = true
+  depends_on = [module.ebs_csi_driver_irsa, module.eks_data_addons]
 
-  # EKS Blueprints Add-ons
-  enable_cert_manager                 = true
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
+    }
+    coredns = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
+
   enable_aws_load_balancer_controller = true
+  enable_cert_manager                 = true
 
-  aws_efs_csi_driver_helm_config = {
-    namespace = "kube-system"
-    version   = "2.4.1"
+  cert_manager = {
+    chart_version = "v1.10.0"
   }
 
   enable_aws_efs_csi_driver = true
-
-  aws_fsx_csi_driver_helm_config = {
-    namespace = "kube-system"
-    version   = "1.5.1"
-  }
-
   enable_aws_fsx_csi_driver = true
 
-  enable_nvidia_device_plugin = local.using_gpu
+
+  aws_efs_csi_driver = {
+    namespace     = "kube-system"
+    chart_version = "2.4.1"
+  }
+
+  aws_fsx_csi_driver = {
+    namespace     = "kube-system"
+    chart_version = "1.5.1"
+  }
 
   tags = local.tags
-
 }
 
+module "eks_data_addons" {
+  source  = "aws-ia/eks-data-addons/aws"
+  version = "~> 1.0" # ensure to update this to the latest/desired version
+
+  oidc_provider_arn = module.eks_blueprints.eks_oidc_provider_arn
+
+  enable_nvidia_gpu_operator = local.using_gpu
+}
 
 # todo: update the blueprints repo code to export the desired values as outputs
 module "eks_blueprints_outputs" {
@@ -180,6 +209,7 @@ module "kubeflow_components" {
   notebook_enable_culling        = var.notebook_enable_culling
   notebook_cull_idle_time        = var.notebook_cull_idle_time
   notebook_idleness_check_period = var.notebook_idleness_check_period
+
 
   tags = local.tags
 }
