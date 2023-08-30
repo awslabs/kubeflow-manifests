@@ -172,6 +172,10 @@ module "eks_blueprints_kubernetes_addons" {
     chart_version = "2.4.1"
   }
 
+  aws_load_balancer_controller = {
+    chart_version = "v1.4.8"
+  }
+
   aws_fsx_csi_driver = {
     namespace     = "kube-system"
     chart_version = "1.5.1"
