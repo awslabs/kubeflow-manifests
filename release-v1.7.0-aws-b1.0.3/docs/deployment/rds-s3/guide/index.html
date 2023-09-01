@@ -1,0 +1,1807 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.93.0" />
+<meta name="robots" content="index, follow">
+
+<script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.3"
+      },
+      "articleSection" : "docs",
+      "name" : "Manifest Deployment Guide",
+      "headline" : "Manifest Deployment Guide",
+      "description" : "Deploying Kubeflow with RDS and S3 using Kustomize or Helm",
+      "inLanguage" : "en-US",
+      "author" : "",
+      "creator" : "",
+      "publisher": "",
+      "accountablePerson" : "",
+      "copyrightHolder" : "",
+      "copyrightYear" : "0001",
+      "datePublished": "0001-01-01 00:00:00 \u002b0000 UTC",
+      "dateModified" : "0001-01-01 00:00:00 \u002b0000 UTC",
+      "url" : "https:\/\/awslabs.github.io\/kubeflow-manifests\/release-v1.7.0-aws-b1.0.3\/docs\/deployment\/rds-s3\/guide\/",
+      "wordCount" : "3146",
+      "keywords" : [ "Kubeflow" ]
+  }
+  </script>
+
+<link rel="shortcut icon" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="manifest" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/manifest.json">
+<meta name="msapplication-config" content="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/favicons/browserconfig.xml" />
+<meta name="msapplication-TileColor" content="#4279f4">
+<meta name="theme-color" content="#4279f4">
+
+<title>Manifest Deployment Guide | Kubeflow on AWS</title>
+<meta name="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
+<meta property="og:title" content="Manifest Deployment Guide" />
+<meta property="og:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/guide/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-09-01T14:28:35-07:00" /><meta property="og:site_name" content="Kubeflow on AWS" />
+
+<meta itemprop="name" content="Manifest Deployment Guide">
+<meta itemprop="description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm">
+<meta itemprop="dateModified" content="2023-09-01T14:28:35-07:00" />
+<meta itemprop="wordCount" content="3146">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Manifest Deployment Guide"/>
+<meta name="twitter:description" content="Deploying Kubeflow with RDS and S3 using Kustomize or Helm"/>
+
+
+
+
+<link rel="preload" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/scss/main.min.0e87db4e7837ba4ec34545773019960a41c44a61700ea401f50f0731e6cb7f3c.css" as="style">
+<link href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/scss/main.min.0e87db4e7837ba4ec34545773019960a41c44a61700ea401f50f0731e6cb7f3c.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+    
+    <link href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/css/syntax.min.css" rel="stylesheet">
+
+    
+    <link href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/css/copy-code-button.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand-md navbar-dark  td-navbar">
+        <a class="navbar-brand" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/">
+		<span class="navbar-logo"></span><span class="text-uppercase font-weight-bold">Kubeflow on AWS</span>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="main_navbar" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav ml-auto pt-4 pt-md-0 my-2 my-md-1">
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				<div id="docsearch"></div>
+			</li>
+
+			
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/" ><i class='fas fa-book pr-2'></i><span>Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/blog/" ><i class='fas fa-blog pr-2'></i><span>Blog</span></a>
+			</li>
+			
+			<li class="nav-item mr-2 mr-lg-4 mt-1 mt-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/awslabs/kubeflow-manifests" target="_blank" ><i class='fab fa-github pr-2'></i><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown mt-1 mt-lg-0 mr-2">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu dropdown-menu-md-right dropdown-menu-lg-left" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/docs">latest</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs">v1.7</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.6.1-aws-b1.0.2/docs">v1.6</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.5.1-aws-b1.0.2/docs">v1.5</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/release-v1.4.1-aws-b1.0.0/docs">v1.4</a>
+	
+	<a class="dropdown-item" href="https://awslabs.github.io/kubeflow-manifests/main/docs">dev</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+	
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b103docs-li">
+  <a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-kubeflow-manifestsrelease-v170-aws-b103docs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabout-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabout-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsabout-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabout"><span class="">About</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutfeatures-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutfeatures-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutfeatures-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/features/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutfeatures"><span class="">AWS Features for Kubeflow</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutreleases-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutreleases-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutreleases-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/releases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutreleases"><span class="">Releases and Versioning</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabouteks-compatibility-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabouteks-compatibility-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsabouteks-compatibility-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/eks-compatibility/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsabouteks-compatibility"><span class="">Amazon EKS and Kubeflow Compatibility</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutsecurity-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutsecurity-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutsecurity-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/security/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutsecurity"><span class="">Security</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutusage-tracking-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutusage-tracking-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutusage-tracking-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/about/usage-tracking/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsaboutusage-tracking"><span class="">Usage Tracking</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeployment-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeployment-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeployment-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeployment"><span class="">Deployment Options</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentprerequisites-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentprerequisites-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentprerequisites-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/prerequisites/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentprerequisites"><span class="">Prerequisites</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-eks-cluster-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-eks-cluster-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-eks-cluster-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/create-eks-cluster/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-eks-cluster"><span class="">Create an EKS Cluster</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanilla-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanilla-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanilla-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanilla"><span class="">Vanilla Installation</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide"><span class="">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-terraform-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentvanillaguide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3"><span class="">RDS and S3</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-check" checked/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/guide/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide"><span class="td-sidebar-nav-active-item">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-terraform-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentrds-s3guide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito"><span class="">Cognito</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifest-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifest-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifest-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito/manifest/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifest"><span class="">Manifest Deployment Guides</span></a></label>
+  
+  <ul class="ul-4 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-automated-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-automated-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-automated-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito/manifest/guide-automated/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-automated"><span class="">Automated Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito/manifest/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitomanifestguide"><span class="">Manual Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitoguide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitoguide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitoguide-terraform-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognitoguide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito-rds-s3/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3"><span class="">Cognito, RDS, and S3</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito-rds-s3/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide"><span class="">Manifest Deployment Guide</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-terraform-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-terraform-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-terraform-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/cognito-rds-s3/guide-terraform/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcognito-rds-s3guide-terraform"><span class="">Terraform Deployment Guide</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentterraform-s3-backend-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentterraform-s3-backend-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentterraform-s3-backend-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/terraform-s3-backend/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentterraform-s3-backend"><span class="">Configure AWS S3 as a backend for storing Terraform State</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconnect-kubeflow-dashboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconnect-kubeflow-dashboard-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconnect-kubeflow-dashboard-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/connect-kubeflow-dashboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconnect-kubeflow-dashboard"><span class="">Connect to your Kubeflow Dashboard</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-profiles-with-iam-role-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-profiles-with-iam-role-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-profiles-with-iam-role-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/create-profiles-with-iam-role/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentcreate-profiles-with-iam-role"><span class="">Create Profiles with IAM role</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconfigure-notebook-culling-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconfigure-notebook-culling-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconfigure-notebook-culling-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/configure-notebook-culling/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsdeploymentconfigure-notebook-culling"><span class="">Configure Culling for Notebooks</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-ons-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-ons-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-ons-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-ons"><span class="">Deployment Add-ons</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsload-balancerguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsload-balancerguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsload-balancerguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/load-balancer/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsload-balancerguide"><span class="">Load Balancer</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstorageefsguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstorageefsguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstorageefsguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/storage/efs/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstorageefsguide"><span class="">EFS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstoragefsx-for-lustreguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstoragefsx-for-lustreguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstoragefsx-for-lustreguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/storage/fsx-for-lustre/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsstoragefsx-for-lustreguide"><span class="">FSx for Lustre</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onscloudwatchguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onscloudwatchguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onscloudwatchguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/cloudwatch/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onscloudwatchguide"><span class="">CloudWatch</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsprometheusguide-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsprometheusguide-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsprometheusguide-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/add-ons/prometheus/guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsadd-onsprometheusguide"><span class="">Prometheus</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guides-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guides-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guides-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guides"><span class="">Component Guides</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesnotebooks-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesnotebooks-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesnotebooks-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/notebooks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesnotebooks"><span class="">Notebooks</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestensorboard-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestensorboard-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestensorboard-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/tensorboard/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestensorboard"><span class="">TensorBoard</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskatib-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskatib-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskatib-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/katib/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskatib"><span class="">Katib</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidespipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidespipelines-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidespipelines-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidespipelines"><span class="">Pipelines</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestraining-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestraining-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestraining-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/training/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidestraining"><span class="">Training Operators</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserve-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserve-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserve"><span class="">KServe</span></a></label>
+  
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaccess-aws-services-from-kserve-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaccess-aws-services-from-kserve-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaccess-aws-services-from-kserve-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/kserve/access-aws-services-from-kserve/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaccess-aws-services-from-kserve"><span class="">Configure inferenceService to Access AWS Services from KServe</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskservetutorial-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskservetutorial-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskservetutorial-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/kserve/tutorial/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskservetutorial"><span class="">KServe with Kubeflow on AWS</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaws-deep-learning-containers-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaws-deep-learning-containers-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaws-deep-learning-containers-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/kserve/aws-deep-learning-containers/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guideskserveaws-deep-learning-containers"><span class="">KServe with AWS Deep Learning Containers</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesprofiles-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesprofiles-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesprofiles-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/component-guides/profiles/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docscomponent-guidesprofiles"><span class="">Profiles</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integration-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integration-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integration-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/amazon-sagemaker-integration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integration"><span class="">Amazon SageMaker Integration</span></a></label>
+  
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-operators-ack-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-operators-ack-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-operators-ack-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/amazon-sagemaker-integration/sagemaker-operators-ack/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-operators-ack"><span class="">SageMaker Operators for Kubernetes (ACK)</span></a></label>
+  
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/amazon-sagemaker-integration/sagemaker-components-for-kubeflow-pipelines/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docsamazon-sagemaker-integrationsagemaker-components-for-kubeflow-pipelines"><span class="">SageMaker Components for Kubeflow Pipelines</span></a></label>
+  
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-kubeflow-manifestsrelease-v170-aws-b103docstroubleshooting-aws-li">
+  <input type="checkbox" id="m-kubeflow-manifestsrelease-v170-aws-b103docstroubleshooting-aws-check"/>
+  <label for="m-kubeflow-manifestsrelease-v170-aws-b103docstroubleshooting-aws-check"><a href="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/troubleshooting-aws/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-kubeflow-manifestsrelease-v170-aws-b103docstroubleshooting-aws"><span class="">Troubleshooting</span></a></label>
+  
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+<a href="https://github.com/awslabs/kubeflow-manifests//tree/main/website/content/en/docs/deployment/rds-s3/guide.md" class="td-page-meta--view" target="_blank" rel="noopener"><i class="fa fa-file-alt fa-fw"></i> View page source</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//edit/main/website/content/en/docs/deployment/rds-s3/guide.md" class="td-page-meta--edit" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//new/main/website/content/en/docs/deployment/rds-s3/guide.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" class="td-page-meta--child" target="_blank" rel="noopener"><i class="fa fa-edit fa-fw"></i> Create child page</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests//issues/new?title=Manifest%20Deployment%20Guide" class="td-page-meta--issue" target="_blank" rel="noopener"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+  <a href="https://github.com/awslabs/kubeflow-manifests/issues/new" class="td-page-meta--project-issue" target="_blank" rel="noopener"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+  
+</div>
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#rds">RDS</a></li>
+        <li><a href="#s3">S3</a></li>
+      </ul>
+    </li>
+    <li><a href="#install">Install</a>
+      <ul>
+        <li><a href="#using-only-rds-or-only-s3">Using only RDS or only S3</a></li>
+      </ul>
+    </li>
+    <li><a href="#10-prerequisites">1.0 Prerequisites</a></li>
+    <li><a href="#20-set-up-rds-s3-and-configure-secrets">2.0 Set up RDS, S3, and configure Secrets</a>
+      <ul>
+        <li><a href="#21-option-1-automated-setup">2.1 <strong>Option 1: Automated Setup</strong></a></li>
+        <li><a href="#advanced-customization">Advanced customization</a></li>
+        <li><a href="#22-option-2-manual-setup">2.2 <strong>Option 2: Manual Setup</strong></a></li>
+        <li><a href="#221-rds-setup">2.2.1 RDS Setup</a></li>
+        <li><a href="#222-s3-setup">2.2.2 S3 Setup</a></li>
+        <li><a href="#2221-configure-using-irsa">2.2.2.1 Configure using IRSA</a></li>
+        <li><a href="#2222-configure-using-iam-user">2.2.2.2 Configure using IAM User</a></li>
+        <li><a href="#install-csi-driver-and-update-kfp-configurations">Install CSI Driver and update KFP configurations</a></li>
+        <li><a href="#optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</a></li>
+      </ul>
+    </li>
+    <li><a href="#30-build-manifests-and-install-kubeflow">3.0 Build Manifests and install Kubeflow</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#40-creating-profiles">4.0 Creating Profiles</a></li>
+    <li><a href="#50-verify-the-installation">5.0 Verify the installation</a>
+      <ul>
+        <li><a href="#51-verify-rds">5.1 Verify RDS</a></li>
+        <li><a href="#52-verify-s3">5.2 Verify S3</a></li>
+      </ul>
+    </li>
+    <li><a href="#60-uninstall-kubeflow">6.0 Uninstall Kubeflow</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/">Documentation</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/">Deployment Options</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/">RDS and S3</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/rds-s3/guide/">Manifest Deployment Guide</a>
+  </li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>Manifest Deployment Guide</h1>
+	<div class="lead">Deploying Kubeflow with RDS and S3 using Kustomize or Helm</div>
+	<header class="article-meta">
+		
+
+  
+    
+
+
+  
+    
+
+
+  
+
+		
+	</header>    
+	<blockquote>
+<p>Note: Helm installation option is still in preview.</p>
+</blockquote>
+<p>This guide can be used to deploy Kubeflow Pipelines (KFP) and Katib with RDS and S3.</p>
+<h3 id="rds">RDS</h3>
+<p><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html">Amazon Relational Database Service (RDS)</a> is a managed relational database service that facilitates several database management tasks such as database scaling, database backups, database software patching, OS patching, and more.</p>
+<p>In the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/pipeline/upstream/third-party/mysql/base/mysql-deployment.yaml">KFP</a> and <a href="https://github.com/kubeflow/manifests/blob/v1.5-branch/apps/katib/upstream/components/mysql/mysql.yaml">Katib</a> components both use their own MySQL pod to persist KFP data (such as experiments, pipelines, jobs, etc.) and Katib experiment observation logs, respectively.</p>
+<p>Compared to the MySQL setup in the default installation, using RDS provides the following advantages:</p>
+<ul>
+<li>Availability: RDS provides high availability and failover support for DB instances using Multi Availability Zone (Mulit-AZ) deployments with a single standby DB instance, increasing the availability of KFP and Katib services during unexpected network events.</li>
+<li>Scalability: RDS can be configured to handle availability and scaling needs. The default Kubeflow installation uses an EBS-hosted Persistent Volume Claim that is AZ-bound and does not support automatic online resizing.</li>
+<li>Persistent data: KFP and Katib data can persist beyond single Kubeflow installations. Using RDS decouples the KFP and Katib datastores from the Kubeflow deployment, allowing multiple Kubeflow installations to reuse the same RDS instance provided that the KFP component versions store data in a format that is compatible.</li>
+<li>Customization and management: RDS provides management features to facilitate changing database instance types, updating SQL versions, and more.</li>
+</ul>
+<h3 id="s3">S3</h3>
+<p><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (S3)</a> is an object storage service that is highly scalable, available, secure, and performant.</p>
+<p>In the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/">default Kubeflow installation</a>, the <a href="https://github.com/kubeflow/manifests/blob/v1.4-branch/apps/pipeline/upstream/third-party/minio/base/minio-deployment.yaml">KFP</a> component uses the MinIO object storage service that can be configured to store objects in S3. However, by default the installation hosts the object store service locally in the cluster. KFP stores data such as pipeline architectures and pipeline run artifacts in MinIO.</p>
+<p>Configuring MinIO to read and write to S3 provides the following advantages:</p>
+<ul>
+<li>Scalability and availability: S3 offers industry-leading scalability and availability and is more durable than the default MinIO object storage solution provided by Kubeflow.</li>
+<li>Persistent artifacts: KFP artifacts can persist beyond single Kubeflow installations. Using S3 decouples the KFP artifact store from the Kubeflow deployment, allowing multiple Kubeflow installations to access the same artifacts provided that the KFP component versions store data in a format that is compatible.</li>
+<li>Customization and management: S3 provides management features to help optimize, organize, and configure access to your data to meet your specific business, organizational, and compliance requirements.</li>
+</ul>
+<p>To get started with configuring and installing your Kubeflow installation with RDS and S3 follow the <a href="#install">install</a> steps below to configure and deploy the Kustomize manifest.</p>
+<h2 id="install">Install</h2>
+<p>The following steps show how to configure and deploy Kubeflow with supported AWS services.</p>
+<h3 id="using-only-rds-or-only-s3">Using only RDS or only S3</h3>
+<p>Steps relevant only to the RDS installation are prefixed with <code>[RDS]</code>.</p>
+<p>Steps relevant only to the S3 installation are prefixed with <code>[S3]</code>.</p>
+<p>Steps without any prefixing are necessary for all installations.</p>
+<p>To install for only RDS or only S3, complete the steps relevant to your installation choice.</p>
+<p>To install for both RDS and S3, complete all the steps below.</p>
+<h2 id="10-prerequisites">1.0 Prerequisites</h2>
+<p>Follow the steps in <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/prerequisites/">Prerequisites</a> to make sure that you have everything you need to get started.</p>
+<p>Make sure you are starting from the repository root directory.
+Export the below variable:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">REPO_ROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+</span></span></code></pre></div><h2 id="20-set-up-rds-s3-and-configure-secrets">2.0 Set up RDS, S3, and configure Secrets</h2>
+<p>There are two ways to create RDS and S3 resources before you deploy the Kubeflow manifests. Either use the <a href="#21-option-1-automated-setup">automated setup</a> Python script that is mentioned in the following step, or follow the <a href="#22-option-2-manual-setup">manual setup instructions</a>.</p>
+<p>As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:</p>
+<blockquote>
+<p>Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.</p>
+</blockquote>
+<ul>
+<li>
+<p>Option 1 - IRSA (Recommended): IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA.
+For more information, see <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Amazon EKS IAM roles for service accounts</a>.</p>
+</li>
+<li>
+<p>Option 2 - IAM User (Deprecated):
+<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>minio_aws_access_key_id</code> and <code>minio_aws_secret_access_key</code> respectively.</p>
+</li>
+</ul>
+<ol>
+<li>Export your desired PIPELINE_S3_CREDENTIAL_OPTION:
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-3" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-3-0-tab" data-toggle="tab" href="#tabs-3-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-3-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-3-1-tab" data-toggle="tab" href="#tabs-3-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-3-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-3-content"><div class="tab-pane fade show active"
+        id="tabs-3-0" role="tabpanel" aria-labelled-by="tabs-3-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">irsa</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-3-1" role="tabpanel" aria-labelled-by="tabs-3-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">static</span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ol>
+<h3 id="21-option-1-automated-setup">2.1 <strong>Option 1: Automated Setup</strong></h3>
+<blockquote>
+<p>Note: Automated Setup is only supported for RDS AND S3 Deployments, for RDS/S3 only use the manual steps.</p>
+</blockquote>
+<p>This setup performs all the manual steps in an automated fashion.</p>
+<p>The script takes care of creating the S3 bucket, setting up IRSA to access to S3 or creating the S3 Secrets if using static credentials, setting up the RDS database, and creating the RDS Secret using the Secrets manager. The script also edits the required configuration files for Kubeflow Pipelines to be properly configured for the RDS database during Kubeflow installation. The script also handles cases where the resources already exist. In this case, the script will simply skip the step.</p>
+<blockquote>
+<p>Note: The script will <strong>not</strong> delete any resource. Therefore, if a resource already exists (eg: Secret, database with the same name, or S3 bucket), <strong>it will skip the creation of those resources and use the existing resources instead</strong>. This is by design in order to prevent unwanted results, such as accidental deletion. For example, if a database with the same name already exists, the script will skip the database creation setup. If you forgot to change the database name used for creation, then this gives you the chance to retry the script with the proper value. See <code>python auto-rds-s3-setup.py --help</code> for the list of parameters, as well as their default values.</p>
+</blockquote>
+<ol>
+<li>
+<p>Navigate to the <code>tests/e2e</code> directory.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
+</span></span></code></pre></div></li>
+<li>
+<p>Export values for <code>CLUSTER_REGION</code>, <code>CLUSTER_NAME</code>, <code>S3_BUCKET</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_REGION</span><span class="o">=</span>&lt;&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">CLUSTER_NAME</span><span class="o">=</span>&lt;&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span>&lt;&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_INSTANCE_NAME</span><span class="o">=</span>&lt;&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_SUBNET_GROUP_NAME</span><span class="o">=</span>&lt;&gt;
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RDS_SECRET_NAME</span><span class="o">=</span>&lt;&gt;
+</span></span></code></pre></div></li>
+<li>
+<p>Export your desired PIPELINE_S3_CREDENTIAL_OPTION specific values
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-4" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-4-0-tab" data-toggle="tab" href="#tabs-4-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-4-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-4-1-tab" data-toggle="tab" href="#tabs-4-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-4-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-4-content"><div class="tab-pane fade show active"
+        id="tabs-4-0" role="tabpanel" aria-labelled-by="tabs-4-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">irsa</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-4-1" role="tabpanel" aria-labelled-by="tabs-4-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">S3_SECRET_NAME</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">MINIO_AWS_ACCESS_KEY_ID</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="p">=</span><span class="err">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">export</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="nx">static</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
+<li>
+<p>Run the <code>auto-rds-s3-setup.py</code> script
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   <ul class="nav nav-tabs" id="tabs-5" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-IRSA"
+        id="tabs-5-0-tab" data-toggle="tab" href="#tabs-5-0" role="tab" onclick="handleClick(&#34;IRSA&#34;);"
+        aria-controls="tabs-5-0" aria-selected="true">
+        IRSA
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-IAM-User"
+        id="tabs-5-1-tab" data-toggle="tab" href="#tabs-5-1" role="tab" onclick="handleClick(&#34;IAM-User&#34;);"
+        aria-controls="tabs-5-1" aria-selected="false">
+        IAM User
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-5-content"><div class="tab-pane fade show active"
+        id="tabs-5-0" role="tabpanel" aria-labelled-by="tabs-5-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-5-1" role="tabpanel" aria-labelled-by="tabs-5-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">PYTHONPATH</span><span class="p">=..</span> <span class="nx">python</span> <span class="nx">utils</span><span class="err">/</span><span class="nx">rds-s3</span><span class="err">/</span><span class="nx">auto-rds-s3-setup</span><span class="p">.</span><span class="nx">py</span> <span class="nx">--region</span> <span class="err">$</span><span class="nx">CLUSTER_REGION</span> <span class="nx">--cluster</span> <span class="err">$</span><span class="nx">CLUSTER_NAME</span> <span class="nx">--bucket</span> <span class="err">$</span><span class="nx">S3_BUCKET</span> <span class="nx">--s3_aws_access_key_id</span> <span class="err">$</span><span class="nx">MINIO_AWS_ACCESS_KEY_ID</span> <span class="nx">--s3_aws_secret_access_key</span> <span class="err">$</span><span class="nx">MINIO_AWS_SECRET_ACCESS_KEY</span> <span class="nx">--db_instance_name</span> <span class="err">$</span><span class="nx">DB_INSTANCE_NAME</span> <span class="nx">--s3_secret_name</span> <span class="err">$</span><span class="nx">S3_SECRET_NAME</span>  <span class="nx">--rds_secret_name</span> <span class="err">$</span><span class="nx">RDS_SECRET_NAME</span> <span class="nx">--db_subnet_group_name</span> <span class="err">$</span><span class="nx">DB_SUBNET_GROUP_NAME</span> <span class="nx">--pipeline_s3_credential_option</span> <span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+</li>
+</ol>
+<h3 id="advanced-customization">Advanced customization</h3>
+<p>The <code>auto-rds-s3-setup.py</code> script applies default values for the user password, max storage, storage type, instance type, and more. You can customize those preferences by specifying different values.</p>
+<p>Learn more about the different parameters with the following command:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/rds-s3/auto-rds-s3-setup.py --help
+</span></span></code></pre></div><h3 id="22-option-2-manual-setup">2.2 <strong>Option 2: Manual Setup</strong></h3>
+<p>Follow this step if you prefer to manually set up each component.</p>
+<ol>
+<li>
+<p>[S3] Create an S3 Bucket</p>
+<p>Refer to the <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html">S3 documentation</a> for steps on creating an <code>S3 bucket</code>.
+Take note of your <code>S3 bucket name</code> to use in the following steps.</p>
+</li>
+<li>
+<p>[RDS] Create an RDS Instance</p>
+<p>Refer to the <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.MySQL.html">RDS documentation</a> for steps on creating an <code>RDS MySQL instance</code>.</p>
+<p>When creating the RDS instance for security and connectivity reasons, we recommend that:</p>
+<ul>
+<li>The RDS instance is in the same VPC as the cluster</li>
+<li>The RDS instance subnets must belong to at least two private subnets within the VPC</li>
+<li>The RDS instance security group is the same security group used by the EKS node instances</li>
+</ul>
+<p>To complete the following steps you will need to keep track of the following:</p>
+<ul>
+<li><code>RDS database name</code> (not to be confused with the <code>DB identifier</code>)</li>
+<li><code>RDS database admin username</code></li>
+<li><code>RDS database admin password</code></li>
+<li><code>RDS database endpoint URL</code></li>
+<li><code>RDS database port</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="221-rds-setup">2.2.1 RDS Setup</h3>
+<ol>
+<li>
+<p>Export values:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RDS_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your rds secret name&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">DB_HOST</span><span class="o">=</span><span class="s2">&#34;&lt;your rds db host&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MLMD_DB</span><span class="o">=</span>metadata_db
+</span></span></code></pre></div></li>
+<li>
+<p>Create Secrets in AWS Secrets Manager</p>
+<ol>
+<li>[RDS] Create the RDS Secret and configure the Secret provider:
+<ol>
+<li>Configure a Secret (e.g <code>rds-secret</code>), with the RDS DB name, RDS endpoint URL, RDS DB port, and RDS DB credentials that were configured when creating your RDS instance.
+<ul>
+<li>For example, if your database name is <code>kubeflow</code>, your endpoint URL is <code>rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com</code>, your DB port is <code>3306</code>, your DB username is <code>admin</code>, and your DB password is <code>Kubefl0w</code> your secret should look similar to the following:</li>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$RDS_SECRET</span> --secret-string <span class="s1">&#39;{&#34;username&#34;:&#34;admin&#34;,&#34;password&#34;:&#34;Kubefl0w&#34;,&#34;database&#34;:&#34;kubeflow&#34;,&#34;host&#34;:&#34;rm12abc4krxxxxx.xxxxxxxxxxxx.us-west-2.rds.amazonaws.com&#34;,&#34;port&#34;:&#34;3306&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>Rename the <code>parameters.objects.objectName</code> field in <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/rds/secret-provider.yaml">the RDS Secret provider configuration</a> to the name of the Secret.
+<ul>
+<li>Rename the field with the following command:
+Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-6" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-6-0-tab" data-toggle="tab" href="#tabs-6-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-6-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-6-1-tab" data-toggle="tab" href="#tabs-6-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-6-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-6-content"><div class="tab-pane fade show active"
+        id="tabs-6-0" role="tabpanel" aria-labelled-by="tabs-6-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;rds-secret&#34;,env(RDS_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-6-1" role="tabpanel" aria-labelled-by="tabs-6-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.secretName = env(RDS_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="222-s3-setup">2.2.2 S3 Setup</h3>
+<ol>
+<li>Export values:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_BUCKET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 bucket name&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_SERVICE_HOST</span><span class="o">=</span>s3.amazonaws.com
+</span></span></code></pre></div></li>
+</ol>
+<p>As of Kubeflow 1.7, there are two options to configure Amazon S3 as an artifact store for pipelines. Choose one of the following options:</p>
+<blockquote>
+<p>Note: IRSA is only supported in KFPv1, if you plan to use KFPv2, choose the IAM User option. IRSA support for KFPv2 will be added in the next release.</p>
+</blockquote>
+<ul>
+<li>Option 1 - IRSA (Recommended): Follow <a href="#2221-configure-using-irsa">Configure using IRSA</a></li>
+<li>Option 2 - IAM User (Deprecated): Follow <a href="#2222-configure-using-iam-user">Configure using IAM User</a></li>
+</ul>
+<h3 id="2221-configure-using-irsa">2.2.2.1 Configure using IRSA</h3>
+<p>IAM Role for Service Account (IRSA) which allows the use of AWS IAM permission boundaries at the Kubernetes pod level. A Kubernetes service account (SA) is associated with an IAM role with a role policy that scopes the IAM permissions (e.g. S3 read/write access, etc.). When a pod in the SA namespace is annotated with the SA name, EKS injects the IAM role ARN and a token is used to get the credentials so that the pod can make requests to AWS services within the scope of the role policy associated with the IRSA. For more information, see <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Amazon EKS IAM roles for service accounts</a>.</p>
+<ol>
+<li>
+<p>Create and Configure IAM Roles:</p>
+<ol>
+<li>
+<p>An OIDC provider must exist for your cluster to use IRSA. Create an OIDC provider and associate it with your EKS cluster by running the following command if your cluster doesn’t already have one:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --cluster <span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--region <span class="si">${</span><span class="nv">CLUSTER_REGION</span><span class="si">}</span> --approve
+</span></span></code></pre></div></li>
+<li>
+<p>Get the identity issuer URL by running the following commands:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --query <span class="s2">&#34;Account&#34;</span> --output text<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OIDC_PROVIDER_URL</span><span class="o">=</span><span class="k">$(</span>aws eks describe-cluster --name <span class="nv">$CLUSTER_NAME</span> --region <span class="nv">$CLUSTER_REGION</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--query <span class="s2">&#34;cluster.identity.oidc.issuer&#34;</span> --output text <span class="p">|</span> cut -c9-<span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html">Create an IAM policy</a> with access to the S3 bucket where pipeline artifacts will be stored. The following policy grants full access to the S3 bucket, you can scope it down by giving read, write and GetBucketLocation permissions.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; s3_policy.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">            {
+</span></span></span><span class="line"><span class="cl"><span class="s">         &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">         &#34;Action&#34;: &#34;s3:*&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">         &#34;Resource&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;arn:aws:s3:::${S3_BUCKET}/*&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">               ]
+</span></span></span><span class="line"><span class="cl"><span class="s">            }
+</span></span></span><span class="line"><span class="cl"><span class="s">      ]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Create Pipeline Backend Role</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; backend-trust.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">   {
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Principal&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;Federated&#34;: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER_URL}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">   },
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Action&#34;: &#34;sts:AssumeRoleWithWebIdentity&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Condition&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;StringEquals&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:sub&#34;: &#34;system:serviceaccount:kubeflow:ml-pipeline&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PIPELINE_BACKEND_ROLE_NAME</span><span class="o">=</span>kf-pipeline-backend-role-<span class="nv">$CLUSTER_NAME</span>
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam create-role --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --assume-role-policy-document file://backend-trust.json
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">BACKEND_ROLE_ARN</span><span class="o">=</span><span class="k">$(</span>aws --region <span class="nv">$CLUSTER_REGION</span> iam get-role --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --output text --query <span class="s1">&#39;Role.Arn&#39;</span><span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Create Profile Role</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; profile-trust.json
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Version&#34;: &#34;2012-10-17&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">&#34;Statement&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s">   {
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Effect&#34;: &#34;Allow&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Principal&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;Federated&#34;: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER_URL}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">   },
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Action&#34;: &#34;sts:AssumeRoleWithWebIdentity&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">   &#34;Condition&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;StringEquals&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:aud&#34;: &#34;sts.amazonaws.com&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">      &#34;${OIDC_PROVIDER_URL}:sub&#34;: &#34;system:serviceaccount:kubeflow-user-example-com:default-editor&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">      }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">   }
+</span></span></span><span class="line"><span class="cl"><span class="s">]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_ROLE_NAME</span><span class="o">=</span>kf-pipeline-profile-role-<span class="nv">$CLUSTER_NAME</span>
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam create-role --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --assume-role-policy-document file://profile-trust.json
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PROFILE_ROLE_ARN</span><span class="o">=</span><span class="k">$(</span>aws --region <span class="nv">$CLUSTER_REGION</span> iam get-role --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --output text --query <span class="s1">&#39;Role.Arn&#39;</span><span class="k">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Attach S3 Policy to Roles</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PIPELINE_BACKEND_ROLE_NAME</span> --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
+</span></span><span class="line"><span class="cl">aws --region <span class="nv">$CLUSTER_REGION</span> iam put-role-policy --role-name <span class="nv">$PROFILE_ROLE_NAME</span> --policy-name kf-pipeline-s3 --policy-document file://s3_policy.json
+</span></span></code></pre></div></li>
+<li>
+<p>Configure the manifests with role ARNs.</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-7" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-7-0-tab" data-toggle="tab" href="#tabs-7-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-7-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-7-1-tab" data-toggle="tab" href="#tabs-7-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-7-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-7-content"><div class="tab-pane fade show active"
+        id="tabs-7-0" role="tabpanel" aria-labelled-by="tabs-7-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="s1">&#39;.metadata.annotations.&#34;eks.amazonaws.com/role-arn&#34;=env(BACKEND_ROLE_ARN)&#39;</span> <span class="nx">-i</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">service-account</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="s1">&#39;.spec.plugins[0].spec.&#34;awsIamRole&#34;=env(PROFILE_ROLE_ARN)&#39;</span> <span class="nx">-i</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">user-namespace</span><span class="err">/</span><span class="nx">overlay</span><span class="err">/</span><span class="nx">profile</span><span class="p">.</span><span class="nx">yaml</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-7-1" role="tabpanel" aria-labelled-by="tabs-7-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.roleArn = env(BACKEND_ROLE_ARN)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.roleArn = env(BACKEND_ROLE_ARN)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.awsIamForServiceAccount.awsIamRole = env(PROFILE_ROLE_ARN)&#39; -i charts/common/user-namespace/values.yaml</span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="2222-configure-using-iam-user">2.2.2.2 Configure using IAM User</h3>
+<ol>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_cliwpsapi">Create an IAM user</a> with permissions to get bucket locations and allow read and write access to objects in an S3 bucket where you want to store the Kubeflow artifacts. Take note of the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY of the IAM user that you created to use in the following step, which will be referenced as <code>minio_aws_access_key_id</code> and <code>minio_aws_secret_access_key</code> respectively.</p>
+</li>
+<li>
+<p>Create and configure S3 Secrets:</p>
+<ol>
+<li>Export values:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">S3_SECRET</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 secret name&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user access key&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">MINIO_AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">&#34;&lt;your s3 user secret  key&gt;&#34;</span>
+</span></span></code></pre></div></li>
+<li>Configure a Secret (e.g. <code>s3-secret</code>) with your AWS credentials. These need to be long-term credentials from an IAM user and not temporary.
+<ul>
+<li>For more details about configuring or finding your AWS credentials, see <a href="https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html">AWS security credentials</a></li>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager create-secret --name <span class="nv">$S3_SECRET</span> --secret-string <span class="s1">&#39;{&#34;accesskey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_ACCESS_KEY_ID</span><span class="s1">&#39;&#34;,&#34;secretkey&#34;:&#34;&#39;</span><span class="nv">$MINIO_AWS_SECRET_ACCESS_KEY</span><span class="s1">&#39;&#34;}&#39;</span> --region <span class="nv">$CLUSTER_REGION</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>Rename the <code>parameters.objects.objectName</code> field in <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/awsconfigs/common/aws-secrets-manager/s3/secret-provider.yaml">the S3 Secret provider configuration</a> to the name of the Secret.
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-8" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-8-0-tab" data-toggle="tab" href="#tabs-8-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-8-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-8-1-tab" data-toggle="tab" href="#tabs-8-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-8-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-8-content"><div class="tab-pane fade show active"
+        id="tabs-8-0" role="tabpanel" aria-labelled-by="tabs-8-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">yq</span> <span class="nx">e</span> <span class="nx">-i</span> <span class="s1">&#39;.spec.parameters.objects |= sub(&#34;s3-secret&#34;,env(S3_SECRET))&#39;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">common</span><span class="err">/</span><span class="nx">aws-secrets-manager</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">secret-provider</span><span class="p">.</span><span class="nx">yaml</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-8-1" role="tabpanel" aria-labelled-by="tabs-8-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.secretName = env(S3_SECRET)&#39; -i charts/common/aws-secrets-manager/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="install-csi-driver-and-update-kfp-configurations">Install CSI Driver and update KFP configurations</h3>
+<ol start="4">
+<li>
+<p>Install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver</p>
+<ol>
+<li>Run the following commands to enable OIDC and create an <code>iamserviceaccount</code> with permissions to retrieve the Secrets created with AWS Secrets Manager.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">eksctl utils associate-iam-oidc-provider --region<span class="o">=</span><span class="nv">$CLUSTER_REGION</span> --cluster<span class="o">=</span><span class="nv">$CLUSTER_NAME</span> --approve
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">eksctl create iamserviceaccount  --name kubeflow-secrets-manager-sa  --namespace kubeflow  --cluster <span class="nv">$CLUSTER_NAME</span> --attach-policy-arn  arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess --attach-policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite --override-existing-serviceaccounts   --approve --region <span class="nv">$CLUSTER_REGION</span>
+</span></span></code></pre></div><ol start="2">
+<li>Run the following commands to install AWS Secrets &amp; Configuration Provider with Kubernetes Secrets Store CSI driver:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretproviderclass.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/csidriver.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasses.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store.csi.x-k8s.io_secretproviderclasspodstatuses.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/secrets-store-csi-driver.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/v1.3.2/deploy/rbac-secretprovidersyncing.yaml
+</span></span><span class="line"><span class="cl"> kubectl apply -f https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml
+</span></span></code></pre></div></li>
+<li>
+<p>Update the KFP configurations.</p>
+<ol>
+<li>
+<p>[RDS] Configure the <em>RDS endpoint URL</em> and <em>the metadata DB name</em>:</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-9" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-9-0-tab" data-toggle="tab" href="#tabs-9-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-9-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-9-1-tab" data-toggle="tab" href="#tabs-9-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-9-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-9-content"><div class="tab-pane fade show active"
+        id="tabs-9-0" role="tabpanel" aria-labelled-by="tabs-9-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">dbHost=&#39;</span><span class="err">$</span><span class="nx">DB_HOST</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">mlmdDb=&#39;</span><span class="err">$</span><span class="nx">MLMD_DB</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="err">&gt;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">rds</span><span class="err">/</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-9-1" role="tabpanel" aria-labelled-by="tabs-9-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.dbHost = env(DB_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.rds.mlmdDb = env(MLMD_DB)&#39; -i charts/apps/kubeflow-pipelines/rds-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+<li>
+<p>[S3] Configure the <em>S3 bucket name</em> and <em>S3 bucket region</em>:</p>
+<ul>
+<li>Select the package manager of your choice.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <ul class="nav nav-tabs" id="tabs-10" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-10-0-tab" data-toggle="tab" href="#tabs-10-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-10-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-10-1-tab" data-toggle="tab" href="#tabs-10-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-10-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-10-content"><div class="tab-pane fade show active"
+        id="tabs-10-0" role="tabpanel" aria-labelled-by="tabs-10-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">printf</span> <span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">bucketName=&#39;</span><span class="err">$</span><span class="nx">S3_BUCKET</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">minioServiceHost=&#39;</span><span class="err">$</span><span class="nx">MINIO_SERVICE_HOST</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">minioServiceRegion=&#39;</span><span class="err">$</span><span class="nx">CLUSTER_REGION</span><span class="s1">&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;</span> <span class="err">&gt;</span> <span class="nx">awsconfigs</span><span class="err">/</span><span class="nx">apps</span><span class="err">/</span><span class="nx">pipeline</span><span class="err">/</span><span class="nx">s3</span><span class="err">/</span><span class="nx">params</span><span class="p">.</span><span class="nx">env</span>
+</span></span><span class="line"><span class="cl">            </span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-10-1" role="tabpanel" aria-labelled-by="tabs-10-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/rds-s3-static/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.bucketName = env(S3_BUCKET)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceHost = env(MINIO_SERVICE_HOST)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">yq e &#39;.s3.minioServiceRegion = env(CLUSTER_REGION)&#39; -i charts/apps/kubeflow-pipelines/s3-only/values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span></span></span></code></pre></div></div>
+  
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="optional-configure-culling-for-notebooks">(Optional) Configure Culling for Notebooks</h3>
+<p>Enable culling for notebooks by following the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/configure-notebook-culling/">instructions</a> in configure culling for notebooks guide.</p>
+<h2 id="30-build-manifests-and-install-kubeflow">3.0 Build Manifests and install Kubeflow</h2>
+<p>Once you have the resources ready, you can deploy the Kubeflow manifests for one of the following deployment options:</p>
+<ul>
+<li>both RDS and S3</li>
+<li>RDS only</li>
+<li>S3 only</li>
+</ul>
+<p>Navigate to the root of repository</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$REPO_ROOT</span>
+</span></span></code></pre></div><h4 id="rds-and-s3-deploy-both-rds-and-s3">[RDS and S3] Deploy both RDS and S3</h4>
+<p>Use the following command to deploy the Kubeflow manifests for both RDS and S3:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-12" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-12-0-tab" data-toggle="tab" href="#tabs-12-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-12-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-12-1-tab" data-toggle="tab" href="#tabs-12-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-12-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-12-content"><div class="tab-pane fade show active"
+        id="tabs-12-0" role="tabpanel" aria-labelled-by="tabs-12-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-12-1" role="tabpanel" aria-labelled-by="tabs-12-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+<h4 id="rds-deploy-rds-only">[RDS] Deploy RDS only</h4>
+<p>Use the following command to deploy the Kubeflow manifests for RDS only:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-13" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-13-0-tab" data-toggle="tab" href="#tabs-13-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-13-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-13-1-tab" data-toggle="tab" href="#tabs-13-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-13-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-13-content"><div class="tab-pane fade show active"
+        id="tabs-13-0" role="tabpanel" aria-labelled-by="tabs-13-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-only</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-13-1" role="tabpanel" aria-labelled-by="tabs-13-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-only PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+<h4 id="s3-deploy-s3-only">[S3] Deploy S3 only</h4>
+<p>Use the following command to deploy the Kubeflow manifests for S3 only:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-14" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-14-0-tab" data-toggle="tab" href="#tabs-14-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-14-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-14-1-tab" data-toggle="tab" href="#tabs-14-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-14-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-14-content"><div class="tab-pane fade show active"
+        id="tabs-14-0" role="tabpanel" aria-labelled-by="tabs-14-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">deploy-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">s3-only</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-14-1" role="tabpanel" aria-labelled-by="tabs-14-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make deploy-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=s3-only PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+</p>
+<p>Once everything is installed successfully, you can access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a>.</p>
+<p>You can now start experimenting and running your end-to-end ML workflows with Kubeflow!</p>
+<h2 id="40-creating-profiles">4.0 Creating Profiles</h2>
+<p>A default profile named <code>kubeflow-user-example-com</code> for email <code>user@example.com</code> has been configured with this deployment. If you are using IRSA as <code>PIPELINE_S3_CREDENTIAL_OPTION</code>, any additional profiles that you create will also need to be configured with IRSA and S3 Bucket access. Follow the <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/create-profiles-with-iam-role/">pipeline profiles</a> for instructions on how to create additional profiles.</p>
+<p>If you are not using this feature, you can create a profile by just specifying email address of the user.</p>
+<h2 id="50-verify-the-installation">5.0 Verify the installation</h2>
+<h3 id="51-verify-rds">5.1 Verify RDS</h3>
+<ol>
+<li>Connect to your RDS instance from a pod within the cluster with the following command:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl run -it --rm --image<span class="o">=</span>mysql:5.7 --restart<span class="o">=</span>Never mysql-client -- mysql -h &lt;YOUR RDS ENDPOINT&gt; -u &lt;YOUR LOGIN&gt; -p&lt;YOUR PASSWORD&gt;
+</span></span></code></pre></div><p>You can find your credentials by visiting <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> or by using the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/secretsmanager/get-secret-value.html">AWS CLI</a>.</p>
+<p>For example, use the following command to retrieve the value of a Secret named <code>rds-secret</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager get-secret-value <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --region <span class="nv">$CLUSTER_REGION</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --secret-id <span class="nv">$RDS_SECRET_NAME</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --query <span class="s1">&#39;SecretString&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --output text
+</span></span></code></pre></div><ol start="2">
+<li>Once you are connected to your RDS instance, verify that the databases <code>kubeflow</code> and <code>mlpipeline</code> exist.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql&gt; show databases<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">+--------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Database           <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+--------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> cachedb            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> information_schema <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> kubeflow           <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> metadb             <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> mlpipeline         <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> mysql              <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> performance_schema <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> sys                <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+--------------------+
+</span></span></code></pre></div><ol start="3">
+<li>Verify that the database <code>mlpipeline</code> has the following tables:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql&gt; use mlpipeline<span class="p">;</span> show tables<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Tables_in_mlpipeline <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> db_statuses          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> default_experiments  <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> experiments          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nb">jobs</span>                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> pipeline_versions    <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> pipelines            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> resource_references  <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> run_details          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> run_metrics          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tasks                <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span></code></pre></div><ol start="4">
+<li>
+<p>Access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Katib (under Experiments (AutoML)).</p>
+</li>
+<li>
+<p>Create an experiment using the following <a href="https://github.com/awslabs/kubeflow-manifests/blob/main/tests/e2e/resources/custom-resource-templates/katib-experiment-random.yaml">yaml file</a>.</p>
+</li>
+<li>
+<p>Once the experiment is complete, verify that the following table exists:</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql&gt; use kubeflow<span class="p">;</span> show tables<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Tables_in_kubeflow   <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> observation_logs     <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------------------+
+</span></span></code></pre></div><ol start="7">
+<li>Describe the <code>observation_logs</code> to verify that they are being populated.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mysql&gt; <span class="k">select</span> * from observation_logs<span class="p">;</span>
+</span></span></code></pre></div><h3 id="52-verify-s3">5.2 Verify S3</h3>
+<ol>
+<li>
+<p>Access the Kubeflow Central Dashboard <a href="https://awslabs.github.io/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/docs/deployment/vanilla/guide/#connect-to-your-kubeflow-cluster">by logging in to your cluster</a> and navigate to Kubeflow Pipelines (under Pipelines).</p>
+</li>
+<li>
+<p>Create an experiment named <code>test</code> and create a run using the sample pipeline <code>[Demo] XGBoost - Iterative model training</code>.</p>
+</li>
+<li>
+<p>Once the run is completed, go to the S3 AWS console and open the bucket that you specified for your Kubeflow installation.</p>
+</li>
+<li>
+<p>Verify that the bucket is not empty and was populated by the outputs of the experiment.</p>
+</li>
+</ol>
+<h2 id="60-uninstall-kubeflow">6.0 Uninstall Kubeflow</h2>
+<p>Run the following command to uninstall your Kubeflow deployment:</p>
+<blockquote>
+<p>Note: Make sure you have the correct INSTALLATION_OPTION, DEPLOYMENT_OPTION and PIPELINE_S3_CREDENTIAL_OPTION environment variables set for your chosen installation</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="nav nav-tabs" id="tabs-19" role="tablist"><li class="nav-item">
+      <a class="nav-link active tab-Kustomize"
+        id="tabs-19-0-tab" data-toggle="tab" href="#tabs-19-0" role="tab" onclick="handleClick(&#34;Kustomize&#34;);"
+        aria-controls="tabs-19-0" aria-selected="true">
+        Kustomize
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link tab-Helm"
+        id="tabs-19-1-tab" data-toggle="tab" href="#tabs-19-1" role="tab" onclick="handleClick(&#34;Helm&#34;);"
+        aria-controls="tabs-19-1" aria-selected="false">
+        Helm
+      </a>
+    </li></ul>
+
+
+<div class="tab-content" id="tabs-19-content"><div class="tab-pane fade show active"
+        id="tabs-19-0" role="tabpanel" aria-labelled-by="tabs-19-0-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">make</span> <span class="nx">delete-kubeflow</span> <span class="nx">INSTALLATION_OPTION</span><span class="p">=</span><span class="nx">kustomize</span> <span class="nx">DEPLOYMENT_OPTION</span><span class="p">=</span><span class="nx">rds-s3</span> <span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span><span class="p">=</span><span class="err">$</span><span class="nx">PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  <div class="tab-pane fade"
+        id="tabs-19-1" role="tabpanel" aria-labelled-by="tabs-19-1-tab"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">make delete-kubeflow INSTALLATION_OPTION=helm DEPLOYMENT_OPTION=rds-s3 PIPELINE_S3_CREDENTIAL_OPTION=$PIPELINE_S3_CREDENTIAL_OPTION</span></span></span></code></pre></div></div>
+  
+</div>
+
+<p>To uninstall AWS resources created by the automated setup, run the cleanup script:</p>
+<ol>
+<li>Navigate to the <code>tests/e2e</code> directory.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> tests/e2e
+</span></span></code></pre></div><ol start="2">
+<li>Install the script dependencies.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip install -r requirements.txt
+</span></span></code></pre></div><ol start="3">
+<li>Make sure that you have the configuration file created by the script in <code>tests/e2e/utils/rds-s3/metadata.yaml</code>.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PYTHONPATH</span><span class="o">=</span>.. python utils/rds-s3/auto-rds-s3-cleanup.py
+</span></span></code></pre></div>
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+  Last modified September 1, 2023: <a href="https://github.com/awslabs/kubeflow-manifests//commit/7faf1a5831b1f5da7b336124defd3538235f76db">v1.7.0-aws-b1.0.3 website changes (#791) (7faf1a5)</a>
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark pt-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2023 The Kubeflow on AWS Authors.</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/js/main.min.5b2e574c2d11bb521dbb91ce8e4950b3d0887db4fe90a3812a8f176ab6cd7b9e.js" integrity="sha256-Wy5XTC0Ru1Idu5HOjklQs9CIfbT&#43;kKOBKo8XarbNe54=" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/kubeflow-manifests/release-v1.7.0-aws-b1.0.3/js/copy-code-button.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+docsearch({
+
+appId: 'A1FXAERJE4',
+
+apiKey: '88f3a753878f24ffdcd3d786be775545',
+
+indexName: 'kubeflow-manifests',
+
+container: '#docsearch',
+
+searchParameters: {
+    facetFilters: ["version: main "],
+  },
+debug: true 
+
+});
+</script>
+
+
+
+  </body>
+</html>
