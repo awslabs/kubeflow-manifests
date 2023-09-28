@@ -247,7 +247,7 @@ def install_ack_controller():
         + "helm registry login --username AWS --password-stdin public.ecr.aws"
     )
     exec_shell(
-        f"helm pull https://{CHART_REPO} --version {RELEASE_VERSION} -d {CHART_EXPORT_PATH}"
+        f"helm pull oci://{CHART_REPO} --version {RELEASE_VERSION} -d {CHART_EXPORT_PATH}"
     )
     exec_shell(f"tar xvf {CHART_EXPORT_PATH}/{CHART_PACKAGE} -C {CHART_EXPORT_PATH}")
     exec_shell(
