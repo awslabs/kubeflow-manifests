@@ -49,7 +49,9 @@ install-terraform:
 	terraform --version
 
 install-helm: 
-	curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+	wget https://get.helm.sh/helm-v3.12.2-linux-amd64.tar.gz
+	tar -zxvf helm-v3.12.2-linux-amd64.tar.gz
+	sudo mv linux-amd64/helm /usr/local/bin/helm
 	helm version
 
 install-python:
