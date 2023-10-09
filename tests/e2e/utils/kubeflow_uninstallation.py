@@ -136,6 +136,13 @@ def delete_component(
                 else:
                     if check_helm_chart_exists(component_name, namespace):
                         uninstall_helm(component_name, namespace)
+                        if component_name == "kserve":
+                            # Helm uninstall returns before CRs are cleaned up which cause failure with CRD deletion
+                            # Kserve chart contains CRD and CRs for clusterservingruntime
+                            # TODO: explore --cascade delete option
+                            exec_shell(
+                                f"kubectl delete clusterservingruntime --all"
+                            )
                         if component_name == "ingress":
                             # Helm doesn't seem to delete ingress during uninstall
                             exec_shell(
