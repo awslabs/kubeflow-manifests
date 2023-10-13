@@ -249,10 +249,10 @@ def uninstall_helm(chart_name, namespace=None):
     """
     if namespace:
         uninstall_retcode = subprocess.call(
-            f"helm uninstall {chart_name} -n {namespace} --wait".split()
+            f"helm uninstall {chart_name} -n {namespace}".split()
         )
     else:
-        uninstall_retcode = subprocess.call(f"helm uninstall {chart_name} --wait".split())
+        uninstall_retcode = subprocess.call(f"helm uninstall {chart_name}".split())
     assert uninstall_retcode == 0
 
 
