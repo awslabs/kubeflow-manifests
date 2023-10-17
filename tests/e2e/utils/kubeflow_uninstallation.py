@@ -141,6 +141,9 @@ def delete_component(
                             exec_shell(
                                 f"kubectl delete ingress -n istio-system istio-ingress"
                             )
+                        # Helm uninstallation is async. Delete the Cluster Serving runtimes with Kubectl.
+                        if component_name == "kserve":
+                            kubectl_delete(f"{installation_path}/templates/ClusterServingRuntime")
                     if os.path.isdir(f"{installation_path}/crds"):
                         print(f"deleting {component_name} crds ...")
                         kubectl_delete(f"{installation_path}/crds")
