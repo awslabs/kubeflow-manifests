@@ -96,7 +96,7 @@ def install_kubeflow(
     print_banner(
         f"Installing kubeflow {deployment_option} deployment with {installation_option} with {pipeline_s3_credential_option}"
     )
-
+    print(f"DEPLOYMENT FILE: {installation_config['oidc-authservice']['installation_options']}")
     for component in Install_Sequence:
         install_component(
             installation_option,
