@@ -133,7 +133,7 @@ oidc-authservice:
   installation_options:
     kustomize:
       paths: 
-        - ../../upstream/common/oidc-authservice/base
+        - ../../upstream/common/oidc-client/oidc-authservice/base
     helm: 
       paths: ../../charts/common/oidc-authservice
   validations:
