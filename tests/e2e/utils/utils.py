@@ -204,7 +204,8 @@ def apply_kustomize(path, crds=None):
                 retcode = kubectl_wait_crd(crd)
                 assert retcode == 0
             print("assert retcode == 0")
-            apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
+            # apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
+            apply_retcode = os.system(f"kubectl apply -f {tmp.name}")
         assert apply_retcode == 0
 
 
