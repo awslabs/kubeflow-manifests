@@ -31,6 +31,16 @@ from e2e.fixtures.cluster import (
     delete_iam_service_account,
 )
 
+CHECK_STUCK_CRD_COMMAND = "kubectl get inferenceservices.serving.kserve.io"
+PATCH_STUCK_CRD_COMMAND = r'kubectl patch crd/inferenceservices.serving.kserve.io -p '+ r"'"+r'{"metadata":{"finalizers":[]}}'+r"'"+r' --type=merge'
+
+def delete_stuck_crd():
+    try:
+        crd_check_output = subprocess.check_output(CHECK_STUCK_CRD_COMMAND.split())
+        if "inferenceservices.serving.kserve.io" in crd_check_output.decode("utf-8"):
+            os.system(PATCH_STUCK_CRD_COMMAND.split())
+    except:
+        pass
 
 @pytest.fixture(scope="class")
 def configure_manifests(region, cluster):
@@ -117,6 +127,7 @@ def installation(
     """
 
     def on_create():
+        delete_stuck_crd()
         install_kubeflow(
             installation_option,
             deployment_option,
