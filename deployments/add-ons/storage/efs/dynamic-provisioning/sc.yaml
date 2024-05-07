@@ -4,12 +4,12 @@ kind: StorageClass
 metadata:
   name: efs-sc
 mountOptions:
-  - tls
+- tls
 parameters:
   directoryPerms: '700'
   gid: '100'
   uid: '1000'
-  fileSystemId: <YOUR_FILE_SYSTEM_ID>
+  fileSystemId: fs-0c4355ce89b6c3720
   provisioningMode: efs-ap
 provisioner: efs.csi.aws.com
 reclaimPolicy: Delete
