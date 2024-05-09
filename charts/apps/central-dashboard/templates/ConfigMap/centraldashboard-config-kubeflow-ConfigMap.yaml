@@ -68,6 +68,12 @@ data:
           "link": "/pipeline/#/executions",
           "text": "Executions",
           "icon": "av:play-arrow"
+        },
+        {
+          "type": "item",
+          "link": "/mlflow/",
+          "text": "MLflow",
+          "icon": "icon:cached"
         }
       ],
       "externalLinks": [ ],
