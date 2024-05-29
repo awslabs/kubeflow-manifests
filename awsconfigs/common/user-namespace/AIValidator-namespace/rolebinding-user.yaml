@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: user-test-user-ardentmc-com-clusterrole-edit
+  namespace: ai-validator
+  annotations:
+    role: edit
+    user: test.user@ardentmc.com
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeflow-edit
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: test.user@ardentmc.com

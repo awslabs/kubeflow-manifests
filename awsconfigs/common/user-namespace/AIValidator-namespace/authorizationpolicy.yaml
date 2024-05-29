@@ -1,0 +1,26 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: user-test-user-ardentmc-com-clusterrole-edit
+  namespace: ai-validator
+  annotations:
+    role: edit
+    user: test.user@ardentmc.com
+spec:
+  rules:
+    - from:
+        - source:
+            ## for more information see the KFAM code:
+            ## https://github.com/kubeflow/kubeflow/blob/v1.8.0/components/access-management/kfam/bindings.go#L79-L110
+            principals:
+              ## required for kubeflow notebooks
+              ## TEMPLATE: "cluster.local/ns/<ISTIO_GATEWAY_NAMESPACE>/sa/<ISTIO_GATEWAY_SERVICE_ACCOUNT>"
+              - "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
+
+              ## required for kubeflow pipelines
+              ## TEMPLATE: "cluster.local/ns/<KUBEFLOW_NAMESPACE>/sa/<KFP_UI_SERVICE_ACCOUNT>"
+              - "cluster.local/ns/kubeflow/sa/ml-pipeline-ui"
+      when:
+        - key: request.headers[kubeflow-userid]
+          values:
+            - test.user@ardentmc.com
