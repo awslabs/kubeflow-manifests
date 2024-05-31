@@ -1,7 +1,6 @@
-export PROFILE_NAMESPACE=test-user
-export PROFILE_USER=test.user@ardentmc.com
-export ROLE=admin
-export SAFE_USER_PROFILE_NAME=test-user-ardentmc-com
+# 
+# 
+# must run user_setup.sh, which is where variables are defined.
 
 kubectl create namespace ${PROFILE_NAMESPACE}
 

@@ -1,14 +1,6 @@
-# Your cluster name
-export CLUSTER_NAME=kf
-# Your cluster region
-export CLUSTER_REGION=us-east-1
-# The S3 Bucket that is used by Kubeflow Pipelines
-export S3_BUCKET=kf-artifact-store-20240503130017739900000008
-# Your AWS Acconut ID
-export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-# Name of the profile to create
-export PROFILE_NAMESPACE=test-user
-export PROFILE_USER=test.user@ardentmc.com
+# 
+# 
+# must run user_setup.sh, which is where variables are defined.
 
 aws --region $CLUSTER_REGION eks update-kubeconfig --name $CLUSTER_NAME
 
