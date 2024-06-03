@@ -1,8 +1,6 @@
-export PROFILE_NAMESPACE=justin-howard
-export PROFILE_USER=justin.howard@ardentmc.com
-export ROLE=admin
-# kubernentes-friendly prfile username
-export SAFE_USER_PROFILE_NAME=justin-howard-ardentmc-com
+# 
+# 
+# must run user_setup.sh, which is where variables are defined.
 
 kubectl create namespace ${PROFILE_NAMESPACE}
 
@@ -10,7 +8,7 @@ cat <<EOF > rolebinding-user.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: user-${SAFE_USER_PROFILE_NAME}-clusterrole-${ROLE}
+  name: namespaceAdmin
   namespace: ${PROFILE_NAMESPACE}
   annotations:
     role: ${ROLE}
@@ -46,7 +44,6 @@ subjects:
     name: ${PROFILE_USER}
 EOF
 
-kubectl create -f rolebinding-service-account-editor.yaml
 kubectl -n ${PROFILE_NAMESPACE} create serviceaccount default-editor
 
 cat << EOF > authorizationpolicy.yaml

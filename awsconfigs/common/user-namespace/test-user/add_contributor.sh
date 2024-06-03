@@ -1,18 +1,26 @@
-# 
-# 
-# must run user_setup.sh, which is where variables are defined.
+# user first name
+export FIRSTNAME=daniel
+# user last name
+export LASTNAME=desouza
+# name of the profile to grant the contributor edit access to
+export PROFILE_NAME=ai-validator
+# kubeflow only permits edit access for contributors for now
+export ROLE=edit
+# email of the contributor
+export RAW_USER_EMAIL=${FIRSTNAME}.${LASTNAME}@ardentmc.com
+# contributor email replaced with safe character "-"
+export CONTRIBUTOR_SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-ardentmc-com
 
-kubectl create namespace ${PROFILE_NAMESPACE}
-
-cat <<EOF > rolebinding-user.yaml
+# create a rolebinding for the new contributor
+cat <<EOF > contributor-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: namespaceAdmin
-  namespace: ${PROFILE_NAMESPACE}
+  name: user-${CONTRIBUTOR_SAFE_USER_PROFILE_NAME}-clusterrole-${ROLE}
+  namespace: ${PROFILE_NAME}
   annotations:
     role: ${ROLE}
-    user: ${PROFILE_USER}
+    user: ${RAW_USER_EMAIL}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -20,41 +28,19 @@ roleRef:
 subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
-    name: ${PROFILE_USER}
+    name: ${RAW_USER_EMAIL}
 EOF
 
-kubectl create -f rolebinding-user.yaml
-
-cat <<EOF > rolebinding-service-account-editor.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: default-editor
-  namespace: ${PROFILE_NAMESPACE}
-  annotations:
-    role: edit
-    user: ${PROFILE_USER}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kubeflow-edit
-subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: ${PROFILE_USER}
-EOF
-
-kubectl -n ${PROFILE_NAMESPACE} create serviceaccount default-editor
-
-cat << EOF > authorizationpolicy.yaml
+# create authorization policy
+cat <<EOF > contributor-authorization-policy.yaml
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: user-${SAFE_USER_PROFILE_NAME}-clusterrole-admin
-  namespace: ${PROFILE_NAMESPACE}
+  name: user-${CONTRIBUTOR_SAFE_USER_PROFILE_NAME}-clusterrole-${ROLE}
+  namespace: ${PROFILE_NAME}
   annotations:
-    role: admin
-    user: ${PROFILE_USER}
+    role: ${ROLE}
+    user: ${RAW_USER_EMAIL}
 spec:
   rules:
     - from:
@@ -72,7 +58,8 @@ spec:
       when:
         - key: request.headers[kubeflow-userid]
           values:
-            - ${PROFILE_USER}
+            - ${RAW_USER_EMAIL}
 EOF
 
-kubectl create -f authorizationpolicy.yaml
+kubectl create -f contributor-rolebinding.yaml
+kubectl create -f contributor-authorization-policy.yaml
