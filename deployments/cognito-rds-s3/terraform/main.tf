@@ -38,7 +38,7 @@ locals {
     node_group_name = "managed-ondemand-gpu"
     instance_types  = [var.node_instance_type_gpu]
     min_size        = 0
-    desired_size    = 1
+    desired_size    = 0
     max_size        = 4
     ami_type        = "AL2_x86_64_GPU"
     disk_size       = var.node_disk_size_gpu
