@@ -19,8 +19,8 @@ export SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-ardentmc-com
 # RBAC role for namespace
 export ROLE=admin
 
-bash ./profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
-bash ./profile_namespace_creation/profile_setup.sh
+bash ../profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
+bash ../profile_namespace_creation/profile_setup.sh
 
 
 
