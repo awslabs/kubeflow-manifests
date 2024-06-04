@@ -29,7 +29,7 @@ variable "node_instance_type" {
 variable "node_instance_type_gpu" {
   description = "The instance type of a gpu EKS node. Will result in the creation of a separate gpu node group when not null"
   type        = string
-  default     = null
+  default     = "g4dn.xlarge"
 }
 
 variable "node_disk_size_cpu" {
@@ -41,7 +41,7 @@ variable "node_disk_size_cpu" {
 variable "node_disk_size_gpu" {
   description = "The disk size of a gpu node."
   type        = string
-  default     = 75
+  default     = 100
 }
 
 variable "use_rds" {
