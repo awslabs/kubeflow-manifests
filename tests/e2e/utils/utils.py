@@ -270,7 +270,7 @@ def kubectl_wait_pods(
 
     if retcode is not 0:
         ns = f"-n {namespace}" if namespace else ""
-        debug_cmd = f"kubectl describe pod -l '{identifier} in ({pods})' --timeout={timeout}s {ns}"
+        debug_cmd = f"kubectl describe pod -l '{identifier} in ({pods})' {ns}"
         os.system(debug_cmd)
         raise Exception("Timeout/error waiting for pod condition")
 
