@@ -1,3 +1,3 @@
-output "kubelow_platform_domain" {
+output "kubeflow_platform_domain" {
   value = "kubeflow.${data.aws_route53_zone.platform.name}"
 }

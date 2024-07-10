@@ -106,7 +106,7 @@ make deploy
 1. Go to the Cognito console and [create some users]({{< ref "/docs/deployment/cognito/manifest/guide.md#60-connect-to-the-central-dashboard" >}})  in `Users and groups` using their email `user@example.com`.
 1. Get the link to the central dashboard:
     ```sh
-    terraform output -raw kubelow_platform_domain
+    terraform output -raw kubeflow_platform_domain
     ```
 1. Open the link in the browser and connect via the user credentials that were just configured.
 

@@ -155,7 +155,7 @@ If you are not using this feature, you can create a profile by just specifying e
 1. Head over to your user pool in the Cognito console and create a user with email `user@example.com` in `Users and groups`. 
 1. Get the link to the central dashboard:
     ```sh
-    terraform output -raw kubelow_platform_domain
+    terraform output -raw kubeflow_platform_domain
     ```
 1. Open the link in the browser and connect via the user credentials that were just configured.
 

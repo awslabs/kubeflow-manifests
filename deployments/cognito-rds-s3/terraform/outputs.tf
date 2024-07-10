@@ -53,8 +53,8 @@ output "region" {
   description = "AWS region"
 }
 
-output "kubelow_platform_domain" {
-  value = module.kubeflow_components.kubelow_platform_domain
+output "kubeflow_platform_domain" {
+  value = module.kubeflow_components.kubeflow_platform_domain
 }
 
 output "rds_endpoint" {
