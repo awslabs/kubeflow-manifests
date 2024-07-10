@@ -73,7 +73,13 @@ data:
           "type": "item",
           "link": "/mlflow/",
           "text": "MLflow",
-          "icon": "icon:cached"
+          "icon": "icons:cached"
+        },
+        {
+          "type": "item",
+          "link": "/aim/",
+          "text": "Aim",
+          "icon": "icons:timeline"
         }
       ],
       "externalLinks": [ ],
