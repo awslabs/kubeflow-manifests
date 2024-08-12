@@ -7,9 +7,9 @@ export S3_BUCKET=kf-artifact-store-20240503130017739900000008
 # Your AWS Acconut ID
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 # user first name
-export FIRSTNAME=daniel
+export FIRSTNAME=anita
 # user last name
-export LASTNAME=desouza
+export LASTNAME=rao
 # Name of the profile to create
 export PROFILE_NAMESPACE=${FIRSTNAME}-${LASTNAME}
 # user email
