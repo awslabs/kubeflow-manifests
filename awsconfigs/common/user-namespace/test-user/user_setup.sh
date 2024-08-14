@@ -7,15 +7,19 @@ export S3_BUCKET=kf-artifact-store-20240503130017739900000008
 # Your AWS Acconut ID
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 # user first name
-export FIRSTNAME=anita
+export FIRSTNAME=danny
 # user last name
-export LASTNAME=rao
+export LASTNAME=tejada
+# organization
+export ORGANIZATION=mission1st
+# ending
+export END=pr
 # Name of the profile to create
 export PROFILE_NAMESPACE=${FIRSTNAME}-${LASTNAME}
 # user email
-export PROFILE_USER=${FIRSTNAME}.${LASTNAME}@ardentmc.com
+export PROFILE_USER=${FIRSTNAME}.${LASTNAME}@${ORGANIZATION}.${END}
 # k8s compliant user email
-export SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-ardentmc-com
+export SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-${ORGANIZATION}-${END}
 # RBAC role for namespace
 export ROLE=admin
 
