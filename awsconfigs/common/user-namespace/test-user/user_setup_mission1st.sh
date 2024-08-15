@@ -26,5 +26,7 @@ export ROLE=admin
 bash ../profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
 bash ../profile_namespace_creation/profile_setup.sh
 
-
+# clean up created files. If debugging, uncomment these.
+rm *yaml
+rm *json
 
