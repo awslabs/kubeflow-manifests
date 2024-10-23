@@ -35,7 +35,7 @@ spec:
         - name: PROFILES_KFAM_SERVICE_HOST
           value: profiles-kfam.kubeflow
         - name: REGISTRATION_FLOW
-          value: 'false'
+          value: 'true'
         - name: DASHBOARD_LINKS_CONFIGMAP
           value: centraldashboard-config
         - name: LOGOUT_URL
