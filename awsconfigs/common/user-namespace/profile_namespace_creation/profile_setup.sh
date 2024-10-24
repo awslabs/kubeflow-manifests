@@ -48,10 +48,8 @@ aws iam create-role --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --assume-r
 
 aws --region $CLUSTER_REGION iam put-role-policy --role-name $PROFILE_NAMESPACE-$CLUSTER_NAME-role --policy-name kf-$PROFILE_NAMESPACE-pipeline-s3 --policy-document file://s3_policy.json  
 
-
-
 cat <<EOF > profile_iam.yaml
-apiVersion: kubeflow.org/v1
+apiVersion: kubeflow.org/v1beta1
 kind: Profile
 metadata:
   name: ${PROFILE_NAMESPACE}

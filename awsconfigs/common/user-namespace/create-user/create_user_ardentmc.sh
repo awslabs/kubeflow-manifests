@@ -7,9 +7,9 @@ export S3_BUCKET=kf-artifact-store-20240503130017739900000008
 # Your AWS Acconut ID
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 # user first name
-export FIRSTNAME=first
+export FIRSTNAME=test
 # user last name
-export LASTNAME=name
+export LASTNAME=user3
 # organization
 export ORGANIZATION=ardentmc
 # ending
@@ -24,13 +24,14 @@ export SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-${ORGANIZATION}-${END}
 export ROLE=admin
 
 # create a kubernetes namespace and permissions
-bash ../profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
+# bash ../profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
+bash ../profile_namespace_creation/create_rolebinding_to_namespace.sh
 # create aws roles, policies, and finally, a kubernetes profile
 bash ../profile_namespace_creation/profile_setup.sh
 
 # clean up created files. If debugging, uncomment these.
-rm *yaml
-rm *json
+# rm *yaml
+# rm *json
 
 
 

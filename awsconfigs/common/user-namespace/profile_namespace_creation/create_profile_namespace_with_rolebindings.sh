@@ -24,6 +24,7 @@ subjects:
 EOF
 
 kubectl create -f rolebinding-user.yaml
+# kubectl apply -f rolebinding-user.yaml
 
 cat <<EOF > rolebinding-service-account-editor.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -34,6 +35,7 @@ metadata:
   annotations:
     role: edit
     user: ${PROFILE_USER}
+    eks.amazonaws.com/role-arn: arn:aws:iam::905418165254:role/${PROFILE_NAMESPACE}-kf-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -45,6 +47,7 @@ subjects:
 EOF
 
 kubectl -n ${PROFILE_NAMESPACE} create serviceaccount default-editor
+# kubectl -n ${PROFILE_NAMESPACE} apply serviceaccount default-editor
 
 cat << EOF > authorizationpolicy.yaml
 apiVersion: security.istio.io/v1beta1
@@ -76,3 +79,4 @@ spec:
 EOF
 
 kubectl create -f authorizationpolicy.yaml
+# kubectl apply -f authorizationpolicy.yaml
