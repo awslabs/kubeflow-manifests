@@ -1,6 +1,8 @@
 # 
-# 
-# must run user_setup.sh, which is where variables are defined.
+# This script creates a profile that is NOT managed by the 
+# kfp-pipeline-profile-controller. KFP pipelines will not function
+# as expected, but Notebooks can be created.
+# Depends on running create-user/user_setup.sh, where variables are defined.
 
 kubectl create namespace ${PROFILE_NAMESPACE}
 

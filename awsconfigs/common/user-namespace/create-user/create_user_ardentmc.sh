@@ -9,7 +9,7 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output t
 # user first name
 export FIRSTNAME=test
 # user last name
-export LASTNAME=user3
+export LASTNAME=user2
 # organization
 export ORGANIZATION=ardentmc
 # ending
@@ -23,9 +23,13 @@ export SAFE_USER_PROFILE_NAME=${FIRSTNAME}-${LASTNAME}-${ORGANIZATION}-${END}
 # RBAC role for namespace
 export ROLE=admin
 
-# create a kubernetes namespace and permissions
-# bash ../profile_namespace_creation/create_profile_namespace_with_rolebindings.sh
+
+# create a profile controlled by kfp-pipelines-controller
 bash ../profile_namespace_creation/create_rolebinding_to_namespace.sh
+
+# create a kubernetes namespace and permissions WITHOUT pipelines
+# bash ../profile_namespace_creation/create_profile_no_kfp_pipeline.sh
+
 # create aws roles, policies, and finally, a kubernetes profile
 bash ../profile_namespace_creation/profile_setup.sh
 
