@@ -30,8 +30,8 @@ bash ../profile_namespace_creation/create_rolebinding_to_namespace.sh
 bash ../profile_namespace_creation/profile_setup.sh
 
 # clean up created files. If debugging, uncomment these.
-# rm *yaml
-# rm *json
+rm *yaml
+rm *json
 
 
 
