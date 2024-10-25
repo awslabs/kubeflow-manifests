@@ -26,6 +26,10 @@ The default user profile will be managed by the kfp-pipeline-controller. It auto
 
 Another method of creating a user profile and namespace that is not centrally managed by the kfp-pipelines-controller can be achieved using the `/profile_namespace_creation/create_profile_no_kfp_pipeline.sh` method. This method will provide a detached experience where users still have the ability to create kubeflow notebooks, persistent volumes, and access kubeflow's central dashboard with their own username. They will not have the ability to use the full functionality of the Pipelines UI, so pipeline graphs will not load and neither will any helpful pipeline metadata. A correctly formatted pipeline yaml can still be uploaded and run, but the user will be on their own when trying to observe the results of the run and any artifacts they intend to produce. Correctly formatted pipelines can still run and store objects in minio and S3. These artifacts can be discovered by observing the pod logs via the `kubectl -n <user-namespace> logs <pod-name>` command.
 
+### Additional Note
+
+Once a profile and namespace are created without kfp-pipeline-controller administration, there does not appear to be a way to grant the controller access to convert the profile into a controlled profile without losing all of the user's data. The user's namespace must be deleted to grant control to the pipeline controller.
+
 ## Troubleshooting
 
 If fields are defined incorrectly, you may need to delete the user data. `./create-user/delete_user.sh` contains helpful commands that should remove many, but not all problematic configurations.
