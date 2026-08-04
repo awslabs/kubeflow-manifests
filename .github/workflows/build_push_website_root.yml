@@ -19,9 +19,13 @@ jobs:
           extended: true
 
       - name: Checkout repository and setup Hugo
+        env:
+          BRANCH_NAME: ${{ github.event.inputs.branch_name }}
+          SERVER_URL: ${{ github.server_url }}
+          REPO: ${{ github.repository }}
         run: |
-          git clone --recurse-submodules ${{ github.server_url }}/${{ github.repository }}.git && cd kubeflow-manifests
-          git checkout ${{ github.event.inputs.branch_name }}
+          git clone --recurse-submodules "${SERVER_URL}/${REPO}.git" && cd kubeflow-manifests
+          git checkout "$BRANCH_NAME"
           cd website
           npm install postcss-cli@8.3.0
           base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/\""
