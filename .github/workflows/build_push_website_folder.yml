@@ -28,14 +28,16 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
         id: extract_branch
 
       - name: Run a multi-line script
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
-          cd $GITHUB_WORKSPACE/website
+          cd "$GITHUB_WORKSPACE/website"
           npm install postcss-cli@8.3.0
-          base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/$(git branch --show-current)\""
+          base_url="baseURL = \"https://$GITHUB_REPOSITORY_OWNER.github.io/kubeflow-manifests/${BRANCH_NAME}\""
           sed -i "1s#.*#$base_url#" config.toml
           hugo
 
