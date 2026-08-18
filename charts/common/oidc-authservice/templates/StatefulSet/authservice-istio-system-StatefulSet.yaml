@@ -22,7 +22,7 @@ spec:
             name: oidc-authservice-client
         - configMapRef:
             name: oidc-authservice-parameters
-        image: gcr.io/arrikto/kubeflow/oidc-authservice:e236439
+        image: docker.io/kubeflowmanifestswg/oidc-authservice:e236439
         imagePullPolicy: Always
         name: authservice
         ports:
