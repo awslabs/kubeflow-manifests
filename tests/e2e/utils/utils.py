@@ -196,13 +196,16 @@ def apply_kustomize(path, crds=None):
     with tempfile.NamedTemporaryFile() as tmp:
         build_retcode = subprocess.call(f"kustomize build {path} -o {tmp.name}".split())
         assert build_retcode == 0
+        print(tmp.name)
         apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
         # to deal with runtime crds
         if crds is not None:
             for crd in crds:
                 retcode = kubectl_wait_crd(crd)
                 assert retcode == 0
-            apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
+            print("assert retcode == 0")
+            # apply_retcode = subprocess.call(f"kubectl apply -f {tmp.name}".split())
+            apply_retcode = os.system(f"kubectl apply -f {tmp.name}")
         assert apply_retcode == 0
 
 
